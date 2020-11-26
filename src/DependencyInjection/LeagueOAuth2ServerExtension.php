@@ -25,6 +25,8 @@ use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Grant\ImplicitGrant;
+use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\ResourceServer;
 use LogicException;
@@ -155,6 +157,13 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             ]);
         }
 
+        if ($config['enable_password_grant']) {
+            $authorizationServer->addMethodCall('enableGrantType', [
+                new Reference(PasswordGrant::class),
+                new Definition(DateInterval::class, [$config['access_token_ttl']]),
+            ]);
+        }
+
         if ($config['enable_refresh_token_grant']) {
             $authorizationServer->addMethodCall('enableGrantType', [
                 new Reference(RefreshTokenGrant::class),
@@ -169,11 +178,25 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             ]);
         }
 
+        if ($config['enable_implicit_grant']) {
+            $authorizationServer->addMethodCall('enableGrantType', [
+                new Reference(ImplicitGrant::class),
+                new Definition(DateInterval::class, [$config['access_token_ttl']]),
+            ]);
+        }
+
         $this->configureGrants($container, $config);
     }
 
     private function configureGrants(ContainerBuilder $container, array $config): void
     {
+        $container
+            ->getDefinition(PasswordGrant::class)
+            ->addMethodCall('setRefreshTokenTTL', [
+                new Definition(DateInterval::class, [$config['refresh_token_ttl']]),
+            ])
+        ;
+
         $container
             ->getDefinition(RefreshTokenGrant::class)
             ->addMethodCall('setRefreshTokenTTL', [
@@ -191,6 +214,11 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         if (false === $config['require_code_challenge_for_public_clients']) {
             $authCodeGrantDefinition->addMethodCall('disableRequireCodeChallengeForPublicClients');
         }
+
+        $container
+            ->getDefinition(ImplicitGrant::class)
+            ->replaceArgument('$accessTokenTTL', new Definition(DateInterval::class, [$config['access_token_ttl']]))
+        ;
     }
 
     /**
