@@ -11,6 +11,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as ClientModel;
 use League\Bundle\OAuth2ServerBundle\Model\Grant as GrantModel;
 use League\Bundle\OAuth2ServerBundle\Model\Scope as ScopeModel;
+use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -78,7 +79,13 @@ final class ScopeRepository implements ScopeRepositoryInterface
         $scopes = $this->setupScopes($client, $this->scopeConverter->toDomainArray($scopes));
 
         $event = $this->eventDispatcher->dispatch(
-            new ScopeResolveEvent($scopes, new GrantModel($grantType), $client, $userIdentifier)
+            new ScopeResolveEvent(
+                $scopes,
+                new GrantModel($grantType),
+                $client,
+                $userIdentifier
+            ),
+            OAuth2Events::SCOPE_RESOLVE
         );
 
         return $this->scopeConverter->toLeagueArray($event->getScopes());

@@ -8,12 +8,14 @@ use DateInterval;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
 use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverter;
+use League\Bundle\OAuth2ServerBundle\Converter\UserConverter;
 use League\Bundle\OAuth2ServerBundle\League\Entity\User;
 use League\Bundle\OAuth2ServerBundle\League\Repository\AccessTokenRepository;
 use League\Bundle\OAuth2ServerBundle\League\Repository\AuthCodeRepository;
 use League\Bundle\OAuth2ServerBundle\League\Repository\ClientRepository;
 use League\Bundle\OAuth2ServerBundle\League\Repository\RefreshTokenRepository;
 use League\Bundle\OAuth2ServerBundle\League\Repository\ScopeRepository;
+use League\Bundle\OAuth2ServerBundle\League\Repository\UserRepository;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
@@ -32,12 +34,15 @@ use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Grant\ImplicitGrant;
+use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
@@ -115,6 +120,8 @@ abstract class AbstractIntegrationTest extends TestCase
         $clientRepository = new ClientRepository($this->clientManager);
         $accessTokenRepository = new AccessTokenRepository($this->accessTokenManager, $this->clientManager, $scopeConverter);
         $refreshTokenRepository = new RefreshTokenRepository($this->refreshTokenManager, $this->accessTokenManager);
+        $userConverter = new UserConverter();
+        $userRepository = new UserRepository($this->clientManager, $this->eventDispatcher, $userConverter);
         $authCodeRepository = new AuthCodeRepository($this->authCodeManager, $this->clientManager, $scopeConverter);
 
         $this->authorizationServer = $this->createAuthorizationServer(
@@ -122,6 +129,7 @@ abstract class AbstractIntegrationTest extends TestCase
             $clientRepository,
             $accessTokenRepository,
             $refreshTokenRepository,
+            $userRepository,
             $authCodeRepository
         );
 
@@ -263,6 +271,7 @@ abstract class AbstractIntegrationTest extends TestCase
         ClientRepositoryInterface $clientRepository,
         AccessTokenRepositoryInterface $accessTokenRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository,
+        UserRepositoryInterface $userRepository,
         AuthCodeRepositoryInterface $authCodeRepository
     ): AuthorizationServer {
         $authorizationServer = new AuthorizationServer(
@@ -281,7 +290,9 @@ abstract class AbstractIntegrationTest extends TestCase
 
         $authorizationServer->enableGrantType(new ClientCredentialsGrant());
         $authorizationServer->enableGrantType(new RefreshTokenGrant($refreshTokenRepository));
+        $authorizationServer->enableGrantType(new PasswordGrant($userRepository, $refreshTokenRepository));
         $authorizationServer->enableGrantType($authCodeGrant);
+        $authorizationServer->enableGrantType(new ImplicitGrant(new DateInterval('PT10M')));
 
         return $authorizationServer;
     }

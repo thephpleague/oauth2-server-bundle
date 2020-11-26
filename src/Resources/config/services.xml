@@ -31,6 +31,13 @@
         </service>
         <service id="League\OAuth2\Server\Repositories\ScopeRepositoryInterface" alias="League\Bundle\OAuth2ServerBundle\League\Repository\ScopeRepository" />
 
+        <service id="League\Bundle\OAuth2ServerBundle\League\Repository\UserRepository">
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface" />
+            <argument type="service" id="Symfony\Component\EventDispatcher\EventDispatcherInterface" />
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Converter\UserConverter" />
+        </service>
+        <service id="League\OAuth2\Server\Repositories\UserRepositoryInterface" alias="League\Bundle\OAuth2ServerBundle\League\Repository\UserRepository" />
+
         <service id="League\Bundle\OAuth2ServerBundle\League\Repository\AuthCodeRepository">
             <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface" />
             <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface" />
@@ -80,6 +87,12 @@
         <service id="League\OAuth2\Server\Grant\ClientCredentialsGrant" />
         <service id="league.oauth2.server.grant.client_credentials_grant" alias="League\OAuth2\Server\Grant\ClientCredentialsGrant" />
 
+        <service id="League\OAuth2\Server\Grant\PasswordGrant">
+            <argument type="service" id="League\OAuth2\Server\Repositories\UserRepositoryInterface" />
+            <argument type="service" id="League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface" />
+        </service>
+        <service id="league.oauth2.server.grant.password_grant" alias="League\OAuth2\Server\Grant\PasswordGrant" />
+
         <service id="League\OAuth2\Server\Grant\RefreshTokenGrant">
             <argument type="service" id="League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface" />
         </service>
@@ -91,6 +104,11 @@
             <argument key="$authCodeTTL" />
         </service>
         <service id="league.oauth2.server.grant.auth_code_grant" alias="League\OAuth2\Server\Grant\AuthCodeGrant" />
+
+        <service id="League\OAuth2\Server\Grant\ImplicitGrant">
+            <argument key="$accessTokenTTL" />
+        </service>
+        <service id="league.oauth2.server.grant.implicit_grant" alias="League\OAuth2\Server\Grant\ImplicitGrant" />
 
         <!-- Authorization controller -->
         <service id="League\Bundle\OAuth2ServerBundle\Controller\AuthorizationController">
