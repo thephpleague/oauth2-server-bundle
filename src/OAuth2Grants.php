@@ -1,0 +1,39 @@
+<?php
+
+declare(strict_types=1);
+
+namespace League\Bundle\OAuth2ServerBundle;
+
+final class OAuth2Grants
+{
+    /**
+     * @see https://tools.ietf.org/html/rfc6749#section-1.3.1
+     *
+     * @var string
+     */
+    public const AUTHORIZATION_CODE = 'authorization_code';
+
+    /**
+     * @see https://tools.ietf.org/html/rfc6749#section-1.3.4
+     *
+     * @var string
+     */
+    public const CLIENT_CREDENTIALS = 'client_credentials';
+
+    /**
+    /**
+     * @see https://tools.ietf.org/html/rfc6749#section-6
+     *
+     * @var string
+     */
+    public const REFRESH_TOKEN = 'refresh_token';
+
+    public static function has(string $grant): bool
+    {
+        return \in_array($grant, [
+            self::CLIENT_CREDENTIALS,
+            self::REFRESH_TOKEN,
+            self::AUTHORIZATION_CODE,
+        ]);
+    }
+}

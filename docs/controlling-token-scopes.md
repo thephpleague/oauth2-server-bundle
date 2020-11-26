@@ -1,6 +1,6 @@
 # Controlling token scopes
 
-It's possible to alter issued access token's scopes by subscribing to the `trikoder.oauth2.scope_resolve` event.
+It's possible to alter issued access token's scopes by subscribing to the `league.oauth2-server.scope_resolve` event.
 
 ## Example
 
@@ -10,7 +10,7 @@ It's possible to alter issued access token's scopes by subscribing to the `triko
 
 namespace App\EventListener;
 
-use Trikoder\Bundle\OAuth2Bundle\Event\ScopeResolveEvent;
+use League\Bundle\OAuth2ServerBundle\Event\ScopeResolveEvent;
 
 final class ScopeResolveListener
 {
@@ -18,8 +18,7 @@ final class ScopeResolveListener
     {
         $requestedScopes = $event->getScopes();
 
-        // Make adjustments to the client's requested scopes...
-        ...
+        // ...Make adjustments to the client's requested scopes...
 
         $event->setScopes(...$requestedScopes);
     }
@@ -31,5 +30,5 @@ final class ScopeResolveListener
 ```yaml
 App\EventListener\ScopeResolveListener:
     tags:
-        - { name: kernel.event_listener, event: trikoder.oauth2.scope_resolve, method: onScopeResolve }
+        - { name: kernel.event_listener, event: league.oauth2-server.scope_resolve, method: onScopeResolve }
 ```

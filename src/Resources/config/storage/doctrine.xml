@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <!-- Aliases -->
+        <service id="League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface" alias="League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager" />
+        <service id="League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface" alias="League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager" />
+        <service id="League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface" alias="League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager" />
+        <service id="League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface" alias="League\Bundle\OAuth2ServerBundle\Manager\InMemory\ScopeManager" />
+        <service id="League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface" alias="League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager" />
+
+        <!-- Services -->
+        <service id="League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface" alias="League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker" />
+        <service id="League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker">
+            <argument key="$entityManager" />
+        </service>
+
+        <service id="League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager">
+            <argument key="$entityManager" />
+        </service>
+        <service id="league.oauth2-server.manager.doctrine.client_manager" alias="League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager">
+            <deprecated>The "%alias_id%" service alias is deprecated and will be removed in v4.</deprecated>
+        </service>
+
+        <service id="League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager">
+            <argument key="$entityManager" />
+        </service>
+        <service id="league.oauth2-server.manager.doctrine.access_token_manager" alias="League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager">
+            <deprecated>The "%alias_id%" service alias is deprecated and will be removed in v4.</deprecated>
+        </service>
+
+        <service id="League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager">
+            <argument key="$entityManager" />
+        </service>
+        <service id="league.oauth2-server.manager.doctrine.refresh_token_manager" alias="League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager">
+            <deprecated>The "%alias_id%" service alias is deprecated and will be removed in v4.</deprecated>
+        </service>
+
+        <service id="League\Bundle\OAuth2ServerBundle\Manager\InMemory\ScopeManager" />
+        <service id="league.oauth2-server.manager.in_memory.scope_manager" alias="League\Bundle\OAuth2ServerBundle\Manager\InMemory\ScopeManager">
+            <deprecated>The "%alias_id%" service alias is deprecated and will be removed in v4.</deprecated>
+        </service>
+
+        <service id="League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager">
+            <argument key="$entityManager" />
+        </service>
+        <service id="league.oauth2-server.manager.doctrine.authorization_code_manager" alias="League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager">
+            <deprecated>The "%alias_id%" service alias is deprecated and will be removed in v4.</deprecated>
+        </service>
+    </services>
+</container>

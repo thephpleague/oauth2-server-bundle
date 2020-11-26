@@ -6,14 +6,14 @@ There are several commands available to manage clients.
 
 ### Add a client
 
-To add a client you should use the `trikoder:oauth2:create-client` command.
+To add a client you should use the `league:oauth2-server:create-client` command.
 
 ```sh
 Description:
   Creates a new oAuth2 client
 
 Usage:
-  trikoder:oauth2:create-client [options] [--] [<identifier> [<secret>]]
+  league:oauth2-server:create-client [options] [--] [<identifier> [<secret>]]
 
 Arguments:
   identifier                         The client identifier
@@ -30,14 +30,14 @@ Options:
 
 ### Update a client
 
-To update a client you should use the `trikoder:oauth2:update-client` command.
+To update a client you should use the `league:oauth2-server:update-client` command.
 
 ```sh
 Description:
   Updates an oAuth2 client
 
 Usage:
-  trikoder:oauth2:update-client [options] [--] <identifier>
+  league:oauth2-server:update-client [options] [--] <identifier>
 
 Arguments:
   identifier                         The client ID
@@ -52,39 +52,39 @@ Options:
 #### Restrict which grant types a client can access
 
 ```sh
-$ bin/console trikoder:oauth2:update-client --grant-type client_credentials --grant-type password foo
+$ bin/console league:oauth2-server:update-client --grant-type client_credentials foo
 ```
 
 #### Assign which scopes the client will receive
 
 
 ```sh
-$ bin/console trikoder:oauth2:update-client --scope create --scope read foo
+$ bin/console league:oauth2-server:update-client --scope create --scope read foo
 ```
 
 ### Delete a client
-To delete a client you should use the `trikoder:oauth2:delete-client` command.
+To delete a client you should use the `league:oauth2-server:delete-client` command.
 
 ```sh
 Description:
   Deletes an oAuth2 client
 
 Usage:
-  trikoder:oauth2:delete-client <identifier>
+  league:oauth2-server:delete-client <identifier>
 
 Arguments:
   identifier            The client ID
 ```
 
 ### List clients
-To list clients you should use the `trikoder:oauth2:list-clients` command.
+To list clients you should use the `league:oauth2-server:list-clients` command.
 
 ```sh
 Description:
   Lists existing oAuth2 clients
 
 Usage:
-  trikoder:oauth2:list-clients [options]
+  league:oauth2-server:list-clients [options]
 
 Options:
       --columns[=COLUMNS]            Determine which columns are shown. Comma separated list. [default: "identifier, secret, scope, redirect uri, grant type"]
@@ -160,7 +160,7 @@ There are two possible reasons for the authentication server to reject a request
 
 ## Clearing expired access, refresh tokens and auth codes
 
-To clear expired access and refresh tokens and auth codes you can use the `trikoder:oauth2:clear-expired-tokens` command.
+To clear expired access and refresh tokens and auth codes you can use the `league:oauth2-server:clear-expired-tokens` command.
 
 The command removes all tokens whose expiry time is lesser than the current.
 
@@ -169,7 +169,7 @@ Description:
   Clears all expired access and/or refresh tokens and/or auth codes
 
 Usage:
-  trikoder:oauth2:clear-expired-tokens [options]
+  league:oauth2-server:clear-expired-tokens [options]
 
 Options:
   -a, --access-tokens   Clear expired access tokens.

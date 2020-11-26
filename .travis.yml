@@ -1,50 +1,27 @@
-dist: bionic
+language: php
+dist: xenial
+sudo: false
 
-sudo: required
+matrix:
+    include:
+        - php: 7.1
+          env: SYMFONY_VERSION="4.4.*" COMPOSER_FLAGS="--prefer-lowest"
+        - php: 7.4
+          env: SYMFONY_VERSION="5.1.*" CHECK_CS=1
+    fast_finish: true
 
-language: bash
-
-services:
-    - docker
-
-env:
-    # PHP 7.2
-    - PHP_VERSION=7.2 PSR_HTTP_PROVIDER=nyholm SYMFONY_REQUIRE=4.4.*
-    - PHP_VERSION=7.2 PSR_HTTP_PROVIDER=zendframework SYMFONY_REQUIRE=4.4.*
-    - PHP_VERSION=7.2 COMPOSER_FLAGS="--prefer-lowest" SYMFONY_REQUIRE=4.4.*
-    - PHP_VERSION=7.2 PSR_HTTP_PROVIDER=nyholm SYMFONY_REQUIRE=5.0.*
-    - PHP_VERSION=7.2 PSR_HTTP_PROVIDER=zendframework SYMFONY_REQUIRE=5.0.*
-    - PHP_VERSION=7.2 COMPOSER_FLAGS="--prefer-lowest" SYMFONY_REQUIRE=5.0.*
-
-    # PHP 7.3
-    - PHP_VERSION=7.3 PSR_HTTP_PROVIDER=nyholm SYMFONY_REQUIRE=4.4.*
-    - PHP_VERSION=7.3 PSR_HTTP_PROVIDER=zendframework SYMFONY_REQUIRE=4.4.*
-    - PHP_VERSION=7.3 COMPOSER_FLAGS="--prefer-lowest" SYMFONY_REQUIRE=4.4.*
-    - PHP_VERSION=7.3 PSR_HTTP_PROVIDER=nyholm SYMFONY_REQUIRE=5.0.*
-    - PHP_VERSION=7.3 PSR_HTTP_PROVIDER=zendframework SYMFONY_REQUIRE=5.0.*
-    - PHP_VERSION=7.3 COMPOSER_FLAGS="--prefer-lowest" SYMFONY_REQUIRE=5.0.*
-
-    # PHP 7.4
-    - PHP_VERSION=7.4 PSR_HTTP_PROVIDER=nyholm SYMFONY_REQUIRE=4.4.*
-    - PHP_VERSION=7.4 PSR_HTTP_PROVIDER=zendframework SYMFONY_REQUIRE=4.4.*
-    - PHP_VERSION=7.4 COMPOSER_FLAGS="--prefer-lowest" SYMFONY_REQUIRE=4.4.*
-    - PHP_VERSION=7.4 PSR_HTTP_PROVIDER=nyholm SYMFONY_REQUIRE=5.0.*
-    - PHP_VERSION=7.4 PSR_HTTP_PROVIDER=zendframework SYMFONY_REQUIRE=5.0.*
-    - PHP_VERSION=7.4 COMPOSER_FLAGS="--prefer-lowest" SYMFONY_REQUIRE=5.0.*
-
-install:
-    - dev/bin/docker-compose build --build-arg PHP_VERSION=${PHP_VERSION} php
+cache:
+    directories:
+        - $HOME/.composer/cache
 
 before_script:
-    # Our docker image has symfony/flex installed to make sure SYMFONY_REQUIRE is working
-    - dev/bin/php composer update --ansi --prefer-dist ${COMPOSER_FLAGS:-}
+    - pecl install timecop-1.2.10
+    - composer self-update
+    - composer require --no-update symfony/config=$SYMFONY_VERSION symfony/http-kernel=$SYMFONY_VERSION symfony/dependency-injection=$SYMFONY_VERSION symfony/options-resolver=$SYMFONY_VERSION
+    - composer require --no-update --dev symfony/framework-bundle=$SYMFONY_VERSION symfony/yaml=$SYMFONY_VERSION
+    - composer update $COMPOSER_FLAGS --prefer-dist
 
 script:
-    - dev/bin/php-test composer test -- --colors=always --coverage-clover=coverage.xml --debug
-    - dev/bin/php composer lint -- --ansi --diff --dry-run --using-cache=no --verbose
-
-after_script:
-    - dev/bin/docker-compose down --volumes
-
-after_success:
-    - bash <(curl -s https://codecov.io/bash)
+    - stty cols 120
+    - if [ "$CHECK_CS" == 1 ]; then wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.15.8/php-cs-fixer.phar && php php-cs-fixer.phar fix --dry-run --diff; fi
+    - PSR_HTTP_PROVIDER=nyholm vendor/bin/simple-phpunit

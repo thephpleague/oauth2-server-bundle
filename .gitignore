@@ -11,4 +11,4 @@ phpunit.xml
 .phpunit.result.cache
 
 # Tests
-Tests/.kernel/
+tests/.kernel/

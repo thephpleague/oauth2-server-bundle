@@ -1,6 +1,6 @@
 # PSR 7/17 implementation switching
 
-This bundle requires a PSR 7/17 implementation to operate. We recommend that you use [nyholm/psr7](https://github.com/Nyholm/psr7) as this is the one Symfony [suggests](https://symfony.com/doc/current/components/psr7.html#installation) themselves.
+This bundle requires a PSR 7/17 implementation to operate. We recommend that you use [nyholm/psr7](https://github.com/Nyholm/psr7) as this is the one Symfony [suggests](https://symfony.com/doc/current/components/psr7.html#installation) to.
 
 The recommended implementation requires no extra configuration. Check out the example below to see how to use a different one.
 

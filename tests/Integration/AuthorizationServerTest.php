@@ -1,0 +1,660 @@
+<?php
+
+declare(strict_types=1);
+
+namespace League\Bundle\OAuth2ServerBundle\Tests\Integration;
+
+use DateTimeImmutable;
+use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
+use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
+use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
+
+final class AuthorizationServerTest extends AbstractIntegrationTest
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        FixtureFactory::initializeFixtures(
+            $this->scopeManager,
+            $this->clientManager,
+            $this->accessTokenManager,
+            $this->refreshTokenManager,
+            $this->authCodeManager
+        );
+    }
+
+    public function testSuccessfulAuthorizationThroughHeaders(): void
+    {
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'client_credentials',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Assert that we got something that looks like a normal response.
+        $this->assertArrayHasKey('token_type', $response);
+    }
+
+    public function testSuccessfulAuthorizationThroughBody(): void
+    {
+        $request = $this->createAuthorizationRequest(null, [
+            'client_id' => 'foo',
+            'client_secret' => 'secret',
+            'grant_type' => 'client_credentials',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Assert that we got something that looks like a normal response.
+        $this->assertArrayHasKey('token_type', $response);
+    }
+
+    public function testMissingAuthorizationCredentials(): void
+    {
+        $request = $this->createAuthorizationRequest(null, [
+            'grant_type' => 'client_credentials',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_request', $response['error']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['message']);
+        $this->assertSame('Check the `client_id` parameter', $response['hint']);
+    }
+
+    public function testInvalidAuthorizationCredentials(): void
+    {
+        $request = $this->createAuthorizationRequest('foo:wrong', [
+            'grant_type' => 'client_credentials',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_client', $response['error']);
+        $this->assertSame('Client authentication failed', $response['message']);
+    }
+
+    public function testMissingClient(): void
+    {
+        $request = $this->createAuthorizationRequest('yolo:wrong', [
+            'grant_type' => 'client_credentials',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_client', $response['error']);
+        $this->assertSame('Client authentication failed', $response['message']);
+    }
+
+    public function testInactiveClient(): void
+    {
+        $request = $this->createAuthorizationRequest('baz_inactive:woah', [
+            'grant_type' => 'client_credentials',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_client', $response['error']);
+        $this->assertSame('Client authentication failed', $response['message']);
+    }
+
+    public function testRestrictedGrantClient(): void
+    {
+        $request = $this->createAuthorizationRequest('qux_restricted_grants:wicked', [
+            'grant_type' => 'client_credentials',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_client', $response['error']);
+        $this->assertSame('Client authentication failed', $response['message']);
+    }
+
+    public function testRestrictedScopeClient(): void
+    {
+        $request = $this->createAuthorizationRequest('quux_restricted_scopes:beer', [
+            'grant_type' => 'client_credentials',
+            'scope' => 'fancy rock',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_scope', $response['error']);
+        $this->assertSame('The requested scope is invalid, unknown, or malformed', $response['message']);
+        $this->assertSame('Check the `fancy` scope', $response['hint']);
+    }
+
+    public function testInvalidGrantType(): void
+    {
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'non_existing',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('unsupported_grant_type', $response['error']);
+        $this->assertSame('The authorization grant type is not supported by the authorization server.', $response['message']);
+        $this->assertSame('Check that all required parameters have been provided', $response['hint']);
+    }
+
+    public function testInvalidScope(): void
+    {
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'client_credentials',
+            'scope' => 'non_existing',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_scope', $response['error']);
+        $this->assertSame('The requested scope is invalid, unknown, or malformed', $response['message']);
+        $this->assertSame('Check the `non_existing` scope', $response['hint']);
+    }
+
+    public function testValidClientCredentialsGrant(): void
+    {
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'client_credentials',
+        ]);
+
+        timecop_freeze(new DateTimeImmutable());
+
+        try {
+            $response = $this->handleTokenRequest($request);
+        } finally {
+            timecop_return();
+        }
+
+        $accessToken = $this->getAccessToken($response['access_token']);
+
+        // Response assertions.
+        $this->assertSame('Bearer', $response['token_type']);
+        $this->assertSame(3600, $response['expires_in']);
+        $this->assertInstanceOf(AccessToken::class, $accessToken);
+
+        // Make sure the access token is issued for the given client ID.
+        $this->assertSame('foo', $accessToken->getClient()->getIdentifier());
+    }
+
+    public function testValidClientCredentialsGrantWithScope(): void
+    {
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'client_credentials',
+            'scope' => 'fancy',
+        ]);
+
+        timecop_freeze(new DateTimeImmutable());
+
+        try {
+            $response = $this->handleTokenRequest($request);
+        } finally {
+            timecop_return();
+        }
+
+        $accessToken = $this->getAccessToken($response['access_token']);
+
+        // Response assertions.
+        $this->assertSame('Bearer', $response['token_type']);
+        $this->assertSame(3600, $response['expires_in']);
+        $this->assertInstanceOf(AccessToken::class, $accessToken);
+
+        // Make sure the access token is issued for the given client ID.
+        $this->assertSame('foo', $accessToken->getClient()->getIdentifier());
+
+        // The access token should have the requested scope.
+        $this->assertEquals(
+            [
+                $this->scopeManager->find(FixtureFactory::FIXTURE_SCOPE_FIRST),
+            ],
+            $accessToken->getScopes()
+        );
+    }
+
+    public function testValidClientCredentialsGrantWithInheritedScope(): void
+    {
+        $request = $this->createAuthorizationRequest('quux_restricted_scopes:beer', [
+            'grant_type' => 'client_credentials',
+        ]);
+
+        timecop_freeze(new DateTimeImmutable());
+
+        try {
+            $response = $this->handleTokenRequest($request);
+        } finally {
+            timecop_return();
+        }
+
+        $accessToken = $this->getAccessToken($response['access_token']);
+
+        // Response assertions.
+        $this->assertSame('Bearer', $response['token_type']);
+        $this->assertSame(3600, $response['expires_in']);
+        $this->assertInstanceOf(AccessToken::class, $accessToken);
+
+        // Make sure the access token is issued for the given client ID.
+        $this->assertSame('quux_restricted_scopes', $accessToken->getClient()->getIdentifier());
+
+        // The access token should have the requested scope.
+        $this->assertEquals(
+            [
+                $this->scopeManager->find(FixtureFactory::FIXTURE_SCOPE_SECOND),
+            ],
+            $accessToken->getScopes()
+        );
+    }
+
+    public function testValidClientCredentialsGrantWithRequestedScope(): void
+    {
+        $request = $this->createAuthorizationRequest('quux_restricted_scopes:beer', [
+            'grant_type' => 'client_credentials',
+            'scope' => 'rock',
+        ]);
+
+        timecop_freeze(new DateTimeImmutable());
+
+        try {
+            $response = $this->handleTokenRequest($request);
+        } finally {
+            timecop_return();
+        }
+
+        $accessToken = $this->getAccessToken($response['access_token']);
+
+        // Response assertions.
+        $this->assertSame('Bearer', $response['token_type']);
+        $this->assertSame(3600, $response['expires_in']);
+        $this->assertInstanceOf(AccessToken::class, $accessToken);
+
+        // Make sure the access token is issued for the given client ID.
+        $this->assertSame('quux_restricted_scopes', $accessToken->getClient()->getIdentifier());
+
+        // The access token should have the requested scope.
+        $this->assertEquals(
+            [
+                $this->scopeManager->find(FixtureFactory::FIXTURE_SCOPE_SECOND),
+            ],
+            $accessToken->getScopes()
+        );
+    }
+
+    public function testValidRefreshGrant(): void
+    {
+        $existingRefreshToken = $this->refreshTokenManager->find(FixtureFactory::FIXTURE_REFRESH_TOKEN);
+        $existingAccessToken = $existingRefreshToken->getAccessToken();
+
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'refresh_token',
+            'refresh_token' => TestHelper::generateEncryptedPayload($existingRefreshToken),
+        ]);
+
+        timecop_freeze(new DateTimeImmutable());
+
+        try {
+            $response = $this->handleTokenRequest($request);
+        } finally {
+            timecop_return();
+        }
+
+        $accessToken = $this->getAccessToken($response['access_token']);
+        $refreshToken = $this->getRefreshToken($response['refresh_token']);
+
+        // Response assertions.
+        $this->assertSame('Bearer', $response['token_type']);
+        $this->assertSame(3600, $response['expires_in']);
+        $this->assertInstanceOf(AccessToken::class, $accessToken);
+        $this->assertInstanceOf(RefreshToken::class, $refreshToken);
+
+        // Make sure old tokens are revoked.
+        $this->assertTrue($existingRefreshToken->isRevoked());
+        $this->assertTrue($existingAccessToken->isRevoked());
+
+        // The newly issued tokens should be different.
+        $this->assertNotSame($existingRefreshToken, $refreshToken);
+        $this->assertNotSame($existingAccessToken, $accessToken);
+    }
+
+    public function testDifferentClientRefreshGrant(): void
+    {
+        $existingRefreshToken = $this->refreshTokenManager->find(FixtureFactory::FIXTURE_REFRESH_TOKEN_DIFFERENT_CLIENT);
+
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'refresh_token',
+            'refresh_token' => TestHelper::generateEncryptedPayload($existingRefreshToken),
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_request', $response['error']);
+        $this->assertSame('The refresh token is invalid.', $response['message']);
+        $this->assertSame('Token is not linked to client', $response['hint']);
+    }
+
+    public function testDifferentScopeRefreshGrant(): void
+    {
+        $existingRefreshToken = $this->refreshTokenManager->find(FixtureFactory::FIXTURE_REFRESH_TOKEN_WITH_SCOPES);
+
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'refresh_token',
+            'scope' => 'rock',
+            'refresh_token' => TestHelper::generateEncryptedPayload($existingRefreshToken),
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_scope', $response['error']);
+        $this->assertSame('The requested scope is invalid, unknown, or malformed', $response['message']);
+        $this->assertSame('Check the `rock` scope', $response['hint']);
+    }
+
+    public function testExpiredRefreshGrant(): void
+    {
+        $existingRefreshToken = $this->refreshTokenManager->find(FixtureFactory::FIXTURE_REFRESH_TOKEN_EXPIRED);
+
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'refresh_token',
+            'refresh_token' => TestHelper::generateEncryptedPayload($existingRefreshToken),
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_request', $response['error']);
+        $this->assertSame('The refresh token is invalid.', $response['message']);
+        $this->assertSame('Token has expired', $response['hint']);
+    }
+
+    public function testRevokedRefreshGrant(): void
+    {
+        $existingRefreshToken = $this->refreshTokenManager->find(FixtureFactory::FIXTURE_REFRESH_TOKEN_REVOKED);
+
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'refresh_token',
+            'refresh_token' => TestHelper::generateEncryptedPayload($existingRefreshToken),
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_request', $response['error']);
+        $this->assertSame('The refresh token is invalid.', $response['message']);
+        $this->assertSame('Token has been revoked', $response['hint']);
+    }
+
+    public function testMissingPayloadRefreshGrant(): void
+    {
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'refresh_token',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_request', $response['error']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['message']);
+        $this->assertSame('Check the `refresh_token` parameter', $response['hint']);
+    }
+
+    public function testInvalidPayloadRefreshGrant(): void
+    {
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'refresh_token',
+            'refresh_token' => 'invalid',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_request', $response['error']);
+        $this->assertSame('The refresh token is invalid.', $response['message']);
+        $this->assertSame('Cannot decrypt the refresh token', $response['hint']);
+    }
+
+    public function testSuccessfulCodeRequest(): void
+    {
+        $request = $this->createAuthorizeRequest(null, [
+            'response_type' => 'code',
+            'client_id' => 'foo',
+        ]);
+
+        $response = $this->handleAuthorizationRequest($request);
+
+        // Response assertions.
+        $this->assertSame(302, $response->getStatusCode());
+        $this->assertTrue($response->hasHeader('Location'));
+        $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $response->getHeaderLine('Location'));
+        $queryData = $this->extractQueryDataFromUri($response->getHeaderLine('Location'));
+        $this->assertArrayHasKey('code', $queryData);
+    }
+
+    public function testSuccessfulCodeRequestWithState(): void
+    {
+        $request = $this->createAuthorizeRequest(null, [
+            'response_type' => 'code',
+            'client_id' => 'foo',
+            'state' => 'quzbaz',
+        ]);
+
+        $response = $this->handleAuthorizationRequest($request);
+
+        // Response assertions.
+        $this->assertSame(302, $response->getStatusCode());
+        $this->assertTrue($response->hasHeader('Location'));
+        $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $response->getHeaderLine('Location'));
+        $queryData = $this->extractQueryDataFromUri($response->getHeaderLine('Location'));
+        $this->assertArrayHasKey('code', $queryData);
+        $this->assertSame('quzbaz', $queryData['state']);
+    }
+
+    public function testSuccessfulCodeRequestWithRedirectUri(): void
+    {
+        $request = $this->createAuthorizeRequest(null, [
+            'response_type' => 'code',
+            'client_id' => 'foo',
+            'redirect_uri' => 'https://example.org/oauth2/redirect-uri',
+        ]);
+
+        $response = $this->handleAuthorizationRequest($request);
+
+        // Response assertions.
+        $this->assertSame(302, $response->getStatusCode());
+        $this->assertTrue($response->hasHeader('Location'));
+        $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $response->getHeaderLine('Location'));
+        $queryData = $this->extractQueryDataFromUri($response->getHeaderLine('Location'));
+        $this->assertArrayHasKey('code', $queryData);
+    }
+
+    public function testCodeRequestWithInvalidScope(): void
+    {
+        $request = $this->createAuthorizeRequest(null, [
+            'response_type' => 'code',
+            'client_id' => 'foo',
+            'scope' => 'non_existing',
+        ]);
+
+        $response = $this->handleAuthorizationRequest($request);
+
+        // Response assertions.
+        $this->assertSame(302, $response->getStatusCode());
+        $this->assertTrue($response->hasHeader('Location'));
+        $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $response->getHeaderLine('Location'));
+        $queryData = $this->extractQueryDataFromUri($response->getHeaderLine('Location'));
+        $this->assertSame('invalid_scope', $queryData['error']);
+        $this->assertSame('The requested scope is invalid, unknown, or malformed', $queryData['message']);
+        $this->assertSame('Check the `non_existing` scope', $queryData['hint']);
+    }
+
+    public function testCodeRequestWithInvalidRedirectUri(): void
+    {
+        $request = $this->createAuthorizeRequest(null, [
+            'response_type' => 'code',
+            'client_id' => 'foo',
+            'redirect_uri' => 'https://example.org/oauth2/other-uri',
+        ]);
+
+        $response = $this->handleAuthorizationRequest($request);
+
+        // Response assertions.
+        $this->assertSame(401, $response->getStatusCode());
+        $responseData = json_decode((string) $response->getBody(), true);
+        $this->assertSame('invalid_client', $responseData['error']);
+        $this->assertSame('Client authentication failed', $responseData['message']);
+    }
+
+    public function testDeniedCodeRequest(): void
+    {
+        $request = $this->createAuthorizeRequest(null, [
+            'response_type' => 'code',
+            'client_id' => 'foo',
+        ]);
+
+        $response = $this->handleAuthorizationRequest($request, false);
+
+        // Response assertions.
+        $this->assertSame(302, $response->getStatusCode());
+        $this->assertTrue($response->hasHeader('Location'));
+        $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $response->getHeaderLine('Location'));
+        $queryData = $this->extractQueryDataFromUri($response->getHeaderLine('Location'));
+        $this->assertSame('access_denied', $queryData['error']);
+        $this->assertSame('The resource owner or authorization server denied the request.', $queryData['message']);
+        $this->assertSame('The user denied the request', $queryData['hint']);
+    }
+
+    public function testCodeRequestWithMissingClient(): void
+    {
+        $request = $this->createAuthorizeRequest(null, [
+            'response_type' => 'code',
+            'client_id' => 'yolo',
+        ]);
+
+        $response = $this->handleAuthorizationRequest($request, false);
+
+        // Response assertions.
+        $this->assertSame(401, $response->getStatusCode());
+        $responseData = json_decode((string) $response->getBody(), true);
+        $this->assertSame('invalid_client', $responseData['error']);
+        $this->assertSame('Client authentication failed', $responseData['message']);
+    }
+
+    public function testCodeRequestWithInactiveClient(): void
+    {
+        $request = $this->createAuthorizeRequest(null, [
+            'response_type' => 'code',
+            'client_id' => 'baz_inactive',
+        ]);
+
+        $response = $this->handleAuthorizationRequest($request, false);
+
+        // Response assertions.
+        $this->assertSame(401, $response->getStatusCode());
+        $responseData = json_decode((string) $response->getBody(), true);
+        $this->assertSame('invalid_client', $responseData['error']);
+        $this->assertSame('Client authentication failed', $responseData['message']);
+    }
+
+    public function testCodeRequestWithRestrictedGrantClient(): void
+    {
+        $request = $this->createAuthorizeRequest(null, [
+            'response_type' => 'code',
+            'client_id' => 'qux_restricted',
+        ]);
+
+        $response = $this->handleAuthorizationRequest($request, false);
+
+        // Response assertions.
+        $this->assertSame(401, $response->getStatusCode());
+        $responseData = json_decode((string) $response->getBody(), true);
+        $this->assertSame('invalid_client', $responseData['error']);
+        $this->assertSame('Client authentication failed', $responseData['message']);
+    }
+
+    public function testSuccessfulAuthorizationWithCode(): void
+    {
+        $existingAuthCode = $this->authCodeManager->find(FixtureFactory::FIXTURE_AUTH_CODE);
+
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'authorization_code',
+            'code' => TestHelper::generateEncryptedAuthCodePayload($existingAuthCode),
+            'redirect_uri' => 'https://example.org/oauth2/redirect-uri',
+        ]);
+
+        timecop_freeze(new DateTimeImmutable());
+
+        try {
+            $response = $this->handleTokenRequest($request);
+        } finally {
+            timecop_return();
+        }
+
+        $accessToken = $this->getAccessToken($response['access_token']);
+
+        $this->assertSame('Bearer', $response['token_type']);
+        $this->assertSame(3600, $response['expires_in']);
+        $this->assertInstanceOf(AccessToken::class, $accessToken);
+        $this->assertSame('foo', $accessToken->getClient()->getIdentifier());
+    }
+
+    public function testFailedAuthorizationWithCodeForOtherClient(): void
+    {
+        $existingAuthCode = $this->authCodeManager->find(FixtureFactory::FIXTURE_AUTH_CODE_DIFFERENT_CLIENT);
+
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'authorization_code',
+            'code' => TestHelper::generateEncryptedAuthCodePayload($existingAuthCode),
+            'redirect_uri' => 'https://example.org/oauth2/redirect-uri',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_request', $response['error']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['message']);
+        $this->assertSame('Authorization code was not issued to this client', $response['hint']);
+    }
+
+    public function testFailedAuthorizationWithExpiredCode(): void
+    {
+        $existingAuthCode = $this->authCodeManager->find(FixtureFactory::FIXTURE_AUTH_CODE_EXPIRED);
+
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'authorization_code',
+            'code' => TestHelper::generateEncryptedAuthCodePayload($existingAuthCode),
+            'redirect_uri' => 'https://example.org/oauth2/redirect-uri',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_request', $response['error']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['message']);
+        $this->assertSame('Authorization code has expired', $response['hint']);
+    }
+
+    public function testFailedAuthorizationWithInvalidRedirectUri(): void
+    {
+        $existingAuthCode = $this->authCodeManager->find(FixtureFactory::FIXTURE_AUTH_CODE);
+
+        $request = $this->createAuthorizationRequest('foo:secret', [
+            'grant_type' => 'authorization_code',
+            'code' => TestHelper::generateEncryptedAuthCodePayload($existingAuthCode),
+            'redirect_uri' => 'https://example.org/oauth2/other-uri',
+        ]);
+
+        $response = $this->handleTokenRequest($request);
+
+        // Response assertions.
+        $this->assertSame('invalid_client', $response['error']);
+        $this->assertSame('Client authentication failed', $response['message']);
+    }
+}

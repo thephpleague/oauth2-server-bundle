@@ -2,7 +2,7 @@
 
 All contributions are **welcome** and **very much appreciated**.
 
-We accept contributions via Pull Requests on [Github](https://github.com/trikoder/oauth2-bundle).
+We accept contributions via Pull Requests on [Github](https://github.com/thephpleague/oauth2-server-bundle).
 
 ## Pull Request guidelines
 

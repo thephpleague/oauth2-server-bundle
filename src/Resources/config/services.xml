@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <!-- The league repositories -->
+        <service id="League\Bundle\OAuth2ServerBundle\League\Repository\ClientRepository">
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface" />
+        </service>
+        <service id="League\OAuth2\Server\Repositories\ClientRepositoryInterface" alias="League\Bundle\OAuth2ServerBundle\League\Repository\ClientRepository" />
+
+        <service id="League\Bundle\OAuth2ServerBundle\League\Repository\AccessTokenRepository">
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface" />
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface" />
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Converter\ScopeConverter" />
+        </service>
+        <service id="League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface" alias="League\Bundle\OAuth2ServerBundle\League\Repository\AccessTokenRepository" />
+
+        <service id="League\Bundle\OAuth2ServerBundle\League\Repository\RefreshTokenRepository">
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface" />
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface" />
+        </service>
+        <service id="League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface" alias="League\Bundle\OAuth2ServerBundle\League\Repository\RefreshTokenRepository" />
+
+        <service id="League\Bundle\OAuth2ServerBundle\League\Repository\ScopeRepository">
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface" />
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface" />
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Converter\ScopeConverter" />
+            <argument type="service" id="Symfony\Component\EventDispatcher\EventDispatcherInterface" />
+        </service>
+        <service id="League\OAuth2\Server\Repositories\ScopeRepositoryInterface" alias="League\Bundle\OAuth2ServerBundle\League\Repository\ScopeRepository" />
+
+        <service id="League\Bundle\OAuth2ServerBundle\League\Repository\AuthCodeRepository">
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface" />
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface" />
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Converter\ScopeConverter" />
+        </service>
+        <service id="League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface" alias="League\Bundle\OAuth2ServerBundle\League\Repository\AuthCodeRepository" />
+
+        <!-- Security layer -->
+        <service id="League\Bundle\OAuth2ServerBundle\Security\Authentication\Provider\OAuth2Provider">
+            <argument key="$userProvider" />
+            <argument key="$resourceServer" type="service" id="League\OAuth2\Server\ResourceServer" />
+            <argument key="$oauth2TokenFactory" type="service" id="League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory" />
+        </service>
+
+        <service id="League\Bundle\OAuth2ServerBundle\Security\EntryPoint\OAuth2EntryPoint" />
+
+        <service id="League\Bundle\OAuth2ServerBundle\Security\Firewall\OAuth2Listener">
+            <argument type="service" id="security.token_storage" />
+            <argument type="service" id="security.authentication.manager" />
+            <argument type="service" id="sensio_framework_extra.psr7.http_message_factory" />
+            <argument key="$oauth2TokenFactory" type="service" id="League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory" />
+        </service>
+
+        <service id="League\Bundle\OAuth2ServerBundle\League\AuthorizationServer\GrantConfigurator">
+            <argument key="$grants" type="tagged_iterator" tag="league.oauth2-server.authorization_server.grant" />
+        </service>
+
+        <!-- The league authorization server -->
+        <service id="League\OAuth2\Server\AuthorizationServer">
+            <argument key="$clientRepository" type="service" id="League\OAuth2\Server\Repositories\ClientRepositoryInterface" />
+            <argument key="$accessTokenRepository" type="service" id="League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface" />
+            <argument key="$scopeRepository" type="service" id="League\OAuth2\Server\Repositories\ScopeRepositoryInterface" />
+            <argument key="$privateKey" />
+            <argument key="$encryptionKey" />
+            <configurator service="League\Bundle\OAuth2ServerBundle\League\AuthorizationServer\GrantConfigurator"/>
+        </service>
+        <service id="league.oauth2.server.authorization_server" alias="League\OAuth2\Server\AuthorizationServer" />
+
+        <!-- The league resource server -->
+        <service id="League\OAuth2\Server\ResourceServer">
+            <argument key="$accessTokenRepository" type="service" id="League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface" />
+            <argument key="$publicKey" />
+        </service>
+        <service id="league.oauth2.server.resource_server" alias="League\OAuth2\Server\ResourceServer" />
+
+        <!-- The league authorization server grants -->
+        <service id="League\OAuth2\Server\Grant\ClientCredentialsGrant" />
+        <service id="league.oauth2.server.grant.client_credentials_grant" alias="League\OAuth2\Server\Grant\ClientCredentialsGrant" />
+
+        <service id="League\OAuth2\Server\Grant\RefreshTokenGrant">
+            <argument type="service" id="League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface" />
+        </service>
+        <service id="league.oauth2.server.grant.refresh_token_grant" alias="League\OAuth2\Server\Grant\RefreshTokenGrant" />
+
+        <service id="League\OAuth2\Server\Grant\AuthCodeGrant">
+            <argument type="service" id="League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface" />
+            <argument type="service" id="League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface" />
+            <argument key="$authCodeTTL" />
+        </service>
+        <service id="league.oauth2.server.grant.auth_code_grant" alias="League\OAuth2\Server\Grant\AuthCodeGrant" />
+
+        <!-- Authorization controller -->
+        <service id="League\Bundle\OAuth2ServerBundle\Controller\AuthorizationController">
+            <argument type="service" id="League\OAuth2\Server\AuthorizationServer" />
+            <argument type="service" id="Symfony\Component\EventDispatcher\EventDispatcherInterface" />
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEventFactory" />
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Converter\UserConverter" />
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface" />
+            <tag name="controller.service_arguments" />
+        </service>
+
+        <!-- Authorization listeners -->
+        <service id="League\Bundle\OAuth2ServerBundle\EventListener\AuthorizationRequestUserResolvingListener">
+            <argument type="service" id="Symfony\Component\Security\Core\Security" />
+            <tag name="kernel.event_listener" event="league.oauth2-server.authorization_request_resolve" method="onAuthorizationRequest" priority="1024" />
+        </service>
+
+        <service id="League\Bundle\OAuth2ServerBundle\EventListener\ConvertExceptionToResponseListener" />
+
+        <!-- Token controller -->
+        <service id="League\Bundle\OAuth2ServerBundle\Controller\TokenController">
+            <argument type="service" id="League\OAuth2\Server\AuthorizationServer" />
+            <tag name="controller.service_arguments" />
+        </service>
+
+        <!-- Commands -->
+        <service id="League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand">
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface" />
+            <tag name="console.command" />
+        </service>
+
+        <service id="League\Bundle\OAuth2ServerBundle\Command\UpdateClientCommand">
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface" />
+            <tag name="console.command" />
+        </service>
+
+        <service id="League\Bundle\OAuth2ServerBundle\Command\DeleteClientCommand">
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface" />
+            <tag name="console.command" />
+        </service>
+
+        <service id="League\Bundle\OAuth2ServerBundle\Command\ListClientsCommand">
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface" />
+            <tag name="console.command" />
+        </service>
+
+        <service id="League\Bundle\OAuth2ServerBundle\Command\ClearExpiredTokensCommand">
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface" />
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface" />
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface" />
+            <tag name="console.command" />
+        </service>
+
+        <!-- Utility services -->
+        <service id="League\Bundle\OAuth2ServerBundle\Converter\UserConverter" />
+        <service id="League\Bundle\OAuth2ServerBundle\Converter\UserConverterInterface" alias="League\Bundle\OAuth2ServerBundle\Converter\UserConverter" />
+
+        <service id="League\Bundle\OAuth2ServerBundle\Converter\ScopeConverter" />
+        <service id="League\Bundle\OAuth2ServerBundle\Converter\ScopeConverterInterface" alias="League\Bundle\OAuth2ServerBundle\Converter\ScopeConverter" />
+
+        <service id="League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEventFactory">
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Converter\ScopeConverter" />
+            <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface" />
+        </service>
+
+        <service id="League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory">
+            <argument type="string" />
+        </service>
+    </services>
+</container>
