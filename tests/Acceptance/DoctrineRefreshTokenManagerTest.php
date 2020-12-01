@@ -50,8 +50,7 @@ final class DoctrineRefreshTokenManagerTest extends AbstractAcceptanceTest
         $validRefreshTokens = [
             $this->buildRefreshToken('1111', '+1 day', $client),
             $this->buildRefreshToken('2222', '+1 hour', $client),
-            $this->buildRefreshToken('3333', '+1 second', $client),
-            $this->buildRefreshToken('4444', 'now', $client),
+            $this->buildRefreshToken('3333', '+5 second', $client),
         ];
 
         $expiredRefreshTokens = [

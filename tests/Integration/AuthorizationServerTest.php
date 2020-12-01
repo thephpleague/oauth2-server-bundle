@@ -10,6 +10,9 @@ use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
 
+/**
+ * @group time-sensitive
+ */
 final class AuthorizationServerTest extends AbstractIntegrationTest
 {
     protected function setUp(): void

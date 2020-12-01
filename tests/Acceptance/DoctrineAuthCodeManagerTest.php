@@ -47,8 +47,7 @@ final class DoctrineAuthCodeManagerTest extends AbstractAcceptanceTest
         $validAuthCodes = [
             $this->buildAuthCode('1111', '+1 day', $client),
             $this->buildAuthCode('2222', '+1 hour', $client),
-            $this->buildAuthCode('3333', '+1 second', $client),
-            $this->buildAuthCode('4444', 'now', $client),
+            $this->buildAuthCode('3333', '+5 second', $client),
         ];
 
         $expiredAuthCodes = [
