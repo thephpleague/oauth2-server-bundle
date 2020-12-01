@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Acceptance;
 
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
@@ -83,7 +82,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
     {
         return new RefreshToken(
             $identifier,
-            new DateTimeImmutable($modify),
+            new \DateTimeImmutable($modify),
             $accessToken
         );
     }
@@ -92,7 +91,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
     {
         return new AccessToken(
             $identifier,
-            new DateTimeImmutable($modify),
+            new \DateTimeImmutable($modify),
             $client,
             $userIdentifier,
             []
@@ -103,7 +102,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
     {
         return new AuthorizationCode(
             $identifier,
-            new DateTimeImmutable($modify),
+            new \DateTimeImmutable($modify),
             $client,
             $userIdentifier,
             []

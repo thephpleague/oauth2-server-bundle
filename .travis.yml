@@ -22,5 +22,5 @@ before_script:
 
 script:
     - stty cols 120
-    - if [ "$CHECK_CS" == 1 ]; then wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.15.8/php-cs-fixer.phar && php php-cs-fixer.phar fix --dry-run --diff; fi
+    - if [ "$CHECK_CS" == 1 ]; then wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.7/php-cs-fixer.phar && php php-cs-fixer.phar fix --dry-run --diff; fi
     - vendor/bin/simple-phpunit

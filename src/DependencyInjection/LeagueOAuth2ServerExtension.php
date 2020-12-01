@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\DependencyInjection;
 
-use DateInterval;
 use Defuse\Crypto\Key;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use Exception;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Grant as GrantType;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\RedirectUri as RedirectUriType;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Scope as ScopeType;
@@ -29,8 +27,6 @@ use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\ResourceServer;
-use LogicException;
-use RuntimeException;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Component\Config\FileLocator;
@@ -49,7 +45,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     /**
      * {@inheritdoc}
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -120,7 +116,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         foreach ($requiredBundles as $bundleAlias => $requiredBundle) {
             if (!$container->hasExtension($bundleAlias)) {
-                throw new LogicException(sprintf('Bundle \'%s\' needs to be enabled in your application kernel.', $requiredBundle));
+                throw new \LogicException(sprintf('Bundle \'%s\' needs to be enabled in your application kernel.', $requiredBundle));
             }
         }
     }
@@ -139,7 +135,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             $authorizationServer->replaceArgument('$encryptionKey', $config['encryption_key']);
         } elseif ('defuse' === $config['encryption_key_type']) {
             if (!class_exists(Key::class)) {
-                throw new RuntimeException('You must install the "defuse/php-encryption" package to use "encryption_key_type: defuse".');
+                throw new \RuntimeException('You must install the "defuse/php-encryption" package to use "encryption_key_type: defuse".');
             }
 
             $keyDefinition = (new Definition(Key::class))
@@ -153,35 +149,35 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         if ($config['enable_client_credentials_grant']) {
             $authorizationServer->addMethodCall('enableGrantType', [
                 new Reference(ClientCredentialsGrant::class),
-                new Definition(DateInterval::class, [$config['access_token_ttl']]),
+                new Definition(\DateInterval::class, [$config['access_token_ttl']]),
             ]);
         }
 
         if ($config['enable_password_grant']) {
             $authorizationServer->addMethodCall('enableGrantType', [
                 new Reference(PasswordGrant::class),
-                new Definition(DateInterval::class, [$config['access_token_ttl']]),
+                new Definition(\DateInterval::class, [$config['access_token_ttl']]),
             ]);
         }
 
         if ($config['enable_refresh_token_grant']) {
             $authorizationServer->addMethodCall('enableGrantType', [
                 new Reference(RefreshTokenGrant::class),
-                new Definition(DateInterval::class, [$config['access_token_ttl']]),
+                new Definition(\DateInterval::class, [$config['access_token_ttl']]),
             ]);
         }
 
         if ($config['enable_auth_code_grant']) {
             $authorizationServer->addMethodCall('enableGrantType', [
                 new Reference(AuthCodeGrant::class),
-                new Definition(DateInterval::class, [$config['access_token_ttl']]),
+                new Definition(\DateInterval::class, [$config['access_token_ttl']]),
             ]);
         }
 
         if ($config['enable_implicit_grant']) {
             $authorizationServer->addMethodCall('enableGrantType', [
                 new Reference(ImplicitGrant::class),
-                new Definition(DateInterval::class, [$config['access_token_ttl']]),
+                new Definition(\DateInterval::class, [$config['access_token_ttl']]),
             ]);
         }
 
@@ -193,21 +189,21 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container
             ->getDefinition(PasswordGrant::class)
             ->addMethodCall('setRefreshTokenTTL', [
-                new Definition(DateInterval::class, [$config['refresh_token_ttl']]),
+                new Definition(\DateInterval::class, [$config['refresh_token_ttl']]),
             ])
         ;
 
         $container
             ->getDefinition(RefreshTokenGrant::class)
             ->addMethodCall('setRefreshTokenTTL', [
-                new Definition(DateInterval::class, [$config['refresh_token_ttl']]),
+                new Definition(\DateInterval::class, [$config['refresh_token_ttl']]),
             ])
         ;
 
         $authCodeGrantDefinition = $container->getDefinition(AuthCodeGrant::class);
-        $authCodeGrantDefinition->replaceArgument('$authCodeTTL', new Definition(DateInterval::class, [$config['auth_code_ttl']]))
+        $authCodeGrantDefinition->replaceArgument('$authCodeTTL', new Definition(\DateInterval::class, [$config['auth_code_ttl']]))
             ->addMethodCall('setRefreshTokenTTL', [
-                new Definition(DateInterval::class, [$config['refresh_token_ttl']]),
+                new Definition(\DateInterval::class, [$config['refresh_token_ttl']]),
             ])
         ;
 
@@ -217,17 +213,17 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $container
             ->getDefinition(ImplicitGrant::class)
-            ->replaceArgument('$accessTokenTTL', new Definition(DateInterval::class, [$config['access_token_ttl']]))
+            ->replaceArgument('$accessTokenTTL', new Definition(\DateInterval::class, [$config['access_token_ttl']]))
         ;
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     private function configurePersistence(LoaderInterface $loader, ContainerBuilder $container, array $config): void
     {
         if (\count($config) > 1) {
-            throw new LogicException('Only one persistence method can be configured at a time.');
+            throw new \LogicException('Only one persistence method can be configured at a time.');
         }
 
         $persistenceConfiguration = current($config);

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Acceptance;
 
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager as DoctrineAccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
@@ -68,7 +67,7 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
     {
         return new AccessToken(
             $identifier,
-            new DateTimeImmutable($modify),
+            new \DateTimeImmutable($modify),
             $client,
             null,
             []
@@ -128,10 +127,10 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
     {
         return new RefreshToken(
             $identifier,
-            new DateTimeImmutable('+1 day'),
+            new \DateTimeImmutable('+1 day'),
             new AccessToken(
                 $identifier,
-                new DateTimeImmutable($modify),
+                new \DateTimeImmutable($modify),
                 $client,
                 null,
                 []

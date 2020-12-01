@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Fixtures;
 
-use ArrayObject;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class User extends ArrayObject implements UserInterface
+class User extends \ArrayObject implements UserInterface
 {
     /**
      * {@inheritdoc}

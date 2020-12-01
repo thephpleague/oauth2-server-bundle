@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Manager\Doctrine;
 
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
@@ -43,7 +42,7 @@ final class AuthorizationCodeManager implements AuthorizationCodeManagerInterfac
         return $this->entityManager->createQueryBuilder()
             ->delete(AuthorizationCode::class, 'ac')
             ->where('ac.expiry < :expiry')
-            ->setParameter('expiry', new DateTimeImmutable())
+            ->setParameter('expiry', new \DateTimeImmutable())
             ->getQuery()
             ->execute();
     }

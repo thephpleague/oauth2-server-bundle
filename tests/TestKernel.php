@@ -17,7 +17,6 @@ use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController;
 use League\Bundle\OAuth2ServerBundle\Tests\Support\SqlitePlatform;
-use LogicException;
 use Nyholm\Psr7\Factory as Nyholm;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
@@ -246,7 +245,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                 $responseFactory = Nyholm\Psr17Factory::class;
                 break;
             default:
-                throw new LogicException(sprintf('PSR HTTP factory provider \'%s\' is not supported.', $this->psrHttpProvider));
+                throw new \LogicException(sprintf('PSR HTTP factory provider \'%s\' is not supported.', $this->psrHttpProvider));
         }
 
         $container->addDefinitions([
@@ -299,7 +298,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                 $this->psrHttpProvider = self::PSR_HTTP_PROVIDER_NYHOLM;
                 break;
             default:
-                throw new LogicException(sprintf('PSR HTTP factory provider \'%s\' is not supported.', $psrHttpProvider));
+                throw new \LogicException(sprintf('PSR HTTP factory provider \'%s\' is not supported.', $psrHttpProvider));
         }
     }
 

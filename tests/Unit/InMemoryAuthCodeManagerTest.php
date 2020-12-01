@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
-use DateTimeImmutable;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AuthorizationCodeManager as InMemoryAuthCodeManager;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 
 final class InMemoryAuthCodeManagerTest extends TestCase
 {
@@ -26,7 +24,7 @@ final class InMemoryAuthCodeManagerTest extends TestCase
 
         $this->assertSame(3, $inMemoryAuthCodeManager->clearExpired());
 
-        $reflectionProperty = new ReflectionProperty(InMemoryAuthCodeManager::class, 'authorizationCodes');
+        $reflectionProperty = new \ReflectionProperty(InMemoryAuthCodeManager::class, 'authorizationCodes');
         $reflectionProperty->setAccessible(true);
 
         $this->assertSame($testData['output'], $reflectionProperty->getValue($inMemoryAuthCodeManager));
@@ -56,7 +54,7 @@ final class InMemoryAuthCodeManagerTest extends TestCase
     {
         return new AuthorizationCode(
             $identifier,
-            new DateTimeImmutable($modify),
+            new \DateTimeImmutable($modify),
             new Client('client', 'secret'),
             null,
             []

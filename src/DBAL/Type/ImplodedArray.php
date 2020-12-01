@@ -6,8 +6,6 @@ namespace League\Bundle\OAuth2ServerBundle\DBAL\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\TextType;
-use InvalidArgumentException;
-use LogicException;
 
 abstract class ImplodedArray extends TextType
 {
@@ -22,7 +20,7 @@ abstract class ImplodedArray extends TextType
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         if (!\is_array($value)) {
-            throw new LogicException('This type can only be used in combination with arrays.');
+            throw new \LogicException('This type can only be used in combination with arrays.');
         }
 
         if (0 === \count($value)) {
@@ -82,7 +80,7 @@ abstract class ImplodedArray extends TextType
             return;
         }
 
-        throw new InvalidArgumentException(sprintf('The value of \'%s\' type cannot be imploded.', \gettype($value)));
+        throw new \InvalidArgumentException(sprintf('The value of \'%s\' type cannot be imploded.', \gettype($value)));
     }
 
     abstract protected function convertDatabaseValues(array $values): array;
