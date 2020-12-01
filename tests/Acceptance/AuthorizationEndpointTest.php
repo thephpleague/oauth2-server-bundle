@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Acceptance;
 
-use DateTimeImmutable;
 use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
@@ -41,21 +40,15 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
             });
 
-        timecop_freeze(new DateTimeImmutable());
-
-        try {
-            $this->client->request(
-                'GET',
-                '/authorize',
-                [
-                    'client_id' => FixtureFactory::FIXTURE_CLIENT_FIRST,
-                    'response_type' => 'code',
-                    'state' => 'foobar',
-                ]
-            );
-        } finally {
-            timecop_return();
-        }
+        $this->client->request(
+            'GET',
+            '/authorize',
+            [
+                'client_id' => FixtureFactory::FIXTURE_CLIENT_FIRST,
+                'response_type' => 'code',
+                'state' => 'foobar',
+            ]
+        );
 
         $response = $this->client->getResponse();
 
@@ -93,24 +86,18 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
             });
 
-        timecop_freeze(new DateTimeImmutable());
-
-        try {
-            $this->client->request(
-                'GET',
-                '/authorize',
-                [
-                    'client_id' => FixtureFactory::FIXTURE_PUBLIC_CLIENT,
-                    'response_type' => 'code',
-                    'scope' => '',
-                    'state' => $state,
-                    'code_challenge' => $codeChallenge,
-                    'code_challenge_method' => $codeChallengeMethod,
-                ]
-            );
-        } finally {
-            timecop_return();
-        }
+        $this->client->request(
+            'GET',
+            '/authorize',
+            [
+                'client_id' => FixtureFactory::FIXTURE_PUBLIC_CLIENT,
+                'response_type' => 'code',
+                'scope' => '',
+                'state' => $state,
+                'code_challenge' => $codeChallenge,
+                'code_challenge_method' => $codeChallengeMethod,
+            ]
+        );
 
         $response = $this->client->getResponse();
 
@@ -151,22 +138,16 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 $this->fail('This event should not have been dispatched.');
             });
 
-        timecop_freeze(new DateTimeImmutable());
-
-        try {
-            $this->client->request(
-                'GET',
-                '/authorize',
-                [
-                    'client_id' => FixtureFactory::FIXTURE_PUBLIC_CLIENT,
-                    'response_type' => 'code',
-                    'scope' => '',
-                    'state' => bin2hex(random_bytes(20)),
-                ]
-            );
-        } finally {
-            timecop_return();
-        }
+        $this->client->request(
+            'GET',
+            '/authorize',
+            [
+                'client_id' => FixtureFactory::FIXTURE_PUBLIC_CLIENT,
+                'response_type' => 'code',
+                'scope' => '',
+                'state' => bin2hex(random_bytes(20)),
+            ]
+        );
 
         $response = $this->client->getResponse();
 
@@ -195,24 +176,18 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 $this->fail('This event should not have been dispatched.');
             });
 
-        timecop_freeze(new DateTimeImmutable());
-
-        try {
-            $this->client->request(
-                'GET',
-                '/authorize',
-                [
-                    'client_id' => FixtureFactory::FIXTURE_PUBLIC_CLIENT,
-                    'response_type' => 'code',
-                    'scope' => '',
-                    'state' => $state,
-                    'code_challenge' => $codeChallenge,
-                    'code_challenge_method' => $codeChallengeMethod,
-                ]
-            );
-        } finally {
-            timecop_return();
-        }
+        $this->client->request(
+            'GET',
+            '/authorize',
+            [
+                'client_id' => FixtureFactory::FIXTURE_PUBLIC_CLIENT,
+                'response_type' => 'code',
+                'scope' => '',
+                'state' => $state,
+                'code_challenge' => $codeChallenge,
+                'code_challenge_method' => $codeChallengeMethod,
+            ]
+        );
 
         $response = $this->client->getResponse();
 
@@ -245,24 +220,18 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
             });
 
-        timecop_freeze(new DateTimeImmutable());
-
-        try {
-            $this->client->request(
-                'GET',
-                '/authorize',
-                [
-                    'client_id' => FixtureFactory::FIXTURE_PUBLIC_CLIENT_ALLOWED_TO_USE_PLAIN_CHALLENGE_METHOD,
-                    'response_type' => 'code',
-                    'scope' => '',
-                    'state' => $state,
-                    'code_challenge' => $codeChallenge,
-                    'code_challenge_method' => $codeChallengeMethod,
-                ]
-            );
-        } finally {
-            timecop_return();
-        }
+        $this->client->request(
+            'GET',
+            '/authorize',
+            [
+                'client_id' => FixtureFactory::FIXTURE_PUBLIC_CLIENT_ALLOWED_TO_USE_PLAIN_CHALLENGE_METHOD,
+                'response_type' => 'code',
+                'scope' => '',
+                'state' => $state,
+                'code_challenge' => $codeChallenge,
+                'code_challenge_method' => $codeChallengeMethod,
+            ]
+        );
 
         $response = $this->client->getResponse();
 
@@ -303,21 +272,15 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
             });
 
-        timecop_freeze(new DateTimeImmutable());
-
-        try {
-            $this->client->request(
-                'GET',
-                '/authorize',
-                [
-                    'client_id' => FixtureFactory::FIXTURE_CLIENT_FIRST,
-                    'response_type' => 'token',
-                    'state' => 'foobar',
-                ]
-            );
-        } finally {
-            timecop_return();
-        }
+        $this->client->request(
+            'GET',
+            '/authorize',
+            [
+                'client_id' => FixtureFactory::FIXTURE_CLIENT_FIRST,
+                'response_type' => 'token',
+                'state' => 'foobar',
+            ]
+        );
 
         $response = $this->client->getResponse();
 
@@ -344,23 +307,17 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 $event->setResponse($response);
             });
 
-        timecop_freeze(new DateTimeImmutable());
-
-        try {
-            $this->client->request(
-                'GET',
-                '/authorize',
-                [
-                    'client_id' => FixtureFactory::FIXTURE_CLIENT_FIRST,
-                    'response_type' => 'code',
-                    'state' => 'foobar',
-                    'redirect_uri' => FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI,
-                    'scope' => FixtureFactory::FIXTURE_SCOPE_FIRST . ' ' . FixtureFactory::FIXTURE_SCOPE_SECOND,
-                ]
-            );
-        } finally {
-            timecop_return();
-        }
+        $this->client->request(
+            'GET',
+            '/authorize',
+            [
+                'client_id' => FixtureFactory::FIXTURE_CLIENT_FIRST,
+                'response_type' => 'code',
+                'state' => 'foobar',
+                'redirect_uri' => FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI,
+                'scope' => FixtureFactory::FIXTURE_SCOPE_FIRST . ' ' . FixtureFactory::FIXTURE_SCOPE_SECOND,
+            ]
+        );
 
         $response = $this->client->getResponse();
 
@@ -382,21 +339,15 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
             $event->setResponse($response);
         }, 200);
 
-        timecop_freeze(new DateTimeImmutable());
-
-        try {
-            $this->client->request(
-                'GET',
-                '/authorize',
-                [
-                    'client_id' => FixtureFactory::FIXTURE_CLIENT_FIRST,
-                    'response_type' => 'code',
-                    'state' => 'foobar',
-                ]
-            );
-        } finally {
-            timecop_return();
-        }
+        $this->client->request(
+            'GET',
+            '/authorize',
+            [
+                'client_id' => FixtureFactory::FIXTURE_CLIENT_FIRST,
+                'response_type' => 'code',
+                'state' => 'foobar',
+            ]
+        );
 
         $response = $this->client->getResponse();
 
@@ -418,21 +369,15 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
             $event->setResponse($response);
         }, 100);
 
-        timecop_freeze(new DateTimeImmutable());
-
-        try {
-            $this->client->request(
-                'GET',
-                '/authorize',
-                [
-                    'client_id' => FixtureFactory::FIXTURE_CLIENT_FIRST,
-                    'response_type' => 'code',
-                    'state' => 'foobar',
-                ]
-            );
-        } finally {
-            timecop_return();
-        }
+        $this->client->request(
+            'GET',
+            '/authorize',
+            [
+                'client_id' => FixtureFactory::FIXTURE_CLIENT_FIRST,
+                'response_type' => 'code',
+                'state' => 'foobar',
+            ]
+        );
 
         $response = $this->client->getResponse();
 
@@ -456,22 +401,16 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
             });
 
-        timecop_freeze(new DateTimeImmutable());
-
-        try {
-            $this->client->request(
-                'GET',
-                '/authorize',
-                [
-                    'client_id' => FixtureFactory::FIXTURE_CLIENT_FIRST,
-                    'response_type' => 'code',
-                    'state' => 'foobar',
-                    'redirect_uri' => 'https://example.org/oauth2/malicious-uri',
-                ]
-            );
-        } finally {
-            timecop_return();
-        }
+        $this->client->request(
+            'GET',
+            '/authorize',
+            [
+                'client_id' => FixtureFactory::FIXTURE_CLIENT_FIRST,
+                'response_type' => 'code',
+                'state' => 'foobar',
+                'redirect_uri' => 'https://example.org/oauth2/malicious-uri',
+            ]
+        );
 
         $response = $this->client->getResponse();
 

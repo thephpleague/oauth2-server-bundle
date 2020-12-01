@@ -28,20 +28,14 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
         $em->persist($client);
         $em->flush();
 
-        timecop_freeze(new DateTimeImmutable());
+        $testData = $this->buildClearExpiredTestData($client);
 
-        try {
-            $testData = $this->buildClearExpiredTestData($client);
-
-            /** @var AccessToken $token */
-            foreach ($testData['input'] as $token) {
-                $doctrineAccessTokenManager->save($token);
-            }
-
-            $this->assertSame(3, $doctrineAccessTokenManager->clearExpired());
-        } finally {
-            timecop_return();
+        /** @var AccessToken $token */
+        foreach ($testData['input'] as $token) {
+            $doctrineAccessTokenManager->save($token);
         }
+
+        $this->assertSame(3, $doctrineAccessTokenManager->clearExpired());
 
         $this->assertSame(
             $testData['output'],
@@ -91,23 +85,17 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
         $em->persist($client);
         $em->flush();
 
-        timecop_freeze(new DateTimeImmutable());
+        $testData = $this->buildClearExpiredTestDataWithRefreshToken($client);
 
-        try {
-            $testData = $this->buildClearExpiredTestDataWithRefreshToken($client);
-
-            /** @var RefreshToken $token */
-            foreach ($testData['input'] as $token) {
-                $doctrineAccessTokenManager->save($token->getAccessToken());
-                $em->persist($token);
-            }
-
-            $em->flush();
-
-            $this->assertSame(3, $doctrineAccessTokenManager->clearExpired());
-        } finally {
-            timecop_return();
+        /** @var RefreshToken $token */
+        foreach ($testData['input'] as $token) {
+            $doctrineAccessTokenManager->save($token->getAccessToken());
+            $em->persist($token);
         }
+
+        $em->flush();
+
+        $this->assertSame(3, $doctrineAccessTokenManager->clearExpired());
 
         $this->assertSame(
             $testData['output'],

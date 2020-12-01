@@ -26,22 +26,16 @@ final class DoctrineAuthCodeManagerTest extends AbstractAcceptanceTest
         $client = new Client('client', 'secret');
         $em->persist($client);
 
-        timecop_freeze(new DateTimeImmutable());
+        $testData = $this->buildClearExpiredTestData($client);
 
-        try {
-            $testData = $this->buildClearExpiredTestData($client);
-
-            /** @var AuthorizationCode $authCode */
-            foreach ($testData['input'] as $authCode) {
-                $doctrineAuthCodeManager->save($authCode);
-            }
-
-            $em->flush();
-
-            $this->assertSame(3, $doctrineAuthCodeManager->clearExpired());
-        } finally {
-            timecop_return();
+        /** @var AuthorizationCode $authCode */
+        foreach ($testData['input'] as $authCode) {
+            $doctrineAuthCodeManager->save($authCode);
         }
+
+        $em->flush();
+
+        $this->assertSame(3, $doctrineAuthCodeManager->clearExpired());
 
         $this->assertSame(
             $testData['output'],

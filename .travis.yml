@@ -15,7 +15,6 @@ cache:
         - $HOME/.composer/cache
 
 before_script:
-    - pecl install timecop-1.2.10
     - composer self-update
     - composer require --no-update symfony/config=$SYMFONY_VERSION symfony/http-kernel=$SYMFONY_VERSION symfony/dependency-injection=$SYMFONY_VERSION symfony/options-resolver=$SYMFONY_VERSION
     - composer require --no-update --dev symfony/framework-bundle=$SYMFONY_VERSION symfony/yaml=$SYMFONY_VERSION
@@ -24,4 +23,4 @@ before_script:
 script:
     - stty cols 120
     - if [ "$CHECK_CS" == 1 ]; then wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.15.8/php-cs-fixer.phar && php php-cs-fixer.phar fix --dry-run --diff; fi
-    - PSR_HTTP_PROVIDER=nyholm vendor/bin/simple-phpunit
+    - vendor/bin/simple-phpunit

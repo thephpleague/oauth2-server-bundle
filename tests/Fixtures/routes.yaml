@@ -1,0 +1,18 @@
+oauth2:
+    resource: '@LeagueOAuth2ServerBundle/Resources/config/routes.xml'
+
+security_test:
+    path: /security-test
+    controller: League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController::helloAction
+
+security_test_scopes:
+    path: /security-test-scopes
+    controller: League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController::scopeAction
+    defaults:
+        oauth2_scopes: ['fancy']
+
+security_test_roles:
+    path: /security-test-roles
+    controller: League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController::rolesAction
+    defaults:
+        oauth2_scopes: ['fancy']

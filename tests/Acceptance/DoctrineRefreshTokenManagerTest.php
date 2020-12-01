@@ -28,23 +28,17 @@ final class DoctrineRefreshTokenManagerTest extends AbstractAcceptanceTest
         $em->persist($client);
         $em->flush();
 
-        timecop_freeze(new DateTimeImmutable());
+        $testData = $this->buildClearExpiredTestData($client);
 
-        try {
-            $testData = $this->buildClearExpiredTestData($client);
-
-            /** @var RefreshToken $token */
-            foreach ($testData['input'] as $token) {
-                $em->persist($token->getAccessToken());
-                $doctrineRefreshTokenManager->save($token);
-            }
-
-            $em->flush();
-
-            $this->assertSame(3, $doctrineRefreshTokenManager->clearExpired());
-        } finally {
-            timecop_return();
+        /** @var RefreshToken $token */
+        foreach ($testData['input'] as $token) {
+            $em->persist($token->getAccessToken());
+            $doctrineRefreshTokenManager->save($token);
         }
+
+        $em->flush();
+
+        $this->assertSame(3, $doctrineRefreshTokenManager->clearExpired());
 
         $this->assertSame(
             $testData['output'],
