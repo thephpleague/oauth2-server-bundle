@@ -17,20 +17,14 @@ final class InMemoryAuthCodeManagerTest extends TestCase
     {
         $inMemoryAuthCodeManager = new InMemoryAuthCodeManager();
 
-        timecop_freeze(new DateTimeImmutable());
+        $testData = $this->buildClearExpiredTestData();
 
-        try {
-            $testData = $this->buildClearExpiredTestData();
-
-            /** @var AuthorizationCode $authCode */
-            foreach ($testData['input'] as $authCode) {
-                $inMemoryAuthCodeManager->save($authCode);
-            }
-
-            $this->assertSame(3, $inMemoryAuthCodeManager->clearExpired());
-        } finally {
-            timecop_return();
+        /** @var AuthorizationCode $authCode */
+        foreach ($testData['input'] as $authCode) {
+            $inMemoryAuthCodeManager->save($authCode);
         }
+
+        $this->assertSame(3, $inMemoryAuthCodeManager->clearExpired());
 
         $reflectionProperty = new ReflectionProperty(InMemoryAuthCodeManager::class, 'authorizationCodes');
         $reflectionProperty->setAccessible(true);
@@ -43,8 +37,7 @@ final class InMemoryAuthCodeManagerTest extends TestCase
         $validAuthCodes = [
             '1111' => $this->buildAuthCode('1111', '+1 day'),
             '2222' => $this->buildAuthCode('2222', '+1 hour'),
-            '3333' => $this->buildAuthCode('3333', '+1 second'),
-            '4444' => $this->buildAuthCode('4444', 'now'),
+            '3333' => $this->buildAuthCode('3333', '+5 second'),
         ];
 
         $expiredAuthCodes = [

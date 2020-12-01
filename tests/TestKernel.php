@@ -23,25 +23,17 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
-use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
-use Symfony\Component\Config\Exception\LoaderLoadException;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Routing\RouteCollectionBuilder;
 
 final class TestKernel extends Kernel implements CompilerPassInterface
 {
-    use MicroKernelTrait;
-
     private const PSR_HTTP_PROVIDER_NYHOLM = 'nyholm';
-    private const PSR_HTTP_PROVIDER_ZENDFRAMEWORK = 'zendframework';
+    private const PSR_HTTP_PROVIDER_LAMINAS = 'laminas';
 
-    /**
-     * @var string
-     */
     private $psrHttpProvider;
 
     /**
@@ -103,101 +95,91 @@ final class TestKernel extends Kernel implements CompilerPassInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @throws LoaderLoadException
      */
-    protected function configureRoutes(RouteCollectionBuilder $routes)
+    public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $routes->import('@LeagueOAuth2ServerBundle/Resources/config/routes.xml');
-
-        $routes
-            ->add('/security-test', 'League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController::helloAction')
-        ;
-
-        $routes
-            ->add('/security-test-scopes', 'League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController::scopeAction')
-            ->setDefault('oauth2_scopes', ['fancy'])
-        ;
-
-        $routes
-            ->add('/security-test-roles', 'League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController::rolesAction')
-            ->setDefault('oauth2_scopes', ['fancy'])
-        ;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader)
-    {
-        $container->loadFromExtension('doctrine', [
-            'dbal' => [
-                'driver' => 'sqlite',
-                'charset' => 'utf8mb4',
-                'url' => 'sqlite:///:memory:',
-                'default_table_options' => [
+        $loader->load(function (ContainerBuilder $container) use ($loader) {
+            $container->loadFromExtension('doctrine', [
+                'dbal' => [
+                    'driver' => 'sqlite',
                     'charset' => 'utf8mb4',
-                    'utf8mb4_unicode_ci' => 'utf8mb4_unicode_ci',
+                    'url' => 'sqlite:///:memory:',
+                    'default_table_options' => [
+                        'charset' => 'utf8mb4',
+                        'utf8mb4_unicode_ci' => 'utf8mb4_unicode_ci',
+                    ],
+                    'platform_service' => SqlitePlatform::class,
                 ],
-                'platform_service' => SqlitePlatform::class,
-            ],
-            'orm' => null,
-        ]);
+                'orm' => null,
+            ]);
 
-        $container->loadFromExtension('framework', [
-            'secret' => 'nope',
-            'test' => null,
-        ]);
-
-        $container->loadFromExtension('security', [
-            'firewalls' => [
-                'test' => [
-                    'pattern' => '^/security-test',
-                    'stateless' => true,
-                    'oauth2' => true,
+            $container->loadFromExtension('framework', [
+                'secret' => 'nope',
+                'test' => null,
+                'router' => [
+                    'resource' => __DIR__ . '/Fixtures/routes.yaml',
+                    'type' => 'yaml',
+                    'utf8' => true,
                 ],
-            ],
-            'providers' => [
-                'in_memory' => [
-                    'memory' => [
-                        'users' => [
-                            FixtureFactory::FIXTURE_USER => [
-                                'roles' => ['ROLE_USER'],
+            ]);
+
+            if (!$container->hasDefinition('kernel')) {
+                $container->register('kernel', static::class)
+                    ->setSynthetic(true)
+                    ->setPublic(true)
+                    ->addTag('routing.route_loader');
+            }
+
+            $container->loadFromExtension('security', [
+                'firewalls' => [
+                    'test' => [
+                        'pattern' => '^/security-test',
+                        'stateless' => true,
+                        'oauth2' => true,
+                    ],
+                ],
+                'providers' => [
+                    'in_memory' => [
+                        'memory' => [
+                            'users' => [
+                                FixtureFactory::FIXTURE_USER => [
+                                    'roles' => ['ROLE_USER'],
+                                ],
                             ],
                         ],
                     ],
                 ],
-            ],
-        ]);
+            ]);
 
-        $container->loadFromExtension('sensio_framework_extra', [
-            'router' => [
-                'annotations' => false,
-            ],
-        ]);
-
-        $container->loadFromExtension('league_oauth2_server', [
-            'authorization_server' => [
-                'private_key' => '%env(PRIVATE_KEY_PATH)%',
-                'encryption_key' => '%env(ENCRYPTION_KEY)%',
-            ],
-            'resource_server' => [
-                'public_key' => '%env(PUBLIC_KEY_PATH)%',
-            ],
-            'scopes' => [
-                FixtureFactory::FIXTURE_SCOPE_SECOND,
-            ],
-            'persistence' => [
-                'doctrine' => [
-                    'entity_manager' => 'default',
+            $container->loadFromExtension('sensio_framework_extra', [
+                'router' => [
+                    'annotations' => false,
                 ],
-            ],
-        ]);
+            ]);
 
-        $this->configureControllers($container);
-        $this->configurePsrHttpFactory($container);
-        $this->configureDatabaseServices($container);
-        $this->registerFakeGrant($container);
+            $container->loadFromExtension('league_oauth2_server', [
+                'authorization_server' => [
+                    'private_key' => '%env(PRIVATE_KEY_PATH)%',
+                    'encryption_key' => '%env(ENCRYPTION_KEY)%',
+                ],
+                'resource_server' => [
+                    'public_key' => '%env(PUBLIC_KEY_PATH)%',
+                ],
+                'scopes' => [
+                    FixtureFactory::FIXTURE_SCOPE_SECOND,
+                ],
+                'persistence' => [
+                    'doctrine' => [
+                        'entity_manager' => 'default',
+                    ],
+                ],
+            ]);
+
+            $this->configureControllers($container);
+            $this->configurePsrHttpFactory($container);
+            $this->configureDatabaseServices($container);
+            $this->registerFakeGrant($container);
+        });
     }
 
     private function exposeManagerServices(ContainerBuilder $container): void
@@ -251,7 +233,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     private function configurePsrHttpFactory(ContainerBuilder $container): void
     {
         switch ($this->psrHttpProvider) {
-            case self::PSR_HTTP_PROVIDER_ZENDFRAMEWORK:
+            case self::PSR_HTTP_PROVIDER_LAMINAS:
                 $serverRequestFactory = ServerRequestFactory::class;
                 $streamFactory = StreamFactory::class;
                 $uploadedFileFactory = UploadedFileFactory::class;
@@ -307,11 +289,11 @@ final class TestKernel extends Kernel implements CompilerPassInterface
 
     private function determinePsrHttpFactory(): void
     {
-        $psrHttpProvider = getenv('PSR_HTTP_PROVIDER');
+        $psrHttpProvider = getenv('PSR_HTTP_PROVIDER') ?: self::PSR_HTTP_PROVIDER_NYHOLM;
 
         switch ($psrHttpProvider) {
-            case self::PSR_HTTP_PROVIDER_ZENDFRAMEWORK:
-                $this->psrHttpProvider = self::PSR_HTTP_PROVIDER_ZENDFRAMEWORK;
+            case self::PSR_HTTP_PROVIDER_LAMINAS:
+                $this->psrHttpProvider = self::PSR_HTTP_PROVIDER_LAMINAS;
                 break;
             case self::PSR_HTTP_PROVIDER_NYHOLM:
                 $this->psrHttpProvider = self::PSR_HTTP_PROVIDER_NYHOLM;

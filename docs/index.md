@@ -1,16 +1,8 @@
-# OAuth2-Server Bundle
-
-Symfony bundle which provides OAuth 2.1 authorization/resource server capabilities on top of the [thephpleague/oauth2-server](https://github.com/thephpleague/oauth2-server) library.
-
 ## Important notes
 
 This bundle provides the "glue" between  [thephpleague/oauth2-server](https://github.com/thephpleague/oauth2-server) library and the Symfony framework.
 It implements [thephpleague/oauth2-server](https://github.com/thephpleague/oauth2-server) library in a way specified by its official documentation.
 For implementation into Symfony projects, please see [bundle documentation](docs/basic-setup.md) and official [Symfony Security documentation](https://symfony.com/doc/current/security.html).
-
-## Status
-
-This package is currently in the active development.
 
 ## Features
 
@@ -124,7 +116,7 @@ This package is currently in the active development.
 
     ```yaml
     oauth2:
-        resource: '@LeagueOAuth2Bundle/Resources/config/routes.xml'
+        resource: '@LeagueOAuth2ServerBundle/Resources/config/routes.xml'
     ```
 
 You can verify that everything is working by issuing a `POST` request to the `/token` endpoint.

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Acceptance;
 
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
@@ -24,8 +23,6 @@ final class ClearExpiredTokensCommandTest extends AbstractAcceptanceTest
     {
         parent::setUp();
 
-        timecop_freeze(new DateTimeImmutable());
-
         FixtureFactory::initializeFixtures(
             $this->client->getContainer()->get(ScopeManagerInterface::class),
             $this->client->getContainer()->get(ClientManagerInterface::class),
@@ -37,8 +34,6 @@ final class ClearExpiredTokensCommandTest extends AbstractAcceptanceTest
 
     protected function tearDown(): void
     {
-        timecop_return();
-
         parent::tearDown();
     }
 

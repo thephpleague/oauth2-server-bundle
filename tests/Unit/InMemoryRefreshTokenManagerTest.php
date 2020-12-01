@@ -18,19 +18,13 @@ final class InMemoryRefreshTokenManagerTest extends TestCase
     {
         $inMemoryRefreshTokenManager = new InMemoryRefreshTokenManager();
 
-        timecop_freeze(new DateTimeImmutable());
+        $testData = $this->buildClearExpiredTestData();
 
-        try {
-            $testData = $this->buildClearExpiredTestData();
-
-            foreach ($testData['input'] as $token) {
-                $inMemoryRefreshTokenManager->save($token);
-            }
-
-            $this->assertSame(3, $inMemoryRefreshTokenManager->clearExpired());
-        } finally {
-            timecop_return();
+        foreach ($testData['input'] as $token) {
+            $inMemoryRefreshTokenManager->save($token);
         }
+
+        $this->assertSame(3, $inMemoryRefreshTokenManager->clearExpired());
 
         $reflectionProperty = new ReflectionProperty(InMemoryRefreshTokenManager::class, 'refreshTokens');
         $reflectionProperty->setAccessible(true);
@@ -43,8 +37,7 @@ final class InMemoryRefreshTokenManagerTest extends TestCase
         $validRefreshTokens = [
             '1111' => $this->buildRefreshToken('1111', '+1 day'),
             '2222' => $this->buildRefreshToken('2222', '+1 hour'),
-            '3333' => $this->buildRefreshToken('3333', '+1 second'),
-            '4444' => $this->buildRefreshToken('4444', 'now'),
+            '3333' => $this->buildRefreshToken('3333', '+5 seconds'),
         ];
 
         $expiredRefreshTokens = [
