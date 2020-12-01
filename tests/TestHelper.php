@@ -6,7 +6,6 @@ namespace League\Bundle\OAuth2ServerBundle\Tests;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
-use Exception;
 use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverter;
 use League\Bundle\OAuth2ServerBundle\League\Entity\AccessToken as AccessTokenEntity;
 use League\Bundle\OAuth2ServerBundle\League\Entity\Client as ClientEntity;
@@ -96,7 +95,7 @@ final class TestHelper
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public static function initializeDoctrineSchema(Application $application, array $arguments = []): bool
     {

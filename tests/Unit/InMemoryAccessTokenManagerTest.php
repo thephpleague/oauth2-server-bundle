@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
-use DateTimeImmutable;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AccessTokenManager as InMemoryAccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 
 /**
  * @group time-sensitive
@@ -28,7 +26,7 @@ final class InMemoryAccessTokenManagerTest extends TestCase
 
         $this->assertSame(3, $inMemoryAccessTokenManager->clearExpired());
 
-        $reflectionProperty = new ReflectionProperty(InMemoryAccessTokenManager::class, 'accessTokens');
+        $reflectionProperty = new \ReflectionProperty(InMemoryAccessTokenManager::class, 'accessTokens');
         $reflectionProperty->setAccessible(true);
 
         $this->assertSame($testData['output'], $reflectionProperty->getValue($inMemoryAccessTokenManager));
@@ -58,7 +56,7 @@ final class InMemoryAccessTokenManagerTest extends TestCase
     {
         return new AccessToken(
             $identifier,
-            new DateTimeImmutable($modify),
+            new \DateTimeImmutable($modify),
             new Client('client', 'secret'),
             null,
             []

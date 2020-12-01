@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Manager\InMemory;
 
-use DateTimeImmutable;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 
@@ -29,7 +28,7 @@ final class AuthorizationCodeManager implements AuthorizationCodeManagerInterfac
     {
         $count = \count($this->authorizationCodes);
 
-        $now = new DateTimeImmutable();
+        $now = new \DateTimeImmutable();
         $this->authorizationCodes = array_filter($this->authorizationCodes, static function (AuthorizationCode $authorizationCode) use ($now): bool {
             return $authorizationCode->getExpiryDateTime() >= $now;
         });

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Acceptance;
 
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager as DoctrineClientManager;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
@@ -46,7 +45,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
         $em->persist($client);
         $em->flush();
 
-        $accessToken = new AccessToken('access token', new DateTimeImmutable('+1 day'), $client, $client->getIdentifier(), []);
+        $accessToken = new AccessToken('access token', new \DateTimeImmutable('+1 day'), $client, $client->getIdentifier(), []);
         $em->persist($accessToken);
         $em->flush();
 
@@ -79,11 +78,11 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
         $em->persist($client);
         $em->flush();
 
-        $accessToken = new AccessToken('access token', new DateTimeImmutable('+1 day'), $client, $client->getIdentifier(), []);
+        $accessToken = new AccessToken('access token', new \DateTimeImmutable('+1 day'), $client, $client->getIdentifier(), []);
         $em->persist($accessToken);
         $em->flush();
 
-        $refreshToken = new RefreshToken('refresh token', new DateTimeImmutable('+1 day'), $accessToken);
+        $refreshToken = new RefreshToken('refresh token', new \DateTimeImmutable('+1 day'), $accessToken);
         $em->persist($refreshToken);
         $em->flush();
 

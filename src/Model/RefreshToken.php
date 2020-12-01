@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Model;
 
-use DateTimeInterface;
-
 class RefreshToken
 {
     /**
@@ -14,7 +12,7 @@ class RefreshToken
     private $identifier;
 
     /**
-     * @var DateTimeInterface
+     * @var \DateTimeInterface
      */
     private $expiry;
 
@@ -28,7 +26,7 @@ class RefreshToken
      */
     private $revoked = false;
 
-    public function __construct(string $identifier, DateTimeInterface $expiry, ?AccessToken $accessToken = null)
+    public function __construct(string $identifier, \DateTimeInterface $expiry, ?AccessToken $accessToken = null)
     {
         $this->identifier = $identifier;
         $this->expiry = $expiry;
@@ -45,7 +43,7 @@ class RefreshToken
         return $this->identifier;
     }
 
-    public function getExpiry(): DateTimeInterface
+    public function getExpiry(): \DateTimeInterface
     {
         return $this->expiry;
     }

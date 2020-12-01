@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
-use DateTimeImmutable;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\RefreshTokenManager as InMemoryRefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 
 final class InMemoryRefreshTokenManagerTest extends TestCase
 {
@@ -26,7 +24,7 @@ final class InMemoryRefreshTokenManagerTest extends TestCase
 
         $this->assertSame(3, $inMemoryRefreshTokenManager->clearExpired());
 
-        $reflectionProperty = new ReflectionProperty(InMemoryRefreshTokenManager::class, 'refreshTokens');
+        $reflectionProperty = new \ReflectionProperty(InMemoryRefreshTokenManager::class, 'refreshTokens');
         $reflectionProperty->setAccessible(true);
 
         $this->assertSame($testData['output'], $reflectionProperty->getValue($inMemoryRefreshTokenManager));
@@ -56,10 +54,10 @@ final class InMemoryRefreshTokenManagerTest extends TestCase
     {
         return new RefreshToken(
             $identifier,
-            new DateTimeImmutable($modify),
+            new \DateTimeImmutable($modify),
             new AccessToken(
                 $identifier,
-                new DateTimeImmutable('+1 day'),
+                new \DateTimeImmutable('+1 day'),
                 new Client('client', 'secret'),
                 null,
                 []

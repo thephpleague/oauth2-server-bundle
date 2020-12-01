@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Model;
 
-use DateTimeInterface;
-
 class AccessToken
 {
     /**
@@ -14,7 +12,7 @@ class AccessToken
     private $identifier;
 
     /**
-     * @var DateTimeInterface
+     * @var \DateTimeInterface
      */
     private $expiry;
 
@@ -40,7 +38,7 @@ class AccessToken
 
     public function __construct(
         string $identifier,
-        DateTimeInterface $expiry,
+        \DateTimeInterface $expiry,
         Client $client,
         ?string $userIdentifier,
         array $scopes
@@ -62,7 +60,7 @@ class AccessToken
         return $this->identifier;
     }
 
-    public function getExpiry(): DateTimeInterface
+    public function getExpiry(): \DateTimeInterface
     {
         return $this->expiry;
     }
