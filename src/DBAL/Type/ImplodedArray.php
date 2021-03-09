@@ -7,6 +7,9 @@ namespace League\Bundle\OAuth2ServerBundle\DBAL\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\TextType;
 
+/**
+ * @psalm-template T
+ */
 abstract class ImplodedArray extends TextType
 {
     /**
@@ -27,6 +30,7 @@ abstract class ImplodedArray extends TextType
             return null;
         }
 
+        /** @psalm-var T $item */
         foreach ($value as $item) {
             $this->assertValueCanBeImploded($item);
         }
@@ -36,12 +40,18 @@ abstract class ImplodedArray extends TextType
 
     /**
      * {@inheritdoc}
+     *
+     * @param mixed $value
+     *
+     * @psalm-return list<T>
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): array
     {
         if (null === $value) {
             return [];
         }
+
+        \assert(\is_string($value), 'Expected $value of be either a string or null.');
 
         $values = explode(self::VALUE_DELIMITER, $value);
 
@@ -51,21 +61,24 @@ abstract class ImplodedArray extends TextType
     /**
      * {@inheritdoc}
      */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        $fieldDeclaration['length'] = 65535;
+        $column['length'] = 65535;
 
-        return parent::getSQLDeclaration($fieldDeclaration, $platform);
+        return parent::getSQLDeclaration($column, $platform);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;
     }
 
+    /**
+     * @psalm-param T $value
+     */
     private function assertValueCanBeImploded($value): void
     {
         if (null === $value) {
@@ -83,5 +96,10 @@ abstract class ImplodedArray extends TextType
         throw new \InvalidArgumentException(sprintf('The value of \'%s\' type cannot be imploded.', \gettype($value)));
     }
 
+    /**
+     * @param list<string> $values
+     *
+     * @return list<T>
+     */
     abstract protected function convertDatabaseValues(array $values): array;
 }

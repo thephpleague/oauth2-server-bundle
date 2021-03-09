@@ -10,21 +10,18 @@ use League\Bundle\OAuth2ServerBundle\Model\Scope;
 final class ScopeManager implements ScopeManagerInterface
 {
     /**
-     * @var Scope[]
+     * @var array<string, Scope>
      */
     private $scopes = [];
 
     /**
-     * {@inheritdoc}
+     * @psalm-mutation-free
      */
     public function find(string $identifier): ?Scope
     {
         return $this->scopes[$identifier] ?? null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(Scope $scope): void
     {
         $this->scopes[(string) $scope] = $scope;

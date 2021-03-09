@@ -6,6 +6,9 @@ namespace League\Bundle\OAuth2ServerBundle\DBAL\Type;
 
 use League\Bundle\OAuth2ServerBundle\Model\Scope as ScopeModel;
 
+/**
+ * @extends ImplodedArray<ScopeModel>
+ */
 final class Scope extends ImplodedArray
 {
     /**
@@ -16,20 +19,20 @@ final class Scope extends ImplodedArray
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }
 
     /**
-     * {@inheritdoc}
+     * @param list<string> $values
+     *
+     * @return list<ScopeModel>
      */
     protected function convertDatabaseValues(array $values): array
     {
-        foreach ($values as &$value) {
-            $value = new ScopeModel($value);
-        }
-
-        return $values;
+        return array_map(static function(string $value): ScopeModel {
+            return new ScopeModel($value);
+        }, $values);
     }
 }

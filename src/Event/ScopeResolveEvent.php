@@ -12,7 +12,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 final class ScopeResolveEvent extends Event
 {
     /**
-     * @var Scope[]
+     * @var list<Scope>
      */
     private $scopes;
 
@@ -26,8 +26,14 @@ final class ScopeResolveEvent extends Event
      */
     private $client;
 
+    /**
+     * @var string|null
+     */
     private $userIdentifier;
 
+    /**
+     * @param list<Scope> $scopes
+     */
     public function __construct(array $scopes, Grant $grant, Client $client, ?string $userIdentifier)
     {
         $this->scopes = $scopes;
@@ -37,7 +43,7 @@ final class ScopeResolveEvent extends Event
     }
 
     /**
-     * @return Scope[]
+     * @return list<Scope>
      */
     public function getScopes(): array
     {

@@ -11,20 +11,23 @@ use League\Bundle\OAuth2ServerBundle\Model\Scope;
 final class ClientFilter
 {
     /**
-     * @var Grant[]
+     * @var list<Grant>
      */
     private $grants = [];
 
     /**
-     * @var RedirectUri[]
+     * @var list<RedirectUri>
      */
     private $redirectUris = [];
 
     /**
-     * @var Scope[]
+     * @var list<Scope>
      */
     private $scopes = [];
 
+    /**
+     * @psalm-pure
+     */
     public static function create(): self
     {
         return new static();
@@ -32,32 +35,35 @@ final class ClientFilter
 
     public function addGrantCriteria(Grant ...$grants): self
     {
-        return $this->addCriteria($this->grants, ...$grants);
+        foreach ($grants as $grant) {
+            $this->grants[] = $grant;
+        }
+
+        return $this;
     }
 
     public function addRedirectUriCriteria(RedirectUri ...$redirectUris): self
     {
-        return $this->addCriteria($this->redirectUris, ...$redirectUris);
+        foreach ($redirectUris as $redirectUri) {
+            $this->redirectUris[] = $redirectUri;
+        }
+
+        return $this;
     }
 
     public function addScopeCriteria(Scope ...$scopes): self
     {
-        return $this->addCriteria($this->scopes, ...$scopes);
-    }
-
-    private function addCriteria(&$field, ...$values): self
-    {
-        if (0 === \count($values)) {
-            return $this;
+        foreach ($scopes as $scope) {
+            $this->scopes[] = $scope;
         }
-
-        $field = array_merge($field, $values);
 
         return $this;
     }
 
     /**
-     * @return Grant[]
+     * @return list<Grant>
+     *
+     * @psalm-mutation-free
      */
     public function getGrants(): array
     {
@@ -65,7 +71,9 @@ final class ClientFilter
     }
 
     /**
-     * @return RedirectUri[]
+     * @return list<RedirectUri>
+     *
+     * @psalm-mutation-free
      */
     public function getRedirectUris(): array
     {
@@ -73,13 +81,18 @@ final class ClientFilter
     }
 
     /**
-     * @return Scope[]
+     * @return list<Scope>
+     *
+     * @psalm-mutation-free
      */
     public function getScopes(): array
     {
         return $this->scopes;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function hasFilters(): bool
     {
         return

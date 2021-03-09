@@ -22,6 +22,9 @@ final class ListClientsCommand extends Command
 
     protected static $defaultName = 'league:oauth2-server:list-clients';
 
+    /**
+     * @var ClientManagerInterface
+     */
     private $clientManager;
 
     public function __construct(ClientManagerInterface $clientManager)
@@ -77,18 +80,25 @@ final class ListClientsCommand extends Command
 
     private function getFindByCriteria(InputInterface $input): ClientFilter
     {
+        /** @var list<string> $grantStrings */
+        $grantStrings = $input->getOption('grant-type');
+        /** @var list<string> $redirectUriStrings */
+        $redirectUriStrings = $input->getOption('redirect-uri');
+        /** @var list<string> $scopeStrings */
+        $scopeStrings = $input->getOption('scope');
+
         return
             ClientFilter
                 ::create()
                 ->addGrantCriteria(...array_map(static function (string $grant): Grant {
                     return new Grant($grant);
-                }, $input->getOption('grant-type')))
+                }, $grantStrings))
                 ->addRedirectUriCriteria(...array_map(static function (string $redirectUri): RedirectUri {
                     return new RedirectUri($redirectUri);
-                }, $input->getOption('redirect-uri')))
+                }, $redirectUriStrings))
                 ->addScopeCriteria(...array_map(static function (string $scope): Scope {
                     return new Scope($scope);
-                }, $input->getOption('scope')))
+                }, $scopeStrings))
             ;
     }
 

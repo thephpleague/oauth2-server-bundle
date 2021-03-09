@@ -10,18 +10,21 @@ use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 final class AuthorizationCodeManager implements AuthorizationCodeManagerInterface
 {
     /**
-     * @var AuthorizationCode[]
+     * @var array<string, AuthorizationCode>
      */
     private $authorizationCodes = [];
 
+    /**
+     * @psalm-mutation-free
+     */
     public function find(string $identifier): ?AuthorizationCode
     {
         return $this->authorizationCodes[$identifier] ?? null;
     }
 
-    public function save(AuthorizationCode $authorizationCode): void
+    public function save(AuthorizationCode $authCode): void
     {
-        $this->authorizationCodes[$authorizationCode->getIdentifier()] = $authorizationCode;
+        $this->authorizationCodes[$authCode->getIdentifier()] = $authCode;
     }
 
     public function clearExpired(): int

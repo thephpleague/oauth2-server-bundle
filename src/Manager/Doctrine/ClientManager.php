@@ -8,6 +8,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientFilter;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\Grant;
+use League\Bundle\OAuth2ServerBundle\Model\RedirectUri;
+use League\Bundle\OAuth2ServerBundle\Model\Scope;
 
 final class ClientManager implements ClientManagerInterface
 {
@@ -18,26 +21,17 @@ final class ClientManager implements ClientManagerInterface
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function find(string $identifier): ?Client
     {
         return $this->entityManager->find(Client::class, $identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(Client $client): void
     {
         $this->entityManager->persist($client);
         $this->entityManager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove(Client $client): void
     {
         $this->entityManager->remove($client);
@@ -45,16 +39,19 @@ final class ClientManager implements ClientManagerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return list<Client>
      */
     public function list(?ClientFilter $clientFilter): array
     {
         $repository = $this->entityManager->getRepository(Client::class);
         $criteria = self::filterToCriteria($clientFilter);
 
-        return $repository->findBy($criteria);
+        return \array_values($repository->findBy($criteria));
     }
 
+    /**
+     * @return array{grants?: list<Grant>, redirect_uris?: list<RedirectUri>, scopes?: list<Scope>}
+     */
     private static function filterToCriteria(?ClientFilter $clientFilter): array
     {
         if (null === $clientFilter || false === $clientFilter->hasFilters()) {

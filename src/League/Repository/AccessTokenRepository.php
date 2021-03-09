@@ -9,6 +9,7 @@ use League\Bundle\OAuth2ServerBundle\League\Entity\AccessToken as AccessTokenEnt
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken as AccessTokenModel;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
@@ -46,6 +47,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null)
     {
+        /** @var int|string|null $userIdentifier */
         $accessToken = new AccessTokenEntity();
         $accessToken->setClient($clientEntity);
         $accessToken->setUserIdentifier($userIdentifier);
@@ -60,7 +62,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
+    public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void
     {
         $accessToken = $this->accessTokenManager->find($accessTokenEntity->getIdentifier());
 
@@ -74,9 +76,9 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $tokenId
      */
-    public function revokeAccessToken($tokenId)
+    public function revokeAccessToken($tokenId): void
     {
         $accessToken = $this->accessTokenManager->find($tokenId);
 
@@ -90,9 +92,9 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $tokenId
      */
-    public function isAccessTokenRevoked($tokenId)
+    public function isAccessTokenRevoked($tokenId): bool
     {
         $accessToken = $this->accessTokenManager->find($tokenId);
 
@@ -105,14 +107,20 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
 
     private function buildAccessTokenModel(AccessTokenEntityInterface $accessTokenEntity): AccessTokenModel
     {
+        /** @var Client $client */
         $client = $this->clientManager->find($accessTokenEntity->getClient()->getIdentifier());
+
+        $userIdentifier = $accessTokenEntity->getUserIdentifier();
+        if (null !== $userIdentifier) {
+            $userIdentifier = (string) $userIdentifier;
+        }
 
         return new AccessTokenModel(
             $accessTokenEntity->getIdentifier(),
             $accessTokenEntity->getExpiryDateTime(),
             $client,
-            $accessTokenEntity->getUserIdentifier(),
-            $this->scopeConverter->toDomainArray($accessTokenEntity->getScopes())
+            $userIdentifier,
+            $this->scopeConverter->toDomainArray(\array_values($accessTokenEntity->getScopes()))
         );
     }
 }

@@ -52,6 +52,8 @@ final class OAuth2Factory implements SecurityFactoryInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return void
      */
     public function addConfiguration(NodeDefinition $node)
     {

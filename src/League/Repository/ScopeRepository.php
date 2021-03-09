@@ -8,11 +8,13 @@ use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Event\ScopeResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\Client as ClientModel;
 use League\Bundle\OAuth2ServerBundle\Model\Grant as GrantModel;
 use League\Bundle\OAuth2ServerBundle\Model\Scope as ScopeModel;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -66,18 +68,24 @@ final class ScopeRepository implements ScopeRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param ScopeEntityInterface[]    $scopes
+     * @param string                    $grantType
+     * @param null|string               $userIdentifier
+     *
+     * @return list<ScopeEntityInterface>
      */
     public function finalizeScopes(
         array $scopes,
         $grantType,
         ClientEntityInterface $clientEntity,
         $userIdentifier = null
-    ) {
+    ): array {
+        /** @var Client $client */
         $client = $this->clientManager->find($clientEntity->getIdentifier());
 
-        $scopes = $this->setupScopes($client, $this->scopeConverter->toDomainArray($scopes));
+        $scopes = $this->setupScopes($client, $this->scopeConverter->toDomainArray(\array_values($scopes)));
 
+        /** @var ScopeResolveEvent $event */
         $event = $this->eventDispatcher->dispatch(
             new ScopeResolveEvent(
                 $scopes,
@@ -92,9 +100,9 @@ final class ScopeRepository implements ScopeRepositoryInterface
     }
 
     /**
-     * @param ScopeModel[] $requestedScopes
+     * @param list<ScopeModel> $requestedScopes
      *
-     * @return ScopeModel[]
+     * @return list<ScopeModel>
      */
     private function setupScopes(ClientModel $client, array $requestedScopes): array
     {

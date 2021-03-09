@@ -21,9 +21,9 @@ final class Client implements ClientEntityInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
-        return $this->getIdentifier();
+        return (string) $this->getIdentifier();
     }
 
     /**

@@ -6,6 +6,9 @@ namespace League\Bundle\OAuth2ServerBundle\DBAL\Type;
 
 use League\Bundle\OAuth2ServerBundle\Model\RedirectUri as RedirectUriModel;
 
+/**
+ * @template-extends ImplodedArray<RedirectUriModel>
+ */
 final class RedirectUri extends ImplodedArray
 {
     /**
@@ -16,20 +19,20 @@ final class RedirectUri extends ImplodedArray
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }
 
     /**
-     * {@inheritdoc}
+     * @param list<string> $values
+     *
+     * @return list<RedirectUriModel>
      */
     protected function convertDatabaseValues(array $values): array
     {
-        foreach ($values as &$value) {
-            $value = new RedirectUriModel($value);
-        }
-
-        return $values;
+        return array_map(static function(string $value): RedirectUriModel {
+            return new RedirectUriModel($value);
+        }, $values);
     }
 }

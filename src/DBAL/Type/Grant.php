@@ -6,6 +6,9 @@ namespace League\Bundle\OAuth2ServerBundle\DBAL\Type;
 
 use League\Bundle\OAuth2ServerBundle\Model\Grant as GrantModel;
 
+/**
+ * @extends ImplodedArray<GrantModel>
+ */
 final class Grant extends ImplodedArray
 {
     /**
@@ -16,20 +19,20 @@ final class Grant extends ImplodedArray
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }
 
     /**
-     * {@inheritdoc}
+     * @param list<string> $values
+     *
+     * @return list<GrantModel>
      */
     protected function convertDatabaseValues(array $values): array
     {
-        foreach ($values as &$value) {
-            $value = new GrantModel($value);
-        }
-
-        return $values;
+        return array_map(static function(string $value): GrantModel {
+            return new GrantModel($value);
+        }, $values);
     }
 }

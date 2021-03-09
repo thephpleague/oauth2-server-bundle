@@ -10,21 +10,18 @@ use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 final class RefreshTokenManager implements RefreshTokenManagerInterface
 {
     /**
-     * @var RefreshToken[]
+     * @var array<string, RefreshToken>
      */
     private $refreshTokens = [];
 
     /**
-     * {@inheritdoc}
+     * @psalm-mutation-free
      */
     public function find(string $identifier): ?RefreshToken
     {
         return $this->refreshTokens[$identifier] ?? null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(RefreshToken $refreshToken): void
     {
         $this->refreshTokens[$refreshToken->getIdentifier()] = $refreshToken;

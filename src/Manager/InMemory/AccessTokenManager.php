@@ -10,21 +10,18 @@ use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 final class AccessTokenManager implements AccessTokenManagerInterface
 {
     /**
-     * @var AccessToken[]
+     * @var array<string, AccessToken>
      */
     private $accessTokens = [];
 
     /**
-     * {@inheritdoc}
+     * @psalm-mutation-free
      */
     public function find(string $identifier): ?AccessToken
     {
         return $this->accessTokens[$identifier] ?? null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(AccessToken $accessToken): void
     {
         $this->accessTokens[$accessToken->getIdentifier()] = $accessToken;

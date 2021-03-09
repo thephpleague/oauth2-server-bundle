@@ -8,6 +8,7 @@ use League\Bundle\OAuth2ServerBundle\Converter\UserConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEventFactory;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -18,10 +19,29 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 final class AuthorizationController
 {
+    /**
+     * @var AuthorizationServer
+     */
     private $server;
+
+    /**
+     * @var EventDispatcherInterface
+     */
     private $eventDispatcher;
+
+    /**
+     * @var AuthorizationRequestResolveEventFactory
+     */
     private $eventFactory;
+
+    /**
+     * @var UserConverterInterface
+     */
     private $userConverter;
+
+    /**
+     * @var ClientManagerInterface
+     */
     private $clientManager;
 
     public function __construct(
@@ -46,6 +66,7 @@ final class AuthorizationController
             $authRequest = $this->server->validateAuthorizationRequest($serverRequest);
 
             if ('plain' === $authRequest->getCodeChallengeMethod()) {
+                /** @var Client $client */
                 $client = $this->clientManager->find($authRequest->getClient()->getIdentifier());
                 if (!$client->isPlainTextPkceAllowed()) {
                     return OAuthServerException::invalidRequest(
@@ -64,6 +85,7 @@ final class AuthorizationController
             $authRequest->setUser($this->userConverter->toLeague($event->getUser()));
 
             if ($event->hasResponse()) {
+                /** @var ResponseInterface */
                 return $event->getResponse();
             }
 

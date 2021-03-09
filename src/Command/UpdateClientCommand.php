@@ -20,6 +20,9 @@ final class UpdateClientCommand extends Command
 {
     protected static $defaultName = 'league:oauth2-server:update-client';
 
+    /**
+     * @var ClientManagerInterface
+     */
     private $clientManager;
 
     public function __construct(ClientManagerInterface $clientManager)
@@ -89,24 +92,23 @@ final class UpdateClientCommand extends Command
     {
         $client->setActive(!$input->getOption('deactivated'));
 
-        $redirectUris = array_map(
-            static function (string $redirectUri): RedirectUri { return new RedirectUri($redirectUri); },
-            $input->getOption('redirect-uri')
-        );
-        $client->setRedirectUris(...$redirectUris);
+        /** @var list<string> $redirectUriStrings */
+        $redirectUriStrings = $input->getOption('redirect-uri');
+        /** @var list<string> $grantStrings */
+        $grantStrings = $input->getOption('grant-type');
+        /** @var list<string> $scopeStrings */
+        $scopeStrings = $input->getOption('scope');
 
-        $grants = array_map(
-            static function (string $grant): Grant { return new Grant($grant); },
-            $input->getOption('grant-type')
-        );
-        $client->setGrants(...$grants);
-
-        $scopes = array_map(
-            static function (string $scope): Scope { return new Scope($scope); },
-            $input->getOption('scope')
-        );
-        $client->setScopes(...$scopes);
-
-        return $client;
+        return $client
+            ->setRedirectUris(...array_map(static function (string $redirectUri): RedirectUri {
+                return new RedirectUri($redirectUri);
+            },  $redirectUriStrings))
+            ->setGrants(...array_map(static function (string $grant): Grant {
+                return new Grant($grant);
+            }, $grantStrings))
+            ->setScopes(...array_map(static function (string $scope): Scope {
+                return new Scope($scope);
+            }, $scopeStrings))
+        ;
     }
 }

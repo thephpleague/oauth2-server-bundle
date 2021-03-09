@@ -20,17 +20,11 @@ final class AccessTokenManager implements AccessTokenManagerInterface
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function find(string $identifier): ?AccessToken
     {
         return $this->entityManager->find(AccessToken::class, $identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(AccessToken $accessToken): void
     {
         $this->entityManager->persist($accessToken);
@@ -39,10 +33,11 @@ final class AccessTokenManager implements AccessTokenManagerInterface
 
     public function clearExpired(): int
     {
+        /** @var int */
         return $this->entityManager->createQueryBuilder()
             ->delete(AccessToken::class, 'at')
             ->where('at.expiry < :expiry')
-            ->setParameter('expiry', new \DateTimeImmutable())
+            ->setParameter('expiry', new \DateTimeImmutable(), 'datetime_immutable')
             ->getQuery()
             ->execute();
     }
