@@ -1,6 +1,7 @@
 # OAuth2 Server Bundle
 
-[![Build Status](https://travis-ci.com/thephpleague/oauth2-server-bundle.svg?branch=master)](https://travis-ci.org/thephpleague/oauth2-server-bundle)
+![Unit tests status](https://github.com/thephpleague/oauth2-server-bundle/workflows/unit%20tests/badge.svg)
+![Coding standards status](https://github.com/thephpleague/oauth2-server-bundle/workflows/coding%20standards/badge.svg)
 [![Latest Stable Version](https://poser.pugx.org/league/oauth2-server-bundle/v/stable)](https://packagist.org/packages/thephpleague/oauth2-server-bundle)
 
 OAuth2ServerBundle is a Symfony bundle integrating the [oauth2-server](https://github.com/thephpleague/oauth2-server) library into Symfony applications.
