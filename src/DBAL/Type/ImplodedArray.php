@@ -20,7 +20,7 @@ abstract class ImplodedArray extends TextType
     /**
      * {@inheritdoc}
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (!\is_array($value)) {
             throw new \LogicException('This type can only be used in combination with arrays.');

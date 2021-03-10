@@ -68,9 +68,9 @@ final class ScopeRepository implements ScopeRepositoryInterface
     }
 
     /**
-     * @param ScopeEntityInterface[]    $scopes
-     * @param string                    $grantType
-     * @param null|string               $userIdentifier
+     * @param ScopeEntityInterface[] $scopes
+     * @param string $grantType
+     * @param string|null $userIdentifier
      *
      * @return list<ScopeEntityInterface>
      */
@@ -83,7 +83,7 @@ final class ScopeRepository implements ScopeRepositoryInterface
         /** @var Client $client */
         $client = $this->clientManager->find($clientEntity->getIdentifier());
 
-        $scopes = $this->setupScopes($client, $this->scopeConverter->toDomainArray(\array_values($scopes)));
+        $scopes = $this->setupScopes($client, $this->scopeConverter->toDomainArray(array_values($scopes)));
 
         /** @var ScopeResolveEvent $event */
         $event = $this->eventDispatcher->dispatch(

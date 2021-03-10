@@ -8,7 +8,6 @@ use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\InsufficientScopesException;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\Oauth2AuthenticationFailedException;
-use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;

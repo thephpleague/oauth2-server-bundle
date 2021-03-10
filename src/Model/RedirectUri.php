@@ -19,7 +19,7 @@ class RedirectUri
      */
     public function __construct(string $redirectUri)
     {
-        if (!filter_var($redirectUri, FILTER_VALIDATE_URL)) {
+        if (!filter_var($redirectUri, \FILTER_VALIDATE_URL)) {
             throw new \RuntimeException(sprintf('The \'%s\' string is not a valid URI.', $redirectUri));
         }
 

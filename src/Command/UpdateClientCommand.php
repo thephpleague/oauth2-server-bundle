@@ -102,7 +102,7 @@ final class UpdateClientCommand extends Command
         return $client
             ->setRedirectUris(...array_map(static function (string $redirectUri): RedirectUri {
                 return new RedirectUri($redirectUri);
-            },  $redirectUriStrings))
+            }, $redirectUriStrings))
             ->setGrants(...array_map(static function (string $grant): Grant {
                 return new Grant($grant);
             }, $grantStrings))

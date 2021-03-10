@@ -75,6 +75,9 @@ final class AuthorizationRequestResolveEvent extends Event
         return $this->response instanceof ResponseInterface;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function getResponse(): ?ResponseInterface
     {
         return $this->response;
@@ -93,11 +96,17 @@ final class AuthorizationRequestResolveEvent extends Event
         return $this->authorizationRequest->getGrantTypeId();
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function getClient(): Client
     {
         return $this->client;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function getUser(): ?UserInterface
     {
         return $this->user;

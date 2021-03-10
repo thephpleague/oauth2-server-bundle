@@ -46,7 +46,7 @@ final class ClientManager implements ClientManagerInterface
         $repository = $this->entityManager->getRepository(Client::class);
         $criteria = self::filterToCriteria($clientFilter);
 
-        return \array_values($repository->findBy($criteria));
+        return array_values($repository->findBy($criteria));
     }
 
     /**

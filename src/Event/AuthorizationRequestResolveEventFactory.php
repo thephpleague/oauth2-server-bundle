@@ -28,7 +28,7 @@ class AuthorizationRequestResolveEventFactory
 
     public function fromAuthorizationRequest(AuthorizationRequest $authorizationRequest): AuthorizationRequestResolveEvent
     {
-        $scopes = $this->scopeConverter->toDomainArray(\array_values($authorizationRequest->getScopes()));
+        $scopes = $this->scopeConverter->toDomainArray(array_values($authorizationRequest->getScopes()));
 
         $client = $this->clientManager->find($authorizationRequest->getClient()->getIdentifier());
 

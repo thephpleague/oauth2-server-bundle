@@ -21,9 +21,6 @@ jobs:
                 dependencies:
                     - "lowest"
                     - "highest"
-                include:
-                    - { symfony-version: "4.4.*", php-version: "7.1", dependencies: "lowest" }
-                    - { symfony-version: "4.4.*", php-version: "7.1", dependencies: "highest" }
 
         steps:
             -   name: "checkout"

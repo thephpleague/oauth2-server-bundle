@@ -39,10 +39,10 @@ final class ClientManager implements ClientManagerInterface
     public function list(?ClientFilter $clientFilter): array
     {
         if (null === $clientFilter || !$clientFilter->hasFilters()) {
-            return \array_values($this->clients);
+            return array_values($this->clients);
         }
 
-        return \array_values(array_filter($this->clients, static function (Client $client) use ($clientFilter): bool {
+        return array_values(array_filter($this->clients, static function (Client $client) use ($clientFilter): bool {
             if (!self::passesFilter($client->getGrants(), $clientFilter->getGrants())) {
                 return false;
             }

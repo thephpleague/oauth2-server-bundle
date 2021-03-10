@@ -31,7 +31,7 @@ final class Grant extends ImplodedArray
      */
     protected function convertDatabaseValues(array $values): array
     {
-        return array_map(static function(string $value): GrantModel {
+        return array_map(static function (string $value): GrantModel {
             return new GrantModel($value);
         }, $values);
     }

@@ -57,7 +57,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
 
         $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $redirectUri);
         $query = [];
-        parse_str(parse_url($redirectUri, PHP_URL_QUERY), $query);
+        parse_str(parse_url($redirectUri, \PHP_URL_QUERY), $query);
         $this->assertArrayHasKey('code', $query);
         $this->assertArrayHasKey('state', $query);
         $this->assertEquals('foobar', $query['state']);
@@ -106,7 +106,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
 
         $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $redirectUri);
         $query = [];
-        parse_str(parse_url($redirectUri, PHP_URL_QUERY), $query);
+        parse_str(parse_url($redirectUri, \PHP_URL_QUERY), $query);
         $this->assertArrayHasKey('state', $query);
         $this->assertSame($state, $query['state']);
 
@@ -240,7 +240,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
 
         $this->assertStringStartsWith(FixtureFactory::FIXTURE_PUBLIC_CLIENT_ALLOWED_TO_USE_PLAIN_CHALLENGE_METHOD_REDIRECT_URI, $redirectUri);
         $query = [];
-        parse_str(parse_url($redirectUri, PHP_URL_QUERY), $query);
+        parse_str(parse_url($redirectUri, \PHP_URL_QUERY), $query);
         $this->assertArrayHasKey('state', $query);
         $this->assertSame($state, $query['state']);
 
@@ -289,7 +289,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
 
         $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $redirectUri);
         $fragment = [];
-        parse_str(parse_url($redirectUri, PHP_URL_FRAGMENT), $fragment);
+        parse_str(parse_url($redirectUri, \PHP_URL_FRAGMENT), $fragment);
         $this->assertArrayHasKey('access_token', $fragment);
         $this->assertArrayHasKey('token_type', $fragment);
         $this->assertArrayHasKey('expires_in', $fragment);
@@ -386,7 +386,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
 
         $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $redirectUri);
         $query = [];
-        parse_str(parse_url($redirectUri, PHP_URL_QUERY), $query);
+        parse_str(parse_url($redirectUri, \PHP_URL_QUERY), $query);
         $this->assertArrayHasKey('code', $query);
         $this->assertArrayHasKey('state', $query);
         $this->assertEquals('foobar', $query['state']);

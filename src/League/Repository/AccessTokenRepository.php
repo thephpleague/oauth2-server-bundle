@@ -120,7 +120,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
             $accessTokenEntity->getExpiryDateTime(),
             $client,
             $userIdentifier,
-            $this->scopeConverter->toDomainArray(\array_values($accessTokenEntity->getScopes()))
+            $this->scopeConverter->toDomainArray(array_values($accessTokenEntity->getScopes()))
         );
     }
 }
