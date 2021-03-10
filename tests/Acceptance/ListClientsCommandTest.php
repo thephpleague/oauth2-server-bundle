@@ -24,13 +24,7 @@ final class ListClientsCommandTest extends AbstractAcceptanceTest
             'command' => $command->getName(),
         ]);
         $output = $commandTester->getDisplay();
-        $expected = <<<'TABLE'
- ------------ -------- ------- -------------- ------------ 
-  identifier   secret   scope   redirect uri   grant type  
- ------------ -------- ------- -------------- ------------ 
-  foobar       quzbaz                                      
- ------------ -------- ------- -------------- ------------
-TABLE;
+        $expected = file_get_contents(__DIR__ . '/resource/list-clients.txt');
         $this->assertEquals(trim($expected), trim($output));
     }
 
@@ -45,13 +39,7 @@ TABLE;
             'command' => $command->getName(),
         ]);
         $output = $commandTester->getDisplay();
-        $expected = <<<'TABLE'
- ------------ -------- ------- -------------- ------------ 
-  identifier   secret   scope   redirect uri   grant type  
- ------------ -------- ------- -------------- ------------ 
-  foobar                                                   
- ------------ -------- ------- -------------- ------------
-TABLE;
+        $expected = file_get_contents(__DIR__ . '/resource/list-clients-with-client-having-no-secret.txt');
 
         $this->assertEquals(trim($expected), trim($output));
     }
@@ -64,11 +52,7 @@ TABLE;
             'command' => $command->getName(),
         ]);
         $output = $commandTester->getDisplay();
-        $expected = <<<'TABLE'
- ------------ -------- ------- -------------- ------------ 
-  identifier   secret   scope   redirect uri   grant type  
- ------------ -------- ------- -------------- ------------
-TABLE;
+        $expected = file_get_contents(__DIR__ . '/resource/list-client-empty.txt');
 
         $this->assertEquals(trim($expected), trim($output));
     }
@@ -100,13 +84,7 @@ TABLE;
         ]);
         $output = $commandTester->getDisplay();
 
-        $expected = <<<'TABLE'
- ------------ -------------------------------- 
-  identifier   scope                           
- ------------ -------------------------------- 
-  foobar       client-scope-1, client-scope-2  
- ------------ --------------------------------
-TABLE;
+        $expected = file_get_contents(__DIR__ . '/resource/list-client-columns.txt');
 
         $this->assertEquals(trim($expected), trim($output));
     }
@@ -131,13 +109,7 @@ TABLE;
         ]);
         $output = $commandTester->getDisplay();
 
-        $expected = <<<'TABLE'
- ------------ ----------------- ---------------- -------------- ------------ 
-  identifier   secret            scope            redirect uri   grant type  
- ------------ ----------------- ---------------- -------------- ------------ 
-  client-b     client-b-secret   client-b-scope                              
- ------------ ----------------- ---------------- -------------- ------------
-TABLE;
+        $expected = file_get_contents(__DIR__ . '/resource/list-filters-clients.txt');
 
         $this->assertEquals(trim($expected), trim($output));
     }

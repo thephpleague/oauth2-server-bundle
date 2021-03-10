@@ -97,7 +97,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load(function (ContainerBuilder $container) use ($loader) {
+        $loader->load(function (ContainerBuilder $container) {
             $container->loadFromExtension('doctrine', [
                 'dbal' => [
                     'driver' => 'sqlite',
