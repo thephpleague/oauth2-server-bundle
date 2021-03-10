@@ -20,17 +20,11 @@ final class RefreshTokenManager implements RefreshTokenManagerInterface
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function find(string $identifier): ?RefreshToken
     {
         return $this->entityManager->find(RefreshToken::class, $identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(RefreshToken $refreshToken): void
     {
         $this->entityManager->persist($refreshToken);
@@ -39,10 +33,11 @@ final class RefreshTokenManager implements RefreshTokenManagerInterface
 
     public function clearExpired(): int
     {
+        /** @var int */
         return $this->entityManager->createQueryBuilder()
             ->delete(RefreshToken::class, 'rt')
             ->where('rt.expiry < :expiry')
-            ->setParameter('expiry', new \DateTimeImmutable())
+            ->setParameter('expiry', new \DateTimeImmutable(), 'datetime_immutable')
             ->getQuery()
             ->execute();
     }

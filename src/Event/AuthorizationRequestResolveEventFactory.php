@@ -10,7 +10,14 @@ use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 
 class AuthorizationRequestResolveEventFactory
 {
+    /**
+     * @var ScopeConverterInterface
+     */
     private $scopeConverter;
+
+    /**
+     * @var ClientManagerInterface
+     */
     private $clientManager;
 
     public function __construct(ScopeConverterInterface $scopeConverter, ClientManagerInterface $clientManager)
@@ -21,7 +28,7 @@ class AuthorizationRequestResolveEventFactory
 
     public function fromAuthorizationRequest(AuthorizationRequest $authorizationRequest): AuthorizationRequestResolveEvent
     {
-        $scopes = $this->scopeConverter->toDomainArray($authorizationRequest->getScopes());
+        $scopes = $this->scopeConverter->toDomainArray(\array_values($authorizationRequest->getScopes()));
 
         $client = $this->clientManager->find($authorizationRequest->getClient()->getIdentifier());
 

@@ -15,6 +15,9 @@ final class DeleteClientCommand extends Command
 {
     protected static $defaultName = 'league:oauth2-server:delete-client';
 
+    /**
+     * @var ClientManagerInterface
+     */
     private $clientManager;
 
     public function __construct(ClientManagerInterface $clientManager)

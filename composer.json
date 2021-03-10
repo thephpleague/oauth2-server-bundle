@@ -31,8 +31,10 @@
         "ext-pdo_sqlite": "*",
         "laminas/laminas-diactoros": "^2.2",
         "nyholm/psr7": "^1.2",
+        "psalm/plugin-symfony": "^2.2",
         "symfony/browser-kit": "^4.4|^5.0",
-        "symfony/phpunit-bridge": "^5.2"
+        "symfony/phpunit-bridge": "^5.2",
+        "vimeo/psalm": "^4.6"
     },
     "autoload": {
         "psr-4": { "League\\Bundle\\OAuth2ServerBundle\\": "src/" }

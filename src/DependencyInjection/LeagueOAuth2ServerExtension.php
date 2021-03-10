@@ -46,6 +46,8 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
      * {@inheritdoc}
      *
      * @throws \Exception
+     *
+     * @return void
      */
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -83,6 +85,8 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
     /**
      * {@inheritdoc}
+     *
+     * @return void
      */
     public function prepend(ContainerBuilder $container)
     {
@@ -100,6 +104,8 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
     /**
      * {@inheritdoc}
+     *
+     * @return void
      */
     public function process(ContainerBuilder $container)
     {

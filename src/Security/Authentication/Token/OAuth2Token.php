@@ -38,12 +38,18 @@ final class OAuth2Token extends AbstractToken
         $this->providerKey = $providerKey;
     }
 
+    public function getServerRequest(): ServerRequestInterface
+    {
+        /** @var ServerRequestInterface */
+        return $this->getAttribute('server_request');
+    }
+
     /**
      * {@inheritdoc}
      */
     public function getCredentials()
     {
-        return $this->getAttribute('server_request')->getAttribute('oauth_access_token_id');
+        return $this->getServerRequest()->getAttribute('oauth_access_token_id');
     }
 
     public function getProviderKey(): string
@@ -58,16 +64,23 @@ final class OAuth2Token extends AbstractToken
 
     public function __unserialize(array $data): void
     {
+        /** @var mixed[] $parentData */
         [$this->providerKey, $parentData] = $data;
         parent::__unserialize($parentData);
     }
 
+    /**
+     * @return string[]
+     */
     private function buildRolesFromScopes(): array
     {
+        /** @var string $prefix */
         $prefix = $this->getAttribute('role_prefix');
         $roles = [];
 
-        foreach ($this->getAttribute('server_request')->getAttribute('oauth_scopes', []) as $scope) {
+        /** @var string[] $scopes */
+        $scopes = $this->getServerRequest()->getAttribute('oauth_scopes', []);
+        foreach ($scopes as $scope) {
             $roles[] = strtoupper(trim($prefix . $scope));
         }
 

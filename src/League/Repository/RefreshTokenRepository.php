@@ -43,7 +43,7 @@ final class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity)
+    public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity): void
     {
         $refreshToken = $this->refreshTokenManager->find($refreshTokenEntity->getIdentifier());
 
@@ -57,9 +57,9 @@ final class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $tokenId
      */
-    public function revokeRefreshToken($tokenId)
+    public function revokeRefreshToken($tokenId): void
     {
         $refreshToken = $this->refreshTokenManager->find($tokenId);
 
@@ -73,9 +73,9 @@ final class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $tokenId
      */
-    public function isRefreshTokenRevoked($tokenId)
+    public function isRefreshTokenRevoked($tokenId): bool
     {
         $refreshToken = $this->refreshTokenManager->find($tokenId);
 

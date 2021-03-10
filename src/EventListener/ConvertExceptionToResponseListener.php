@@ -18,7 +18,7 @@ final class ConvertExceptionToResponseListener
     {
         $exception = $event->getThrowable();
         if ($exception instanceof InsufficientScopesException || $exception instanceof Oauth2AuthenticationFailedException) {
-            $event->setResponse(new Response($exception->getMessage(), $exception->getCode()));
+            $event->setResponse(new Response($exception->getMessage(), (int) $exception->getCode()));
         }
     }
 }

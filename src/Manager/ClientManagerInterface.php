@@ -15,7 +15,7 @@ interface ClientManagerInterface
     public function find(string $identifier): ?Client;
 
     /**
-     * @return Client[]
+     * @return list<Client>
      */
     public function list(?ClientFilter $clientFilter): array;
 }

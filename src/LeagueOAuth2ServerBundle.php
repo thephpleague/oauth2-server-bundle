@@ -15,6 +15,8 @@ final class LeagueOAuth2ServerBundle extends Bundle
 {
     /**
      * {@inheritdoc}
+     *
+     * @return void
      */
     public function build(ContainerBuilder $container)
     {
@@ -41,10 +43,13 @@ final class LeagueOAuth2ServerBundle extends Bundle
 
     private function configureDoctrineExtension(ContainerBuilder $container): void
     {
+        /** @var string $modelDirectory */
+        $modelDirectory = realpath(__DIR__ . '/Resources/config/doctrine/model');
+
         $container->addCompilerPass(
             DoctrineOrmMappingsPass::createXmlMappingDriver(
                 [
-                    realpath(__DIR__ . '/Resources/config/doctrine/model') => 'League\Bundle\OAuth2ServerBundle\Model',
+                    $modelDirectory => 'League\Bundle\OAuth2ServerBundle\Model',
                 ],
                 [
                     'league.oauth2-server.persistence.doctrine.manager',

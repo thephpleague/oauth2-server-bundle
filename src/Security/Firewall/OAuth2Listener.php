@@ -8,6 +8,7 @@ use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\InsufficientScopesException;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\Oauth2AuthenticationFailedException;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -80,15 +81,15 @@ final class OAuth2Listener
 
     private function isAccessToRouteGranted(Request $request, OAuth2Token $token): bool
     {
+        /** @var string[] $routeScopes */
         $routeScopes = $request->attributes->get('oauth2_scopes', []);
 
         if (empty($routeScopes)) {
             return true;
         }
 
-        $tokenScopes = $token
-            ->getAttribute('server_request')
-            ->getAttribute('oauth_scopes');
+        /** @var string[] $tokenScopes */
+        $tokenScopes = $token->getServerRequest()->getAttribute('oauth_scopes');
 
         /*
          * If the end result is empty that means that all route

@@ -20,6 +20,9 @@ final class CreateClientCommand extends Command
 {
     protected static $defaultName = 'league:oauth2-server:create-client';
 
+    /**
+     * @var ClientManagerInterface
+     */
     private $clientManager;
 
     public function __construct(ClientManagerInterface $clientManager)
@@ -105,38 +108,40 @@ final class CreateClientCommand extends Command
 
     private function buildClientFromInput(InputInterface $input): Client
     {
+        /** @var string $identifier */
         $identifier = $input->getArgument('identifier') ?? hash('md5', random_bytes(16));
 
+        /** @var bool $isPublic */
         $isPublic = $input->getOption('public');
 
-        if (null !== $input->getArgument('secret') && $isPublic) {
+        if ($isPublic && null !== $input->getArgument('secret')) {
             throw new \InvalidArgumentException('The client cannot have a secret and be public.');
         }
 
+        /** @var string $secret */
         $secret = $isPublic ? null : $input->getArgument('secret') ?? hash('sha512', random_bytes(32));
 
         $client = new Client($identifier, $secret);
         $client->setActive(true);
         $client->setAllowPlainTextPkce($input->getOption('allow-plain-text-pkce'));
 
-        $redirectUris = array_map(
-            static function (string $redirectUri): RedirectUri { return new RedirectUri($redirectUri); },
-            $input->getOption('redirect-uri')
-        );
-        $client->setRedirectUris(...$redirectUris);
+        /** @var list<string> $redirectUriStrings */
+        $redirectUriStrings = $input->getOption('redirect-uri');
+        /** @var list<string> $grantStrings */
+        $grantStrings = $input->getOption('grant-type');
+        /** @var list<string> $scopeStrings */
+        $scopeStrings = $input->getOption('scope');
 
-        $grants = array_map(
-            static function (string $grant): Grant { return new Grant($grant); },
-            $input->getOption('grant-type')
-        );
-        $client->setGrants(...$grants);
-
-        $scopes = array_map(
-            static function (string $scope): Scope { return new Scope($scope); },
-            $input->getOption('scope')
-        );
-        $client->setScopes(...$scopes);
-
-        return $client;
+        return $client
+            ->setRedirectUris(...array_map(static function (string $redirectUri): RedirectUri {
+                return new RedirectUri($redirectUri);
+            }, $redirectUriStrings))
+            ->setGrants(...array_map(static function (string $grant): Grant {
+                return new Grant($grant);
+            }, $grantStrings))
+            ->setScopes(...array_map(static function (string $scope): Scope {
+                return new Scope($scope);
+            }, $scopeStrings))
+        ;
     }
 }

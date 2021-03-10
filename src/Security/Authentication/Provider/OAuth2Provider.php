@@ -59,14 +59,14 @@ final class OAuth2Provider implements AuthenticationProviderInterface
 
         try {
             $request = $this->resourceServer->validateAuthenticatedRequest(
-                $token->getAttribute('server_request')
+                $token->getServerRequest()
             );
         } catch (OAuthServerException $e) {
             throw new AuthenticationException('The resource server rejected the request.', 0, $e);
         }
 
         $user = $this->getAuthenticatedUser(
-            $request->getAttribute('oauth_user_id')
+            (string) $request->getAttribute('oauth_user_id')
         );
 
         $token = $this->oauth2TokenFactory->createOAuth2Token($request, $user, $this->providerKey);
@@ -77,6 +77,8 @@ final class OAuth2Provider implements AuthenticationProviderInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @psalm-assert-if-true OAuth2Token $token
      */
     public function supports(TokenInterface $token)
     {

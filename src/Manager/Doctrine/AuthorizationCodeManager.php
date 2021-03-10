@@ -20,29 +20,24 @@ final class AuthorizationCodeManager implements AuthorizationCodeManagerInterfac
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function find(string $identifier): ?AuthorizationCode
     {
         return $this->entityManager->find(AuthorizationCode::class, $identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function save(AuthorizationCode $authorizationCode): void
+    public function save(AuthorizationCode $authCode): void
     {
-        $this->entityManager->persist($authorizationCode);
+        $this->entityManager->persist($authCode);
         $this->entityManager->flush();
     }
 
     public function clearExpired(): int
     {
+        /** @var int */
         return $this->entityManager->createQueryBuilder()
             ->delete(AuthorizationCode::class, 'ac')
             ->where('ac.expiry < :expiry')
-            ->setParameter('expiry', new \DateTimeImmutable())
+            ->setParameter('expiry', new \DateTimeImmutable(), 'datetime_immutable')
             ->getQuery()
             ->execute();
     }

@@ -17,17 +17,17 @@ class Client
     private $secret;
 
     /**
-     * @var RedirectUri[]
+     * @var list<RedirectUri>
      */
     private $redirectUris = [];
 
     /**
-     * @var Grant[]
+     * @var list<Grant>
      */
     private $grants = [];
 
     /**
-     * @var Scope[]
+     * @var list<Scope>
      */
     private $scopes = [];
 
@@ -41,29 +41,43 @@ class Client
      */
     private $allowPlainTextPkce = false;
 
+    /**
+     * @psalm-mutation-free
+     */
     public function __construct(string $identifier, ?string $secret)
     {
         $this->identifier = $identifier;
         $this->secret = $secret;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function __toString(): string
     {
         return $this->getIdentifier();
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function getSecret(): ?string
     {
         return $this->secret;
     }
 
     /**
-     * @return RedirectUri[]
+     * @return list<RedirectUri>
+     *
+     * @psalm-mutation-free
      */
     public function getRedirectUris(): array
     {
@@ -78,7 +92,9 @@ class Client
     }
 
     /**
-     * @return Grant[]
+     * @return list<Grant>
+     *
+     * @psalm-mutation-free
      */
     public function getGrants(): array
     {
@@ -93,7 +109,9 @@ class Client
     }
 
     /**
-     * @return Scope[]
+     * @return list<Scope>
+     *
+     * @psalm-mutation-free
      */
     public function getScopes(): array
     {
@@ -107,6 +125,9 @@ class Client
         return $this;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function isActive(): bool
     {
         return $this->active;
@@ -119,11 +140,17 @@ class Client
         return $this;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function isConfidential(): bool
     {
         return !empty($this->secret);
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function isPlainTextPkceAllowed(): bool
     {
         return $this->allowPlainTextPkce;

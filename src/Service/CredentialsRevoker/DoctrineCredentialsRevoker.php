@@ -60,6 +60,7 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
 
     public function revokeCredentialsForClient(Client $client): void
     {
+        /** @var Client $doctrineClient */
         $doctrineClient = $this->entityManager
             ->getRepository(Client::class)
             ->findOneBy(['identifier' => $client->getIdentifier()]);
@@ -68,7 +69,7 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
             ->update(AccessToken::class, 'at')
             ->set('at.revoked', true)
             ->where('at.client = :client')
-            ->setParameter('client', $doctrineClient)
+            ->setParameter('client', $doctrineClient->getIdentifier(), 'string')
             ->getQuery()
             ->execute();
 
@@ -83,7 +84,7 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
                     ->where('at.client = :client')
                     ->getDQL()
             ))
-            ->setParameter('client', $doctrineClient)
+            ->setParameter('client', $doctrineClient->getIdentifier(), 'string')
             ->getQuery()
             ->execute();
 
@@ -91,7 +92,7 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
             ->update(AuthorizationCode::class, 'ac')
             ->set('ac.revoked', true)
             ->where('ac.client = :client')
-            ->setParameter('client', $doctrineClient)
+            ->setParameter('client', $doctrineClient->getIdentifier(), 'string')
             ->getQuery()
             ->execute();
     }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Model;
 
+/**
+ * @psalm-immutable
+ */
 class RedirectUri
 {
     /**
@@ -11,6 +14,9 @@ class RedirectUri
      */
     private $redirectUri;
 
+    /**
+     * @psalm-mutation-free
+     */
     public function __construct(string $redirectUri)
     {
         if (!filter_var($redirectUri, FILTER_VALIDATE_URL)) {
@@ -20,6 +26,9 @@ class RedirectUri
         $this->redirectUri = $redirectUri;
     }
 
+    /**
+     * @psalm-mutation-free
+     */
     public function __toString(): string
     {
         return $this->redirectUri;

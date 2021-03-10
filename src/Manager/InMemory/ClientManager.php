@@ -7,65 +7,74 @@ namespace League\Bundle\OAuth2ServerBundle\Manager\InMemory;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientFilter;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\Grant;
+use League\Bundle\OAuth2ServerBundle\Model\RedirectUri;
+use League\Bundle\OAuth2ServerBundle\Model\Scope;
 
 final class ClientManager implements ClientManagerInterface
 {
     /**
-     * @var Client[]
+     * @var array<string, Client>
      */
     private $clients = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function find(string $identifier): ?Client
     {
         return $this->clients[$identifier] ?? null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function save(Client $client): void
     {
         $this->clients[$client->getIdentifier()] = $client;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove(Client $client): void
     {
         unset($this->clients[$client->getIdentifier()]);
     }
 
     /**
-     * {@inheritdoc}
+     * @return list<Client>
      */
     public function list(?ClientFilter $clientFilter): array
     {
-        if (!$clientFilter || !$clientFilter->hasFilters()) {
-            return $this->clients;
+        if (null === $clientFilter || !$clientFilter->hasFilters()) {
+            return \array_values($this->clients);
         }
 
-        return array_filter($this->clients, static function (Client $client) use ($clientFilter): bool {
-            $grantsPassed = self::passesFilter($client->getGrants(), $clientFilter->getGrants());
-            $scopesPassed = self::passesFilter($client->getScopes(), $clientFilter->getScopes());
-            $redirectUrisPassed = self::passesFilter($client->getRedirectUris(), $clientFilter->getRedirectUris());
+        return \array_values(array_filter($this->clients, static function (Client $client) use ($clientFilter): bool {
+            if (!self::passesFilter($client->getGrants(), $clientFilter->getGrants())) {
+                return false;
+            }
 
-            return $grantsPassed && $scopesPassed && $redirectUrisPassed;
-        });
+            if (!self::passesFilter($client->getScopes(), $clientFilter->getScopes())) {
+                return false;
+            }
+
+            if (!self::passesFilter($client->getRedirectUris(), $client->getRedirectUris())) {
+                return false;
+            }
+
+            return true;
+        }));
     }
 
+    /**
+     * @param list<RedirectUri|Grant|Scope> $clientValues
+     * @param list<RedirectUri|Grant|Scope> $filterValues
+     */
     private static function passesFilter(array $clientValues, array $filterValues): bool
     {
         if (empty($filterValues)) {
             return true;
         }
 
+        /** @var list<string> $clientValues */
         $clientValues = array_map('strval', $clientValues);
+        /** @var list<string> $filterValues */
         $filterValues = array_map('strval', $filterValues);
 
+        /** @var list<string> $valuesPassed */
         $valuesPassed = array_intersect($filterValues, $clientValues);
 
         return \count($valuesPassed) > 0;

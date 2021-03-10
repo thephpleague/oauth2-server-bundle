@@ -9,10 +9,13 @@ use League\OAuth2\Server\AuthorizationServer;
 final class GrantConfigurator
 {
     /**
-     * @var iterable|GrantTypeInterface[]
+     * @var iterable<GrantTypeInterface>
      */
     private $grants;
 
+    /**
+     * @param iterable<GrantTypeInterface> $grants
+     */
     public function __construct(iterable $grants)
     {
         $this->grants = $grants;
