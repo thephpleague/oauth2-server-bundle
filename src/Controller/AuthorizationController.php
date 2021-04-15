@@ -13,9 +13,11 @@ use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
+use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 final class AuthorizationController
 {
@@ -44,23 +46,45 @@ final class AuthorizationController
      */
     private $clientManager;
 
+    /**
+     * @var HttpMessageFactoryInterface
+     */
+    private $httpMessageFactory;
+
+    /**
+     * @var HttpFoundationFactoryInterface
+     */
+    private $httpFoundationFactory;
+
+    /**
+     * @var ResponseFactoryInterface
+     */
+    private $responseFactory;
+
     public function __construct(
         AuthorizationServer $server,
         EventDispatcherInterface $eventDispatcher,
         AuthorizationRequestResolveEventFactory $eventFactory,
         UserConverterInterface $userConverter,
-        ClientManagerInterface $clientManager
+        ClientManagerInterface $clientManager,
+        HttpMessageFactoryInterface $httpMessageFactory,
+        HttpFoundationFactoryInterface $httpFoundationFactory,
+        ResponseFactoryInterface $responseFactory
     ) {
         $this->server = $server;
         $this->eventDispatcher = $eventDispatcher;
         $this->eventFactory = $eventFactory;
         $this->userConverter = $userConverter;
         $this->clientManager = $clientManager;
+        $this->httpMessageFactory = $httpMessageFactory;
+        $this->httpFoundationFactory = $httpFoundationFactory;
+        $this->responseFactory = $responseFactory;
     }
 
-    public function indexAction(ServerRequestInterface $serverRequest, ResponseFactoryInterface $responseFactory): ResponseInterface
+    public function indexAction(Request $request): Response
     {
-        $serverResponse = $responseFactory->createResponse();
+        $serverRequest = $this->httpMessageFactory->createRequest($request);
+        $serverResponse = $this->responseFactory->createResponse();
 
         try {
             $authRequest = $this->server->validateAuthorizationRequest($serverRequest);
@@ -69,10 +93,7 @@ final class AuthorizationController
                 /** @var Client $client */
                 $client = $this->clientManager->find($authRequest->getClient()->getIdentifier());
                 if (!$client->isPlainTextPkceAllowed()) {
-                    return OAuthServerException::invalidRequest(
-                        'code_challenge_method',
-                        'Plain code challenge method is not allowed for this client'
-                    )->generateHttpResponse($serverResponse);
+                    throw OAuthServerException::invalidRequest('code_challenge_method', 'Plain code challenge method is not allowed for this client');
                 }
             }
 
@@ -85,15 +106,16 @@ final class AuthorizationController
             $authRequest->setUser($this->userConverter->toLeague($event->getUser()));
 
             if ($event->hasResponse()) {
-                /** @var ResponseInterface */
-                return $event->getResponse();
+                return $this->httpFoundationFactory->createResponse($event->getResponse());
             }
 
             $authRequest->setAuthorizationApproved($event->getAuthorizationResolution());
 
-            return $this->server->completeAuthorizationRequest($authRequest, $serverResponse);
+            $response = $this->server->completeAuthorizationRequest($authRequest, $serverResponse);
         } catch (OAuthServerException $e) {
-            return $e->generateHttpResponse($serverResponse);
+            $response = $e->generateHttpResponse($serverResponse);
         }
+
+        return $this->httpFoundationFactory->createResponse($response);
     }
 }

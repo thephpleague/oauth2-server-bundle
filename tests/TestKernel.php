@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests;
 
-use Laminas\Diactoros\ResponseFactory;
-use Laminas\Diactoros\ServerRequestFactory;
-use Laminas\Diactoros\StreamFactory;
-use Laminas\Diactoros\UploadedFileFactory;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
@@ -17,30 +13,18 @@ use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController;
 use League\Bundle\OAuth2ServerBundle\Tests\Support\SqlitePlatform;
-use Nyholm\Psr7\Factory as Nyholm;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ServerRequestFactoryInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\UploadedFileFactoryInterface;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\Kernel;
 
 final class TestKernel extends Kernel implements CompilerPassInterface
 {
-    private const PSR_HTTP_PROVIDER_NYHOLM = 'nyholm';
-    private const PSR_HTTP_PROVIDER_LAMINAS = 'laminas';
-
-    private $psrHttpProvider;
-
     /**
      * {@inheritdoc}
      */
     public function boot()
     {
-        $this->determinePsrHttpFactory();
         $this->initializeEnvironmentVariables();
 
         parent::boot();
@@ -53,7 +37,6 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     {
         return [
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
-            new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new \League\Bundle\OAuth2ServerBundle\LeagueOAuth2ServerBundle(),
@@ -65,7 +48,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
      */
     public function getCacheDir()
     {
-        return sprintf('%s/Tests/.kernel/cache', $this->getProjectDir());
+        return sprintf('%s/tests/.kernel/cache', $this->getProjectDir());
     }
 
     /**
@@ -73,7 +56,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
      */
     public function getLogDir()
     {
-        return sprintf('%s/Tests/.kernel/logs', $this->getProjectDir());
+        return sprintf('%s/tests/.kernel/logs', $this->getProjectDir());
     }
 
     /**
@@ -82,14 +65,6 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $this->exposeManagerServices($container);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getContainerClass()
-    {
-        return parent::getContainerClass() . ucfirst($this->psrHttpProvider);
     }
 
     /**
@@ -150,12 +125,6 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                 ],
             ]);
 
-            $container->loadFromExtension('sensio_framework_extra', [
-                'router' => [
-                    'annotations' => false,
-                ],
-            ]);
-
             $container->loadFromExtension('league_oauth2_server', [
                 'authorization_server' => [
                     'private_key' => '%env(PRIVATE_KEY_PATH)%',
@@ -175,7 +144,6 @@ final class TestKernel extends Kernel implements CompilerPassInterface
             ]);
 
             $this->configureControllers($container);
-            $this->configurePsrHttpFactory($container);
             $this->configureDatabaseServices($container);
             $this->registerFakeGrant($container);
         });
@@ -229,40 +197,6 @@ final class TestKernel extends Kernel implements CompilerPassInterface
         ;
     }
 
-    private function configurePsrHttpFactory(ContainerBuilder $container): void
-    {
-        switch ($this->psrHttpProvider) {
-            case self::PSR_HTTP_PROVIDER_LAMINAS:
-                $serverRequestFactory = ServerRequestFactory::class;
-                $streamFactory = StreamFactory::class;
-                $uploadedFileFactory = UploadedFileFactory::class;
-                $responseFactory = ResponseFactory::class;
-                break;
-            case self::PSR_HTTP_PROVIDER_NYHOLM:
-                $serverRequestFactory = Nyholm\Psr17Factory::class;
-                $streamFactory = Nyholm\Psr17Factory::class;
-                $uploadedFileFactory = Nyholm\Psr17Factory::class;
-                $responseFactory = Nyholm\Psr17Factory::class;
-                break;
-            default:
-                throw new \LogicException(sprintf('PSR HTTP factory provider \'%s\' is not supported.', $this->psrHttpProvider));
-        }
-
-        $container->addDefinitions([
-            $serverRequestFactory => new Definition($serverRequestFactory),
-            $streamFactory => new Definition($streamFactory),
-            $uploadedFileFactory => new Definition($uploadedFileFactory),
-            $responseFactory => new Definition($responseFactory),
-        ]);
-
-        $container->addAliases([
-            ServerRequestFactoryInterface::class => $serverRequestFactory,
-            StreamFactoryInterface::class => $streamFactory,
-            UploadedFileFactoryInterface::class => $uploadedFileFactory,
-            ResponseFactoryInterface::class => $responseFactory,
-        ]);
-    }
-
     private function configureControllers(ContainerBuilder $container): void
     {
         $container
@@ -284,22 +218,6 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     private function registerFakeGrant(ContainerBuilder $container): void
     {
         $container->register(FakeGrant::class)->setAutoconfigured(true);
-    }
-
-    private function determinePsrHttpFactory(): void
-    {
-        $psrHttpProvider = getenv('PSR_HTTP_PROVIDER') ?: self::PSR_HTTP_PROVIDER_NYHOLM;
-
-        switch ($psrHttpProvider) {
-            case self::PSR_HTTP_PROVIDER_LAMINAS:
-                $this->psrHttpProvider = self::PSR_HTTP_PROVIDER_LAMINAS;
-                break;
-            case self::PSR_HTTP_PROVIDER_NYHOLM:
-                $this->psrHttpProvider = self::PSR_HTTP_PROVIDER_NYHOLM;
-                break;
-            default:
-                throw new \LogicException(sprintf('PSR HTTP factory provider \'%s\' is not supported.', $psrHttpProvider));
-        }
     }
 
     private function initializeEnvironmentVariables(): void
