@@ -57,7 +57,7 @@
         <service id="League\Bundle\OAuth2ServerBundle\Security\Firewall\OAuth2Listener">
             <argument type="service" id="security.token_storage" />
             <argument type="service" id="security.authentication.manager" />
-            <argument type="service" id="sensio_framework_extra.psr7.http_message_factory" />
+            <argument type="service" id="league.oauth2_server.http_message_factory" />
             <argument key="$oauth2TokenFactory" type="service" id="League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory" />
         </service>
 
@@ -117,6 +117,9 @@
             <argument type="service" id="League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEventFactory" />
             <argument type="service" id="League\Bundle\OAuth2ServerBundle\Converter\UserConverter" />
             <argument type="service" id="League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface" />
+            <argument type="service" id="league.oauth2_server.http_message_factory" />
+            <argument type="service" id="league.oauth2_server.http_foundation_factory" />
+            <argument type="service" id="nyholm.psr7.psr17_factory" />
             <tag name="controller.service_arguments" />
         </service>
 
@@ -131,6 +134,9 @@
         <!-- Token controller -->
         <service id="League\Bundle\OAuth2ServerBundle\Controller\TokenController">
             <argument type="service" id="League\OAuth2\Server\AuthorizationServer" />
+            <argument type="service" id="league.oauth2_server.http_message_factory" />
+            <argument type="service" id="league.oauth2_server.http_foundation_factory" />
+            <argument type="service" id="nyholm.psr7.psr17_factory" />
             <tag name="controller.service_arguments" />
         </service>
 
@@ -177,5 +183,17 @@
         <service id="League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory">
             <argument type="string" />
         </service>
+
+        <!-- PSR-7/17 -->
+        <service id="nyholm.psr7.psr17_factory" class="Nyholm\Psr7\Factory\Psr17Factory" />
+
+        <service id="league.oauth2_server.http_message_factory" class="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory">
+            <argument type="service" id="nyholm.psr7.psr17_factory" />
+            <argument type="service" id="nyholm.psr7.psr17_factory" />
+            <argument type="service" id="nyholm.psr7.psr17_factory" />
+            <argument type="service" id="nyholm.psr7.psr17_factory" />
+        </service>
+
+        <service id="league.oauth2_server.http_foundation_factory" class="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory" />
     </services>
 </container>

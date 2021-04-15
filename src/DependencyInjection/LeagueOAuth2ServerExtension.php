@@ -27,7 +27,6 @@ use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\ResourceServer;
-use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -117,7 +116,6 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $requiredBundles = [
             'doctrine' => DoctrineBundle::class,
             'security' => SecurityBundle::class,
-            'sensio_framework_extra' => SensioFrameworkExtraBundle::class,
         ];
 
         foreach ($requiredBundles as $bundleAlias => $requiredBundle) {

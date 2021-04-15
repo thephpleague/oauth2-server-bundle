@@ -7,8 +7,10 @@ namespace League\Bundle\OAuth2ServerBundle\Controller;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
+use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 final class TokenController
 {
@@ -17,21 +19,44 @@ final class TokenController
      */
     private $server;
 
-    public function __construct(AuthorizationServer $server)
-    {
+    /**
+     * @var HttpMessageFactoryInterface
+     */
+    private $httpMessageFactory;
+
+    /**
+     * @var HttpFoundationFactoryInterface
+     */
+    private $httpFoundationFactory;
+
+    /**
+     * @var ResponseFactoryInterface
+     */
+    private $responseFactory;
+
+    public function __construct(
+        AuthorizationServer $server,
+        HttpMessageFactoryInterface $httpMessageFactory,
+        HttpFoundationFactoryInterface $httpFoundationFactory,
+        ResponseFactoryInterface $responseFactory
+    ) {
         $this->server = $server;
+        $this->httpMessageFactory = $httpMessageFactory;
+        $this->httpFoundationFactory = $httpFoundationFactory;
+        $this->responseFactory = $responseFactory;
     }
 
-    public function indexAction(
-        ServerRequestInterface $serverRequest,
-        ResponseFactoryInterface $responseFactory
-    ): ResponseInterface {
-        $serverResponse = $responseFactory->createResponse();
+    public function indexAction(Request $request): Response
+    {
+        $serverRequest = $this->httpMessageFactory->createRequest($request);
+        $serverResponse = $this->responseFactory->createResponse();
 
         try {
-            return $this->server->respondToAccessTokenRequest($serverRequest, $serverResponse);
+            $response = $this->server->respondToAccessTokenRequest($serverRequest, $serverResponse);
         } catch (OAuthServerException $e) {
-            return $e->generateHttpResponse($serverResponse);
+            $response = $e->generateHttpResponse($serverResponse);
         }
+
+        return $this->httpFoundationFactory->createResponse($response);
     }
 }
