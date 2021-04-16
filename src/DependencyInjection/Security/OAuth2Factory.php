@@ -23,13 +23,13 @@ final class OAuth2Factory implements SecurityFactoryInterface
         $providerId = 'security.authentication.provider.oauth2.' . $id;
         $container
             ->setDefinition($providerId, new ChildDefinition(OAuth2Provider::class))
-            ->replaceArgument('$userProvider', new Reference($userProvider))
-            ->replaceArgument('$providerKey', $id);
+            ->replaceArgument(0, new Reference($userProvider))
+            ->replaceArgument(3, $id);
 
         $listenerId = 'security.authentication.listener.oauth2.' . $id;
         $container
             ->setDefinition($listenerId, new ChildDefinition(OAuth2Listener::class))
-            ->replaceArgument('$providerKey', $id);
+            ->replaceArgument(4, $id);
 
         return [$providerId, $listenerId, OAuth2EntryPoint::class];
     }
