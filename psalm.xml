@@ -45,6 +45,21 @@
         <RawObjectIteration errorLevel="error"/>
         <InvalidStringClass errorLevel="error"/>
         <UnresolvableInclude errorLevel="error"/>
+        <ImplicitToStringCast errorLevel="error">
+            <errorLevel type="suppress">
+                <file name="src/Resources/config/services.php" />
+            </errorLevel>
+        </ImplicitToStringCast>
+        <MixedInferredReturnType errorLevel="error">
+            <errorLevel type="suppress">
+                <file name="src/Resources/config/services.php" />
+            </errorLevel>
+        </MixedInferredReturnType>
+        <MixedReturnStatement errorLevel="error">
+            <errorLevel type="suppress">
+                <file name="src/Resources/config/services.php" />
+            </errorLevel>
+        </MixedReturnStatement>
     </issueHandlers>
 
     <plugins>

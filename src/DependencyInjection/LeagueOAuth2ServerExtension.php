@@ -35,7 +35,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -50,8 +50,8 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.xml');
+        $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('services.php');
 
         $config = $this->processConfiguration(new Configuration(), $configs);
 
@@ -129,14 +129,14 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     {
         $authorizationServer = $container
             ->getDefinition(AuthorizationServer::class)
-            ->replaceArgument('$privateKey', new Definition(CryptKey::class, [
+            ->replaceArgument(3, new Definition(CryptKey::class, [
                 $config['private_key'],
                 $config['private_key_passphrase'],
                 false,
             ]));
 
         if ('plain' === $config['encryption_key_type']) {
-            $authorizationServer->replaceArgument('$encryptionKey', $config['encryption_key']);
+            $authorizationServer->replaceArgument(4, $config['encryption_key']);
         } elseif ('defuse' === $config['encryption_key_type']) {
             if (!class_exists(Key::class)) {
                 throw new \RuntimeException('You must install the "defuse/php-encryption" package to use "encryption_key_type: defuse".');
@@ -147,7 +147,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
                 ->addArgument($config['encryption_key']);
             $container->setDefinition('league.oauth2-server.defuse_key', $keyDefinition);
 
-            $authorizationServer->replaceArgument('$encryptionKey', new Reference('league.oauth2-server.defuse_key'));
+            $authorizationServer->replaceArgument(4, new Reference('league.oauth2-server.defuse_key'));
         }
 
         if ($config['enable_client_credentials_grant']) {
@@ -205,7 +205,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         ;
 
         $authCodeGrantDefinition = $container->getDefinition(AuthCodeGrant::class);
-        $authCodeGrantDefinition->replaceArgument('$authCodeTTL', new Definition(\DateInterval::class, [$config['auth_code_ttl']]))
+        $authCodeGrantDefinition->replaceArgument(2, new Definition(\DateInterval::class, [$config['auth_code_ttl']]))
             ->addMethodCall('setRefreshTokenTTL', [
                 new Definition(\DateInterval::class, [$config['refresh_token_ttl']]),
             ])
@@ -217,7 +217,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $container
             ->getDefinition(ImplicitGrant::class)
-            ->replaceArgument('$accessTokenTTL', new Definition(\DateInterval::class, [$config['access_token_ttl']]))
+            ->replaceArgument(0, new Definition(\DateInterval::class, [$config['access_token_ttl']]))
         ;
     }
 
@@ -235,11 +235,11 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         switch ($persistenceMethod) {
             case 'in_memory':
-                $loader->load('storage/in_memory.xml');
+                $loader->load('storage/in_memory.php');
                 $this->configureInMemoryPersistence($container);
                 break;
             case 'doctrine':
-                $loader->load('storage/doctrine.xml');
+                $loader->load('storage/doctrine.php');
                 $this->configureDoctrinePersistence($container, $persistenceConfiguration);
                 break;
         }
@@ -255,27 +255,27 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $container
             ->getDefinition(AccessTokenManager::class)
-            ->replaceArgument('$entityManager', $entityManager)
+            ->replaceArgument(0, $entityManager)
         ;
 
         $container
             ->getDefinition(ClientManager::class)
-            ->replaceArgument('$entityManager', $entityManager)
+            ->replaceArgument(0, $entityManager)
         ;
 
         $container
             ->getDefinition(RefreshTokenManager::class)
-            ->replaceArgument('$entityManager', $entityManager)
+            ->replaceArgument(0, $entityManager)
         ;
 
         $container
             ->getDefinition(AuthorizationCodeManager::class)
-            ->replaceArgument('$entityManager', $entityManager)
+            ->replaceArgument(0, $entityManager)
         ;
 
         $container
             ->getDefinition(DoctrineCredentialsRevoker::class)
-            ->replaceArgument('$entityManager', $entityManager)
+            ->replaceArgument(0, $entityManager)
         ;
 
         $container->setParameter('league.oauth2-server.persistence.doctrine.enabled', true);
@@ -291,7 +291,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     {
         $container
             ->getDefinition(ResourceServer::class)
-            ->replaceArgument('$publicKey', new Definition(CryptKey::class, [
+            ->replaceArgument(1, new Definition(CryptKey::class, [
                 $config['public_key'],
                 null,
                 false,

@@ -1,5 +1,5 @@
 oauth2:
-    resource: '@LeagueOAuth2ServerBundle/Resources/config/routes.xml'
+    resource: '@LeagueOAuth2ServerBundle/Resources/config/routes.php'
 
 security_test:
     path: /security-test

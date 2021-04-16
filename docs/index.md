@@ -116,7 +116,7 @@ For implementation into Symfony projects, please see [bundle documentation](docs
 
     ```yaml
     oauth2:
-        resource: '@LeagueOAuth2ServerBundle/Resources/config/routes.xml'
+        resource: '@LeagueOAuth2ServerBundle/Resources/config/routes.php'
     ```
 
 You can verify that everything is working by issuing a `POST` request to the `/token` endpoint.
