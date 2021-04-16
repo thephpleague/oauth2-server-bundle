@@ -52,9 +52,9 @@ final class LeagueOAuth2ServerBundle extends Bundle
                     $modelDirectory => 'League\Bundle\OAuth2ServerBundle\Model',
                 ],
                 [
-                    'league.oauth2-server.persistence.doctrine.manager',
+                    'league.oauth2_server.persistence.doctrine.manager',
                 ],
-                'league.oauth2-server.persistence.doctrine.enabled',
+                'league.oauth2_server.persistence.doctrine.enabled',
                 [
                     'LeagueOAuth2ServerBundle' => 'League\Bundle\OAuth2ServerBundle\Model',
                 ]

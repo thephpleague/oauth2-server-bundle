@@ -54,7 +54,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $this->client
             ->getContainer()
             ->get('event_dispatcher')
-            ->addListener('league.oauth2-server.user_resolve', static function (UserResolveEvent $event): void {
+            ->addListener('league.oauth2_server.user_resolve', static function (UserResolveEvent $event): void {
                 $event->setUser(FixtureFactory::createUser());
             });
 

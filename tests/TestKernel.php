@@ -152,47 +152,27 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     private function exposeManagerServices(ContainerBuilder $container): void
     {
         $container
-            ->getDefinition(
-                (string) $container
-                    ->getAlias(ScopeManagerInterface::class)
-                    ->setPublic(true)
-            )
+            ->getAlias(ScopeManagerInterface::class)
             ->setPublic(true)
         ;
 
         $container
-            ->getDefinition(
-                (string) $container
-                    ->getAlias(ClientManagerInterface::class)
-                    ->setPublic(true)
-            )
+            ->getAlias(ClientManagerInterface::class)
             ->setPublic(true)
         ;
 
         $container
-            ->getDefinition(
-                (string) $container
-                    ->getAlias(AccessTokenManagerInterface::class)
-                    ->setPublic(true)
-            )
+            ->getAlias(AccessTokenManagerInterface::class)
             ->setPublic(true)
         ;
 
         $container
-            ->getDefinition(
-                (string) $container
-                    ->getAlias(RefreshTokenManagerInterface::class)
-                    ->setPublic(true)
-            )
+            ->getAlias(RefreshTokenManagerInterface::class)
             ->setPublic(true)
         ;
 
         $container
-            ->getDefinition(
-                (string) $container
-                    ->getAlias(AuthorizationCodeManagerInterface::class)
-                    ->setPublic(true)
-            )
+            ->getAlias(AuthorizationCodeManagerInterface::class)
             ->setPublic(true)
         ;
     }

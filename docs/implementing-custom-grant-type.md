@@ -48,7 +48,7 @@
     ```
 
 1. In order to enable the new grant type in the authorization server you must register the service in the container.
-The service must be autoconfigured or you have to manually tag it with the `league.oauth2-server.authorization_server.grant` tag:
+The service must be autoconfigured or you have to manually tag it with the `league.oauth2_server.authorization_server.grant` tag:
 
     ```yaml
     services:

@@ -29,7 +29,7 @@ final class ExtensionTest extends TestCase
 
         $extension->load($this->getValidConfiguration([$grantKey => $shouldTheGrantBeEnabled]), $container);
 
-        $authorizationServer = $container->getDefinition(AuthorizationServer::class);
+        $authorizationServer = $container->findDefinition(AuthorizationServer::class);
         $methodCalls = $authorizationServer->getMethodCalls();
         $isGrantEnabled = false;
 
@@ -83,7 +83,7 @@ final class ExtensionTest extends TestCase
 
         $extension->load($configuration, $container);
 
-        $authorizationServer = $container->getDefinition(AuthCodeGrant::class);
+        $authorizationServer = $container->findDefinition(AuthCodeGrant::class);
         $methodCalls = $authorizationServer->getMethodCalls();
 
         $isRequireCodeChallengeForPublicClientsDisabled = false;

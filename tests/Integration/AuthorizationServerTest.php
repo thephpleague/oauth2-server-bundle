@@ -265,7 +265,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
     public function testValidPasswordGrant(): void
     {
-        $this->eventDispatcher->addListener('league.oauth2-server.user_resolve', static function (UserResolveEvent $event): void {
+        $this->eventDispatcher->addListener('league.oauth2_server.user_resolve', static function (UserResolveEvent $event): void {
             $event->setUser(FixtureFactory::createUser());
         });
 
@@ -294,7 +294,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
     public function testInvalidCredentialsPasswordGrant(): void
     {
-        $this->eventDispatcher->addListener('league.oauth2-server.user_resolve', static function (UserResolveEvent $event): void {
+        $this->eventDispatcher->addListener('league.oauth2_server.user_resolve', static function (UserResolveEvent $event): void {
             $event->setUser(null);
         });
 

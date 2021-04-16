@@ -74,79 +74,89 @@ return static function (ContainerConfigurator $container): void {
     $container->services()
 
         // League repositories
-        ->set(ClientRepository::class)
+        ->set('league.oauth2_server.repository.client', ClientRepository::class)
             ->args([
                 service(ClientManagerInterface::class),
             ])
-        ->alias(ClientRepositoryInterface::class, ClientRepository::class)
+        ->alias(ClientRepositoryInterface::class, 'league.oauth2_server.repository.client')
+        ->alias(ClientRepository::class, 'league.oauth2_server.repository.client')
 
-        ->set(AccessTokenRepository::class)
+        ->set('league.oauth2_server.repository.access_token', AccessTokenRepository::class)
             ->args([
                 service(AccessTokenManagerInterface::class),
                 service(ClientManagerInterface::class),
-                service(ScopeConverter::class),
+                service(ScopeConverterInterface::class),
             ])
-        ->alias(AccessTokenRepositoryInterface::class, AccessTokenRepository::class)
+        ->alias(AccessTokenRepositoryInterface::class, 'league.oauth2_server.repository.access_token')
+        ->alias(AccessTokenRepository::class, 'league.oauth2_server.repository.access_token')
 
-        ->set(RefreshTokenRepository::class)
+        ->set('league.oauth2_server.repository.refresh_token', RefreshTokenRepository::class)
             ->args([
                 service(RefreshTokenManagerInterface::class),
                 service(AccessTokenManagerInterface::class),
             ])
-        ->alias(RefreshTokenRepositoryInterface::class, RefreshTokenRepository::class)
+        ->alias(RefreshTokenRepositoryInterface::class, 'league.oauth2_server.repository.refresh_token')
+        ->alias(RefreshTokenRepository::class, 'league.oauth2_server.repository.refresh_token')
 
-        ->set(ScopeRepository::class)
+        ->set('league.oauth2_server.repository.scope', ScopeRepository::class)
             ->args([
                 service(ScopeManagerInterface::class),
                 service(ClientManagerInterface::class),
-                service(ScopeConverter::class),
+                service(ScopeConverterInterface::class),
                 service(EventDispatcherInterface::class),
             ])
-        ->alias(ScopeRepositoryInterface::class, ScopeRepository::class)
+        ->alias(ScopeRepositoryInterface::class, 'league.oauth2_server.repository.scope')
+        ->alias(ScopeRepository::class, 'league.oauth2_server.repository.scope')
 
-        ->set(UserRepository::class)
+        ->set('league.oauth2_server.repository.user', UserRepository::class)
             ->args([
                 service(ClientManagerInterface::class),
                 service(EventDispatcherInterface::class),
-                service(UserConverter::class),
+                service(UserConverterInterface::class),
             ])
-        ->alias(UserRepositoryInterface::class, UserRepository::class)
+        ->alias(UserRepositoryInterface::class, 'league.oauth2_server.repository.user')
+        ->alias(UserRepository::class, 'league.oauth2_server.repository.user')
 
-        ->set(AuthCodeRepository::class)
+        ->set('league.oauth2_server.repository.auth_code', AuthCodeRepository::class)
             ->args([
                 service(AuthorizationCodeManagerInterface::class),
                 service(ClientManagerInterface::class),
-                service(ScopeConverter::class),
+                service(ScopeConverterInterface::class),
             ])
-        ->alias(AuthCodeRepositoryInterface::class, AuthCodeRepository::class)
+        ->alias(AuthCodeRepositoryInterface::class, 'league.oauth2_server.repository.auth_code')
+        ->alias(AuthCodeRepository::class, 'league.oauth2_server.repository.auth_code')
 
         // Security layer
-        ->set(OAuth2Provider::class)
+        ->set('league.oauth2_server.provider.oauth2', OAuth2Provider::class)
             ->args([
                 service(UserProviderInterface::class),
                 service(ResourceServer::class),
                 service(OAuth2TokenFactory::class),
                 null,
             ])
+        ->alias(OAuth2Provider::class, 'league.oauth2_server.provider.oauth2')
 
-        ->set(OAuth2EntryPoint::class)
+        ->set('league.oauth2_server.security.entrypoint.oauth2', OAuth2EntryPoint::class)
+        ->alias(OAuth2EntryPoint::class, 'league.oauth2_server.security.entrypoint.oauth2')
 
-        ->set(OAuth2Listener::class)
+        ->set('league.oauth2_server.security.firewall.oauth2_listener', OAuth2Listener::class)
             ->args([
                 service(TokenStorageInterface::class),
                 service(AuthenticationManagerInterface::class),
-                service('league.oauth2-server.psr_http_factory'),
+                service('league.oauth2_server.factory.psr_http'),
                 service(OAuth2TokenFactory::class),
                 null,
             ])
+        ->alias(OAuth2Listener::class, 'league.oauth2_server.security.firewall.oauth2_listener')
 
-        ->set(GrantConfigurator::class)
+        ->set('league.oauth2_server.authorization_server.grant_configurator', GrantConfigurator::class)
             ->args([
-                tagged_iterator('league.oauth2-server.authorization_server.grant'),
+                tagged_iterator('league.oauth2_server.authorization_server.grant'),
             ])
+        ->alias(GrantConfigurator::class, 'league.oauth2_server.authorization_server.grant_configurator')
 
         // League authorization server
-        ->set(AuthorizationServer::class)
+        ->set('league.oauth2_server.authorization_server', AuthorizationServer::class)
             ->args([
                 service(ClientRepositoryInterface::class),
                 service(AccessTokenRepositoryInterface::class),
@@ -155,150 +165,164 @@ return static function (ContainerConfigurator $container): void {
                 null,
             ])
             ->configurator(service(GrantConfigurator::class))
-        ->alias('league.oauth2-server.authorization_server', AuthorizationServer::class)
+        ->alias(AuthorizationServer::class, 'league.oauth2_server.authorization_server')
 
         // League resource server
-        ->set(ResourceServer::class)
+        ->set('league.oauth2_server.resource_server', ResourceServer::class)
             ->args([
                 service(AccessTokenRepositoryInterface::class),
                 null,
             ])
-        ->alias('league.oauth2-server.resource_server', ResourceServer::class)
+        ->alias(ResourceServer::class, 'league.oauth2_server.resource_server')
 
         // League authorization server grants
-        ->set(ClientCredentialsGrant::class)
-        ->alias('league.oauth2-server.client_credentials_grant', ClientCredentialsGrant::class)
+        ->set('league.oauth2_server.grant.client_credentials', ClientCredentialsGrant::class)
+        ->alias(ClientCredentialsGrant::class, 'league.oauth2_server.grant.client_credentials')
 
-        ->set(PasswordGrant::class)
+        ->set('league.oauth2_server.grant.password', PasswordGrant::class)
             ->args([
                 service(UserRepositoryInterface::class),
                 service(RefreshTokenRepositoryInterface::class),
             ])
-        ->alias('league.oauth2-server.password_grant', PasswordGrant::class)
+        ->alias(PasswordGrant::class, 'league.oauth2_server.grant.password')
 
-        ->set(RefreshTokenGrant::class)
+        ->set('league.oauth2_server.grant.refresh_token', RefreshTokenGrant::class)
             ->args([
                 service(RefreshTokenRepositoryInterface::class),
             ])
-        ->alias('league.oauth2-server.refresh_token_grant', RefreshTokenGrant::class)
+        ->alias(RefreshTokenGrant::class, 'league.oauth2_server.grant.refresh_token')
 
-        ->set(AuthCodeGrant::class)
+        ->set('league.oauth2_server.grant.auth_code', AuthCodeGrant::class)
             ->args([
                 service(AuthCodeRepositoryInterface::class),
                 service(RefreshTokenRepositoryInterface::class),
                 null,
             ])
-        ->alias('league.oauth2-server.auth_code_grant', AuthCodeGrant::class)
+        ->alias(AuthCodeGrant::class, 'league.oauth2_server.grant.auth_code')
 
-        ->set(ImplicitGrant::class)
+        ->set('league.oauth2_server.grant.implicit', ImplicitGrant::class)
             ->args([
                 null,
             ])
-        ->alias('league.oauth2-server.implicit_grant', ImplicitGrant::class)
+        ->alias(ImplicitGrant::class, 'league.oauth2_server.grant.implicit')
 
         // Authorization controller
-        ->set(AuthorizationController::class)
+        ->set('league.oauth2_server.controller.authorization', AuthorizationController::class)
             ->args([
                 service(AuthorizationServer::class),
                 service(EventDispatcherInterface::class),
                 service(AuthorizationRequestResolveEventFactory::class),
-                service(UserConverter::class),
+                service(UserConverterInterface::class),
                 service(ClientManagerInterface::class),
-                service('league.oauth2-server.psr_http_factory'),
-                service('league.oauth2-server.http_foundation_factory'),
-                service(Psr17Factory::class),
+                service('league.oauth2_server.factory.psr_http'),
+                service('league.oauth2_server.factory.http_foundation'),
+                service('league.oauth2_server.factory.psr17'),
             ])
             ->tag('controller.service_arguments')
+        ->alias(AuthorizationController::class, 'league.oauth2_server.controller.authorization')
 
         // Authorization listeners
-        ->set(AuthorizationRequestUserResolvingListener::class)
+        ->set('league.oauth2_server.listener.authorization_request_user_resolving', AuthorizationRequestUserResolvingListener::class)
             ->args([
                 service(Security::class),
             ])
             ->tag('kernel.event_listener', [
-                'event' => 'league.oauth2-server.authorization_request_resolve',
+                'event' => 'league.oauth2_server.authorization_request_resolve',
                 'method' => 'onAuthorizationRequest',
                 'priority' => 1024,
             ])
+        ->alias(AuthorizationRequestUserResolvingListener::class, 'league.oauth2_server.listener.authorization_request_user_resolving')
 
-        ->set(ConvertExceptionToResponseListener::class)
+        ->set('league.oauth2_server.listener.convert_exception_to_response', ConvertExceptionToResponseListener::class)
+        ->alias(ConvertExceptionToResponseListener::class, 'league.oauth2_server.listener.convert_exception_to_response')
 
         // Token controller
-        ->set(TokenController::class)
+        ->set('league.oauth2_server.controller.token', TokenController::class)
             ->args([
                 service(AuthorizationServer::class),
-                service('league.oauth2-server.psr_http_factory'),
-                service('league.oauth2-server.http_foundation_factory'),
-                service(Psr17Factory::class),
+                service('league.oauth2_server.factory.psr_http'),
+                service('league.oauth2_server.factory.http_foundation'),
+                service('league.oauth2_server.factory.psr17'),
             ])
             ->tag('controller.service_arguments')
+        ->alias(TokenController::class, 'league.oauth2_server.controller.token')
 
         // Commands
-        ->set(CreateClientCommand::class)
+        ->set('league.oauth2_server.command.create_client', CreateClientCommand::class)
             ->args([
                 service(ClientManagerInterface::class),
             ])
             ->tag('console.command')
+        ->alias(CreateClientCommand::class, 'league.oauth2_server.command.create_client')
 
-        ->set(UpdateClientCommand::class)
+        ->set('league.oauth2_server.command.update_client', UpdateClientCommand::class)
             ->args([
                 service(ClientManagerInterface::class),
             ])
             ->tag('console.command')
+        ->alias(UpdateClientCommand::class, 'league.oauth2_server.command.update_client')
 
-        ->set(DeleteClientCommand::class)
+        ->set('league.oauth2_server.command.delete_client', DeleteClientCommand::class)
             ->args([
                 service(ClientManagerInterface::class),
             ])
             ->tag('console.command')
+        ->alias(DeleteClientCommand::class, 'league.oauth2_server.command.delete_client')
 
-        ->set(ListClientsCommand::class)
+        ->set('league.oauth2_server.command.list_clients', ListClientsCommand::class)
             ->args([
                 service(ClientManagerInterface::class),
             ])
             ->tag('console.command')
+        ->alias(ListClientsCommand::class, 'league.oauth2_server.command.list_clients')
 
-        ->set(ClearExpiredTokensCommand::class)
+        ->set('league.oauth2_server.command.clear_expired_tokens', ClearExpiredTokensCommand::class)
             ->args([
                 service(AccessTokenManagerInterface::class),
                 service(RefreshTokenManagerInterface::class),
                 service(AuthorizationCodeManagerInterface::class),
             ])
             ->tag('console.command')
+        ->alias(ClearExpiredTokensCommand::class, 'league.oauth2_server.command.clear_expired_tokens')
 
         // Utility services
-        ->set(UserConverter::class)
-        ->alias(UserConverterInterface::class, UserConverter::class)
+        ->set('league.oauth2_server.converter.user', UserConverter::class)
+        ->alias(UserConverterInterface::class, 'league.oauth2_server.converter.user')
+        ->alias(UserConverter::class, 'league.oauth2_server.converter.user')
 
-        ->set(ScopeConverter::class)
-        ->alias(ScopeConverterInterface::class, ScopeConverter::class)
+        ->set('league.oauth2_server.converter.scope', ScopeConverter::class)
+        ->alias(ScopeConverterInterface::class, 'league.oauth2_server.converter.scope')
+        ->alias(ScopeConverter::class, 'league.oauth2_server.converter.scope')
 
-        ->set(AuthorizationRequestResolveEventFactory::class)
+        ->set('league.oauth2_server.factory.authorization_request_resolve_event', AuthorizationRequestResolveEventFactory::class)
             ->args([
-                service(ScopeConverter::class),
+                service(ScopeConverterInterface::class),
                 service(ClientManagerInterface::class),
             ])
+        ->alias(AuthorizationRequestResolveEventFactory::class, 'league.oauth2_server.factory.authorization_request_resolve_event')
 
-        ->set(OAuth2TokenFactory::class)
+        ->set('league.oauth2_server.factory.oauth2_token', OAuth2TokenFactory::class)
+        ->alias(OAuth2TokenFactory::class, 'league.oauth2_server.factory.oauth2_token')
 
         // Storage managers
-        ->set(ScopeManager::class)
+        ->set('league.oauth2_server.manager.in_memory.scope', ScopeManager::class)
             ->args([
                 null,
             ])
-        ->alias(ScopeManagerInterface::class, ScopeManager::class)
+        ->alias(ScopeManagerInterface::class, 'league.oauth2_server.manager.in_memory.scope')
+        ->alias(ScopeManager::class, 'league.oauth2_server.manager.in_memory.scope')
 
         // PSR-7/17
-        ->set(Psr17Factory::class)
+        ->set('league.oauth2_server.factory.psr17', Psr17Factory::class)
 
-        ->set('league.oauth2-server.psr_http_factory', PsrHttpFactory::class)
+        ->set('league.oauth2_server.factory.psr_http', PsrHttpFactory::class)
             ->args([
-                service(Psr17Factory::class),
-                service(Psr17Factory::class),
-                service(Psr17Factory::class),
-                service(Psr17Factory::class),
+                service('league.oauth2_server.factory.psr17'),
+                service('league.oauth2_server.factory.psr17'),
+                service('league.oauth2_server.factory.psr17'),
+                service('league.oauth2_server.factory.psr17'),
             ])
 
-        ->set('league.oauth2-server.http_foundation_factory', HttpFoundationFactory::class)
+        ->set('league.oauth2_server.factory.http_foundation', HttpFoundationFactory::class)
     ;
 };

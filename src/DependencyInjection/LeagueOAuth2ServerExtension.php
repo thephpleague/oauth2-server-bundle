@@ -60,10 +60,10 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $this->configureResourceServer($container, $config['resource_server']);
         $this->configureScopes($container, $config['scopes']);
 
-        $container->getDefinition(OAuth2TokenFactory::class)
+        $container->findDefinition(OAuth2TokenFactory::class)
             ->setArgument(0, $config['role_prefix']);
 
-        $container->getDefinition(ConvertExceptionToResponseListener::class)
+        $container->findDefinition(ConvertExceptionToResponseListener::class)
             ->addTag('kernel.event_listener', [
                 'event' => KernelEvents::EXCEPTION,
                 'method' => 'onKernelException',
@@ -71,7 +71,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             ]);
 
         $container->registerForAutoconfiguration(GrantTypeInterface::class)
-            ->addTag('league.oauth2-server.authorization_server.grant');
+            ->addTag('league.oauth2_server.authorization_server.grant');
     }
 
     /**
@@ -128,7 +128,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     private function configureAuthorizationServer(ContainerBuilder $container, array $config): void
     {
         $authorizationServer = $container
-            ->getDefinition(AuthorizationServer::class)
+            ->findDefinition(AuthorizationServer::class)
             ->replaceArgument(3, new Definition(CryptKey::class, [
                 $config['private_key'],
                 $config['private_key_passphrase'],
@@ -145,9 +145,9 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             $keyDefinition = (new Definition(Key::class))
                 ->setFactory([Key::class, 'loadFromAsciiSafeString'])
                 ->addArgument($config['encryption_key']);
-            $container->setDefinition('league.oauth2-server.defuse_key', $keyDefinition);
+            $container->setDefinition('league.oauth2_server.defuse_key', $keyDefinition);
 
-            $authorizationServer->replaceArgument(4, new Reference('league.oauth2-server.defuse_key'));
+            $authorizationServer->replaceArgument(4, new Reference('league.oauth2_server.defuse_key'));
         }
 
         if ($config['enable_client_credentials_grant']) {
@@ -191,20 +191,20 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     private function configureGrants(ContainerBuilder $container, array $config): void
     {
         $container
-            ->getDefinition(PasswordGrant::class)
+            ->findDefinition(PasswordGrant::class)
             ->addMethodCall('setRefreshTokenTTL', [
                 new Definition(\DateInterval::class, [$config['refresh_token_ttl']]),
             ])
         ;
 
         $container
-            ->getDefinition(RefreshTokenGrant::class)
+            ->findDefinition(RefreshTokenGrant::class)
             ->addMethodCall('setRefreshTokenTTL', [
                 new Definition(\DateInterval::class, [$config['refresh_token_ttl']]),
             ])
         ;
 
-        $authCodeGrantDefinition = $container->getDefinition(AuthCodeGrant::class);
+        $authCodeGrantDefinition = $container->findDefinition(AuthCodeGrant::class);
         $authCodeGrantDefinition->replaceArgument(2, new Definition(\DateInterval::class, [$config['auth_code_ttl']]))
             ->addMethodCall('setRefreshTokenTTL', [
                 new Definition(\DateInterval::class, [$config['refresh_token_ttl']]),
@@ -216,7 +216,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         }
 
         $container
-            ->getDefinition(ImplicitGrant::class)
+            ->findDefinition(ImplicitGrant::class)
             ->replaceArgument(0, new Definition(\DateInterval::class, [$config['access_token_ttl']]))
         ;
     }
@@ -254,43 +254,43 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         );
 
         $container
-            ->getDefinition(AccessTokenManager::class)
+            ->findDefinition(AccessTokenManager::class)
             ->replaceArgument(0, $entityManager)
         ;
 
         $container
-            ->getDefinition(ClientManager::class)
+            ->findDefinition(ClientManager::class)
             ->replaceArgument(0, $entityManager)
         ;
 
         $container
-            ->getDefinition(RefreshTokenManager::class)
+            ->findDefinition(RefreshTokenManager::class)
             ->replaceArgument(0, $entityManager)
         ;
 
         $container
-            ->getDefinition(AuthorizationCodeManager::class)
+            ->findDefinition(AuthorizationCodeManager::class)
             ->replaceArgument(0, $entityManager)
         ;
 
         $container
-            ->getDefinition(DoctrineCredentialsRevoker::class)
+            ->findDefinition(DoctrineCredentialsRevoker::class)
             ->replaceArgument(0, $entityManager)
         ;
 
-        $container->setParameter('league.oauth2-server.persistence.doctrine.enabled', true);
-        $container->setParameter('league.oauth2-server.persistence.doctrine.manager', $entityManagerName);
+        $container->setParameter('league.oauth2_server.persistence.doctrine.enabled', true);
+        $container->setParameter('league.oauth2_server.persistence.doctrine.manager', $entityManagerName);
     }
 
     private function configureInMemoryPersistence(ContainerBuilder $container): void
     {
-        $container->setParameter('league.oauth2-server.persistence.in_memory.enabled', true);
+        $container->setParameter('league.oauth2_server.persistence.in_memory.enabled', true);
     }
 
     private function configureResourceServer(ContainerBuilder $container, array $config): void
     {
         $container
-            ->getDefinition(ResourceServer::class)
+            ->findDefinition(ResourceServer::class)
             ->replaceArgument(1, new Definition(CryptKey::class, [
                 $config['public_key'],
                 null,
@@ -302,7 +302,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     private function configureScopes(ContainerBuilder $container, array $scopes): void
     {
         $scopeManager = $container
-            ->getDefinition(
+            ->findDefinition(
                 (string) $container->getAlias(ScopeManagerInterface::class)
             )
         ;

@@ -59,6 +59,12 @@
                 <file name="src/Resources/config/services.php" />
             </errorLevel>
         </MixedReturnStatement>
+        <InvalidArgument errorLevel="error">
+            <errorLevel type="suppress">
+                <file name="src/Resources/config/routes.php" />
+                <referencedFunction name="Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator::controller" />
+            </errorLevel>
+        </InvalidArgument>
     </issueHandlers>
 
     <plugins>
