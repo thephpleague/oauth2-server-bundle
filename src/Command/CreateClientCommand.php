@@ -111,7 +111,6 @@ final class CreateClientCommand extends Command
         /** @var string $identifier */
         $identifier = $input->getArgument('identifier') ?? hash('md5', random_bytes(16));
 
-        /** @var bool $isPublic */
         $isPublic = $input->getOption('public');
 
         if ($isPublic && null !== $input->getArgument('secret')) {

@@ -69,13 +69,10 @@ final class ClientManager implements ClientManagerInterface
             return true;
         }
 
-        /** @var list<string> $clientValues */
-        $clientValues = array_map('strval', $clientValues);
-        /** @var list<string> $filterValues */
-        $filterValues = array_map('strval', $filterValues);
-
-        /** @var list<string> $valuesPassed */
-        $valuesPassed = array_intersect($filterValues, $clientValues);
+        $valuesPassed = array_intersect(
+            array_map('strval', $filterValues),
+            array_map('strval', $clientValues)
+        );
 
         return \count($valuesPassed) > 0;
     }

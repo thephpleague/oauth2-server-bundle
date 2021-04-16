@@ -86,6 +86,7 @@ class Client
 
     public function setRedirectUris(RedirectUri ...$redirectUris): self
     {
+        /** @var list<RedirectUri> $redirectUris */
         $this->redirectUris = $redirectUris;
 
         return $this;
@@ -103,6 +104,7 @@ class Client
 
     public function setGrants(Grant ...$grants): self
     {
+        /** @var list<Grant> $grants */
         $this->grants = $grants;
 
         return $this;
@@ -120,6 +122,7 @@ class Client
 
     public function setScopes(Scope ...$scopes): self
     {
+        /** @var list<Scope> $scopes */
         $this->scopes = $scopes;
 
         return $this;
