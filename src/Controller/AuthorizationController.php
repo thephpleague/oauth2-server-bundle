@@ -13,7 +13,6 @@ use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -106,11 +105,8 @@ final class AuthorizationController
 
             $authRequest->setUser($this->userConverter->toLeague($event->getUser()));
 
-            if ($event->hasResponse()) {
-                /** @var ResponseInterface $response */
-                $response = $event->getResponse();
-
-                return $this->httpFoundationFactory->createResponse($response);
+            if ($response = $event->getResponse()) {
+                return $response;
             }
 
             $authRequest->setAuthorizationApproved($event->getAuthorizationResolution());

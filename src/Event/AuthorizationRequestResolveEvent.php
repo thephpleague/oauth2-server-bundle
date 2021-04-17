@@ -7,7 +7,7 @@ namespace League\Bundle\OAuth2ServerBundle\Event;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\Scope;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
-use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
@@ -37,7 +37,7 @@ final class AuthorizationRequestResolveEvent extends Event
     private $authorizationResolution = self::AUTHORIZATION_DENIED;
 
     /**
-     * @var ResponseInterface|null
+     * @var Response|null
      */
     private $response;
 
@@ -70,20 +70,15 @@ final class AuthorizationRequestResolveEvent extends Event
         return $this;
     }
 
-    public function hasResponse(): bool
-    {
-        return $this->response instanceof ResponseInterface;
-    }
-
     /**
      * @psalm-mutation-free
      */
-    public function getResponse(): ?ResponseInterface
+    public function getResponse(): ?Response
     {
         return $this->response;
     }
 
-    public function setResponse(ResponseInterface $response): self
+    public function setResponse(Response $response): self
     {
         $this->response = $response;
         $this->stopPropagation();

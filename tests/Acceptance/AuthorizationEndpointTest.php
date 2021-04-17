@@ -14,7 +14,7 @@ use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
-use Nyholm\Psr7\Response;
+use Symfony\Component\HttpFoundation\Response;
 
 final class AuthorizationEndpointTest extends AbstractAcceptanceTest
 {
@@ -303,8 +303,9 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
             ->getContainer()
             ->get('event_dispatcher')
             ->addListener(OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE, static function (AuthorizationRequestResolveEvent $event): void {
-                $response = (new Response())->withStatus(302)->withHeader('Location', '/authorize/consent');
-                $event->setResponse($response);
+                $event->setResponse(new Response(null, 302, [
+                    'Location' => '/authorize/consent',
+                ]));
             });
 
         $this->client->request(
@@ -335,8 +336,9 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
             $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
         }, 100);
         $eventDispatcher->addListener(OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE, static function (AuthorizationRequestResolveEvent $event): void {
-            $response = (new Response())->withStatus(302)->withHeader('Location', '/authorize/consent');
-            $event->setResponse($response);
+            $event->setResponse(new Response(null, 302, [
+                'Location' => '/authorize/consent',
+            ]));
         }, 200);
 
         $this->client->request(
@@ -365,8 +367,11 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
             $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
         }, 200);
         $eventDispatcher->addListener(OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE, static function (AuthorizationRequestResolveEvent $event): void {
-            $response = (new Response())->withStatus(302)->withHeader('Location', '/authorize/consent');
-            $event->setResponse($response);
+            $event->setResponse(
+                new Response(null, 302, [
+                    'Location' => '/authorize/consent',
+                ])
+            );
         }, 100);
 
         $this->client->request(
