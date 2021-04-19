@@ -25,7 +25,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
-        $em->persist($client = new Client('client', 'secret'));
+        $em->persist($client = new Client('client', 'client', 'secret'));
 
         $authCode = $this->buildAuthCode('foo', '+1 minute', $client, $userIdentifier);
         $accessToken = $this->buildAccessToken('bar', '+1 minute', $client, $userIdentifier);
@@ -54,7 +54,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
-        $em->persist($client = new Client('acme', 'secret'));
+        $em->persist($client = new Client('client', 'acme', 'secret'));
 
         $authCode = $this->buildAuthCode('foo', '+1 minute', $client, 'john');
         $accessToken = $this->buildAccessToken('bar', '+1 minute', $client);

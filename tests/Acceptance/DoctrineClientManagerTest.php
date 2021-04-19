@@ -22,7 +22,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
         $doctrineClientManager = new DoctrineClientManager($em);
 
-        $client = new Client('client', 'secret');
+        $client = new Client('client', 'client', 'secret');
         $em->persist($client);
         $em->flush();
 
@@ -41,7 +41,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
         $doctrineClientManager = new DoctrineClientManager($em);
 
-        $client = new Client('client', 'secret');
+        $client = new Client('client', 'client', 'secret');
         $em->persist($client);
         $em->flush();
 
@@ -74,7 +74,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
         $doctrineClientManager = new DoctrineClientManager($em);
 
-        $client = new Client('client', 'secret');
+        $client = new Client('client', 'client', 'secret');
         $em->persist($client);
         $em->flush();
 

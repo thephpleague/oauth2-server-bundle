@@ -38,7 +38,7 @@ final class ClientRepository implements ClientRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function validateClient($clientIdentifier, $clientSecret, $grantType)
+    public function validateClient($clientIdentifier, $clientSecret, $grantType): bool
     {
         $client = $this->clientManager->find($clientIdentifier);
 
@@ -64,6 +64,7 @@ final class ClientRepository implements ClientRepositoryInterface
     private function buildClientEntity(ClientModel $client): ClientEntity
     {
         $clientEntity = new ClientEntity();
+        $clientEntity->setName($client->getName());
         $clientEntity->setIdentifier($client->getIdentifier());
         $clientEntity->setRedirectUri(array_map('strval', $client->getRedirectUris()));
         $clientEntity->setConfidential($client->isConfidential());

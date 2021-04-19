@@ -22,7 +22,7 @@ final class DoctrineAuthCodeManagerTest extends AbstractAcceptanceTest
 
         $doctrineAuthCodeManager = new DoctrineAuthCodeManager($em);
 
-        $client = new Client('client', 'secret');
+        $client = new Client('client', 'client', 'secret');
         $em->persist($client);
 
         $testData = $this->buildClearExpiredTestData($client);

@@ -9,6 +9,11 @@ class Client
     /**
      * @var string
      */
+    private $name;
+
+    /**
+     * @var string
+     */
     private $identifier;
 
     /**
@@ -44,8 +49,9 @@ class Client
     /**
      * @psalm-mutation-free
      */
-    public function __construct(string $identifier, ?string $secret)
+    public function __construct(string $name, string $identifier, ?string $secret)
     {
+        $this->name = $name;
         $this->identifier = $identifier;
         $this->secret = $secret;
     }
@@ -56,6 +62,14 @@ class Client
     public function __toString(): string
     {
         return $this->getIdentifier();
+    }
+
+    /**
+     * @psalm-mutation-free
+     */
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     /**

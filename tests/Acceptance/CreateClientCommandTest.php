@@ -16,6 +16,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
+            'name' => 'My Awesome OAuth Client',
         ]);
 
         $output = $commandTester->getDisplay();
@@ -28,6 +29,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
+            'name' => 'My Awesome OAuth Client',
             'identifier' => 'foobar',
         ]);
 
@@ -41,6 +43,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
             ->get(ClientManagerInterface::class)
             ->find('foobar');
         $this->assertInstanceOf(Client::class, $client);
+        $this->assertSame('My Awesome OAuth Client', $client->getName());
         $this->assertTrue($client->isConfidential());
         $this->assertNotEmpty($client->getSecret());
         $this->assertFalse($client->isPlainTextPkceAllowed());
@@ -53,6 +56,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
+            'name' => 'My Awesome OAuth Client',
             'identifier' => $clientIdentifier,
             '--public' => true,
         ]);
@@ -81,6 +85,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
+            'name' => 'My Awesome OAuth Client',
             'identifier' => $clientIdentifier,
             'secret' => 'foo',
             '--public' => true,
@@ -105,6 +110,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
+            'name' => 'My Awesome OAuth Client',
             'identifier' => 'foobar',
             'secret' => 'quzbaz',
         ]);
@@ -129,6 +135,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
+            'name' => 'My Awesome OAuth Client',
             'identifier' => 'foobar-123',
             '--allow-plain-text-pkce' => true,
         ]);
@@ -151,6 +158,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
+            'name' => 'My Awesome OAuth Client',
             'identifier' => 'foobar',
             '--redirect-uri' => ['http://example.org', 'http://example.org'],
         ]);
@@ -171,6 +179,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
+            'name' => 'My Awesome OAuth Client',
             'identifier' => 'foobar',
             '--grant-type' => ['password', 'client_credentials'],
         ]);
@@ -191,6 +200,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
+            'name' => 'My Awesome OAuth Client',
             'identifier' => 'foobar',
             '--scope' => ['foo', 'bar'],
         ]);

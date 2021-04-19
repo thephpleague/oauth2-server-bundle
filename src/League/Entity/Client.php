@@ -18,12 +18,9 @@ final class Client implements ClientEntityInterface
      */
     private $allowPlainTextPkce = false;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName(): string
+    public function setName(string $name): void
     {
-        return (string) $this->getIdentifier();
+        $this->name = $name;
     }
 
     /**
