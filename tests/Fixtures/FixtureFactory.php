@@ -256,26 +256,26 @@ final class FixtureFactory
     {
         $clients = [];
 
-        $clients[] = (new Client(self::FIXTURE_CLIENT_FIRST, 'secret'))
+        $clients[] = (new Client('name', self::FIXTURE_CLIENT_FIRST, 'secret'))
             ->setRedirectUris(new RedirectUri(self::FIXTURE_CLIENT_FIRST_REDIRECT_URI));
 
-        $clients[] = (new Client(self::FIXTURE_CLIENT_SECOND, 'top_secret'))
+        $clients[] = (new Client('name', self::FIXTURE_CLIENT_SECOND, 'top_secret'))
             ->setRedirectUris(new RedirectUri(self::FIXTURE_CLIENT_SECOND_REDIRECT_URI));
 
-        $clients[] = (new Client(self::FIXTURE_CLIENT_INACTIVE, 'woah'))
+        $clients[] = (new Client('name', self::FIXTURE_CLIENT_INACTIVE, 'woah'))
             ->setActive(false);
 
-        $clients[] = (new Client(self::FIXTURE_CLIENT_RESTRICTED_GRANTS, 'wicked'))
+        $clients[] = (new Client('name', self::FIXTURE_CLIENT_RESTRICTED_GRANTS, 'wicked'))
             ->setGrants(new Grant('password'));
 
-        $clients[] = (new Client(self::FIXTURE_CLIENT_RESTRICTED_SCOPES, 'beer'))
+        $clients[] = (new Client('name', self::FIXTURE_CLIENT_RESTRICTED_SCOPES, 'beer'))
             ->setRedirectUris(new RedirectUri(self::FIXTURE_CLIENT_FIRST_REDIRECT_URI))
             ->setScopes(new Scope(self::FIXTURE_SCOPE_SECOND));
 
-        $clients[] = (new Client(self::FIXTURE_PUBLIC_CLIENT, null))
+        $clients[] = (new Client('name', self::FIXTURE_PUBLIC_CLIENT, null))
             ->setRedirectUris(new RedirectUri(self::FIXTURE_PUBLIC_CLIENT_REDIRECT_URI));
 
-        $clients[] = (new Client(self::FIXTURE_PUBLIC_CLIENT_ALLOWED_TO_USE_PLAIN_CHALLENGE_METHOD, null))
+        $clients[] = (new Client('name', self::FIXTURE_PUBLIC_CLIENT_ALLOWED_TO_USE_PLAIN_CHALLENGE_METHOD, null))
             ->setAllowPlainTextPkce(true)
             ->setRedirectUris(new RedirectUri(self::FIXTURE_PUBLIC_CLIENT_ALLOWED_TO_USE_PLAIN_CHALLENGE_METHOD_REDIRECT_URI));
 

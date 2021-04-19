@@ -14,7 +14,7 @@ final class ClientEntityTest extends TestCase
      */
     public function testClientConfidentiality(?string $secret, bool $isConfidential): void
     {
-        $client = new Client('foo', $secret);
+        $client = new Client('name', 'identifier', $secret);
 
         $this->assertSame($isConfidential, $client->isConfidential());
     }

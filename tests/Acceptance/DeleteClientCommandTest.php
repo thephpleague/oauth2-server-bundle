@@ -16,7 +16,7 @@ final class DeleteClientCommandTest extends AbstractAcceptanceTest
 {
     public function testDeleteClient(): void
     {
-        $client = $this->fakeAClient('foobar');
+        $client = $this->fakeAClient('foo', 'foobar');
         $this->getClientManager()->save($client);
 
         $command = $this->command();
@@ -54,9 +54,9 @@ final class DeleteClientCommandTest extends AbstractAcceptanceTest
             ;
     }
 
-    private function fakeAClient(string $identifier): Client
+    private function fakeAClient(string $name, string $identifier): Client
     {
-        return new Client($identifier, 'quzbaz');
+        return new Client($name, $identifier, 'quzbaz');
     }
 
     private function getClientManager(): ClientManagerInterface

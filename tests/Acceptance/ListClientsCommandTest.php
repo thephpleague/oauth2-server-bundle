@@ -15,7 +15,7 @@ final class ListClientsCommandTest extends AbstractAcceptanceTest
 {
     public function testListClients(): void
     {
-        $client = $this->fakeAClient('foobar');
+        $client = $this->fakeAClient('client', 'foobar');
         $this->getClientManager()->save($client);
 
         $command = $this->command();
@@ -30,7 +30,7 @@ final class ListClientsCommandTest extends AbstractAcceptanceTest
 
     public function testListClientsWithClientHavingNoSecret(): void
     {
-        $client = $this->fakeAClient('foobar', null);
+        $client = $this->fakeAClient('client', 'foobar', null);
         $this->getClientManager()->save($client);
 
         $command = $this->command();
@@ -70,7 +70,7 @@ final class ListClientsCommandTest extends AbstractAcceptanceTest
 
         $client =
             $this
-                ->fakeAClient('foobar')
+                ->fakeAClient('client', 'foobar')
                 ->setScopes(...$scopes)
                 ->setRedirectUris(...$redirectUris)
         ;
@@ -91,12 +91,12 @@ final class ListClientsCommandTest extends AbstractAcceptanceTest
 
     public function testListFiltersClients(): void
     {
-        $clientA = $this->fakeAClient('client-a', 'client-a-secret');
+        $clientA = $this->fakeAClient('client', 'client-a', 'client-a-secret');
         $this->getClientManager()->save($clientA);
 
         $clientB =
             $this
-                ->fakeAClient('client-b', 'client-b-secret')
+                ->fakeAClient('client', 'client-b', 'client-b-secret')
                 ->setScopes(new Scope('client-b-scope'))
         ;
         $this->getClientManager()->save($clientB);
@@ -114,9 +114,9 @@ final class ListClientsCommandTest extends AbstractAcceptanceTest
         $this->assertEquals(trim($expected), trim($output));
     }
 
-    private function fakeAClient($identifier, $secret = 'quzbaz'): Client
+    private function fakeAClient(string $name, string $identifier, ?string $secret = 'quzbaz'): Client
     {
-        return new Client($identifier, $secret);
+        return new Client($name, $identifier, $secret);
     }
 
     private function getClientManager(): ClientManagerInterface

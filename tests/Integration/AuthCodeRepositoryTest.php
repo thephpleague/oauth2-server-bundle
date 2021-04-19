@@ -18,7 +18,7 @@ final class AuthCodeRepositoryTest extends AbstractIntegrationTest
         $authCode = new AuthorizationCode(
             $identifier,
             new \DateTimeImmutable(),
-            new Client('bar', 'baz'),
+            new Client('bar', 'baz', 'qux'),
             null,
             []
         );

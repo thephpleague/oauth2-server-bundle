@@ -57,7 +57,7 @@ final class InMemoryAccessTokenManagerTest extends TestCase
         return new AccessToken(
             $identifier,
             new \DateTimeImmutable($modify),
-            new Client('client', 'secret'),
+            new Client('name', 'identifier', 'secret'),
             null,
             []
         );

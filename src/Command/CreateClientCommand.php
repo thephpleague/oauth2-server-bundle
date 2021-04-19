@@ -58,6 +58,11 @@ final class CreateClientCommand extends Command
                 []
             )
             ->addArgument(
+                'name',
+                InputArgument::REQUIRED,
+                'The client name'
+            )
+            ->addArgument(
                 'identifier',
                 InputArgument::OPTIONAL,
                 'The client identifier'
@@ -108,6 +113,7 @@ final class CreateClientCommand extends Command
 
     private function buildClientFromInput(InputInterface $input): Client
     {
+        $name = $input->getArgument('name');
         /** @var string $identifier */
         $identifier = $input->getArgument('identifier') ?? hash('md5', random_bytes(16));
 
@@ -120,7 +126,7 @@ final class CreateClientCommand extends Command
         /** @var string $secret */
         $secret = $isPublic ? null : $input->getArgument('secret') ?? hash('sha512', random_bytes(32));
 
-        $client = new Client($identifier, $secret);
+        $client = new Client($name, $identifier, $secret);
         $client->setActive(true);
         $client->setAllowPlainTextPkce($input->getOption('allow-plain-text-pkce'));
 

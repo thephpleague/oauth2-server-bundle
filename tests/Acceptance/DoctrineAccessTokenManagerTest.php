@@ -23,7 +23,7 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
 
         $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em);
 
-        $client = new Client('client', 'secret');
+        $client = new Client('client', 'client', 'secret');
         $em->persist($client);
         $em->flush();
 
@@ -80,7 +80,7 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
         $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em);
 
-        $client = new Client('client', 'secret');
+        $client = new Client('client', 'client', 'secret');
         $em->persist($client);
         $em->flush();
 
