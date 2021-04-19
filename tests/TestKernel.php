@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests;
 
+use Doctrine\DBAL\Platforms\SqlitePlatform;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
@@ -12,7 +13,6 @@ use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController;
-use League\Bundle\OAuth2ServerBundle\Tests\Support\SqlitePlatform;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
