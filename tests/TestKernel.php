@@ -91,8 +91,8 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                 'secret' => 'nope',
                 'test' => null,
                 'router' => [
-                    'resource' => __DIR__ . '/Fixtures/routes.yaml',
-                    'type' => 'yaml',
+                    'resource' => __DIR__ . '/Fixtures/routes.php',
+                    'type' => 'php',
                     'utf8' => true,
                 ],
             ]);
