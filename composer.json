@@ -32,7 +32,6 @@
         "psalm/plugin-symfony": "^2.2",
         "symfony/browser-kit": "^4.4|^5.0",
         "symfony/phpunit-bridge": "^5.2",
-        "symfony/yaml": "^4.4|^5.0",
         "vimeo/psalm": "^4.6"
     },
     "autoload": {
