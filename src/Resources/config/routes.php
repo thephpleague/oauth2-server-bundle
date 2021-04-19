@@ -10,7 +10,6 @@ return function (RoutingConfigurator $routes) {
     $routes
         ->add('oauth2_authorize', '/authorize')
         ->controller([AuthorizationController::class, 'indexAction'])
-        ->methods(['GET'])
 
         ->add('oauth2_token', '/token')
         ->controller([TokenController::class, 'indexAction'])
