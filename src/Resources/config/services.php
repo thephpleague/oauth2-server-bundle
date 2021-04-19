@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
 use League\Bundle\OAuth2ServerBundle\Command\ClearExpiredTokensCommand;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
@@ -126,6 +128,8 @@ return static function (ContainerConfigurator $container): void {
                 service(UserProviderInterface::class),
                 service(ResourceServer::class),
                 service(OAuth2TokenFactory::class),
+                service(RequestStack::class),
+                service('league.oauth2-server.psr_http_factory'),
                 null,
             ])
 

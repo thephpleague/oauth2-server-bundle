@@ -24,7 +24,7 @@ final class OAuth2Factory implements SecurityFactoryInterface
         $container
             ->setDefinition($providerId, new ChildDefinition(OAuth2Provider::class))
             ->replaceArgument(0, new Reference($userProvider))
-            ->replaceArgument(3, $id);
+            ->replaceArgument(5, $id);
 
         $listenerId = 'security.authentication.listener.oauth2.' . $id;
         $container

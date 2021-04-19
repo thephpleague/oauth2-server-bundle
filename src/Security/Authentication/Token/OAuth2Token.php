@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Security\Authentication\Token;
 
-use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -16,13 +15,19 @@ final class OAuth2Token extends AbstractToken
     private $providerKey;
 
     public function __construct(
-        ServerRequestInterface $serverRequest,
         ?UserInterface $user,
+        array $scopes,
+        string $clientId,
+        string $accessTokenId,
         string $rolePrefix,
         string $providerKey
     ) {
-        $this->setAttribute('server_request', $serverRequest);
         $this->setAttribute('role_prefix', $rolePrefix);
+
+        $this->setAttribute('oauth_user_id', $user ? $user->getUsername() : null);
+        $this->setAttribute('oauth_scopes', $scopes);
+        $this->setAttribute('oauth_client_id', $clientId);
+        $this->setAttribute('oauth_access_token_id', $accessTokenId);
 
         $roles = $this->buildRolesFromScopes();
 
@@ -38,10 +43,17 @@ final class OAuth2Token extends AbstractToken
         $this->providerKey = $providerKey;
     }
 
-    public function getServerRequest(): ServerRequestInterface
+    /**
+     * @return list<string>
+     */
+    public function getScopes(): array
     {
-        /** @var ServerRequestInterface */
-        return $this->getAttribute('server_request');
+        return $this->getAttribute('oauth_scopes');
+    }
+
+    public function getClientIdentifier(): string
+    {
+        return $this->getAttribute('oauth_client_id');
     }
 
     /**
@@ -49,7 +61,7 @@ final class OAuth2Token extends AbstractToken
      */
     public function getCredentials()
     {
-        return $this->getServerRequest()->getAttribute('oauth_access_token_id');
+        return $this->getAttribute('oauth_access_token_id');
     }
 
     public function getProviderKey(): string
@@ -78,8 +90,8 @@ final class OAuth2Token extends AbstractToken
         $prefix = $this->getAttribute('role_prefix');
         $roles = [];
 
-        /** @var string[] $scopes */
-        $scopes = $this->getServerRequest()->getAttribute('oauth_scopes', []);
+        /** @var list<string> $scopes */
+        $scopes = $this->getAttribute('oauth_scopes');
         foreach ($scopes as $scope) {
             $roles[] = strtoupper(trim($prefix . $scope));
         }

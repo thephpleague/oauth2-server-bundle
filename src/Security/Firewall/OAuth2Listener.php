@@ -58,20 +58,24 @@ final class OAuth2Listener
 
     public function __invoke(RequestEvent $event)
     {
-        $request = $this->httpMessageFactory->createRequest($event->getRequest());
-
-        if (!$request->hasHeader('Authorization')) {
+        $request = $event->getRequest();
+        if (!$request->headers->has('Authorization')) {
             return;
         }
 
+        $psrRequest = $this->httpMessageFactory->createRequest($request);
+
         try {
             /** @var OAuth2Token $authenticatedToken */
-            $authenticatedToken = $this->authenticationManager->authenticate($this->oauth2TokenFactory->createOAuth2Token($request, null, $this->providerKey));
+            $authenticatedToken = $this->authenticationManager->authenticate(
+                $this->oauth2TokenFactory->createOAuth2Token(null, [], '', '', $this->providerKey),
+                $request
+            );
         } catch (AuthenticationException $e) {
             throw Oauth2AuthenticationFailedException::create($e->getMessage());
         }
 
-        if (!$this->isAccessToRouteGranted($event->getRequest(), $authenticatedToken)) {
+        if (!$this->isAccessToRouteGranted($request, $authenticatedToken)) {
             throw InsufficientScopesException::create($authenticatedToken);
         }
 
@@ -87,8 +91,7 @@ final class OAuth2Listener
             return true;
         }
 
-        /** @var string[] $tokenScopes */
-        $tokenScopes = $token->getServerRequest()->getAttribute('oauth_scopes');
+        $tokenScopes = $token->getScopes();
 
         /*
          * If the end result is empty that means that all route

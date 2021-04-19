@@ -8,6 +8,9 @@ use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
+use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -35,41 +38,55 @@ final class OAuth2Provider implements AuthenticationProviderInterface
      * @var string
      */
     private $providerKey;
+    private $requestStack;
+    private $httpMessageFactory;
 
     public function __construct(
         UserProviderInterface $userProvider,
         ResourceServer $resourceServer,
         OAuth2TokenFactory $oauth2TokenFactory,
+        RequestStack $requestStack,
+        HttpMessageFactoryInterface $httpMessageFactory,
         string $providerKey
     ) {
         $this->userProvider = $userProvider;
         $this->resourceServer = $resourceServer;
         $this->oauth2TokenFactory = $oauth2TokenFactory;
         $this->providerKey = $providerKey;
+        $this->requestStack = $requestStack;
+        $this->httpMessageFactory = $httpMessageFactory;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function authenticate(TokenInterface $token)
+    public function authenticate(TokenInterface $token, Request $request = null)
     {
         if (!$this->supports($token)) {
             throw new \RuntimeException(sprintf('This authentication provider can only handle tokes of type \'%s\'.', OAuth2Token::class));
         }
 
+        if (null === $request) {
+            $request = $this->requestStack->getCurrentRequest();
+        }
+
+        $psrRequest = $this->httpMessageFactory->createRequest($request);
+
         try {
-            $request = $this->resourceServer->validateAuthenticatedRequest(
-                $token->getServerRequest()
-            );
+            $psrRequest = $this->resourceServer->validateAuthenticatedRequest($psrRequest);
         } catch (OAuthServerException $e) {
             throw new AuthenticationException('The resource server rejected the request.', 0, $e);
         }
 
-        $user = $this->getAuthenticatedUser(
-            (string) $request->getAttribute('oauth_user_id')
-        );
+        /** @var list<string> $scopes */
+        $scopes = (string) $psrRequest->getAttribute('oauth_scopes');
+        $userId = (string) $psrRequest->getAttribute('oauth_user_id');
+        $clientId = (string) $psrRequest->getAttribute('oauth_client_id');
+        $accessTokenId = (string) $psrRequest->getAttribute('oauth_access_token_id');
 
-        $token = $this->oauth2TokenFactory->createOAuth2Token($request, $user, $this->providerKey);
+        $user = $this->getAuthenticatedUser($userId);
+
+        $token = $this->oauth2TokenFactory->createOAuth2Token($user, $scopes, $clientId, $accessTokenId, $this->providerKey);
         $token->setAuthenticated(true);
 
         return $token;
