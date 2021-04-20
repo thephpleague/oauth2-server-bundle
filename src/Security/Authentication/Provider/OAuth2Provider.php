@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Security\Authentication\Provider;
 
-use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
-use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory;
+use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\LegacyOAuth2Token;
+use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\LegacyOAuth2TokenFactory;
+use League\Bundle\OAuth2ServerBundle\Security\User\NullUser;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
@@ -27,7 +28,7 @@ final class OAuth2Provider implements AuthenticationProviderInterface
     private $resourceServer;
 
     /**
-     * @var OAuth2TokenFactory
+     * @var LegacyOAuth2TokenFactory
      */
     private $oauth2TokenFactory;
 
@@ -39,7 +40,7 @@ final class OAuth2Provider implements AuthenticationProviderInterface
     public function __construct(
         UserProviderInterface $userProvider,
         ResourceServer $resourceServer,
-        OAuth2TokenFactory $oauth2TokenFactory,
+        LegacyOAuth2TokenFactory $oauth2TokenFactory,
         string $providerKey
     ) {
         $this->userProvider = $userProvider;
@@ -54,7 +55,7 @@ final class OAuth2Provider implements AuthenticationProviderInterface
     public function authenticate(TokenInterface $token)
     {
         if (!$this->supports($token)) {
-            throw new \RuntimeException(sprintf('This authentication provider can only handle tokes of type \'%s\'.', OAuth2Token::class));
+            throw new \RuntimeException(sprintf('This authentication provider can only handle tokens of type \'%s\'.', LegacyOAuth2Token::class));
         }
 
         try {
@@ -78,21 +79,21 @@ final class OAuth2Provider implements AuthenticationProviderInterface
     /**
      * {@inheritdoc}
      *
-     * @psalm-assert-if-true OAuth2Token $token
+     * @psalm-assert-if-true LegacyOAuth2Token $token
      */
     public function supports(TokenInterface $token)
     {
-        return $token instanceof OAuth2Token && $this->providerKey === $token->getProviderKey();
+        return $token instanceof LegacyOAuth2Token && $this->providerKey === $token->getProviderKey();
     }
 
-    private function getAuthenticatedUser(string $userIdentifier): ?UserInterface
+    private function getAuthenticatedUser(string $userIdentifier): UserInterface
     {
         if ('' === $userIdentifier) {
             /*
              * If the identifier is an empty string, that means that the
              * access token isn't bound to a user defined in the system.
              */
-            return null;
+            return new NullUser();
         }
 
         return $this->userProvider->loadUserByUsername($userIdentifier);

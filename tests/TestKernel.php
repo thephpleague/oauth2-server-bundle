@@ -17,9 +17,12 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 
-final class TestKernel extends Kernel implements CompilerPassInterface
+class TestKernel extends Kernel implements CompilerPassInterface
 {
+    protected $useLegacySecuritySystem = false;
+
     /**
      * {@inheritdoc}
      */
@@ -104,7 +107,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                     ->addTag('routing.route_loader');
             }
 
-            $container->loadFromExtension('security', [
+            $securityConfig = [
                 'firewalls' => [
                     'test' => [
                         'pattern' => '^/security-test',
@@ -123,7 +126,13 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                         ],
                     ],
                 ],
-            ]);
+            ];
+
+            if (interface_exists(AuthenticatorInterface::class)) {
+                $securityConfig['enable_authenticator_manager'] = !$this->useLegacySecuritySystem;
+            }
+
+            $container->loadFromExtension('security', $securityConfig);
 
             $container->loadFromExtension('league_oauth2_server', [
                 'authorization_server' => [

@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Security\Firewall;
 
-use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
-use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory;
+use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\LegacyOAuth2Token;
+use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\LegacyOAuth2TokenFactory;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\InsufficientScopesException;
-use League\Bundle\OAuth2ServerBundle\Security\Exception\Oauth2AuthenticationFailedException;
+use League\Bundle\OAuth2ServerBundle\Security\Exception\OAuth2AuthenticationFailedException;
+use League\Bundle\OAuth2ServerBundle\Security\User\NullUser;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -33,7 +34,7 @@ final class OAuth2Listener
     private $httpMessageFactory;
 
     /**
-     * @var OAuth2TokenFactory
+     * @var LegacyOAuth2TokenFactory
      */
     private $oauth2TokenFactory;
 
@@ -46,7 +47,7 @@ final class OAuth2Listener
         TokenStorageInterface $tokenStorage,
         AuthenticationManagerInterface $authenticationManager,
         HttpMessageFactoryInterface $httpMessageFactory,
-        OAuth2TokenFactory $oauth2TokenFactory,
+        LegacyOAuth2TokenFactory $oauth2TokenFactory,
         string $providerKey
     ) {
         $this->tokenStorage = $tokenStorage;
@@ -65,10 +66,10 @@ final class OAuth2Listener
         }
 
         try {
-            /** @var OAuth2Token $authenticatedToken */
-            $authenticatedToken = $this->authenticationManager->authenticate($this->oauth2TokenFactory->createOAuth2Token($request, null, $this->providerKey));
+            /** @var LegacyOAuth2Token $authenticatedToken */
+            $authenticatedToken = $this->authenticationManager->authenticate($this->oauth2TokenFactory->createOAuth2Token($request, new NullUser(), $this->providerKey));
         } catch (AuthenticationException $e) {
-            throw Oauth2AuthenticationFailedException::create($e->getMessage());
+            throw OAuth2AuthenticationFailedException::create($e->getMessage(), $e);
         }
 
         if (!$this->isAccessToRouteGranted($event->getRequest(), $authenticatedToken)) {
@@ -78,7 +79,7 @@ final class OAuth2Listener
         $this->tokenStorage->setToken($authenticatedToken);
     }
 
-    private function isAccessToRouteGranted(Request $request, OAuth2Token $token): bool
+    private function isAccessToRouteGranted(Request $request, LegacyOAuth2Token $token): bool
     {
         /** @var string[] $routeScopes */
         $routeScopes = $request->attributes->get('oauth2_scopes', []);

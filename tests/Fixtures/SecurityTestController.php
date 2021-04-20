@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Fixtures;
 
+use League\Bundle\OAuth2ServerBundle\Security\User\NullUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -27,7 +28,7 @@ final class SecurityTestController extends AbstractController
         $user = $this->getUser();
 
         return new Response(
-            sprintf('Hello, %s', (null !== $user) ? $user->getUsername() : 'guest')
+            sprintf('Hello, %s', $user instanceof NullUser ? 'guest' : $user->getUsername())
         );
     }
 

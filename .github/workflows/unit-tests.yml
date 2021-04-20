@@ -12,6 +12,7 @@ jobs:
             matrix:
                 symfony-version:
                     - "4.4.*"
+                    - "5.1.*"
                     - "5.2.*"
                 php-version:
                     - "7.2"

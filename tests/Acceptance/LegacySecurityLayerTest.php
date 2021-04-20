@@ -10,17 +10,21 @@ use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
+use League\Bundle\OAuth2ServerBundle\Tests\LegacyTestKernel;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
-use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 
-final class SecurityLayerTest extends AbstractAcceptanceTest
+/**
+ * @group legacy
+ */
+final class LegacySecurityLayerTest extends AbstractAcceptanceTest
 {
+    protected static function getKernelClass()
+    {
+        return LegacyTestKernel::class;
+    }
+
     protected function setUp(): void
     {
-        if (!interface_exists(AuthenticatorInterface::class)) {
-            $this->markTestSkipped('Authenticator security system is not available.');
-        }
-
         parent::setUp();
 
         FixtureFactory::initializeFixtures(

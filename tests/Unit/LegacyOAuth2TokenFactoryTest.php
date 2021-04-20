@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
-use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
-use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory;
+use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\LegacyOAuth2Token;
+use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\LegacyOAuth2TokenFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\User;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class OAuth2TokenFactoryTest extends TestCase
+final class LegacyOAuth2TokenFactoryTest extends TestCase
 {
     public function testCreatingToken(): void
     {
         $rolePrefix = 'ROLE_OAUTH2_';
-        $factory = new OAuth2TokenFactory($rolePrefix);
+        $factory = new LegacyOAuth2TokenFactory($rolePrefix);
 
         $scopes = [FixtureFactory::FIXTURE_SCOPE_FIRST];
         $serverRequest = $this->createMock(ServerRequestInterface::class);
@@ -30,7 +30,7 @@ final class OAuth2TokenFactoryTest extends TestCase
 
         $token = $factory->createOAuth2Token($serverRequest, $user, $providerKey);
 
-        $this->assertInstanceOf(OAuth2Token::class, $token);
+        $this->assertInstanceOf(LegacyOAuth2Token::class, $token);
 
         $roles = $token->getRoleNames();
         $this->assertCount(1, $roles);

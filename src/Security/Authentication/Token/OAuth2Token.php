@@ -4,86 +4,51 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Security\Authentication\Token;
 
-use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * @author Mathias Arlaud <mathias.arlaud@gmail.com>
+ */
 final class OAuth2Token extends AbstractToken
 {
-    /**
-     * @var string
-     */
-    private $providerKey;
-
     public function __construct(
-        ServerRequestInterface $serverRequest,
         ?UserInterface $user,
-        string $rolePrefix,
-        string $providerKey
+        string $accessTokenId,
+        array $scopes,
+        string $rolePrefix
     ) {
-        $this->setAttribute('server_request', $serverRequest);
-        $this->setAttribute('role_prefix', $rolePrefix);
+        $this->setAttribute('access_token_id', $accessTokenId);
+        $this->setAttribute('scopes', $scopes);
 
-        $roles = $this->buildRolesFromScopes();
+        // Build roles from scope
+        $roles = array_map(function (string $scope) use ($rolePrefix): string {
+            return strtoupper(trim(sprintf('%s%s', $rolePrefix, $scope)));
+        }, $scopes);
 
         if (null !== $user) {
             // Merge the user's roles with the OAuth 2.0 scopes.
             $roles = array_merge($roles, $user->getRoles());
-
             $this->setUser($user);
         }
 
         parent::__construct(array_unique($roles));
-
-        $this->providerKey = $providerKey;
-    }
-
-    public function getServerRequest(): ServerRequestInterface
-    {
-        /** @var ServerRequestInterface */
-        return $this->getAttribute('server_request');
     }
 
     /**
-     * {@inheritdoc}
+     * @return list<string>
      */
-    public function getCredentials()
+    public function getScopes(): array
     {
-        return $this->getServerRequest()->getAttribute('oauth_access_token_id');
+        /** @var list<string> $scopes */
+        $scopes = $this->getAttribute('scopes');
+
+        return $scopes;
     }
 
-    public function getProviderKey(): string
+    public function getCredentials(): string
     {
-        return $this->providerKey;
-    }
-
-    public function __serialize(): array
-    {
-        return [$this->providerKey, parent::__serialize()];
-    }
-
-    public function __unserialize(array $data): void
-    {
-        /** @var mixed[] $parentData */
-        [$this->providerKey, $parentData] = $data;
-        parent::__unserialize($parentData);
-    }
-
-    /**
-     * @return string[]
-     */
-    private function buildRolesFromScopes(): array
-    {
-        /** @var string $prefix */
-        $prefix = $this->getAttribute('role_prefix');
-        $roles = [];
-
-        /** @var string[] $scopes */
-        $scopes = $this->getServerRequest()->getAttribute('oauth_scopes', []);
-        foreach ($scopes as $scope) {
-            $roles[] = strtoupper(trim($prefix . $scope));
-        }
-
-        return $roles;
+        /** @var string */
+        return $this->getAttribute('access_token_id');
     }
 }

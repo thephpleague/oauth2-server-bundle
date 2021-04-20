@@ -17,7 +17,8 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Scope as ScopeModel;
-use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory;
+use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\LegacyOAuth2TokenFactory;
+use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
@@ -60,8 +61,11 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $this->configureResourceServer($container, $config['resource_server']);
         $this->configureScopes($container, $config['scopes']);
 
-        $container->findDefinition(OAuth2TokenFactory::class)
+        $container->findDefinition(LegacyOAuth2TokenFactory::class)
             ->setArgument(0, $config['role_prefix']);
+
+        $container->findDefinition(OAuth2Authenticator::class)
+            ->setArgument(3, $config['role_prefix']);
 
         $container->findDefinition(ConvertExceptionToResponseListener::class)
             ->addTag('kernel.event_listener', [

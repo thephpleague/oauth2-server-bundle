@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\EventListener;
 
-use League\Bundle\OAuth2ServerBundle\Security\Exception\InsufficientScopesException;
-use League\Bundle\OAuth2ServerBundle\Security\Exception\Oauth2AuthenticationFailedException;
+use League\Bundle\OAuth2ServerBundle\Security\Exception\OAuth2AuthenticationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 
@@ -17,8 +16,8 @@ final class ConvertExceptionToResponseListener
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
-        if ($exception instanceof InsufficientScopesException || $exception instanceof Oauth2AuthenticationFailedException) {
-            $event->setResponse(new Response($exception->getMessage(), (int) $exception->getCode()));
+        if ($exception instanceof OAuth2AuthenticationException) {
+            $event->setResponse(new Response($exception->getMessage(), $exception->getStatusCode(), ['WWW-Authenticate' => 'Bearer']));
         }
     }
 }

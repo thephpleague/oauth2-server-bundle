@@ -32,8 +32,10 @@ use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Provider\OAuth2Provider;
-use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory;
+use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\LegacyOAuth2TokenFactory;
+use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Security\EntryPoint\OAuth2EntryPoint;
+use League\Bundle\OAuth2ServerBundle\Security\EventListener\CheckScopesListener;
 use League\Bundle\OAuth2ServerBundle\Security\Firewall\OAuth2Listener;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
@@ -128,11 +130,24 @@ return static function (ContainerConfigurator $container): void {
         ->alias(AuthCodeRepository::class, 'league.oauth2_server.repository.auth_code')
 
         // Security layer
+        ->set('league.oauth2_server.authenticator.oauth2', OAuth2Authenticator::class)
+            ->args([
+                service('league.oauth2-server.psr_http_factory'),
+                service(ResourceServer::class),
+                service(UserProviderInterface::class),
+                null,
+            ])
+        ->alias(OAuth2Authenticator::class, 'league.oauth2_server.authenticator.oauth2')
+
+        ->set('league.oauth2_server.listener.check_scopes', CheckScopesListener::class)
+            ->tag('kernel.event_subscriber')
+        ->alias(CheckScopesListener::class, 'league.oauth2_server.listener.check_scopes')
+
         ->set('league.oauth2_server.provider.oauth2', OAuth2Provider::class)
             ->args([
                 service(UserProviderInterface::class),
                 service(ResourceServer::class),
-                service(OAuth2TokenFactory::class),
+                service(LegacyOAuth2TokenFactory::class),
                 null,
             ])
         ->alias(OAuth2Provider::class, 'league.oauth2_server.provider.oauth2')
@@ -145,7 +160,7 @@ return static function (ContainerConfigurator $container): void {
                 service(TokenStorageInterface::class),
                 service(AuthenticationManagerInterface::class),
                 service('league.oauth2_server.factory.psr_http'),
-                service(OAuth2TokenFactory::class),
+                service(LegacyOAuth2TokenFactory::class),
                 null,
             ])
         ->alias(OAuth2Listener::class, 'league.oauth2_server.security.firewall.oauth2_listener')
@@ -302,8 +317,8 @@ return static function (ContainerConfigurator $container): void {
             ])
         ->alias(AuthorizationRequestResolveEventFactory::class, 'league.oauth2_server.factory.authorization_request_resolve_event')
 
-        ->set('league.oauth2_server.factory.oauth2_token', OAuth2TokenFactory::class)
-        ->alias(OAuth2TokenFactory::class, 'league.oauth2_server.factory.oauth2_token')
+        ->set('league.oauth2_server.factory.legacy_oauth2_token', OAuth2TokenFactory::class)
+        ->alias(LegacyOAuth2TokenFactory::class, 'league.oauth2_server.factory.legacy_oauth2_token')
 
         // Storage managers
         ->set('league.oauth2_server.manager.in_memory.scope', ScopeManager::class)

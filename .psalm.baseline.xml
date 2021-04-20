@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="4.7.0@d4377c0baf3ffbf0b1ec6998e8d1be2a40971005">
+  <file src="src/Resources/config/services.php">
+    <ImplicitToStringCast occurrences="1">
+      <code>service(GrantConfigurator::class)</code>
+    </ImplicitToStringCast>
+    <MixedInferredReturnType occurrences="1">
+      <code>ReferenceConfigurator</code>
+    </MixedInferredReturnType>
+    <MixedReturnStatement occurrences="1">
+      <code>($fn)($id)</code>
+    </MixedReturnStatement>
+  </file>
+  <file src="src/Security/Authenticator/OAuth2Authenticator.php">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$this-&gt;getUserBadge($userIdentifier)</code>
+    </PossiblyInvalidArgument>
+  </file>
+</files>

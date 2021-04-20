@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Security\Exception;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 /**
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class InsufficientScopesException extends AuthenticationException
+class InsufficientScopesException extends OAuth2AuthenticationException
 {
-    public static function create(TokenInterface $token): self
+    public static function create(TokenInterface $token, ?\Throwable $previous = null): self
     {
-        $exception = new self('The token has insufficient scopes.', 403);
+        $exception = new self('The token has insufficient scopes.', 403, $previous);
         $exception->setToken($token);
 
         return $exception;

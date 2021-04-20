@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Provider\OAuth2Provider;
-use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
-use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory;
+use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\LegacyOAuth2Token;
+use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\LegacyOAuth2TokenFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\User;
 use League\OAuth2\Server\ResourceServer;
@@ -20,7 +20,7 @@ final class OAuth2ProviderTest extends TestCase
     {
         $providerKey = 'foo';
 
-        $tokenFactory = new OAuth2TokenFactory('ROLE_OAUTH2_');
+        $tokenFactory = new LegacyOAuth2TokenFactory('ROLE_OAUTH2_');
 
         $provider = new OAuth2Provider(
             $this->createMock(UserProviderInterface::class),
@@ -33,7 +33,7 @@ final class OAuth2ProviderTest extends TestCase
         $this->assertFalse($provider->supports($this->createToken($tokenFactory, $providerKey . 'bar')));
     }
 
-    private function createToken(OAuth2TokenFactory $tokenFactory, string $providerKey): OAuth2Token
+    private function createToken(LegacyOAuth2TokenFactory $tokenFactory, string $providerKey): LegacyOAuth2Token
     {
         $scopes = [FixtureFactory::FIXTURE_SCOPE_FIRST];
         $serverRequest = $this->createMock(ServerRequestInterface::class);
