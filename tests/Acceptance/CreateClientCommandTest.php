@@ -20,7 +20,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         ]);
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('New oAuth2 client created successfully', $output);
+        $this->assertStringContainsString('New OAuth2 client created successfully', $output);
     }
 
     public function testCreateClientWithIdentifier(): void
@@ -34,7 +34,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         ]);
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('New oAuth2 client created successfully', $output);
+        $this->assertStringContainsString('New OAuth2 client created successfully', $output);
         $this->assertStringContainsString('foobar', $output);
 
         /** @var Client $client */
@@ -64,7 +64,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         $this->assertSame(0, $commandTester->getStatusCode());
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('New oAuth2 client created successfully', $output);
+        $this->assertStringContainsString('New OAuth2 client created successfully', $output);
         $this->assertStringContainsString($clientIdentifier, $output);
 
         /** @var Client $client */
@@ -116,7 +116,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         ]);
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('New oAuth2 client created successfully', $output);
+        $this->assertStringContainsString('New OAuth2 client created successfully', $output);
 
         /** @var Client $client */
         $client = $this->client
@@ -141,7 +141,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         ]);
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('New oAuth2 client created successfully', $output);
+        $this->assertStringContainsString('New OAuth2 client created successfully', $output);
 
         /** @var Client $client */
         $client = $this->client
@@ -164,7 +164,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         ]);
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('New oAuth2 client created successfully', $output);
+        $this->assertStringContainsString('New OAuth2 client created successfully', $output);
         $client = $this->client
             ->getContainer()
             ->get(ClientManagerInterface::class)
@@ -185,7 +185,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         ]);
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('New oAuth2 client created successfully', $output);
+        $this->assertStringContainsString('New OAuth2 client created successfully', $output);
         $client = $this->client
             ->getContainer()
             ->get(ClientManagerInterface::class)
@@ -206,7 +206,7 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
         ]);
 
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('New oAuth2 client created successfully', $output);
+        $this->assertStringContainsString('New OAuth2 client created successfully', $output);
         $client = $this->client
             ->getContainer()
             ->get(ClientManagerInterface::class)

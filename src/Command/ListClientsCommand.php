@@ -6,7 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Command;
 
 use League\Bundle\OAuth2ServerBundle\Manager\ClientFilter;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\Grant;
 use League\Bundle\OAuth2ServerBundle\Model\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\Model\Scope;
@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class ListClientsCommand extends Command
 {
-    private const ALLOWED_COLUMNS = ['identifier', 'secret', 'scope', 'redirect uri', 'grant type'];
+    private const ALLOWED_COLUMNS = ['name', 'identifier', 'secret', 'scope', 'redirect uri', 'grant type'];
 
     protected static $defaultName = 'league:oauth2-server:list-clients';
 
@@ -112,8 +112,9 @@ final class ListClientsCommand extends Command
 
     private function getRows(array $clients, array $columns): array
     {
-        return array_map(static function (Client $client) use ($columns): array {
+        return array_map(static function (AbstractClient $client) use ($columns): array {
             $values = [
+                'name' => $client->getName(),
                 'identifier' => $client->getIdentifier(),
                 'secret' => $client->getSecret(),
                 'scope' => implode(', ', $client->getScopes()),

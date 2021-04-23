@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Event;
 
-use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\Grant;
 use League\Bundle\OAuth2ServerBundle\Model\Scope;
 use Symfony\Contracts\EventDispatcher\Event;
@@ -22,7 +22,7 @@ final class ScopeResolveEvent extends Event
     private $grant;
 
     /**
-     * @var Client
+     * @var AbstractClient
      */
     private $client;
 
@@ -34,7 +34,7 @@ final class ScopeResolveEvent extends Event
     /**
      * @param list<Scope> $scopes
      */
-    public function __construct(array $scopes, Grant $grant, Client $client, ?string $userIdentifier)
+    public function __construct(array $scopes, Grant $grant, AbstractClient $client, ?string $userIdentifier)
     {
         $this->scopes = $scopes;
         $this->grant = $grant;
@@ -63,7 +63,7 @@ final class ScopeResolveEvent extends Event
         return $this->grant;
     }
 
-    public function getClient(): Client
+    public function getClient(): AbstractClient
     {
         return $this->client;
     }

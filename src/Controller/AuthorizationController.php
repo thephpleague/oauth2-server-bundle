@@ -8,7 +8,7 @@ use League\Bundle\OAuth2ServerBundle\Converter\UserConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEventFactory;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -90,7 +90,7 @@ final class AuthorizationController
             $authRequest = $this->server->validateAuthorizationRequest($serverRequest);
 
             if ('plain' === $authRequest->getCodeChallengeMethod()) {
-                /** @var Client $client */
+                /** @var AbstractClient $client */
                 $client = $this->clientManager->find($authRequest->getClient()->getIdentifier());
                 if (!$client->isPlainTextPkceAllowed()) {
                     throw OAuthServerException::invalidRequest('code_challenge_method', 'Plain code challenge method is not allowed for this client');

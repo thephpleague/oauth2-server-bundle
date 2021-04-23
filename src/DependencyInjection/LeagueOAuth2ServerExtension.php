@@ -7,6 +7,7 @@ namespace League\Bundle\OAuth2ServerBundle\DependencyInjection;
 use Defuse\Crypto\Key;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface;
+use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Grant as GrantType;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\RedirectUri as RedirectUriType;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Scope as ScopeType;
@@ -15,7 +16,9 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\Scope as ScopeModel;
+use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Driver;
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker;
 use League\OAuth2\Server\AuthorizationServer;
@@ -53,7 +56,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $config = $this->processConfiguration(new Configuration(), $configs);
 
-        $this->configurePersistence($loader, $container, $config['persistence']);
+        $this->configurePersistence($loader, $container, $config);
         $this->configureAuthorizationServer($container, $config['authorization_server']);
         $this->configureResourceServer($container, $config['resource_server']);
         $this->configureScopes($container, $config['scopes']);
@@ -63,6 +66,11 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $container->registerForAutoconfiguration(GrantTypeInterface::class)
             ->addTag('league.oauth2_server.authorization_server.grant');
+
+        $container
+            ->findDefinition(CreateClientCommand::class)
+            ->replaceArgument(1, $config['client']['classname'])
+        ;
     }
 
     /**
@@ -205,12 +213,12 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
      */
     private function configurePersistence(LoaderInterface $loader, ContainerBuilder $container, array $config): void
     {
-        if (\count($config) > 1) {
+        if (\count($config['persistence']) > 1) {
             throw new \LogicException('Only one persistence method can be configured at a time.');
         }
 
-        $persistenceConfiguration = current($config);
-        $persistenceMethod = key($config);
+        $persistenceConfig = current($config['persistence']);
+        $persistenceMethod = key($config['persistence']);
 
         switch ($persistenceMethod) {
             case 'in_memory':
@@ -219,14 +227,14 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
                 break;
             case 'doctrine':
                 $loader->load('storage/doctrine.php');
-                $this->configureDoctrinePersistence($container, $persistenceConfiguration);
+                $this->configureDoctrinePersistence($container, $config, $persistenceConfig);
                 break;
         }
     }
 
-    private function configureDoctrinePersistence(ContainerBuilder $container, array $config): void
+    private function configureDoctrinePersistence(ContainerBuilder $container, array $config, array $persistenceConfig): void
     {
-        $entityManagerName = $config['entity_manager'];
+        $entityManagerName = $persistenceConfig['entity_manager'];
 
         $entityManager = new Reference(
             sprintf('doctrine.orm.%s_entity_manager', $entityManagerName)
@@ -240,6 +248,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container
             ->findDefinition(ClientManager::class)
             ->replaceArgument(0, $entityManager)
+            ->replaceArgument(1, $config['client']['classname'])
         ;
 
         $container
@@ -255,6 +264,11 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container
             ->findDefinition(DoctrineCredentialsRevoker::class)
             ->replaceArgument(0, $entityManager)
+        ;
+
+        $container
+            ->findDefinition(Driver::class)
+            ->replaceArgument(0, Client::class !== $config['client']['classname'])
         ;
 
         $container->setParameter('league.oauth2_server.persistence.doctrine.enabled', true);

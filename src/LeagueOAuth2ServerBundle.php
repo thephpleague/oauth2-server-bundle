@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle;
 
-use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\CompilerPass\EncryptionKeyPass;
+use League\Bundle\OAuth2ServerBundle\DependencyInjection\CompilerPass\RegisterDoctrineOrmMappingPass;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\LeagueOAuth2ServerExtension;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\Security\OAuth2Factory;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
@@ -44,24 +44,7 @@ final class LeagueOAuth2ServerBundle extends Bundle
 
     private function configureDoctrineExtension(ContainerBuilder $container): void
     {
-        /** @var string $modelDirectory */
-        $modelDirectory = realpath(__DIR__ . '/Resources/config/doctrine/model');
-
-        $container->addCompilerPass(
-            DoctrineOrmMappingsPass::createXmlMappingDriver(
-                [
-                    $modelDirectory => 'League\Bundle\OAuth2ServerBundle\Model',
-                ],
-                [
-                    'league.oauth2_server.persistence.doctrine.manager',
-                ],
-                'league.oauth2_server.persistence.doctrine.enabled',
-                [
-                    'LeagueOAuth2ServerBundle' => 'League\Bundle\OAuth2ServerBundle\Model',
-                ]
-            )
-        );
-
+        $container->addCompilerPass(new RegisterDoctrineOrmMappingPass());
         $container->addCompilerPass(new EncryptionKeyPass());
     }
 }

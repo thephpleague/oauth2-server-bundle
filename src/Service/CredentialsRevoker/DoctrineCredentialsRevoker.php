@@ -5,20 +5,30 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker;
 
 use Doctrine\ORM\EntityManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
-use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
 {
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    /**
+     * @var ClientManagerInterface
+     */
+    private $clientManager;
+
+    public function __construct(EntityManagerInterface $entityManager, ClientManagerInterface $clientManager)
     {
         $this->entityManager = $entityManager;
+        $this->clientManager = $clientManager;
     }
 
     public function revokeCredentialsForUser(UserInterface $user): void
@@ -58,12 +68,10 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
             ->execute();
     }
 
-    public function revokeCredentialsForClient(Client $client): void
+    public function revokeCredentialsForClient(AbstractClient $client): void
     {
-        /** @var Client $doctrineClient */
-        $doctrineClient = $this->entityManager
-            ->getRepository(Client::class)
-            ->findOneBy(['identifier' => $client->getIdentifier()]);
+        /** @var AbstractClient $doctrineClient */
+        $doctrineClient = $this->clientManager->find($client->getIdentifier());
 
         $this->entityManager->createQueryBuilder()
             ->update(AccessToken::class, 'at')

@@ -16,9 +16,6 @@ return static function (ContainerConfigurator $container): void {
     $container->services()
 
         ->set('league.oauth2_server.manager.in_memory.client', ClientManager::class)
-            ->args([
-                null,
-            ])
         ->alias(ClientManagerInterface::class, 'league.oauth2_server.manager.in_memory.client')
         ->alias(ClientManager::class, 'league.oauth2_server.manager.in_memory.client')
 
