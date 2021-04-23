@@ -6,9 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle;
 
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\LeagueOAuth2ServerExtension;
-use League\Bundle\OAuth2ServerBundle\DependencyInjection\Security\LegacyOAuth2Factory;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\Security\OAuth2Factory;
-use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AuthenticatorFactoryInterface;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -40,9 +38,7 @@ final class LeagueOAuth2ServerBundle extends Bundle
     {
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');
-
-        // BC Layer for < 5.1 versions
-        $extension->addSecurityListenerFactory(interface_exists(AuthenticatorFactoryInterface::class) ? new OAuth2Factory() : new LegacyOAuth2Factory());
+        $extension->addSecurityListenerFactory(new OAuth2Factory());
     }
 
     private function configureDoctrineExtension(ContainerBuilder $container): void

@@ -4,12 +4,6 @@
     <ImplicitToStringCast occurrences="1">
       <code>service(GrantConfigurator::class)</code>
     </ImplicitToStringCast>
-    <MixedInferredReturnType occurrences="1">
-      <code>ReferenceConfigurator</code>
-    </MixedInferredReturnType>
-    <MixedReturnStatement occurrences="1">
-      <code>($fn)($id)</code>
-    </MixedReturnStatement>
   </file>
   <file src="src/Security/Authenticator/OAuth2Authenticator.php">
     <PossiblyInvalidArgument occurrences="1">

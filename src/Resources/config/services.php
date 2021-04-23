@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
 use League\Bundle\OAuth2ServerBundle\Command\ClearExpiredTokensCommand;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
@@ -54,24 +55,11 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ReferenceConfigurator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-
-// BC Layer for < 5.1 versions
-if (!function_exists('service')) {
-    function service(string $id): ReferenceConfigurator
-    {
-        $fn = function_exists('Symfony\Component\DependencyInjection\Loader\Configurator\service')
-            ? 'Symfony\Component\DependencyInjection\Loader\Configurator\service'
-            : 'Symfony\Component\DependencyInjection\Loader\Configurator\ref';
-
-        return ($fn)($id);
-    }
-}
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
