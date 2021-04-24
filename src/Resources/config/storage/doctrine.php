@@ -22,29 +22,34 @@ return static function (ContainerConfigurator $container): void {
                 null,
             ])
         ->alias(ClientManagerInterface::class, ClientManager::class)
+        ->alias('league.oauth2_server.manager.doctrine.client', ClientManager::class)
 
         ->set(AccessTokenManager::class)
             ->args([
                 null,
             ])
         ->alias(AccessTokenManagerInterface::class, AccessTokenManager::class)
+        ->alias('league.oauth2_server.manager.doctrine.access_token', AccessTokenManager::class)
 
         ->set(RefreshTokenManager::class)
             ->args([
                 null,
             ])
         ->alias(RefreshTokenManagerInterface::class, RefreshTokenManager::class)
+        ->alias('league.oauth2_server.manager.doctrine.refresh_token', RefreshTokenManager::class)
 
         ->set(AuthorizationCodeManager::class)
             ->args([
                 null,
             ])
         ->alias(AuthorizationCodeManagerInterface::class, AuthorizationCodeManager::class)
+        ->alias('league.oauth2_server.manager.doctrine.authorization_code', AuthorizationCodeManager::class)
 
         ->set(DoctrineCredentialsRevoker::class)
             ->args([
                 null,
             ])
         ->alias(CredentialsRevokerInterface::class, DoctrineCredentialsRevoker::class)
+        ->alias('league.oauth2_server.credentials_revoker.doctrine', DoctrineCredentialsRevoker::class)
     ;
 };
