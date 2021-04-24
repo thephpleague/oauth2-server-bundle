@@ -1,0 +1,9 @@
+---------------------------------------------------------------------------
+
+by chalasr at 2021-04-19T13:09:14Z
+
+Actually, I think we need to inverse the way aliases are registered.
+I mean that "named service" identifiers should be the real services and "types" should be aliases.
+e.g: `league.oauth2_server.provider.oauth2` should be a service and `OAuth2Provider::class` should be an alias of this service.
+Reasoning is: if one wants to decorate service (with one or more decorators), the regular identifier is the one you should use, and symfony/dependency-injection does not support decorating an alias.
+Makes sense?
