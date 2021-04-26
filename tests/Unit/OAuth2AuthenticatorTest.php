@@ -6,7 +6,6 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\OAuth2AuthenticationFailedException;
-use League\Bundle\OAuth2ServerBundle\Security\Passport\Badge\OAuth2Badge;
 use League\Bundle\OAuth2ServerBundle\Security\User\NullUser;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
@@ -96,21 +95,10 @@ final class OAuth2AuthenticatorTest extends TestCase
         /** @var Passport $passport */
         $passport = $authenticator->authenticate(new Request());
 
-        // BC Layer for 5.1 version
-        if (!method_exists(Passport::class, 'getAttribute')) {
-            /** @var OAuth2Badge $oauth2Badge */
-            $oauth2Badge = $passport->getBadge(OAuth2Badge::class);
-            $this->assertSame('accessTokenId', $oauth2Badge->getAccessTokenId());
-            $this->assertSame(['scope_one', 'scope_two'], $oauth2Badge->getScopes());
-        } else {
-            $this->assertSame('accessTokenId', $passport->getAttribute('accessTokenId'));
-            $this->assertSame(['scope_one', 'scope_two'], $passport->getAttribute('scopes'));
-        }
+        $this->assertSame('accessTokenId', $passport->getAttribute('accessTokenId'));
+        $this->assertSame(['scope_one', 'scope_two'], $passport->getAttribute('scopes'));
 
-        // BC Layer for 5.1 version
-        if (class_exists(UserBadge::class)) {
-            $passport->getUser();
-        }
+        $passport->getUser();
     }
 
     public function testAuthenticateCreatePassportWithNullUser(): void
@@ -161,14 +149,8 @@ final class OAuth2AuthenticatorTest extends TestCase
         }
 
         $passport = new SelfValidatingPassport($userBadge);
-
-        // BC Layer for 5.1 version
-        if (!method_exists($passport, 'setAttribute')) {
-            $passport->addBadge(new OAuth2Badge('accessTokenId', ['scope_one', 'scope_two']));
-        } else {
-            $passport->setAttribute('accessTokenId', 'accessTokenId');
-            $passport->setAttribute('scopes', ['scope_one', 'scope_two']);
-        }
+        $passport->setAttribute('accessTokenId', 'accessTokenId');
+        $passport->setAttribute('scopes', ['scope_one', 'scope_two']);
 
         $authenticator = new OAuth2Authenticator(
             $this->createMock(HttpMessageFactoryInterface::class),

@@ -120,7 +120,7 @@ return static function (ContainerConfigurator $container): void {
         // Security layer
         ->set('league.oauth2_server.authenticator.oauth2', OAuth2Authenticator::class)
             ->args([
-                service('league.oauth2-server.psr_http_factory'),
+                service('league.oauth2_server.factory.psr_http'),
                 service(ResourceServer::class),
                 service(UserProviderInterface::class),
                 null,
@@ -305,7 +305,7 @@ return static function (ContainerConfigurator $container): void {
             ])
         ->alias(AuthorizationRequestResolveEventFactory::class, 'league.oauth2_server.factory.authorization_request_resolve_event')
 
-        ->set('league.oauth2_server.factory.legacy_oauth2_token', OAuth2TokenFactory::class)
+        ->set('league.oauth2_server.factory.legacy_oauth2_token', LegacyOAuth2TokenFactory::class)
         ->alias(LegacyOAuth2TokenFactory::class, 'league.oauth2_server.factory.legacy_oauth2_token')
 
         // Storage managers

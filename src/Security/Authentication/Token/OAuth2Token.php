@@ -12,6 +12,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 final class OAuth2Token extends AbstractToken
 {
+    /**
+     * @param list<string> $scopes
+     */
     public function __construct(
         ?UserInterface $user,
         string $accessTokenId,

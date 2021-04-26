@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.7.0@d4377c0baf3ffbf0b1ec6998e8d1be2a40971005">
+<files psalm-version="4.7.1@cd53e047a58f71f646dd6bf45476076ab07b5d44">
+  <file src="src/Resources/config/routes.php">
+    <InvalidArgument occurrences="2">
+      <code>['league.oauth2_server.controller.authorization', 'indexAction']</code>
+      <code>['league.oauth2_server.controller.token', 'indexAction']</code>
+    </InvalidArgument>
+  </file>
   <file src="src/Resources/config/services.php">
     <ImplicitToStringCast occurrences="1">
       <code>service(GrantConfigurator::class)</code>
     </ImplicitToStringCast>
-  </file>
-  <file src="src/Security/Authenticator/OAuth2Authenticator.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$this-&gt;getUserBadge($userIdentifier)</code>
-    </PossiblyInvalidArgument>
   </file>
 </files>

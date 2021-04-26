@@ -7,7 +7,6 @@ namespace League\Bundle\OAuth2ServerBundle\Security\Authenticator;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\OAuth2AuthenticationException;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\OAuth2AuthenticationFailedException;
-use League\Bundle\OAuth2ServerBundle\Security\Passport\Badge\OAuth2Badge;
 use League\Bundle\OAuth2ServerBundle\Security\User\NullUser;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
@@ -24,7 +23,6 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
-use Symfony\Component\Security\Http\Authenticator\Passport\UserPassportInterface;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
 /**
@@ -93,15 +91,11 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         /** @var list<string> $scopes */
         $scopes = $psr7Request->getAttribute('oauth_scopes', []);
 
-        $passport = new SelfValidatingPassport($this->getUserBadge($userIdentifier));
-
-        // BC Layer for 5.1 version
-        if (!method_exists($passport, 'setAttribute')) {
-            $passport->addBadge(new OAuth2Badge($accessTokenId, $scopes));
-        } else {
-            $passport->setAttribute('accessTokenId', $accessTokenId);
-            $passport->setAttribute('scopes', $scopes);
-        }
+        $passport = new SelfValidatingPassport(new UserBadge($userIdentifier, function (string $userIdentifier): UserInterface {
+            return '' !== $userIdentifier ? $this->userProvider->loadUserByUsername($userIdentifier) : new NullUser();
+        }));
+        $passport->setAttribute('accessTokenId', $accessTokenId);
+        $passport->setAttribute('scopes', $scopes);
 
         return $passport;
     }
@@ -111,25 +105,15 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
      */
     public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
     {
-        if (!$passport instanceof UserPassportInterface) {
-            throw new \RuntimeException(sprintf('Cannot create a OAuth2 authenticated token. $passport should be a %s', UserPassportInterface::class));
+        if (!$passport instanceof Passport) {
+            throw new \RuntimeException(sprintf('Cannot create a OAuth2 authenticated token. $passport should be a %s', Passport::class));
         }
 
-        // BC Layer for 5.1 version
-        /** @var Passport $passport */
-        if (!method_exists($passport, 'getAttribute')) {
-            /** @var OAuth2Badge $oauth2Badge */
-            $oauth2Badge = $passport->getBadge(OAuth2Badge::class);
+        /** @var string $accessTokenId */
+        $accessTokenId = $passport->getAttribute('accessTokenId');
 
-            $accessTokenId = $oauth2Badge->getAccessTokenId();
-            $scopes = $oauth2Badge->getScopes();
-        } else {
-            /** @var string $accessTokenId */
-            $accessTokenId = $passport->getAttribute('accessTokenId');
-
-            /** @var list<string> $scopes */
-            $scopes = $passport->getAttribute('scopes');
-        }
+        /** @var list<string> $scopes */
+        $scopes = $passport->getAttribute('scopes');
 
         $token = new OAuth2Token($passport->getUser(), $accessTokenId, $scopes, $this->rolePrefix);
         $token->setAuthenticated(true);
@@ -150,22 +134,5 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         }
 
         throw new UnauthorizedHttpException('Bearer', $exception->getMessage(), $exception);
-    }
-
-    /**
-     * @return UserBadge|UserInterface
-     */
-    private function getUserBadge(string $userIdentifier)
-    {
-        $getUserCallable = function (string $userIdentifier): UserInterface {
-            return '' !== $userIdentifier ? $this->userProvider->loadUserByUsername($userIdentifier) : new NullUser();
-        };
-
-        // BC Layer for 5.1 version
-        if (!class_exists(UserBadge::class)) {
-            return $getUserCallable($userIdentifier);
-        }
-
-        return new UserBadge($userIdentifier, $getUserCallable);
     }
 }
