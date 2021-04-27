@@ -127,6 +127,9 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
     private function configureAuthorizationServer(ContainerBuilder $container, array $config): void
     {
+        $container->setParameter('league.oauth2_server.encryption_key', $config['encryption_key']);
+        $container->setParameter('league.oauth2_server.encryption_key.type', $config['encryption_key_type']);
+
         $authorizationServer = $container
             ->findDefinition(AuthorizationServer::class)
             ->replaceArgument(3, new Definition(CryptKey::class, [
@@ -134,21 +137,6 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
                 $config['private_key_passphrase'],
                 false,
             ]));
-
-        if ('plain' === $config['encryption_key_type']) {
-            $authorizationServer->replaceArgument(4, $config['encryption_key']);
-        } elseif ('defuse' === $config['encryption_key_type']) {
-            if (!class_exists(Key::class)) {
-                throw new \RuntimeException('You must install the "defuse/php-encryption" package to use "encryption_key_type: defuse".');
-            }
-
-            $keyDefinition = (new Definition(Key::class))
-                ->setFactory([Key::class, 'loadFromAsciiSafeString'])
-                ->addArgument($config['encryption_key']);
-            $container->setDefinition('league.oauth2_server.defuse_key', $keyDefinition);
-
-            $authorizationServer->replaceArgument(4, new Reference('league.oauth2_server.defuse_key'));
-        }
 
         if ($config['enable_client_credentials_grant']) {
             $authorizationServer->addMethodCall('enableGrantType', [
