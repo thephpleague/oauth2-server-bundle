@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace League\Bundle\OAuth2ServerBundle\League\Repository;
+namespace League\Bundle\OAuth2ServerBundle\Repository;
 
-use League\Bundle\OAuth2ServerBundle\League\Entity\RefreshToken as RefreshTokenEntity;
+use League\Bundle\OAuth2ServerBundle\Entity\RefreshToken as RefreshTokenEntity;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken as RefreshTokenModel;

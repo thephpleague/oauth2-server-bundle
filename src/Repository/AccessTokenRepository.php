@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace League\Bundle\OAuth2ServerBundle\League\Repository;
+namespace League\Bundle\OAuth2ServerBundle\Repository;
 
 use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverterInterface;
-use League\Bundle\OAuth2ServerBundle\League\Entity\AccessToken as AccessTokenEntity;
+use League\Bundle\OAuth2ServerBundle\Entity\AccessToken as AccessTokenEntity;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken as AccessTokenModel;

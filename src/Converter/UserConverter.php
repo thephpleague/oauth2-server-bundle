@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Converter;
 
-use League\Bundle\OAuth2ServerBundle\League\Entity\User;
+use League\Bundle\OAuth2ServerBundle\Entity\User;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Tests\Integration;
 
 use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverter;
-use League\Bundle\OAuth2ServerBundle\League\Repository\AuthCodeRepository;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Repository\AuthCodeRepository;
 
 final class AuthCodeRepositoryTest extends AbstractIntegrationTest
 {

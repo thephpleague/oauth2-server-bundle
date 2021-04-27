@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace League\Bundle\OAuth2ServerBundle\League\Repository;
+namespace League\Bundle\OAuth2ServerBundle\Repository;
 
-use League\Bundle\OAuth2ServerBundle\League\Entity\Client as ClientEntity;
+use League\Bundle\OAuth2ServerBundle\Entity\Client as ClientEntity;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as ClientModel;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
