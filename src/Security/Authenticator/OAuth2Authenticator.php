@@ -7,13 +7,13 @@ namespace League\Bundle\OAuth2ServerBundle\Security\Authenticator;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\OAuth2AuthenticationException;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\OAuth2AuthenticationFailedException;
+use League\Bundle\OAuth2ServerBundle\Security\Passport\Badge\ScopeBadge;
 use League\Bundle\OAuth2ServerBundle\Security\User\NullUser;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -69,9 +69,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
 
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
-        $exception = new UnauthorizedHttpException('Bearer');
-
-        return new Response('', $exception->getStatusCode(), $exception->getHeaders());
+        return new Response('', 401, ['WWW-Authenticate' => 'Bearer']);
     }
 
     public function authenticate(Request $request): PassportInterface
@@ -93,9 +91,10 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
 
         $passport = new SelfValidatingPassport(new UserBadge($userIdentifier, function (string $userIdentifier): UserInterface {
             return '' !== $userIdentifier ? $this->userProvider->loadUserByUsername($userIdentifier) : new NullUser();
-        }));
+        }), [
+            new ScopeBadge($scopes),
+        ]);
         $passport->setAttribute('accessTokenId', $accessTokenId);
-        $passport->setAttribute('scopes', $scopes);
 
         return $passport;
     }
@@ -112,10 +111,10 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         /** @var string $accessTokenId */
         $accessTokenId = $passport->getAttribute('accessTokenId');
 
-        /** @var list<string> $scopes */
-        $scopes = $passport->getAttribute('scopes');
+        /** @var ScopeBadge $scopeBadge */
+        $scopeBadge = $passport->getBadge(ScopeBadge::class);
 
-        $token = new OAuth2Token($passport->getUser(), $accessTokenId, $scopes, $this->rolePrefix);
+        $token = new OAuth2Token($passport->getUser(), $accessTokenId, $scopeBadge->getScopes(), $this->rolePrefix);
         $token->setAuthenticated(true);
 
         return $token;
@@ -128,11 +127,10 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        // $exception is already customized.
         if ($exception instanceof OAuth2AuthenticationException) {
-            throw $exception;
+            return new Response($exception->getMessage(), $exception->getStatusCode(), $exception->getHeaders());
         }
 
-        throw new UnauthorizedHttpException('Bearer', $exception->getMessage(), $exception);
+        throw $exception;
     }
 }

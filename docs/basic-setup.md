@@ -95,10 +95,12 @@ Options:
 
 ## Configuring the Security layer
 
-Add two new firewalls in your security configuration:
+Add two new firewalls in your security configuration and enable the authenticator security system:
 
 ```yaml
 security:
+    enable_authenticator_manager: true
+
     firewalls:
         api_token:
             pattern: ^/api/token$

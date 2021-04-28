@@ -6,6 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\OAuth2AuthenticationFailedException;
+use League\Bundle\OAuth2ServerBundle\Security\Passport\Badge\ScopeBadge;
 use League\Bundle\OAuth2ServerBundle\Security\User\NullUser;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
@@ -16,22 +17,12 @@ use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
 final class OAuth2AuthenticatorTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        if (!interface_exists(AuthenticatorInterface::class)) {
-            $this->markTestSkipped('Authenticator security system is not available.');
-        }
-
-        parent::setUp();
-    }
-
     public function testAuthenticateThrowIfCannotValidateAuthenticatedRequest(): void
     {
         $httpMessageFactory = $this->createMock(HttpMessageFactoryInterface::class);
@@ -96,7 +87,7 @@ final class OAuth2AuthenticatorTest extends TestCase
         $passport = $authenticator->authenticate(new Request());
 
         $this->assertSame('accessTokenId', $passport->getAttribute('accessTokenId'));
-        $this->assertSame(['scope_one', 'scope_two'], $passport->getAttribute('scopes'));
+        $this->assertSame(['scope_one', 'scope_two'], $passport->getBadge(ScopeBadge::class)->getScopes());
 
         $passport->getUser();
     }
@@ -148,9 +139,10 @@ final class OAuth2AuthenticatorTest extends TestCase
             });
         }
 
-        $passport = new SelfValidatingPassport($userBadge);
+        $passport = new SelfValidatingPassport($userBadge, [
+            new ScopeBadge(['scope_one', 'scope_two']),
+        ]);
         $passport->setAttribute('accessTokenId', 'accessTokenId');
-        $passport->setAttribute('scopes', ['scope_one', 'scope_two']);
 
         $authenticator = new OAuth2Authenticator(
             $this->createMock(HttpMessageFactoryInterface::class),
