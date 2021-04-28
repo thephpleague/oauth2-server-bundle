@@ -15,6 +15,7 @@ use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Driver;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
@@ -28,6 +29,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('league.oauth2_server.manager.doctrine.client', ClientManager::class)
             ->args([
                 null,
+                service(EventDispatcherInterface::class),
                 null,
             ])
         ->alias(ClientManagerInterface::class, 'league.oauth2_server.manager.doctrine.client')
