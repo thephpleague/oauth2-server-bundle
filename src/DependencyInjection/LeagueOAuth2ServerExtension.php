@@ -280,13 +280,17 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
     private function configureScopes(ContainerBuilder $container, array $scopes): void
     {
-        $scopeManager = $container
-            ->findDefinition(
-                (string) $container->getAlias(ScopeManagerInterface::class)
-            )
-        ;
+        $availableScopes = $scopes['available'];
+        $defaultScopes = $scopes['default'];
 
-        foreach ($scopes as $scope) {
+        if ([] !== $invalidDefaultScopes = array_diff($defaultScopes, $availableScopes)) {
+            throw new \LogicException(sprintf('Invalid default scopes "%s" for path "league_oauth2_server.scopes.default". Permissible values: "%s"', implode('", "', $invalidDefaultScopes), implode('", "', $availableScopes)));
+        }
+
+        $container->setParameter('league.oauth2_server.scopes.default', $defaultScopes);
+
+        $scopeManager = $container->findDefinition(ScopeManagerInterface::class);
+        foreach ($availableScopes as $scope) {
             $scopeManager->addMethodCall('save', [
                 new Definition(ScopeModel::class, [$scope]),
             ]);

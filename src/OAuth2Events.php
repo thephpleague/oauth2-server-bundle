@@ -30,4 +30,12 @@ final class OAuth2Events
      * must be redirected to resolve the authorization request.
      */
     public const AUTHORIZATION_REQUEST_RESOLVE = 'league.oauth2_server.event.authorization_request_resolve';
+
+    /**
+     * The PRE_SAVE_CLIENT event occurs right before the client is saved
+     * by a ClientManager.
+     *
+     * You could alter the client here.
+     */
+    public const PRE_SAVE_CLIENT = 'league.oauth2_server.event.pre_save_client';
 }
