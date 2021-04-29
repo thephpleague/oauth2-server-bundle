@@ -12,7 +12,7 @@ final class OAuth2Events
      *
      * You should set a valid user here if applicable.
      */
-    public const USER_RESOLVE = 'league.oauth2_server.user_resolve';
+    public const USER_RESOLVE = 'league.oauth2_server.event.user_resolve';
 
     /**
      * The SCOPE_RESOLVE event occurs right before the user obtains their
@@ -20,7 +20,7 @@ final class OAuth2Events
      *
      * You could alter the access token's scope here.
      */
-    public const SCOPE_RESOLVE = 'league.oauth2_server.scope_resolve';
+    public const SCOPE_RESOLVE = 'league.oauth2_server.event.scope_resolve';
 
     /**
      * The AUTHORIZATION_REQUEST_RESOLVE event occurs right before the system
@@ -29,5 +29,5 @@ final class OAuth2Events
      * You could approve or deny the authorization request, or set the uri where
      * must be redirected to resolve the authorization request.
      */
-    public const AUTHORIZATION_REQUEST_RESOLVE = 'league.oauth2_server.authorization_request_resolve';
+    public const AUTHORIZATION_REQUEST_RESOLVE = 'league.oauth2_server.event.authorization_request_resolve';
 }

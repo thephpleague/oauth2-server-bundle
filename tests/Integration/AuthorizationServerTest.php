@@ -7,6 +7,7 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Integration;
 use League\Bundle\OAuth2ServerBundle\Event\UserResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
+use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
 
@@ -265,7 +266,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
     public function testValidPasswordGrant(): void
     {
-        $this->eventDispatcher->addListener('league.oauth2_server.user_resolve', static function (UserResolveEvent $event): void {
+        $this->eventDispatcher->addListener(OAuth2Events::USER_RESOLVE, static function (UserResolveEvent $event): void {
             $event->setUser(FixtureFactory::createUser());
         });
 
@@ -294,7 +295,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
     public function testInvalidCredentialsPasswordGrant(): void
     {
-        $this->eventDispatcher->addListener('league.oauth2_server.user_resolve', static function (UserResolveEvent $event): void {
+        $this->eventDispatcher->addListener(OAuth2Events::USER_RESOLVE, static function (UserResolveEvent $event): void {
             $event->setUser(null);
         });
 

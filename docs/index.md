@@ -17,15 +17,13 @@ For implementation into Symfony projects, please see [bundle documentation](docs
 
 ## Installation
 
-1. Require the bundle and a PSR 7/17 implementation with Composer:
+1. Require the bundle with Composer:
 
     ```sh
-    composer require league/oauth2-server-bundle nyholm/psr7
+    composer require league/oauth2-server-bundle
     ```
 
     If your project is managed using [Symfony Flex](https://github.com/symfony/flex), the rest of the steps are not required. Just follow the post-installation instructions instead! :tada:
-
-    > **NOTE:** This bundle requires a PSR 7/17 implementation to operate. We recommend that you use [nyholm/psr7](https://github.com/Nyholm/psr7). Check out this [document](docs/psr-implementation-switching.md) if you wish to use a different implementation.
 
 1. Create the bundle configuration file under `config/packages/league_oauth2_server.yaml`. Here is a reference configuration file:
 

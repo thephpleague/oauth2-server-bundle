@@ -10,6 +10,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
+use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
 
@@ -54,7 +55,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $this->client
             ->getContainer()
             ->get('event_dispatcher')
-            ->addListener('league.oauth2_server.user_resolve', static function (UserResolveEvent $event): void {
+            ->addListener(OAuth2Events::USER_RESOLVE, static function (UserResolveEvent $event): void {
                 $event->setUser(FixtureFactory::createUser());
             });
 
