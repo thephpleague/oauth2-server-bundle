@@ -30,6 +30,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ScopeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
+use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Provider\OAuth2Provider;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory;
 use League\Bundle\OAuth2ServerBundle\Security\EntryPoint\OAuth2EntryPoint;
@@ -227,7 +228,7 @@ return static function (ContainerConfigurator $container): void {
                 service(Security::class),
             ])
             ->tag('kernel.event_listener', [
-                'event' => 'league.oauth2_server.authorization_request_resolve',
+                'event' => OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE,
                 'method' => 'onAuthorizationRequest',
                 'priority' => 1024,
             ])
