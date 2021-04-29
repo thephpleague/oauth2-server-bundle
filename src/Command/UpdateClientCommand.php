@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Command;
 
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\Grant;
 use League\Bundle\OAuth2ServerBundle\Model\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\Model\Scope;
@@ -36,45 +35,20 @@ final class UpdateClientCommand extends Command
     {
         $this
             ->setDescription('Updates an OAuth2 client')
-            ->addOption(
-                'redirect-uri',
-                null,
-                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'Sets redirect uri for client. Use this option multiple times to set multiple redirect URIs.',
-                []
-            )
-            ->addOption(
-                'grant-type',
-                null,
-                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'Sets allowed grant type for client. Use this option multiple times to set multiple grant types.',
-                []
-            )
-            ->addOption(
-                'scope',
-                null,
-                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'Sets allowed scope for client. Use this option multiple times to set multiple scopes.',
-                []
-            )
-            ->addOption(
-                'name',
-                null,
-                InputOption::VALUE_REQUIRED,
-                'Sets name for client.',
-                []
-            )
-            ->addOption(
-                'deactivated',
-                null,
-                InputOption::VALUE_NONE,
-                'If provided, it will deactivate the given client.'
-            )
-            ->addArgument(
-                'identifier',
-                InputArgument::REQUIRED,
-                'The client ID'
-            )
+
+            ->addOption('add-redirect-uri', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Add allowed redirect uri to the client.', [])
+            ->addOption('remove-redirect-uri', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Remove allowed redirect uri to the client.', [])
+
+            ->addOption('add-grant-type', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Add allowed grant type to the client.', [])
+            ->addOption('remove-grant-type', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Remove allowed grant type to the client.', [])
+
+            ->addOption('add-scope', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Add allowed scope to the client.', [])
+            ->addOption('remove-scope', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Remove allowed scope to the client.', [])
+
+            ->addOption('activate', null, InputOption::VALUE_NONE, 'Activate the client.')
+            ->addOption('deactivate', null, InputOption::VALUE_NONE, 'Deactivate the client.')
+
+            ->addArgument('identifier', InputArgument::REQUIRED, 'The client identifier')
         ;
     }
 
@@ -88,7 +62,11 @@ final class UpdateClientCommand extends Command
             return 1;
         }
 
-        $client = $this->updateClientFromInput($client, $input);
+        $client->setActive($this->getClientActiveFromInput($input, $client->isActive()));
+        $client->setRedirectUris(...$this->getClientRelatedModelsFromInput($input, RedirectUri::class, $client->getRedirectUris(), 'redirect-uri'));
+        $client->setGrants(...$this->getClientRelatedModelsFromInput($input, Grant::class, $client->getGrants(), 'grant-type'));
+        $client->setScopes(...$this->getClientRelatedModelsFromInput($input, Scope::class, $client->getScopes(), 'scope'));
+
         $this->clientManager->save($client);
 
         $io->success('OAuth2 client updated successfully.');
@@ -96,33 +74,55 @@ final class UpdateClientCommand extends Command
         return 0;
     }
 
-    private function updateClientFromInput(AbstractClient $client, InputInterface $input): AbstractClient
+    private function getClientActiveFromInput(InputInterface $input, bool $actual): bool
     {
-        $client->setActive(!$input->getOption('deactivated'));
+        $active = $actual;
 
-        /** @var list<string> $redirectUriStrings */
-        $redirectUriStrings = $input->getOption('redirect-uri');
-        /** @var list<string> $grantStrings */
-        $grantStrings = $input->getOption('grant-type');
-        /** @var list<string> $scopeStrings */
-        $scopeStrings = $input->getOption('scope');
-
-        $client
-            ->setRedirectUris(...array_map(static function (string $redirectUri): RedirectUri {
-                return new RedirectUri($redirectUri);
-            }, $redirectUriStrings))
-            ->setGrants(...array_map(static function (string $grant): Grant {
-                return new Grant($grant);
-            }, $grantStrings))
-            ->setScopes(...array_map(static function (string $scope): Scope {
-                return new Scope($scope);
-            }, $scopeStrings))
-        ;
-
-        if ($name = $input->getOption('name')) {
-            $client->setName($name);
+        if ($input->getOption('activate') && $input->getOption('deactivate')) {
+            throw new \RuntimeException('Cannot specify "--activate" and "--deactivate" at the same time.');
         }
 
-        return $client;
+        if ($input->getOption('activate')) {
+            $active = true;
+        }
+
+        if ($input->getOption('deactivate')) {
+            $active = false;
+        }
+
+        return $active;
+    }
+
+    /**
+     * @template T1 of RedirectUri
+     * @template T2 of Grant
+     * @template T3 of Scope
+     *
+     * @param class-string<T1>|class-string<T2>|class-string<T3> $modelFqcn
+     *
+     * @return list<T1>|list<T2>|list<T3>
+     *
+     * @psalm-suppress UnsafeInstantiation
+     */
+    private function getClientRelatedModelsFromInput(InputInterface $input, string $modelFqcn, array $actual, string $argument): array
+    {
+        /** @var list<string> $toAdd */
+        $toAdd = $input->getOption($addArgument = sprintf('add-%s', $argument));
+
+        /** @var list<string> $toRemove */
+        $toRemove = $input->getOption($removeArgument = sprintf('remove-%s', $argument));
+
+        if ([] !== $colliding = array_intersect($toAdd, $toRemove)) {
+            throw new \RuntimeException(sprintf('Cannot specify "%s" in either "--%s" and "--%s".', implode('", "', $colliding), $addArgument, $removeArgument));
+        }
+
+        $filtered = array_filter($actual, static function ($model) use ($toRemove): bool {
+            return !\in_array((string) $model, $toRemove);
+        });
+
+        /** @var list<T1>|list<T2>|list<T3> */
+        return array_merge($filtered, array_map(static function (string $value) use ($modelFqcn) {
+            return new $modelFqcn($value);
+        }, $toAdd));
     }
 }
