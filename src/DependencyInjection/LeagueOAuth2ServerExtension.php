@@ -15,6 +15,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager;
+use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AccessTokenManager as InMemoryAccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Scope as ScopeModel;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory;
@@ -55,7 +56,8 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $config = $this->processConfiguration(new Configuration(), $configs);
 
-        $this->configurePersistence($loader, $container, $config['persistence']);
+        $this->configureAccessTokenSaving($loader, $container, $config['authorization_server']);
+        $this->configurePersistence($loader, $container, $config);
         $this->configureAuthorizationServer($container, $config['authorization_server']);
         $this->configureResourceServer($container, $config['resource_server']);
         $this->configureScopes($container, $config['scopes']);
@@ -221,31 +223,44 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         ;
     }
 
+    private function configureAccessTokenSaving(LoaderInterface $loader, ContainerBuilder $container, array $config): void
+    {
+        if ($config['disable_access_token_saving']) {
+            $loader->load('access_token/null.php');
+        } else {
+            $loader->load('access_token/default.php');
+        }
+
+        $container->setParameter('league.oauth2_server.authorization_server.disable_access_token_saving', $config['disable_access_token_saving']);
+    }
+
     /**
      * @throws \Exception
      */
     private function configurePersistence(LoaderInterface $loader, ContainerBuilder $container, array $config): void
     {
-        if (\count($config) > 1) {
+        $persistenceConfig = $config['persistence'];
+        if (\count($persistenceConfig) > 1) {
             throw new \LogicException('Only one persistence method can be configured at a time.');
         }
 
-        $persistenceConfiguration = current($config);
-        $persistenceMethod = key($config);
+        $persistenceConfiguration = current($persistenceConfig);
+        $persistenceMethod = key($persistenceConfig);
 
+        $disableAccessTokenSaving = $config['authorization_server']['disable_access_token_saving'];
         switch ($persistenceMethod) {
             case 'in_memory':
                 $loader->load('storage/in_memory.php');
-                $this->configureInMemoryPersistence($container);
+                $this->configureInMemoryPersistence($container, $disableAccessTokenSaving);
                 break;
             case 'doctrine':
                 $loader->load('storage/doctrine.php');
-                $this->configureDoctrinePersistence($container, $persistenceConfiguration);
+                $this->configureDoctrinePersistence($container, $persistenceConfiguration, $disableAccessTokenSaving);
                 break;
         }
     }
 
-    private function configureDoctrinePersistence(ContainerBuilder $container, array $config): void
+    private function configureDoctrinePersistence(ContainerBuilder $container, array $config, bool $disableAccessTokenSaving): void
     {
         $entityManagerName = $config['entity_manager'];
 
@@ -256,6 +271,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container
             ->findDefinition(AccessTokenManager::class)
             ->replaceArgument(0, $entityManager)
+            ->replaceArgument('$disableAccessTokenSaving', $disableAccessTokenSaving)
         ;
 
         $container
@@ -280,10 +296,20 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $container->setParameter('league.oauth2_server.persistence.doctrine.enabled', true);
         $container->setParameter('league.oauth2_server.persistence.doctrine.manager', $entityManagerName);
+
+        if ($disableAccessTokenSaving) {
+            $container->setParameter('league.oauth2_server.persistence.doctrine.access_token.disabled', true);
+        } else {
+            $container->setParameter('league.oauth2_server.persistence.doctrine.access_token.enabled', true);
+        }
     }
 
-    private function configureInMemoryPersistence(ContainerBuilder $container): void
+    private function configureInMemoryPersistence(ContainerBuilder $container, bool $disableAccessTokenSaving): void
     {
+        $container
+            ->findDefinition(InMemoryAccessTokenManager::class)
+            ->replaceArgument('$disableAccessTokenSaving', $disableAccessTokenSaving)
+        ;
         $container->setParameter('league.oauth2_server.persistence.in_memory.enabled', true);
     }
 

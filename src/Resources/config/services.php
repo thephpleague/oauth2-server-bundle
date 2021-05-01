@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
 use League\Bundle\OAuth2ServerBundle\Command\ClearExpiredTokensCommand;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Command\DeleteClientCommand;
@@ -18,7 +17,6 @@ use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEventFacto
 use League\Bundle\OAuth2ServerBundle\EventListener\AuthorizationRequestUserResolvingListener;
 use League\Bundle\OAuth2ServerBundle\EventListener\ConvertExceptionToResponseListener;
 use League\Bundle\OAuth2ServerBundle\League\AuthorizationServer\GrantConfigurator;
-use League\Bundle\OAuth2ServerBundle\League\Repository\AccessTokenRepository;
 use League\Bundle\OAuth2ServerBundle\League\Repository\AuthCodeRepository;
 use League\Bundle\OAuth2ServerBundle\League\Repository\ClientRepository;
 use League\Bundle\OAuth2ServerBundle\League\Repository\RefreshTokenRepository;
@@ -58,6 +56,7 @@ use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterfac
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
 
 // BC Layer for < 5.1 versions
 if (!function_exists('service')) {
@@ -81,15 +80,6 @@ return static function (ContainerConfigurator $container): void {
             ])
         ->alias(ClientRepositoryInterface::class, 'league.oauth2_server.repository.client')
         ->alias(ClientRepository::class, 'league.oauth2_server.repository.client')
-
-        ->set('league.oauth2_server.repository.access_token', AccessTokenRepository::class)
-            ->args([
-                service(AccessTokenManagerInterface::class),
-                service(ClientManagerInterface::class),
-                service(ScopeConverterInterface::class),
-            ])
-        ->alias(AccessTokenRepositoryInterface::class, 'league.oauth2_server.repository.access_token')
-        ->alias(AccessTokenRepository::class, 'league.oauth2_server.repository.access_token')
 
         ->set('league.oauth2_server.repository.refresh_token', RefreshTokenRepository::class)
             ->args([
