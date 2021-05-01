@@ -14,6 +14,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager;
+use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AccessTokenManager as InMemoryAccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Scope as ScopeModel;
 use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Driver;
@@ -54,6 +55,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $config = $this->processConfiguration(new Configuration(), $configs);
 
+        $this->configureAccessTokenSaving($loader, $config['authorization_server']);
         $this->configurePersistence($loader, $container, $config);
         $this->configureAuthorizationServer($container, $config['authorization_server']);
         $this->configureResourceServer($container, $config['resource_server']);
@@ -206,6 +208,15 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         ;
     }
 
+    private function configureAccessTokenSaving(LoaderInterface $loader, array $config): void
+    {
+        if ($config['persist_access_token']) {
+            $loader->load('access_token/default.php');
+        } else {
+            $loader->load('access_token/null.php');
+        }
+    }
+
     /**
      * @throws \Exception
      */
@@ -221,7 +232,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         switch ($persistenceMethod) {
             case 'in_memory':
                 $loader->load('storage/in_memory.php');
-                $this->configureInMemoryPersistence($container);
+                $this->configureInMemoryPersistence($container, $config);
                 break;
             case 'doctrine':
                 $loader->load('storage/doctrine.php');
@@ -241,6 +252,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container
             ->findDefinition(AccessTokenManager::class)
             ->replaceArgument(0, $entityManager)
+            ->replaceArgument(1, $config['authorization_server']['persist_access_token'])
         ;
 
         $container
@@ -267,14 +279,19 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container
             ->findDefinition(Driver::class)
             ->replaceArgument(0, $config['client']['classname'])
+            ->replaceArgument(1, $config['authorization_server']['persist_access_token'])
         ;
 
         $container->setParameter('league.oauth2_server.persistence.doctrine.enabled', true);
         $container->setParameter('league.oauth2_server.persistence.doctrine.manager', $entityManagerName);
     }
 
-    private function configureInMemoryPersistence(ContainerBuilder $container): void
+    private function configureInMemoryPersistence(ContainerBuilder $container, array $config): void
     {
+        $container
+            ->findDefinition(InMemoryAccessTokenManager::class)
+            ->replaceArgument(0, $config['authorization_server']['persist_access_token'])
+        ;
         $container->setParameter('league.oauth2_server.persistence.in_memory.enabled', true);
     }
 

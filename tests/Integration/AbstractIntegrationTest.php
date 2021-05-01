@@ -110,7 +110,7 @@ abstract class AbstractIntegrationTest extends TestCase
         $this->eventDispatcher = new EventDispatcher();
         $this->scopeManager = new ScopeManager();
         $this->clientManager = new ClientManager($this->eventDispatcher);
-        $this->accessTokenManager = new AccessTokenManager();
+        $this->accessTokenManager = new AccessTokenManager(true);
         $this->refreshTokenManager = new RefreshTokenManager();
         $this->authCodeManager = new AuthorizationCodeManager();
 

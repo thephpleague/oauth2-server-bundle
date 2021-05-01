@@ -28,7 +28,6 @@ use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ScopeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
-use League\Bundle\OAuth2ServerBundle\Repository\AccessTokenRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\AuthCodeRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\ClientRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\RefreshTokenRepository;
@@ -69,15 +68,6 @@ return static function (ContainerConfigurator $container): void {
             ])
         ->alias(ClientRepositoryInterface::class, 'league.oauth2_server.repository.client')
         ->alias(ClientRepository::class, 'league.oauth2_server.repository.client')
-
-        ->set('league.oauth2_server.repository.access_token', AccessTokenRepository::class)
-            ->args([
-                service(AccessTokenManagerInterface::class),
-                service(ClientManagerInterface::class),
-                service(ScopeConverterInterface::class),
-            ])
-        ->alias(AccessTokenRepositoryInterface::class, 'league.oauth2_server.repository.access_token')
-        ->alias(AccessTokenRepository::class, 'league.oauth2_server.repository.access_token')
 
         ->set('league.oauth2_server.repository.refresh_token', RefreshTokenRepository::class)
             ->args([

@@ -14,21 +14,41 @@ final class AccessTokenManager implements AccessTokenManagerInterface
      */
     private $accessTokens = [];
 
+    /** @var bool */
+    private $persistAccessToken;
+
+    public function __construct(bool $persistAccessToken)
+    {
+        $this->persistAccessToken = $persistAccessToken;
+    }
+
     /**
      * @psalm-mutation-free
      */
     public function find(string $identifier): ?AccessToken
     {
+        if (!$this->persistAccessToken) {
+            return null;
+        }
+
         return $this->accessTokens[$identifier] ?? null;
     }
 
     public function save(AccessToken $accessToken): void
     {
+        if (!$this->persistAccessToken) {
+            return;
+        }
+
         $this->accessTokens[$accessToken->getIdentifier()] = $accessToken;
     }
 
     public function clearExpired(): int
     {
+        if (!$this->persistAccessToken) {
+            return 0;
+        }
+
         $count = \count($this->accessTokens);
 
         $now = new \DateTimeImmutable();

@@ -25,9 +25,13 @@ class Driver implements MappingDriver
      */
     private $clientClass;
 
-    public function __construct(string $clientClass)
+    /** @var bool */
+    private $persistAccessToken;
+
+    public function __construct(string $clientClass, bool $persistAccessToken)
     {
         $this->clientClass = $clientClass;
+        $this->persistAccessToken = $persistAccessToken;
     }
 
     public function loadMetadataForClass($className, ClassMetadata $metadata): void
@@ -63,11 +67,11 @@ class Driver implements MappingDriver
         return array_merge(
             [
                 AbstractClient::class,
-                AccessToken::class,
                 AuthorizationCode::class,
                 RefreshToken::class,
             ],
-            Client::class === $this->clientClass ? [Client::class] : []
+            Client::class === $this->clientClass ? [Client::class] : [],
+            $this->persistAccessToken ? [AccessToken::class] : []
         );
     }
 
@@ -126,12 +130,18 @@ class Driver implements MappingDriver
 
     private function buildRefreshTokenMetadata(ClassMetadata $metadata): void
     {
-        (new ClassMetadataBuilder($metadata))
+        $classMetadataBuilder = (new ClassMetadataBuilder($metadata))
             ->setTable('oauth2_refresh_token')
             ->createField('identifier', 'string')->makePrimaryKey()->length(80)->option('fixed', true)->build()
             ->addField('expiry', 'datetime_immutable')
             ->addField('revoked', 'boolean')
-            ->createManyToOne('accessToken', AccessToken::class)->addJoinColumn('access_token', 'identifier', true, false, 'SET NULL')->build()
         ;
+
+        if ($this->persistAccessToken) {
+            $classMetadataBuilder->createManyToOne('accessToken', AccessToken::class)
+                                 ->addJoinColumn('access_token', 'identifier', true, false, 'SET NULL')
+                                 ->build()
+            ;
+        }
     }
 }
