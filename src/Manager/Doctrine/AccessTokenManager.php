@@ -15,24 +15,40 @@ final class AccessTokenManager implements AccessTokenManagerInterface
      */
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    /** @var bool */
+    private $persistAccessToken;
+
+    public function __construct(EntityManagerInterface $entityManager, bool $persistAccessToken)
     {
         $this->entityManager = $entityManager;
+        $this->persistAccessToken = $persistAccessToken;
     }
 
     public function find(string $identifier): ?AccessToken
     {
+        if (!$this->persistAccessToken) {
+            return null;
+        }
+
         return $this->entityManager->find(AccessToken::class, $identifier);
     }
 
     public function save(AccessToken $accessToken): void
     {
+        if (!$this->persistAccessToken) {
+            return;
+        }
+
         $this->entityManager->persist($accessToken);
         $this->entityManager->flush();
     }
 
     public function clearExpired(): int
     {
+        if (!$this->persistAccessToken) {
+            return 0;
+        }
+
         /** @var int */
         return $this->entityManager->createQueryBuilder()
             ->delete(AccessToken::class, 'at')

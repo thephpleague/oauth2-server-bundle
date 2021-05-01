@@ -6,7 +6,6 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Acceptance;
 
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager as DoctrineAccessTokenManager;
-use League\Bundle\OAuth2ServerBundle\Manager\Null\AccessTokenManager as NullAccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
@@ -22,7 +21,7 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
-        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em);
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, true);
 
         $client = new Client('client', 'client', 'secret');
         $em->persist($client);
@@ -48,11 +47,11 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, false);
+
         $client = new Client('name', 'client', 'secret');
         $em->persist($client);
         $em->flush();
-
-        $doctrineAccessTokenManager = new NullAccessTokenManager();
 
         $testData = $this->buildClearExpiredTestData($client);
 
@@ -105,7 +104,7 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
     {
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em);
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, true);
 
         $client = new Client('client', 'client', 'secret');
         $em->persist($client);
@@ -133,12 +132,11 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
     {
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, false);
 
         $client = new Client('name', 'client', 'secret');
         $em->persist($client);
         $em->flush();
-
-        $doctrineAccessTokenManager = new NullAccessTokenManager();
 
         $testData = $this->buildClearExpiredTestDataWithRefreshToken($client, false);
 
