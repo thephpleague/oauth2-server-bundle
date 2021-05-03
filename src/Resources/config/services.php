@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
 use League\Bundle\OAuth2ServerBundle\Command\ClearExpiredTokensCommand;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Command\DeleteClientCommand;
@@ -56,7 +57,6 @@ use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterfac
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
 
 // BC Layer for < 5.1 versions
 if (!function_exists('service')) {

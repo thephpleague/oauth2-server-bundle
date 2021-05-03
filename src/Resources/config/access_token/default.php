@@ -8,6 +8,19 @@ use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ReferenceConfigurator;
+
+// BC Layer for < 5.1 versions
+if (!function_exists('service')) {
+    function service(string $id): ReferenceConfigurator
+    {
+        $fn = function_exists('Symfony\Component\DependencyInjection\Loader\Configurator\service')
+            ? 'Symfony\Component\DependencyInjection\Loader\Configurator\service'
+            : 'Symfony\Component\DependencyInjection\Loader\Configurator\ref';
+
+        return ($fn)($id);
+    }
+}
 
 return static function (ContainerConfigurator $container): void {
     $container->services()

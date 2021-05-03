@@ -43,9 +43,11 @@ final class LeagueOAuth2ServerBundle extends Bundle
 
     private function configureDoctrineExtension(ContainerBuilder $container): void
     {
-        /** @var string $modelDirectory */
+        /** @var string $modelCommonDirectory */
         $modelCommonDirectory = realpath(__DIR__ . '/Resources/config/doctrine/common');
+        /** @var string $modelAccessTokenDirectory */
         $modelAccessTokenDirectory = realpath(__DIR__ . '/Resources/config/doctrine/access_token');
+        /** @var string $modelNullDirectory */
         $modelNullDirectory = realpath(__DIR__ . '/Resources/config/doctrine/null');
 
         $container->addCompilerPass(
