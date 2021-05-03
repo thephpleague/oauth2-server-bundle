@@ -47,16 +47,22 @@
         <ImplicitToStringCast errorLevel="error">
             <errorLevel type="suppress">
                 <file name="src/Resources/config/services.php" />
+                <file name="src/Resources/config/access_token/default.php"/>
+                <file name="src/Resources/config/access_token/null.php"/>
             </errorLevel>
         </ImplicitToStringCast>
         <MixedInferredReturnType errorLevel="error">
             <errorLevel type="suppress">
                 <file name="src/Resources/config/services.php" />
+                <file name="src/Resources/config/access_token/default.php"/>
+                <file name="src/Resources/config/access_token/null.php"/>
             </errorLevel>
         </MixedInferredReturnType>
         <MixedReturnStatement errorLevel="error">
             <errorLevel type="suppress">
                 <file name="src/Resources/config/services.php" />
+                <file name="src/Resources/config/access_token/default.php"/>
+                <file name="src/Resources/config/access_token/null.php"/>
             </errorLevel>
         </MixedReturnStatement>
         <InvalidArgument errorLevel="error">
