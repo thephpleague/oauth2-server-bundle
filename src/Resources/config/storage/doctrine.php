@@ -27,6 +27,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('league.oauth2_server.manager.doctrine.access_token', AccessTokenManager::class)
             ->args([
                 null,
+                '$disableAccessTokenSaving' => null,
             ])
         ->alias(AccessTokenManagerInterface::class, 'league.oauth2_server.manager.doctrine.access_token')
         ->alias(AccessTokenManager::class, 'league.oauth2_server.manager.doctrine.access_token')

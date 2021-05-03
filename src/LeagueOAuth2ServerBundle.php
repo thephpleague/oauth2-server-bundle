@@ -43,18 +43,39 @@ final class LeagueOAuth2ServerBundle extends Bundle
 
     private function configureDoctrineExtension(ContainerBuilder $container): void
     {
-        /** @var string $modelDirectory */
-        $modelDirectory = realpath(__DIR__ . '/Resources/config/doctrine/model');
+        /** @var string $modelCommonDirectory */
+        $modelCommonDirectory = realpath(__DIR__ . '/Resources/config/doctrine/common');
+        /** @var string $modelAccessTokenDirectory */
+        $modelAccessTokenDirectory = realpath(__DIR__ . '/Resources/config/doctrine/access_token');
+        /** @var string $modelNullDirectory */
+        $modelNullDirectory = realpath(__DIR__ . '/Resources/config/doctrine/null');
 
         $container->addCompilerPass(
             DoctrineOrmMappingsPass::createXmlMappingDriver(
                 [
-                    $modelDirectory => 'League\Bundle\OAuth2ServerBundle\Model',
+                    $modelCommonDirectory => 'League\Bundle\OAuth2ServerBundle\Model',
+                    $modelAccessTokenDirectory => 'League\Bundle\OAuth2ServerBundle\Model',
                 ],
                 [
                     'league.oauth2_server.persistence.doctrine.manager',
                 ],
-                'league.oauth2_server.persistence.doctrine.enabled',
+                'league.oauth2_server.persistence.doctrine.access_token.enabled',
+                [
+                    'LeagueOAuth2ServerBundle' => 'League\Bundle\OAuth2ServerBundle\Model',
+                ]
+            )
+        );
+
+        $container->addCompilerPass(
+            DoctrineOrmMappingsPass::createXmlMappingDriver(
+                [
+                    $modelCommonDirectory => 'League\Bundle\OAuth2ServerBundle\Model',
+                    $modelNullDirectory => 'League\Bundle\OAuth2ServerBundle\Model',
+                ],
+                [
+                    'league.oauth2_server.persistence.doctrine.manager',
+                ],
+                'league.oauth2_server.persistence.doctrine.access_token.disabled',
                 [
                     'LeagueOAuth2ServerBundle' => 'League\Bundle\OAuth2ServerBundle\Model',
                 ]

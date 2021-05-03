@@ -24,7 +24,7 @@ return static function (ContainerConfigurator $container): void {
 
         ->set('league.oauth2_server.manager.in_memory.access_token', AccessTokenManager::class)
             ->args([
-                null,
+                '$disableAccessTokenSaving' => null,
             ])
         ->alias(AccessTokenManagerInterface::class, 'league.oauth2_server.manager.in_memory.access_token')
         ->alias(AccessTokenManager::class, 'league.oauth2_server.manager.in_memory.access_token')
