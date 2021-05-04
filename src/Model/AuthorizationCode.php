@@ -46,8 +46,8 @@ class AuthorizationCode
         \DateTimeInterface $expiry,
         Client $client,
         ?string $userIdentifier,
-        array $scopes)
-    {
+        array $scopes
+    ) {
         $this->identifier = $identifier;
         $this->expiry = $expiry;
         $this->client = $client;
