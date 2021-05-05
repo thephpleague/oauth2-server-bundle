@@ -1,0 +1,23 @@
+---------------------------------------------------------------------------
+
+by mtarld at 2021-04-22T15:10:12Z
+
+Agreed, this will simplify a little the code. But I think we should support either the old and the new authentication system.
+Thanks!
+
+---------------------------------------------------------------------------
+
+by chalasr at 2021-04-24T17:39:10Z
+
+Yes, let's drop support for Symfony < 5.2 (5.1 being already EOM).
+
+---------------------------------------------------------------------------
+
+by chalasr at 2021-05-05T11:32:25Z
+
+One thing I'm really unsure about is the `NullUser`.
+I know it has been borrowed from trikoder's guard authenticator, but I'm pretty sure such object should never end up in the token storage as part of an authenticated token.
+I think the `userLoader` callable passed to the UserBadge should just return null when it has no valid identifier, letting the UserBadge throw an AuthenticationException. I may miss some cases where we don't want such exception to be throw, but having an authenticated NullUser in the storage feels wrong anyway.
+
+Apart from that, this is awesome. Really nice work.
+Merging now so that we can move forward and iterate.
