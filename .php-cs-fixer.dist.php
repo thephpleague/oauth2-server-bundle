@@ -9,7 +9,7 @@ $finder = PhpCsFixer\Finder::create()
     ->append([__FILE__])
 ;
 
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config())
     ->setUsingCache(true)
     ->setRules([
         '@DoctrineAnnotation' => true,

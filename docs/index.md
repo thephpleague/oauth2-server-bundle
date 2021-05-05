@@ -13,7 +13,7 @@ For implementation into Symfony projects, please see [bundle documentation](docs
 ## Requirements
 
 * [PHP 7.2](http://php.net/releases/7_2_0.php) or greater
-* [Symfony 4.4](https://symfony.com/roadmap/4.4) or [Symfony 5.x](https://symfony.com/roadmap/5.0)
+* [Symfony 5.2](https://symfony.com/roadmap/5.2) or greater
 
 ## Installation
 
@@ -91,9 +91,6 @@ For implementation into Symfony projects, please see [bundle documentation](docs
                 entity_manager:       default
             in_memory:            ~
 
-        # The priority of the event listener that converts an Exception to a Response
-        exception_event_listener_priority: 10
-
         # Set a custom prefix that replaces the default 'ROLE_OAUTH2_' role prefix
         role_prefix:          ROLE_OAUTH2_
     ```
@@ -110,6 +107,13 @@ For implementation into Symfony projects, please see [bundle documentation](docs
     bin/console doctrine:schema:update --force
     ```
 
+1. Enable the authenticator security system in `config/security.yaml` file:
+
+```yaml
+security:
+    enable_authenticator_manager: true
+```
+
 1. Import the routes inside your `config/routes.yaml` file:
 
     ```yaml
@@ -121,7 +125,7 @@ You can verify that everything is working by issuing a `POST` request to the `/t
 
 **❮ NOTE ❯** It is recommended to control the access to the authorization endpoint
 so that only logged in users can approve authorization requests.
-You should review your `security.yml` file. Here is a sample configuration:
+You should review your `config/security.yaml` file. Here is a sample configuration:
 
 ```yaml
 security:

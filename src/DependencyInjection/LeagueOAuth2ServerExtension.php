@@ -9,7 +9,6 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Grant as GrantType;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\RedirectUri as RedirectUriType;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Scope as ScopeType;
-use League\Bundle\OAuth2ServerBundle\EventListener\ConvertExceptionToResponseListener;
 use League\Bundle\OAuth2ServerBundle\League\AuthorizationServer\GrantTypeInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager;
@@ -17,7 +16,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Scope as ScopeModel;
-use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory;
+use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
@@ -37,7 +36,6 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\HttpKernel\KernelEvents;
 
 final class LeagueOAuth2ServerExtension extends Extension implements PrependExtensionInterface, CompilerPassInterface
 {
@@ -60,15 +58,8 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $this->configureResourceServer($container, $config['resource_server']);
         $this->configureScopes($container, $config['scopes']);
 
-        $container->findDefinition(OAuth2TokenFactory::class)
-            ->setArgument(0, $config['role_prefix']);
-
-        $container->findDefinition(ConvertExceptionToResponseListener::class)
-            ->addTag('kernel.event_listener', [
-                'event' => KernelEvents::EXCEPTION,
-                'method' => 'onKernelException',
-                'priority' => $config['exception_event_listener_priority'],
-            ]);
+        $container->findDefinition(OAuth2Authenticator::class)
+            ->setArgument(3, $config['role_prefix']);
 
         $container->registerForAutoconfiguration(GrantTypeInterface::class)
             ->addTag('league.oauth2_server.authorization_server.grant');

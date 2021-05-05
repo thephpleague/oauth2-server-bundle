@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
 use League\Bundle\OAuth2ServerBundle\Command\ClearExpiredTokensCommand;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
@@ -16,7 +17,6 @@ use League\Bundle\OAuth2ServerBundle\Converter\UserConverter;
 use League\Bundle\OAuth2ServerBundle\Converter\UserConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEventFactory;
 use League\Bundle\OAuth2ServerBundle\EventListener\AuthorizationRequestUserResolvingListener;
-use League\Bundle\OAuth2ServerBundle\EventListener\ConvertExceptionToResponseListener;
 use League\Bundle\OAuth2ServerBundle\League\AuthorizationServer\GrantConfigurator;
 use League\Bundle\OAuth2ServerBundle\League\Repository\AccessTokenRepository;
 use League\Bundle\OAuth2ServerBundle\League\Repository\AuthCodeRepository;
@@ -31,10 +31,8 @@ use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ScopeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
-use League\Bundle\OAuth2ServerBundle\Security\Authentication\Provider\OAuth2Provider;
-use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2TokenFactory;
-use League\Bundle\OAuth2ServerBundle\Security\EntryPoint\OAuth2EntryPoint;
-use League\Bundle\OAuth2ServerBundle\Security\Firewall\OAuth2Listener;
+use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
+use League\Bundle\OAuth2ServerBundle\Security\EventListener\CheckScopeListener;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -52,24 +50,10 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ReferenceConfigurator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-
-// BC Layer for < 5.1 versions
-if (!function_exists('service')) {
-    function service(string $id): ReferenceConfigurator
-    {
-        $fn = function_exists('Symfony\Component\DependencyInjection\Loader\Configurator\service')
-            ? 'Symfony\Component\DependencyInjection\Loader\Configurator\service'
-            : 'Symfony\Component\DependencyInjection\Loader\Configurator\ref';
-
-        return ($fn)($id);
-    }
-}
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
@@ -128,27 +112,21 @@ return static function (ContainerConfigurator $container): void {
         ->alias(AuthCodeRepository::class, 'league.oauth2_server.repository.auth_code')
 
         // Security layer
-        ->set('league.oauth2_server.provider.oauth2', OAuth2Provider::class)
+        ->set('league.oauth2_server.authenticator.oauth2', OAuth2Authenticator::class)
             ->args([
-                service(UserProviderInterface::class),
-                service(ResourceServer::class),
-                service(OAuth2TokenFactory::class),
-                null,
-            ])
-        ->alias(OAuth2Provider::class, 'league.oauth2_server.provider.oauth2')
-
-        ->set('league.oauth2_server.security.entrypoint.oauth2', OAuth2EntryPoint::class)
-        ->alias(OAuth2EntryPoint::class, 'league.oauth2_server.security.entrypoint.oauth2')
-
-        ->set('league.oauth2_server.security.firewall.oauth2_listener', OAuth2Listener::class)
-            ->args([
-                service(TokenStorageInterface::class),
-                service(AuthenticationManagerInterface::class),
                 service('league.oauth2_server.factory.psr_http'),
-                service(OAuth2TokenFactory::class),
+                service(ResourceServer::class),
+                service(UserProviderInterface::class),
                 null,
             ])
-        ->alias(OAuth2Listener::class, 'league.oauth2_server.security.firewall.oauth2_listener')
+        ->alias(OAuth2Authenticator::class, 'league.oauth2_server.authenticator.oauth2')
+
+        ->set('league.oauth2_server.listener.check_scope', CheckScopeListener::class)
+            ->args([
+                service(RequestStack::class),
+            ])
+            ->tag('kernel.event_subscriber')
+        ->alias(CheckScopeListener::class, 'league.oauth2_server.listener.check_scope')
 
         ->set('league.oauth2_server.authorization_server.grant_configurator', GrantConfigurator::class)
             ->args([
@@ -234,9 +212,6 @@ return static function (ContainerConfigurator $container): void {
             ])
         ->alias(AuthorizationRequestUserResolvingListener::class, 'league.oauth2_server.listener.authorization_request_user_resolving')
 
-        ->set('league.oauth2_server.listener.convert_exception_to_response', ConvertExceptionToResponseListener::class)
-        ->alias(ConvertExceptionToResponseListener::class, 'league.oauth2_server.listener.convert_exception_to_response')
-
         // Token controller
         ->set('league.oauth2_server.controller.token', TokenController::class)
             ->args([
@@ -301,9 +276,6 @@ return static function (ContainerConfigurator $container): void {
                 service(ClientManagerInterface::class),
             ])
         ->alias(AuthorizationRequestResolveEventFactory::class, 'league.oauth2_server.factory.authorization_request_resolve_event')
-
-        ->set('league.oauth2_server.factory.oauth2_token', OAuth2TokenFactory::class)
-        ->alias(OAuth2TokenFactory::class, 'league.oauth2_server.factory.oauth2_token')
 
         // Storage managers
         ->set('league.oauth2_server.manager.in_memory.scope', ScopeManager::class)

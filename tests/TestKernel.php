@@ -105,6 +105,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
             }
 
             $container->loadFromExtension('security', [
+                'enable_authenticator_manager' => true,
                 'firewalls' => [
                     'test' => [
                         'pattern' => '^/security-test',
