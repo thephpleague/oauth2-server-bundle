@@ -8,8 +8,8 @@ use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Entity\AccessToken as AccessTokenEntity;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken as AccessTokenModel;
-use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
@@ -107,7 +107,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
 
     private function buildAccessTokenModel(AccessTokenEntityInterface $accessTokenEntity): AccessTokenModel
     {
-        /** @var Client $client */
+        /** @var AbstractClient $client */
         $client = $this->clientManager->find($accessTokenEntity->getClient()->getIdentifier());
 
         $userIdentifier = $accessTokenEntity->getUserIdentifier();

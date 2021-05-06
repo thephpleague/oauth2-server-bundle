@@ -8,10 +8,9 @@ use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Event\ScopeResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\Client;
-use League\Bundle\OAuth2ServerBundle\Model\Client as ClientModel;
-use League\Bundle\OAuth2ServerBundle\Model\Grant as GrantModel;
-use League\Bundle\OAuth2ServerBundle\Model\Scope as ScopeModel;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
+use League\Bundle\OAuth2ServerBundle\Model\Grant;
+use League\Bundle\OAuth2ServerBundle\Model\Scope;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
@@ -80,7 +79,7 @@ final class ScopeRepository implements ScopeRepositoryInterface
         ClientEntityInterface $clientEntity,
         $userIdentifier = null
     ): array {
-        /** @var Client $client */
+        /** @var AbstractClient $client */
         $client = $this->clientManager->find($clientEntity->getIdentifier());
 
         $scopes = $this->setupScopes($client, $this->scopeConverter->toDomainArray(array_values($scopes)));
@@ -89,7 +88,7 @@ final class ScopeRepository implements ScopeRepositoryInterface
         $event = $this->eventDispatcher->dispatch(
             new ScopeResolveEvent(
                 $scopes,
-                new GrantModel($grantType),
+                new Grant($grantType),
                 $client,
                 $userIdentifier
             ),
@@ -100,11 +99,11 @@ final class ScopeRepository implements ScopeRepositoryInterface
     }
 
     /**
-     * @param list<ScopeModel> $requestedScopes
+     * @param list<Scope> $requestedScopes
      *
-     * @return list<ScopeModel>
+     * @return list<Scope>
      */
-    private function setupScopes(ClientModel $client, array $requestedScopes): array
+    private function setupScopes(AbstractClient $client, array $requestedScopes): array
     {
         $clientScopes = $client->getScopes();
 

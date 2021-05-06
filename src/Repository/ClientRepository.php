@@ -6,7 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Repository;
 
 use League\Bundle\OAuth2ServerBundle\Entity\Client as ClientEntity;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\Client as ClientModel;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 
 final class ClientRepository implements ClientRepositoryInterface
@@ -61,7 +61,7 @@ final class ClientRepository implements ClientRepositoryInterface
         return false;
     }
 
-    private function buildClientEntity(ClientModel $client): ClientEntity
+    private function buildClientEntity(AbstractClient $client): ClientEntity
     {
         $clientEntity = new ClientEntity();
         $clientEntity->setName($client->getName());
@@ -73,7 +73,7 @@ final class ClientRepository implements ClientRepositoryInterface
         return $clientEntity;
     }
 
-    private function isGrantSupported(ClientModel $client, ?string $grant): bool
+    private function isGrantSupported(AbstractClient $client, ?string $grant): bool
     {
         if (null === $grant) {
             return true;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Command;
 
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\Grant;
 use League\Bundle\OAuth2ServerBundle\Model\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\Model\Scope;
@@ -35,7 +35,7 @@ final class UpdateClientCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Updates an oAuth2 client')
+            ->setDescription('Updates an OAuth2 client')
             ->addOption(
                 'redirect-uri',
                 null,
@@ -58,6 +58,13 @@ final class UpdateClientCommand extends Command
                 []
             )
             ->addOption(
+                'name',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Sets name for client.',
+                []
+            )
+            ->addOption(
                 'deactivated',
                 null,
                 InputOption::VALUE_NONE,
@@ -76,19 +83,20 @@ final class UpdateClientCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         if (null === $client = $this->clientManager->find($input->getArgument('identifier'))) {
-            $io->error(sprintf('oAuth2 client identified as "%s"', $input->getArgument('identifier')));
+            $io->error(sprintf('OAuth2 client identified as "%s" does not exist.', $input->getArgument('identifier')));
 
             return 1;
         }
 
         $client = $this->updateClientFromInput($client, $input);
         $this->clientManager->save($client);
-        $io->success('Given oAuth2 client updated successfully.');
+
+        $io->success('OAuth2 client updated successfully.');
 
         return 0;
     }
 
-    private function updateClientFromInput(Client $client, InputInterface $input): Client
+    private function updateClientFromInput(AbstractClient $client, InputInterface $input): AbstractClient
     {
         $client->setActive(!$input->getOption('deactivated'));
 
@@ -99,7 +107,7 @@ final class UpdateClientCommand extends Command
         /** @var list<string> $scopeStrings */
         $scopeStrings = $input->getOption('scope');
 
-        return $client
+        $client
             ->setRedirectUris(...array_map(static function (string $redirectUri): RedirectUri {
                 return new RedirectUri($redirectUri);
             }, $redirectUriStrings))
@@ -110,5 +118,11 @@ final class UpdateClientCommand extends Command
                 return new Scope($scope);
             }, $scopeStrings))
         ;
+
+        if ($name = $input->getOption('name')) {
+            $client->setName($name);
+        }
+
+        return $client;
     }
 }

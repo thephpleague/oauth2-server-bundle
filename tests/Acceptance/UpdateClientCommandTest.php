@@ -24,7 +24,7 @@ final class UpdateClientCommandTest extends AbstractAcceptanceTest
             '--redirect-uri' => ['http://example.com', 'http://example.org'],
         ]);
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('Given oAuth2 client updated successfully', $output);
+        $this->assertStringContainsString('OAuth2 client updated successfully.', $output);
         $this->assertCount(2, $client->getRedirectUris());
     }
 
@@ -42,7 +42,7 @@ final class UpdateClientCommandTest extends AbstractAcceptanceTest
             '--grant-type' => ['password', 'client_credentials'],
         ]);
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('Given oAuth2 client updated successfully', $output);
+        $this->assertStringContainsString('OAuth2 client updated successfully.', $output);
         $this->assertCount(2, $client->getGrants());
     }
 
@@ -60,8 +60,43 @@ final class UpdateClientCommandTest extends AbstractAcceptanceTest
             '--scope' => ['foo', 'bar'],
         ]);
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('Given oAuth2 client updated successfully', $output);
+        $this->assertStringContainsString('OAuth2 client updated successfully.', $output);
         $this->assertCount(2, $client->getScopes());
+    }
+
+    public function testUpdateName(): void
+    {
+        $client = $this->fakeAClient('foobar');
+        $this->getClientManager()->save($client);
+        $this->assertCount(0, $client->getRedirectUris());
+
+        $command = $this->application->find('league:oauth2-server:update-client');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'identifier' => $client->getIdentifier(),
+            '--name' => 'newName',
+        ]);
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('OAuth2 client updated successfully.', $output);
+        $this->assertSame('newName', $client->getName());
+    }
+
+    public function testNameIsNotUpdatedIfNotSet(): void
+    {
+        $client = $this->fakeAClient('foobar');
+        $this->getClientManager()->save($client);
+        $this->assertSame('name', $client->getName());
+
+        $command = $this->application->find('league:oauth2-server:update-client');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'identifier' => $client->getIdentifier(),
+        ]);
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('OAuth2 client updated successfully.', $output);
+        $this->assertSame('name', $client->getName());
     }
 
     public function testDeactivate(): void
@@ -78,7 +113,7 @@ final class UpdateClientCommandTest extends AbstractAcceptanceTest
             '--deactivated' => true,
         ]);
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('Given oAuth2 client updated successfully', $output);
+        $this->assertStringContainsString('OAuth2 client updated successfully.', $output);
         $updatedClient = $this->getClientManager()->find($client->getIdentifier());
         $this->assertFalse($updatedClient->isActive());
     }

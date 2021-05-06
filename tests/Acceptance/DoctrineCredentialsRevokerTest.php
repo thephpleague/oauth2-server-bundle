@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Tests\Acceptance;
 
 use Doctrine\ORM\EntityManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
@@ -36,7 +37,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         $em->persist($refreshToken);
         $em->flush();
 
-        $revoker = new DoctrineCredentialsRevoker($em);
+        $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, Client::class));
 
         $revoker->revokeCredentialsForUser(FixtureFactory::createUser());
 
@@ -65,7 +66,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         $em->persist($refreshToken);
         $em->flush();
 
-        $revoker = new DoctrineCredentialsRevoker($em);
+        $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, Client::class));
 
         $revoker->revokeCredentialsForClient($client);
 

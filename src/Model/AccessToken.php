@@ -22,7 +22,7 @@ class AccessToken
     private $userIdentifier;
 
     /**
-     * @var Client
+     * @var AbstractClient
      */
     private $client;
 
@@ -44,7 +44,7 @@ class AccessToken
     public function __construct(
         string $identifier,
         \DateTimeInterface $expiry,
-        Client $client,
+        AbstractClient $client,
         ?string $userIdentifier,
         array $scopes
     ) {
@@ -90,7 +90,7 @@ class AccessToken
     /**
      * @psalm-mutation-free
      */
-    public function getClient(): Client
+    public function getClient(): AbstractClient
     {
         return $this->client;
     }

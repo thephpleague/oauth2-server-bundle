@@ -16,6 +16,7 @@ Usage:
   league:oauth2-server:create-client [options] [--] [<identifier> [<secret>]]
 
 Arguments:
+  name                               The client name
   identifier                         The client identifier
   secret                             The client secret
 
@@ -46,6 +47,7 @@ Options:
       --redirect-uri[=REDIRECT-URI]  Sets redirect uri for client. Use this option multiple times to set multiple redirect URIs. (multiple values allowed)
       --grant-type[=GRANT-TYPE]      Sets allowed grant type for client. Use this option multiple times to set multiple grant types. (multiple values allowed)
       --scope[=SCOPE]                Sets allowed scope for client. Use this option multiple times to set multiple scopes. (multiple values allowed)
+      --name=[=NAME]                 Sets name for client.
       --deactivated                  If provided, it will deactivate the given client.
 ```
 

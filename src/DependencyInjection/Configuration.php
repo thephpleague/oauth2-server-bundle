@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\DependencyInjection;
 
 use Defuse\Crypto\Key;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -23,6 +25,7 @@ final class Configuration implements ConfigurationInterface
         $rootNode->append($this->createResourceServerNode());
         $rootNode->append($this->createScopesNode());
         $rootNode->append($this->createPersistenceNode());
+        $rootNode->append($this->createClientNode());
 
         $rootNode
             ->children()
@@ -165,6 +168,30 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 // In-memory persistence
                 ->scalarNode('in_memory')
+                ->end()
+            ->end()
+        ;
+
+        return $node;
+    }
+
+    private function createClientNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('client');
+        $node = $treeBuilder->getRootNode();
+
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('classname')
+                    ->info(sprintf('Set a custom client class. Must be a %s', AbstractClient::class))
+                    ->defaultValue(Client::class)
+                    ->validate()
+                        ->ifTrue(function ($v) {
+                            return !is_a($v, AbstractClient::class, true);
+                        })
+                        ->thenInvalid(sprintf('%%s must be a %s', AbstractClient::class))
+                    ->end()
                 ->end()
             ->end()
         ;

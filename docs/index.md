@@ -93,6 +93,10 @@ For implementation into Symfony projects, please see [bundle documentation](docs
 
         # Set a custom prefix that replaces the default 'ROLE_OAUTH2_' role prefix
         role_prefix:          ROLE_OAUTH2_
+
+        client:
+            # Set a custom client class. Must be a League\Bundle\OAuth2ServerBundle\Model\Client
+            classname:        League\Bundle\OAuth2ServerBundle\Model\Client
     ```
 
 1. Enable the bundle in `config/bundles.php` by adding it to the array:
@@ -138,6 +142,7 @@ security:
 * [Basic setup](basic-setup.md)
 * [Controlling token scopes](controlling-token-scopes.md)
 * [Implementing custom grant type](implementing-custom-grant-type.md)
+* [Using custom client](using-custom-client.md)
 
 ## Contributing
 

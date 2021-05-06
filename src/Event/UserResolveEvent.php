@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Event;
 
-use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\Grant;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\Event;
@@ -27,7 +27,7 @@ final class UserResolveEvent extends Event
     private $grant;
 
     /**
-     * @var Client
+     * @var AbstractClient
      */
     private $client;
 
@@ -36,7 +36,7 @@ final class UserResolveEvent extends Event
      */
     private $user;
 
-    public function __construct(string $username, string $password, Grant $grant, Client $client)
+    public function __construct(string $username, string $password, Grant $grant, AbstractClient $client)
     {
         $this->username = $username;
         $this->password = $password;
@@ -59,7 +59,7 @@ final class UserResolveEvent extends Event
         return $this->grant;
     }
 
-    public function getClient(): Client
+    public function getClient(): AbstractClient
     {
         return $this->client;
     }

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
@@ -10,6 +11,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Driver;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -17,8 +19,15 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 return static function (ContainerConfigurator $container): void {
     $container->services()
 
+        ->set('league.oauth2_server.persistence.driver', Driver::class)
+            ->args([
+                null,
+            ])
+        ->alias(Driver::class, 'league.oauth2_server.persistence.driver')
+
         ->set('league.oauth2_server.manager.doctrine.client', ClientManager::class)
             ->args([
+                null,
                 null,
             ])
         ->alias(ClientManagerInterface::class, 'league.oauth2_server.manager.doctrine.client')
@@ -48,6 +57,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('league.oauth2_server.credentials_revoker.doctrine', DoctrineCredentialsRevoker::class)
             ->args([
                 null,
+                service(ClientManagerInterface::class),
             ])
         ->alias(CredentialsRevokerInterface::class, 'league.oauth2_server.credentials_revoker.doctrine')
         ->alias(DoctrineCredentialsRevoker::class, 'league.oauth2_server.credentials_revoker.doctrine')

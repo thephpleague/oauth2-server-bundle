@@ -30,7 +30,7 @@ final class DeleteClientCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Deletes an oAuth2 client')
+            ->setDescription('Deletes an OAuth2 client')
             ->addArgument(
                 'identifier',
                 InputArgument::REQUIRED,
@@ -42,15 +42,15 @@ final class DeleteClientCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $identifier = $input->getArgument('identifier');
-        $client = $this->clientManager->find($identifier);
-        if (null === $client) {
-            $io->error(sprintf('oAuth2 client identified as "%s" does not exist', $identifier));
+
+        if (null === $client = $this->clientManager->find($input->getArgument('identifier'))) {
+            $io->error(sprintf('OAuth2 client identified as "%s" does not exist.', $input->getArgument('identifier')));
 
             return 1;
         }
+
         $this->clientManager->remove($client);
-        $io->success('Given oAuth2 client deleted successfully.');
+        $io->success('OAuth2 client deleted successfully.');
 
         return 0;
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Command;
 
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\Grant;
 use League\Bundle\OAuth2ServerBundle\Model\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\Model\Scope;
@@ -25,11 +25,17 @@ final class CreateClientCommand extends Command
      */
     private $clientManager;
 
-    public function __construct(ClientManagerInterface $clientManager)
+    /**
+     * @var string
+     */
+    private $clientFqcn;
+
+    public function __construct(ClientManagerInterface $clientManager, string $clientFqcn)
     {
         parent::__construct();
 
         $this->clientManager = $clientManager;
+        $this->clientFqcn = $clientFqcn;
     }
 
     protected function configure(): void
@@ -57,6 +63,18 @@ final class CreateClientCommand extends Command
                 'Sets allowed scope for client. Use this option multiple times to set multiple scopes.',
                 []
             )
+            ->addOption(
+                'public',
+                null,
+                InputOption::VALUE_NONE,
+                'Create a public client.'
+            )
+            ->addOption(
+                'allow-plain-text-pkce',
+                null,
+                InputOption::VALUE_NONE,
+                'Create a client who is allowed to use plain challenge method for PKCE.'
+            )
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,
@@ -71,18 +89,6 @@ final class CreateClientCommand extends Command
                 'secret',
                 InputArgument::OPTIONAL,
                 'The client secret'
-            )
-            ->addOption(
-                'public',
-                null,
-                InputOption::VALUE_NONE,
-                'Create a public client.'
-            )
-            ->addOption(
-                'allow-plain-text-pkce',
-                null,
-                InputOption::VALUE_NONE,
-                'Create a client who is allowed to use plain challenge method for PKCE.'
             )
         ;
     }
@@ -100,7 +106,7 @@ final class CreateClientCommand extends Command
         }
 
         $this->clientManager->save($client);
-        $io->success('New oAuth2 client created successfully.');
+        $io->success('New OAuth2 client created successfully.');
 
         $headers = ['Identifier', 'Secret'];
         $rows = [
@@ -111,9 +117,10 @@ final class CreateClientCommand extends Command
         return 0;
     }
 
-    private function buildClientFromInput(InputInterface $input): Client
+    private function buildClientFromInput(InputInterface $input): AbstractClient
     {
         $name = $input->getArgument('name');
+
         /** @var string $identifier */
         $identifier = $input->getArgument('identifier') ?? hash('md5', random_bytes(16));
 
@@ -126,7 +133,8 @@ final class CreateClientCommand extends Command
         /** @var string $secret */
         $secret = $isPublic ? null : $input->getArgument('secret') ?? hash('sha512', random_bytes(32));
 
-        $client = new Client($name, $identifier, $secret);
+        /** @var AbstractClient $client */
+        $client = new $this->clientFqcn($name, $identifier, $secret);
         $client->setActive(true);
         $client->setAllowPlainTextPkce($input->getOption('allow-plain-text-pkce'));
 

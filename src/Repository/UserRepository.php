@@ -7,8 +7,8 @@ namespace League\Bundle\OAuth2ServerBundle\Repository;
 use League\Bundle\OAuth2ServerBundle\Converter\UserConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Event\UserResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\Client;
-use League\Bundle\OAuth2ServerBundle\Model\Grant as GrantModel;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
+use League\Bundle\OAuth2ServerBundle\Model\Grant;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
@@ -51,7 +51,7 @@ final class UserRepository implements UserRepositoryInterface
         $grantType,
         ClientEntityInterface $clientEntity
     ): ?UserEntityInterface {
-        /** @var Client $client */
+        /** @var AbstractClient $client */
         $client = $this->clientManager->find($clientEntity->getIdentifier());
 
         /** @var UserResolveEvent $event */
@@ -59,7 +59,7 @@ final class UserRepository implements UserRepositoryInterface
             new UserResolveEvent(
                 $username,
                 $password,
-                new GrantModel($grantType),
+                new Grant($grantType),
                 $client
             ),
             OAuth2Events::USER_RESOLVE

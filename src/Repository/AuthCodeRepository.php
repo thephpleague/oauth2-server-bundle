@@ -8,8 +8,8 @@ use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Entity\AuthCode;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
-use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
@@ -99,7 +99,7 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
 
     private function buildAuthorizationCode(AuthCodeEntityInterface $authCode): AuthorizationCode
     {
-        /** @var Client $client */
+        /** @var AbstractClient $client */
         $client = $this->clientManager->find($authCode->getClient()->getIdentifier());
 
         $userIdentifier = $authCode->getUserIdentifier();

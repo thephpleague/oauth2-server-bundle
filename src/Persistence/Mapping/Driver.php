@@ -1,0 +1,135 @@
+<?php
+
+declare(strict_types=1);
+
+namespace League\Bundle\OAuth2ServerBundle\Persistence\Mapping;
+
+use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
+use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
+use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
+
+/**
+ * Metadata driver that enables mapping dynamically accordingly to container configuration.
+ *
+ * @author Mathias Arlaud <mathias.arlaud@gmail.com>
+ */
+class Driver implements MappingDriver
+{
+    /**
+     * @var bool
+     */
+    private $withCustomClientClass;
+
+    public function __construct(bool $withCustomClientClass)
+    {
+        $this->withCustomClientClass = $withCustomClientClass;
+    }
+
+    public function loadMetadataForClass($className, ClassMetadata $metadata): void
+    {
+        switch ($className) {
+            case AbstractClient::class:
+                $this->buildAbstractClientMetadata($metadata);
+
+                break;
+            case AccessToken::class:
+                $this->buildAccessTokenMetadata($metadata);
+
+                break;
+            case AuthorizationCode::class:
+                $this->buildAuthorizationCodeMetadata($metadata);
+
+                break;
+            case Client::class:
+                $this->buildClientMetadata($metadata);
+
+                break;
+            case RefreshToken::class:
+                $this->buildRefreshTokenMetadata($metadata);
+
+                break;
+            default:
+                throw new \RuntimeException(sprintf('%s cannot load metadata for class %s', __CLASS__, $className));
+        }
+    }
+
+    public function getAllClassNames(): array
+    {
+        return array_merge(
+            [
+                AbstractClient::class,
+                AccessToken::class,
+                AuthorizationCode::class,
+                RefreshToken::class,
+            ],
+            $this->withCustomClientClass ? [] : [Client::class]
+        );
+    }
+
+    public function isTransient($className): bool
+    {
+        return AbstractClient::class !== $className;
+    }
+
+    private function buildAbstractClientMetadata(ClassMetadata $metadata): void
+    {
+        (new ClassMetadataBuilder($metadata))
+            ->setMappedSuperClass()
+            ->createField('identifier', 'string')->makePrimaryKey()->length(32)->build()
+            ->createField('name', 'string')->length(128)->build()
+            ->createField('secret', 'string')->length(128)->nullable(true)->build()
+            ->createField('redirectUris', 'oauth2_redirect_uri')->nullable(true)->build()
+            ->createField('grants', 'oauth2_grant')->nullable(true)->build()
+            ->createField('scopes', 'oauth2_scope')->nullable(true)->build()
+            ->addField('active', 'boolean')
+            ->createField('allowPlainTextPkce', 'boolean')->option('default', 0)->build()
+        ;
+    }
+
+    private function buildAccessTokenMetadata(ClassMetadata $metadata): void
+    {
+        (new ClassMetadataBuilder($metadata))
+            ->setTable('oauth2_access_token')
+            ->createField('identifier', 'string')->makePrimaryKey()->length(80)->option('fixed', true)->build()
+            ->addField('expiry', 'datetime_immutable')
+            ->createField('userIdentifier', 'string')->length(128)->nullable(true)->build()
+            ->createField('scopes', 'oauth2_scope')->nullable(true)->build()
+            ->addField('revoked', 'boolean')
+            ->createManyToOne('client', Client::class)->addJoinColumn('client', 'identifier', false, false, 'CASCADE')->build()
+        ;
+    }
+
+    private function buildAuthorizationCodeMetadata(ClassMetadata $metadata): void
+    {
+        (new ClassMetadataBuilder($metadata))
+            ->setTable('oauth2_authorization_code')
+            ->createField('identifier', 'string')->makePrimaryKey()->length(80)->option('fixed', true)->build()
+            ->addField('expiry', 'datetime_immutable')
+            ->createField('userIdentifier', 'string')->length(128)->nullable(true)->build()
+            ->createField('scopes', 'oauth2_scope')->nullable(true)->build()
+            ->addField('revoked', 'boolean')
+            ->createManyToOne('client', Client::class)->addJoinColumn('client', 'identifier', false, false, 'CASCADE')->build()
+        ;
+    }
+
+    private function buildClientMetadata(ClassMetadata $metadata): void
+    {
+        (new ClassMetadataBuilder($metadata))->setTable('oauth2_client');
+    }
+
+    private function buildRefreshTokenMetadata(ClassMetadata $metadata): void
+    {
+        (new ClassMetadataBuilder($metadata))
+            ->setTable('oauth2_refresh_token')
+            ->createField('identifier', 'string')->makePrimaryKey()->length(80)->option('fixed', true)->build()
+            ->addField('expiry', 'datetime_immutable')
+            ->addField('revoked', 'boolean')
+            ->createManyToOne('accessToken', AccessToken::class)->addJoinColumn('access_token', 'identifier', true, false, 'SET NULL')->build()
+        ;
+    }
+}

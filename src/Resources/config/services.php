@@ -227,6 +227,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('league.oauth2_server.command.create_client', CreateClientCommand::class)
             ->args([
                 service(ClientManagerInterface::class),
+                null,
             ])
             ->tag('console.command')
         ->alias(CreateClientCommand::class, 'league.oauth2_server.command.create_client')
