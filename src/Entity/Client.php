@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace League\Bundle\OAuth2ServerBundle\League\Entity;
+namespace League\Bundle\OAuth2ServerBundle\Entity;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Traits\ClientTrait;

@@ -16,7 +16,7 @@
     use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
     use Nyholm\Psr7\Response;
     use Psr\Http\Message\ServerRequestInterface;
-    use League\Bundle\OAuth2ServerBundle\League\AuthorizationServer\GrantTypeInterface;
+    use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface;
 
     final class FakeGrant extends AbstractGrant implements GrantTypeInterface
     {

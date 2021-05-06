@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace League\Bundle\OAuth2ServerBundle\League\AuthorizationServer;
+namespace League\Bundle\OAuth2ServerBundle\AuthorizationServer;
 
 use League\OAuth2\Server\AuthorizationServer;
 
