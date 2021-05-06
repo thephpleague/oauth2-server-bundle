@@ -6,6 +6,8 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Acceptance;
 
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\Scope;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use Symfony\Component\Console\Tester\CommandTester;
 
 final class UpdateClientCommandTest extends AbstractAcceptanceTest
@@ -50,7 +52,7 @@ final class UpdateClientCommandTest extends AbstractAcceptanceTest
     {
         $client = $this->fakeAClient('foobar');
         $this->getClientManager()->save($client);
-        $this->assertCount(0, $client->getScopes());
+        $this->assertEquals([new Scope(FixtureFactory::FIXTURE_SCOPE_SECOND)], $client->getScopes());
 
         $command = $this->application->find('league:oauth2-server:update-client');
         $commandTester = new CommandTester($command);
@@ -62,6 +64,23 @@ final class UpdateClientCommandTest extends AbstractAcceptanceTest
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Given oAuth2 client updated successfully', $output);
         $this->assertCount(2, $client->getScopes());
+    }
+
+    public function testUpdateScopesWithoutScopeSetDefaultScopes(): void
+    {
+        $client = $this->fakeAClient('foobar');
+        $this->getClientManager()->save($client);
+        $this->assertEquals([new Scope(FixtureFactory::FIXTURE_SCOPE_SECOND)], $client->getScopes());
+
+        $command = $this->application->find('league:oauth2-server:update-client');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'identifier' => $client->getIdentifier(),
+        ]);
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Given oAuth2 client updated successfully', $output);
+        $this->assertEquals([new Scope('rock')], $client->getScopes());
     }
 
     public function testDeactivate(): void

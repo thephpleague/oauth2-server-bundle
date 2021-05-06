@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
@@ -13,6 +14,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
@@ -20,6 +22,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('league.oauth2_server.manager.doctrine.client', ClientManager::class)
             ->args([
                 null,
+                service(EventDispatcherInterface::class),
             ])
         ->alias(ClientManagerInterface::class, 'league.oauth2_server.manager.doctrine.client')
         ->alias(ClientManager::class, 'league.oauth2_server.manager.doctrine.client')

@@ -48,7 +48,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 abstract class AbstractIntegrationTest extends TestCase
 {
@@ -107,12 +107,12 @@ abstract class AbstractIntegrationTest extends TestCase
      */
     protected function setUp(): void
     {
+        $this->eventDispatcher = new EventDispatcher();
         $this->scopeManager = new ScopeManager();
-        $this->clientManager = new ClientManager();
+        $this->clientManager = new ClientManager($this->eventDispatcher);
         $this->accessTokenManager = new AccessTokenManager();
         $this->refreshTokenManager = new RefreshTokenManager();
         $this->authCodeManager = new AuthorizationCodeManager();
-        $this->eventDispatcher = new EventDispatcher();
 
         $scopeConverter = new ScopeConverter();
         $scopeRepository = new ScopeRepository($this->scopeManager, $this->clientManager, $scopeConverter, $this->eventDispatcher);

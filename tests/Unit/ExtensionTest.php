@@ -111,6 +111,40 @@ final class ExtensionTest extends TestCase
         ];
     }
 
+    /**
+     * @dataProvider scopeProvider
+     */
+    public function testDefaultScopeValidation(array $available, array $default, bool $valid): void
+    {
+        $container = new ContainerBuilder();
+        $extension = new LeagueOAuth2ServerExtension();
+
+        $this->setupContainer($container);
+
+        if (!$valid) {
+            $this->expectException(\LogicException::class);
+        }
+
+        $extension->load($this->getValidConfiguration(['scopes' => ['available' => $available, 'default' => $default]]), $container);
+
+        $this->addToAssertionCount(1);
+    }
+
+    public function scopeProvider(): iterable
+    {
+        yield 'when a default scope is part of available scopes' => [
+            ['scope_one', 'scope_two'],
+            ['scope_one'],
+            true,
+        ];
+
+        yield 'when a default scope is not part of available scopes' => [
+            ['scope_one', 'scope_two'],
+            ['unknown_scope'],
+            false,
+        ];
+    }
+
     private function getValidConfiguration(array $options = []): array
     {
         return [
@@ -124,6 +158,15 @@ final class ExtensionTest extends TestCase
                 ],
                 'resource_server' => [
                     'public_key' => 'foo',
+                ],
+                'scopes' => $options['scopes'] ?? [
+                    'available' => [
+                        'foo',
+                        'bar',
+                    ],
+                    'default' => [
+                        'foo',
+                    ],
                 ],
                 //Pick one for valid config:
                 //'persistence' => ['doctrine' => []]
