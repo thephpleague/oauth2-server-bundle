@@ -1,0 +1,83 @@
+---------------------------------------------------------------------------
+
+by azjezz at 2021-04-26T14:16:53Z
+
+> Q: The table oauth2_client is still there (empty) even if the user configured another model class. Should we care about it?
+
+I think we need to, otherwise you might endup with an extra migration when something changes in it, even if it's not used.
+
+---------------------------------------------------------------------------
+
+by azjezz at 2021-04-26T14:17:49Z
+
+> Q: I'm not sure about where to put the configuration. Right now it's under league_oauth2_server.client_class but I'm not a huge fan of it. Any ideas?
+
+`league_oauth2_server.client.classname`? ( allowing other client configurations such as `league_oauth2_server.client.default_scopes` )
+
+---------------------------------------------------------------------------
+
+by mtarld at 2021-04-26T15:24:53Z
+
+> > Q: The table oauth2_client is still there (empty) even if the user configured another model class. Should we care about it?
+>
+> I think we need to, otherwise you might endup with an extra migration when something changes in it, even if it's not used.
+
+As every change will be done in the abstract class, if something changes, it'll generate a needed migration (in the custom concrete class or in our concrete class).
+But I agree that it is cleaner.
+On the other hand, this is tough... I don't know how to handle it as Doctrine drivers are taking a folder in input and loading everything inside.
+The only approach that I can see is to implement our custom dynamic driver. But it's kind of overkill
+WDYT?
+
+---------------------------------------------------------------------------
+
+by azjezz at 2021-04-26T16:50:34Z
+
+hmm, maybe we create a custom compiler pass to use instead of https://github.com/thephpleague/oauth2-server-bundle/blob/534714c37d30f3fc06e9e9a1b11885d6af94d58c/src/LeagueOAuth2ServerBundle.php#L49 ? which loads other entity definitions, but not the client one?
+
+---------------------------------------------------------------------------
+
+by mtarld at 2021-04-27T09:26:42Z
+
+> hmm, maybe we create a custom compiler pass to use instead of
+>
+> https://github.com/thephpleague/oauth2-server-bundle/blob/534714c37d30f3fc06e9e9a1b11885d6af94d58c/src/LeagueOAuth2ServerBundle.php#L49
+>
+> ? which loads other entity definitions, but not the client one?
+
+I finally created a custom driver and compiler pass.
+But I was forced to remove the XML mapping definition and define everything in the driver. It is not something usual but I kind of like it
+
+---------------------------------------------------------------------------
+
+by mtarld at 2021-05-03T14:33:37Z
+
+Sounds like entities with a final constructor cannot be proxied...
+
+```
+Compile Error: Cannot override final method League\Bundle\OAuth2ServerBundle\Model\AbstractClient::__construct()
+at tests/.kernel/cache/doctrine/orm/Proxies/__CG__LeagueBundleOAuth2ServerBundleModelClient.php:49
+```
+
+---------------------------------------------------------------------------
+
+by chalasr at 2021-05-03T15:32:11Z
+
+Let's use `@final` then. We could also catch any `TypeError` to provide a meaningful error when instantiating the client from console commands
+
+---------------------------------------------------------------------------
+
+by azjezz at 2021-05-03T19:11:34Z
+
+hmm, or we could use `@psalm-consistent-constructor` annotation ( see https://psalm.dev/docs/running_psalm/issues/UnsafeInstantiation/ ), basically we say "sure, extend it, but you are required to keep the same signature", which is the best option IMHO.
+
+---------------------------------------------------------------------------
+
+by chalasr at 2021-05-03T19:35:25Z
+
+Works for me!
+
+---------------------------------------------------------------------------
+
+by azjezz at 2021-05-03T19:38:48Z
+
+we should actually use `@psalm-consistent-constructor`, if someone adds a doctrine collection to their entity, they are required to initialize it in the constructor, declaring it final won't work, and `@final` would add an error in PhpStorm or whatever SA tool the end user is using.
