@@ -14,42 +14,42 @@ abstract class AbstractClient
     /**
      * @var string
      */
-    private $name;
+    protected $name;
 
     /**
      * @var string
      */
-    private $identifier;
+    protected $identifier;
 
     /**
      * @var string|null
      */
-    private $secret;
+    protected $secret;
 
     /**
      * @var list<RedirectUri>
      */
-    private $redirectUris = [];
+    protected $redirectUris = [];
 
     /**
      * @var list<Grant>
      */
-    private $grants = [];
+    protected $grants = [];
 
     /**
      * @var list<Scope>
      */
-    private $scopes = [];
+    protected $scopes = [];
 
     /**
      * @var bool
      */
-    private $active = true;
+    protected $active = true;
 
     /**
      * @var bool
      */
-    private $allowPlainTextPkce = false;
+    protected $allowPlainTextPkce = false;
 
     /**
      * @psalm-mutation-free
