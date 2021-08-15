@@ -312,7 +312,6 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         $response = $this->handleTokenRequest($request);
 
-        // Response assertions.
         $this->assertSame('invalid_grant', $response['error']);
     }
 
