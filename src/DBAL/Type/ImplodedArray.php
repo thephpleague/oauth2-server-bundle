@@ -18,7 +18,7 @@ abstract class ImplodedArray extends TextType
     private const VALUE_DELIMITER = ' ';
 
     /**
-     * {@inheritdoc}
+     * @psalm-suppress MixedArgumentTypeCoercion
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
