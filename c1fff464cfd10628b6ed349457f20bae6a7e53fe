@@ -1,0 +1,38 @@
+---------------------------------------------------------------------------
+
+by chalasr at 2021-08-15T21:33:29Z
+
+Thank you for the PR! This looks good to me.
+If you can look into the failing tests, that'd be awesome. Otherwise, I'll have a look this week.
+
+---------------------------------------------------------------------------
+
+by mtarld at 2021-08-16T07:42:42Z
+
+LGTM as well!
+
+---------------------------------------------------------------------------
+
+by yoshz at 2021-08-16T08:58:43Z
+
+The test were already failing in the master branch for me.
+Not sure why it didn't show up in the pipeline of the latest commit to master.
+
+---------------------------------------------------------------------------
+
+by chalasr at 2021-08-16T15:52:04Z
+
+Indeed, I'm fixing the broken tests in #44 so don't worry about the ones that were breaking before your PR.
+
+---------------------------------------------------------------------------
+
+by chalasr at 2021-08-16T15:53:56Z
+
+Out of curiosity, which Symfony version are you using with this bundle?
+I'm tempted to bump the minimum version to 5.3 since 5.2 is not maintained anymore.
+
+---------------------------------------------------------------------------
+
+by yoshz at 2021-08-16T18:50:53Z
+
+I am using Symfony 5.3. I agree with 5.2, it is already EOL.
