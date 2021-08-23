@@ -64,7 +64,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
 
     public function supports(Request $request): ?bool
     {
-        return null;
+        return 0 === strpos($request->headers->get('Authorization', ''), 'Bearer ');
     }
 
     public function start(Request $request, AuthenticationException $authException = null): Response
