@@ -6,6 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Acceptance;
 
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\Scope;
 use Symfony\Component\Console\Tester\CommandTester;
 
 final class CreateClientCommandTest extends AbstractAcceptanceTest
@@ -213,5 +214,25 @@ final class CreateClientCommandTest extends AbstractAcceptanceTest
             ->find('foobar');
         $this->assertInstanceOf(Client::class, $client);
         $this->assertCount(2, $client->getScopes());
+    }
+
+    public function testCreateClientWithoutScopeSetDefaultScopes(): void
+    {
+        $command = $this->application->find('league:oauth2-server:create-client');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'name' => 'My Awesome OAuth Client',
+            'identifier' => 'foobar',
+        ]);
+
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('New OAuth2 client created successfully', $output);
+        $client = $this->client
+            ->getContainer()
+            ->get(ClientManagerInterface::class)
+            ->find('foobar');
+        $this->assertInstanceOf(Client::class, $client);
+        $this->assertEquals([new Scope('rock')], $client->getScopes());
     }
 }

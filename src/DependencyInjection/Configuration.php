@@ -138,9 +138,25 @@ final class Configuration implements ConfigurationInterface
         $node = $treeBuilder->getRootNode();
 
         $node
-            ->info("Scopes that you wish to utilize in your application.\nThis should be a simple array of strings.")
-            ->scalarPrototype()
-            ->treatNullLike([])
+            ->isRequired()
+            ->children()
+                ->arrayNode('available')
+                    ->info("Scopes that you wish to utilize in your application.\nThis should be a simple array of strings.")
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                    ->scalarPrototype()
+                        ->cannotBeEmpty()
+                    ->end()
+                ->end()
+                ->arrayNode('default')
+                    ->info("Scopes that will be assigned when no scope given.\nThis should be a simple array of strings.")
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                    ->scalarPrototype()
+                        ->cannotBeEmpty()
+                    ->end()
+                ->end()
+            ->end()
         ;
 
         return $node;

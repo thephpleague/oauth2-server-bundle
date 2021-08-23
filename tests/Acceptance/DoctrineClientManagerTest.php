@@ -9,6 +9,9 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager as DoctrineC
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
+use League\Bundle\OAuth2ServerBundle\Model\Scope;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @TODO   This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
@@ -20,7 +23,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
     {
         /** @var $em EntityManagerInterface */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrineClientManager = new DoctrineClientManager($em, Client::class);
+        $doctrineClientManager = new DoctrineClientManager($em, self::$container->get(EventDispatcherInterface::class), Client::class);
 
         $client = new Client('client', 'client', 'secret');
         $em->persist($client);
@@ -39,7 +42,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
     {
         /** @var $em EntityManagerInterface */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrineClientManager = new DoctrineClientManager($em, Client::class);
+        $doctrineClientManager = new DoctrineClientManager($em, self::$container->get(EventDispatcherInterface::class), Client::class);
 
         $client = new Client('client', 'client', 'secret');
         $em->persist($client);
@@ -68,11 +71,25 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
         );
     }
 
+    public function testSaveClientWithoutScopeAddDefaultScopes(): void
+    {
+        /** @var $em EntityManagerInterface */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+        $doctrineClientManager = new DoctrineClientManager($em, self::$container->get(EventDispatcherInterface::class), Client::class);
+
+        $doctrineClientManager->save($client = new Client('client', 'client', 'secret'));
+
+        $this->assertEquals(
+            [new Scope(FixtureFactory::FIXTURE_SCOPE_SECOND)],
+            $em->getRepository(Client::class)->find($client->getIdentifier())->getScopes()
+        );
+    }
+
     public function testClientDeleteCascadesToAccessTokensAndRefreshTokens(): void
     {
         /** @var $em EntityManagerInterface */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrineClientManager = new DoctrineClientManager($em, Client::class);
+        $doctrineClientManager = new DoctrineClientManager($em, self::$container->get(EventDispatcherInterface::class), Client::class);
 
         $client = new Client('client', 'client', 'secret');
         $em->persist($client);

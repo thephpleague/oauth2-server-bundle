@@ -125,7 +125,7 @@ oauth2_restricted:
 
 ## Security roles
 
-Once the user gets past the `oauth2` firewall, they will be granted additional roles based on their granted [token scopes](controlling-token-scopes.md).
+Once the user gets past the `oauth2` firewall, they will be granted additional roles based on their granted [token scopes](token-scopes.md).
 By default, the roles are named in the following format:
 
 ```

@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Manager\InMemory;
 
+use League\Bundle\OAuth2ServerBundle\Event\PreSaveClientEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientFilter;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\Grant;
 use League\Bundle\OAuth2ServerBundle\Model\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\Model\Scope;
+use League\Bundle\OAuth2ServerBundle\OAuth2Events;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class ClientManager implements ClientManagerInterface
 {
@@ -18,6 +21,16 @@ final class ClientManager implements ClientManagerInterface
      */
     private $clients = [];
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    public function __construct(EventDispatcherInterface $dispatcher)
+    {
+        $this->dispatcher = $dispatcher;
+    }
+
     public function find(string $identifier): ?AbstractClient
     {
         return $this->clients[$identifier] ?? null;
@@ -25,6 +38,10 @@ final class ClientManager implements ClientManagerInterface
 
     public function save(AbstractClient $client): void
     {
+        /** @var PreSaveClientEvent $event */
+        $event = $this->dispatcher->dispatch(new PreSaveClientEvent($client), OAuth2Events::PRE_SAVE_CLIENT);
+        $client = $event->getClient();
+
         $this->clients[$client->getIdentifier()] = $client;
     }
 
