@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\DependencyInjection;
 
-use Defuse\Crypto\Key;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
@@ -16,7 +15,6 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\Scope as ScopeModel;
 use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Driver;
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
@@ -268,7 +266,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $container
             ->findDefinition(Driver::class)
-            ->replaceArgument(0, Client::class !== $config['client']['classname'])
+            ->replaceArgument(0, $config['client']['classname'])
         ;
 
         $container->setParameter('league.oauth2_server.persistence.doctrine.enabled', true);

@@ -14,14 +14,14 @@
     use Doctrine\ORM\Mapping as ORM;
     use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 
-    /**
-     * @ORM\Entity
-     */
+    #[ORM\Entity]
     class Client extends AbstractClient
     {
-        /**
-         * @ORM\Column(type="string")
-         */
+        #[ORM\Id]
+        #[ORM\Column(type: 'string', length: 32)]
+        protected $identifier;
+
+        #[ORM\Column(type: 'string')]
         private $image;
 
         // other properties, getters, setters, ...

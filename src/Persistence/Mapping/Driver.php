@@ -21,13 +21,13 @@ use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 class Driver implements MappingDriver
 {
     /**
-     * @var bool
+     * @var string
      */
-    private $withCustomClientClass;
+    private $clientClass;
 
-    public function __construct(bool $withCustomClientClass)
+    public function __construct(string $clientClass)
     {
-        $this->withCustomClientClass = $withCustomClientClass;
+        $this->clientClass = $clientClass;
     }
 
     public function loadMetadataForClass($className, ClassMetadata $metadata): void
@@ -67,20 +67,19 @@ class Driver implements MappingDriver
                 AuthorizationCode::class,
                 RefreshToken::class,
             ],
-            $this->withCustomClientClass ? [] : [Client::class]
+            Client::class === $this->clientClass ? [Client::class] : []
         );
     }
 
     public function isTransient($className): bool
     {
-        return AbstractClient::class !== $className;
+        return false;
     }
 
     private function buildAbstractClientMetadata(ClassMetadata $metadata): void
     {
         (new ClassMetadataBuilder($metadata))
             ->setMappedSuperClass()
-            ->createField('identifier', 'string')->makePrimaryKey()->length(32)->build()
             ->createField('name', 'string')->length(128)->build()
             ->createField('secret', 'string')->length(128)->nullable(true)->build()
             ->createField('redirectUris', 'oauth2_redirect_uri')->nullable(true)->build()
@@ -100,7 +99,7 @@ class Driver implements MappingDriver
             ->createField('userIdentifier', 'string')->length(128)->nullable(true)->build()
             ->createField('scopes', 'oauth2_scope')->nullable(true)->build()
             ->addField('revoked', 'boolean')
-            ->createManyToOne('client', Client::class)->addJoinColumn('client', 'identifier', false, false, 'CASCADE')->build()
+            ->createManyToOne('client', $this->clientClass)->addJoinColumn('client', 'identifier', false, false, 'CASCADE')->build()
         ;
     }
 
@@ -113,13 +112,16 @@ class Driver implements MappingDriver
             ->createField('userIdentifier', 'string')->length(128)->nullable(true)->build()
             ->createField('scopes', 'oauth2_scope')->nullable(true)->build()
             ->addField('revoked', 'boolean')
-            ->createManyToOne('client', Client::class)->addJoinColumn('client', 'identifier', false, false, 'CASCADE')->build()
+            ->createManyToOne('client', $this->clientClass)->addJoinColumn('client', 'identifier', false, false, 'CASCADE')->build()
         ;
     }
 
     private function buildClientMetadata(ClassMetadata $metadata): void
     {
-        (new ClassMetadataBuilder($metadata))->setTable('oauth2_client');
+        (new ClassMetadataBuilder($metadata))
+            ->setTable('oauth2_client')
+            ->createField('identifier', 'string')->makePrimaryKey()->length(32)->build()
+        ;
     }
 
     private function buildRefreshTokenMetadata(ClassMetadata $metadata): void
