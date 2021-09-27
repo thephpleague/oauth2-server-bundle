@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Controller;
 
+use League\Bundle\OAuth2ServerBundle\Event\TokenRequestResolveEvent;
+use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -56,6 +58,12 @@ final class TokenController
         } catch (OAuthServerException $e) {
             $response = $e->generateHttpResponse($serverResponse);
         }
+
+        /** @var TokenRequestResolveEvent $event */
+        $event = $this->eventDispatcher->dispatch(
+            new TokenRequestResolveEvent($response),
+            OAuth2Events::TOKEN_REQUEST_RESOLVE
+        );
 
         return $this->httpFoundationFactory->createResponse($response);
     }

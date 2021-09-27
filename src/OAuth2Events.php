@@ -30,4 +30,13 @@ final class OAuth2Events
      * must be redirected to resolve the authorization request.
      */
     public const AUTHORIZATION_REQUEST_RESOLVE = 'league.oauth2_server.event.authorization_request_resolve';
+
+    /**
+    * The REQUEST_TOKEN_RESOLVE event occurs right before the system
+    * complete token request.
+    *
+    * You could manipulate the response.
+    */
+    public const TOKEN_REQUEST_RESOLVE = 'league.oauth2_server.event.token_request_resolve';
+
 }
