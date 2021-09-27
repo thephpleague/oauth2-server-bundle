@@ -32,6 +32,14 @@ final class OAuth2Events
     public const AUTHORIZATION_REQUEST_RESOLVE = 'league.oauth2_server.event.authorization_request_resolve';
 
     /**
+     * The REQUEST_TOKEN_RESOLVE event occurs right before the system
+     * complete token request.
+     *
+     * You could manipulate the response.
+     */
+    public const TOKEN_REQUEST_RESOLVE = 'league.oauth2_server.event.token_request_resolve';
+
+    /**
      * The PRE_SAVE_CLIENT event occurs right before the client is saved
      * by a ClientManager.
      *

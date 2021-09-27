@@ -221,6 +221,7 @@ return static function (ContainerConfigurator $container): void {
                 service('league.oauth2_server.factory.psr_http'),
                 service('league.oauth2_server.factory.http_foundation'),
                 service('league.oauth2_server.factory.psr17'),
+                service('event_dispatcher'),
             ])
             ->tag('controller.service_arguments')
         ->alias(TokenController::class, 'league.oauth2_server.controller.token')
