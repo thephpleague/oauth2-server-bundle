@@ -8,6 +8,7 @@ use League\Bundle\OAuth2ServerBundle\Event\TokenRequestResolveEvent;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
@@ -36,16 +37,23 @@ final class TokenController
      */
     private $responseFactory;
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
     public function __construct(
         AuthorizationServer $server,
         HttpMessageFactoryInterface $httpMessageFactory,
         HttpFoundationFactoryInterface $httpFoundationFactory,
-        ResponseFactoryInterface $responseFactory
+        ResponseFactoryInterface $responseFactory,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->server = $server;
         $this->httpMessageFactory = $httpMessageFactory;
         $this->httpFoundationFactory = $httpFoundationFactory;
         $this->responseFactory = $responseFactory;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function indexAction(Request $request): Response
@@ -59,12 +67,14 @@ final class TokenController
             $response = $e->generateHttpResponse($serverResponse);
         }
 
+        $renderedResponse = $this->httpFoundationFactory->createResponse($response);
+
         /** @var TokenRequestResolveEvent $event */
         $event = $this->eventDispatcher->dispatch(
-            new TokenRequestResolveEvent($response),
+            new TokenRequestResolveEvent($renderedResponse),
             OAuth2Events::TOKEN_REQUEST_RESOLVE
         );
 
-        return $this->httpFoundationFactory->createResponse($response);
+        return $renderedResponse;
     }
 }
