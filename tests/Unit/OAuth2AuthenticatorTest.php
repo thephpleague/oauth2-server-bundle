@@ -40,7 +40,7 @@ final class OAuth2AuthenticatorTest extends TestCase
         $authenticator = new OAuth2Authenticator(
             $httpMessageFactory,
             $resourceServer,
-            $this->createMock(UserProviderInterface::class),
+            $this->createMock(TestUserProvider::class),
             'PREFIX_'
         );
 
@@ -68,10 +68,10 @@ final class OAuth2AuthenticatorTest extends TestCase
             ->willReturn($serverRequest)
         ;
 
-        $userProvider = $this->createMock(UserProviderInterface::class);
+        $userProvider = $this->createMock(TestUserProvider::class);
         $userProvider
             ->expects($this->once())
-            ->method('loadUserByUsername')
+            ->method('loadUserByIdentifier')
             ->with('userIdentifier')
             ->willReturn($this->createMock(UserInterface::class))
         ;
@@ -110,10 +110,10 @@ final class OAuth2AuthenticatorTest extends TestCase
             ->willReturn($serverRequest)
         ;
 
-        $userProvider = $this->createMock(UserProviderInterface::class);
+        $userProvider = $this->createMock(TestUserProvider::class);
         $userProvider
             ->expects($this->never())
-            ->method('loadUserByUsername')
+            ->method('loadUserByIdentifier')
         ;
 
         $authenticator = new OAuth2Authenticator(
@@ -147,7 +147,7 @@ final class OAuth2AuthenticatorTest extends TestCase
         $authenticator = new OAuth2Authenticator(
             $this->createMock(HttpMessageFactoryInterface::class),
             $this->createMock(ResourceServer::class),
-            $this->createMock(UserProviderInterface::class),
+            $this->createMock(TestUserProvider::class),
             'PREFIX_'
         );
 
@@ -157,5 +157,12 @@ final class OAuth2AuthenticatorTest extends TestCase
         $this->assertSame('accessTokenId', $token->getCredentials());
         $this->assertInstanceOf(NullUser::class, $token->getUser());
         $this->assertTrue($token->isAuthenticated());
+    }
+}
+
+abstract class TestUserProvider implements UserProviderInterface
+{
+    public function loadUserByIdentifier(string $identifier): UserInterface
+    {
     }
 }

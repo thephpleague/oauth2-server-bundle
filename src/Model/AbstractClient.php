@@ -19,7 +19,7 @@ abstract class AbstractClient
     /**
      * @var string
      */
-    private $identifier;
+    protected $identifier;
 
     /**
      * @var string|null

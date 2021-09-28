@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
 use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator;
@@ -17,6 +18,7 @@ use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Converter\UserConverter;
 use League\Bundle\OAuth2ServerBundle\Converter\UserConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEventFactory;
+use League\Bundle\OAuth2ServerBundle\EventListener\AddClientDefaultScopesListener;
 use League\Bundle\OAuth2ServerBundle\EventListener\AuthorizationRequestUserResolvingListener;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
@@ -278,6 +280,13 @@ return static function (ContainerConfigurator $container): void {
                 service(ClientManagerInterface::class),
             ])
         ->alias(AuthorizationRequestResolveEventFactory::class, 'league.oauth2_server.factory.authorization_request_resolve_event')
+
+        // Listeners
+        ->set(AddClientDefaultScopesListener::class)
+            ->args([
+                param('league.oauth2_server.scopes.default'),
+            ])
+            ->tag('kernel.event_listener', ['event' => OAuth2Events::PRE_SAVE_CLIENT])
 
         // Storage managers
         ->set('league.oauth2_server.manager.in_memory.scope', ScopeManager::class)

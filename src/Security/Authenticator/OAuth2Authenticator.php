@@ -64,7 +64,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
 
     public function supports(Request $request): ?bool
     {
-        return null;
+        return 0 === strpos($request->headers->get('Authorization', ''), 'Bearer ');
     }
 
     public function start(Request $request, AuthenticationException $authException = null): Response
@@ -72,6 +72,9 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         return new Response('', 401, ['WWW-Authenticate' => 'Bearer']);
     }
 
+    /**
+     * @psalm-suppress DeprecatedMethod
+     */
     public function authenticate(Request $request): PassportInterface
     {
         try {
@@ -89,11 +92,21 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         /** @var list<string> $scopes */
         $scopes = $psr7Request->getAttribute('oauth_scopes', []);
 
-        $passport = new SelfValidatingPassport(new UserBadge($userIdentifier, function (string $userIdentifier): UserInterface {
-            return '' !== $userIdentifier ? $this->userProvider->loadUserByUsername($userIdentifier) : new NullUser();
-        }), [
+        $userLoader = function (string $userIdentifier): UserInterface {
+            if ('' === $userIdentifier) {
+                return new NullUser();
+            }
+            if (!method_exists($this->userProvider, 'loadUserByIdentifier')) {
+                return $this->userProvider->loadUserByUsername($userIdentifier);
+            }
+
+            return $this->userProvider->loadUserByIdentifier($userIdentifier);
+        };
+
+        $passport = new SelfValidatingPassport(new UserBadge($userIdentifier, $userLoader), [
             new ScopeBadge($scopes),
         ]);
+
         $passport->setAttribute('accessTokenId', $accessTokenId);
 
         return $passport;

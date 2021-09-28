@@ -149,7 +149,7 @@ final class SecurityLayerTest extends AbstractAcceptanceTest
 
         $response = $this->client->getResponse();
 
-        $this->assertSame(401, $response->getStatusCode());
-        $this->assertSame('Bearer', $response->headers->get('WWW-Authenticate'));
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('Hello, guest', $response->getContent());
     }
 }

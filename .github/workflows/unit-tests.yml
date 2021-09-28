@@ -11,7 +11,7 @@ jobs:
         strategy:
             matrix:
                 symfony-version:
-                    - "5.2.*"
+                    - "5.3.*"
                 php-version:
                     - "7.2"
                     - "7.3"
@@ -49,10 +49,7 @@ jobs:
 
             -   name: "install lowest dependencies"
                 if: ${{ matrix.dependencies == 'lowest' }}
-                run: |
-                    composer require --no-update symfony/config=${{ matrix.symfony-version }} symfony/http-kernel=${{ matrix.symfony-version }} symfony/dependency-injection=${{ matrix.symfony-version }} symfony/options-resolver=${{ matrix.symfony-version }}
-                    composer require --no-update --dev symfony/framework-bundle=${{ matrix.symfony-version }} symfony/yaml=${{ matrix.symfony-version }}
-                    composer update --prefer-lowest --no-interaction --no-progress --prefer-dist
+                run: composer update --prefer-lowest --no-interaction --no-progress --prefer-dist
 
             -   name: "install highest dependencies"
                 if: ${{ matrix.dependencies == 'highest' }}

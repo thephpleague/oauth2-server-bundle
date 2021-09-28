@@ -12,6 +12,7 @@ use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @TODO   This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
@@ -37,7 +38,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         $em->persist($refreshToken);
         $em->flush();
 
-        $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, Client::class));
+        $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, self::$container->get(EventDispatcherInterface::class), Client::class));
 
         $revoker->revokeCredentialsForUser(FixtureFactory::createUser());
 
@@ -66,7 +67,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         $em->persist($refreshToken);
         $em->flush();
 
-        $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, Client::class));
+        $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, self::$container->get(EventDispatcherInterface::class), Client::class));
 
         $revoker->revokeCredentialsForClient($client);
 

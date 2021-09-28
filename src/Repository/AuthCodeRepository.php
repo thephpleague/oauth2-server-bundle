@@ -54,15 +54,15 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
      *
      * @return void
      */
-    public function persistNewAuthCode(AuthCodeEntityInterface $authCode)
+    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
     {
-        $authorizationCode = $this->authorizationCodeManager->find($authCode->getIdentifier());
+        $authorizationCode = $this->authorizationCodeManager->find($authCodeEntity->getIdentifier());
 
         if (null !== $authorizationCode) {
             throw UniqueTokenIdentifierConstraintViolationException::create();
         }
 
-        $authorizationCode = $this->buildAuthorizationCode($authCode);
+        $authorizationCode = $this->buildAuthorizationCode($authCodeEntity);
 
         $this->authorizationCodeManager->save($authorizationCode);
     }
@@ -97,22 +97,22 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
         return $authorizationCode->isRevoked();
     }
 
-    private function buildAuthorizationCode(AuthCodeEntityInterface $authCode): AuthorizationCode
+    private function buildAuthorizationCode(AuthCodeEntityInterface $authCodeEntity): AuthorizationCode
     {
         /** @var AbstractClient $client */
-        $client = $this->clientManager->find($authCode->getClient()->getIdentifier());
+        $client = $this->clientManager->find($authCodeEntity->getClient()->getIdentifier());
 
-        $userIdentifier = $authCode->getUserIdentifier();
+        $userIdentifier = $authCodeEntity->getUserIdentifier();
         if (null !== $userIdentifier) {
             $userIdentifier = (string) $userIdentifier;
         }
 
         return new AuthorizationCode(
-            $authCode->getIdentifier(),
-            $authCode->getExpiryDateTime(),
+            $authCodeEntity->getIdentifier(),
+            $authCodeEntity->getExpiryDateTime(),
             $client,
             $userIdentifier,
-            $this->scopeConverter->toDomainArray(array_values($authCode->getScopes()))
+            $this->scopeConverter->toDomainArray(array_values($authCodeEntity->getScopes()))
         );
     }
 }

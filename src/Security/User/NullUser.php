@@ -21,12 +21,17 @@ final class NullUser implements UserInterface
         return '';
     }
 
+    public function getUserIdentifier(): string
+    {
+        return '';
+    }
+
     /**
      * @psalm-mutation-free
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
-        return '';
+        return null;
     }
 
     /**

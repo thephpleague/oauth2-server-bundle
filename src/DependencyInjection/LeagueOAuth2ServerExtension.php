@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\DependencyInjection;
 
-use Defuse\Crypto\Key;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
@@ -16,7 +15,6 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\Scope as ScopeModel;
 use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Driver;
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
@@ -248,7 +246,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container
             ->findDefinition(ClientManager::class)
             ->replaceArgument(0, $entityManager)
-            ->replaceArgument(1, $config['client']['classname'])
+            ->replaceArgument(2, $config['client']['classname'])
         ;
 
         $container
@@ -268,7 +266,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $container
             ->findDefinition(Driver::class)
-            ->replaceArgument(0, Client::class !== $config['client']['classname'])
+            ->replaceArgument(0, $config['client']['classname'])
         ;
 
         $container->setParameter('league.oauth2_server.persistence.doctrine.enabled', true);
@@ -294,13 +292,17 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
     private function configureScopes(ContainerBuilder $container, array $scopes): void
     {
-        $scopeManager = $container
-            ->findDefinition(
-                (string) $container->getAlias(ScopeManagerInterface::class)
-            )
-        ;
+        $availableScopes = $scopes['available'];
+        $defaultScopes = $scopes['default'];
 
-        foreach ($scopes as $scope) {
+        if ([] !== $invalidDefaultScopes = array_diff($defaultScopes, $availableScopes)) {
+            throw new \LogicException(sprintf('Invalid default scopes "%s" for path "league_oauth2_server.scopes.default". Permissible values: "%s"', implode('", "', $invalidDefaultScopes), implode('", "', $availableScopes)));
+        }
+
+        $container->setParameter('league.oauth2_server.scopes.default', $defaultScopes);
+
+        $scopeManager = $container->findDefinition(ScopeManagerInterface::class);
+        foreach ($availableScopes as $scope) {
             $scopeManager->addMethodCall('save', [
                 new Definition(ScopeModel::class, [$scope]),
             ]);
