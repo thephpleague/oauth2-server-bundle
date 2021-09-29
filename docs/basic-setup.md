@@ -21,9 +21,9 @@ Arguments:
   secret                             The client secret
 
 Options:
-      --redirect-uri[=REDIRECT-URI]  Sets redirect uri for client. Use this option multiple times to set multiple redirect URIs. (multiple values allowed)
-      --grant-type[=GRANT-TYPE]      Sets allowed grant type for client. Use this option multiple times to set multiple grant types. (multiple values allowed)
-      --scope[=SCOPE]                Sets allowed scope for client. Use this option multiple times to set multiple scopes. (multiple values allowed)
+      --redirect-uri=REDIRECT-URI    Sets redirect uri for client. Use this option multiple times to set multiple redirect URIs. (multiple values allowed)
+      --grant-type=GRANT-TYPE        Sets allowed grant type for client. Use this option multiple times to set multiple grant types. (multiple values allowed)
+      --scope=SCOPE                  Sets allowed scope for client. Use this option multiple times to set multiple scopes. (multiple values allowed)
       --public                       Creates a public client (a client which does not have a secret)
       --allow-plain-text-pkce        Creates a client which is allowed to create an authorization code grant PKCE request with the "plain" code challenge method
 ```
@@ -41,27 +41,17 @@ Usage:
   league:oauth2-server:update-client [options] [--] <identifier>
 
 Arguments:
-  identifier                         The client ID
+  identifier                                     The client identifier
 
 Options:
-      --redirect-uri[=REDIRECT-URI]  Sets redirect uri for client. Use this option multiple times to set multiple redirect URIs. (multiple values allowed)
-      --grant-type[=GRANT-TYPE]      Sets allowed grant type for client. Use this option multiple times to set multiple grant types. (multiple values allowed)
-      --scope[=SCOPE]                Sets allowed scope for client. Use this option multiple times to set multiple scopes. (multiple values allowed)
-      --name=[=NAME]                 Sets name for client.
-      --deactivated                  If provided, it will deactivate the given client.
-```
-
-#### Restrict which grant types a client can access
-
-```sh
-$ bin/console league:oauth2-server:update-client --grant-type client_credentials foo
-```
-
-#### Assign which scopes the client will receive
-
-
-```sh
-$ bin/console league:oauth2-server:update-client --scope create --scope read foo
+      --add-redirect-uri=ADD-REDIRECT-URI        Add allowed redirect uri to the client. (multiple values allowed)
+      --remove-redirect-uri=REMOVE-REDIRECT-URI  Remove allowed redirect uri to the client. (multiple values allowed)
+      --add-grant-type=ADD-GRANT-TYPE            Add allowed grant type to the client. (multiple values allowed)
+      --remove-grant-type=REMOVE-GRANT-TYPE      Remove allowed grant type to the client. (multiple values allowed)
+      --add-scope=ADD-SCOPE                      Add allowed scope to the client. (multiple values allowed)
+      --remove-scope=REMOVE-SCOPE                Remove allowed scope to the client. (multiple values allowed)
+      --activate                                 Activate the client.
+      --deactivate                               Deactivate the client.
 ```
 
 ### Delete a client
@@ -89,10 +79,10 @@ Usage:
   league:oauth2-server:list-clients [options]
 
 Options:
-      --columns[=COLUMNS]            Determine which columns are shown. Comma separated list. [default: "identifier, secret, scope, redirect uri, grant type"]
-      --redirect-uri[=REDIRECT-URI]  Finds by redirect uri for client. Use this option multiple times to filter by multiple redirect URIs. (multiple values allowed)
-      --grant-type[=GRANT-TYPE]      Finds by allowed grant type for client. Use this option multiple times to filter by multiple grant types. (multiple values allowed)
-      --scope[=SCOPE]                Finds by allowed scope for client. Use this option multiple times to find by multiple scopes. (multiple values allowed)__
+      --columns=COLUMNS              Determine which columns are shown. Comma separated list. [default: "identifier, secret, scope, redirect uri, grant type"]
+      --redirect-uri=REDIRECT-URI    Finds by redirect uri for client. Use this option multiple times to filter by multiple redirect URIs. (multiple values allowed)
+      --grant-type=GRANT-TYPE        Finds by allowed grant type for client. Use this option multiple times to filter by multiple grant types. (multiple values allowed)
+      --scope=SCOPE                  Finds by allowed scope for client. Use this option multiple times to find by multiple scopes. (multiple values allowed)__
 ```
 
 ## Configuring the Security layer
@@ -135,7 +125,7 @@ oauth2_restricted:
 
 ## Security roles
 
-Once the user gets past the `oauth2` firewall, they will be granted additional roles based on their granted [token scopes](controlling-token-scopes.md).
+Once the user gets past the `oauth2` firewall, they will be granted additional roles based on their granted [token scopes](token-scopes.md).
 By default, the roles are named in the following format:
 
 ```

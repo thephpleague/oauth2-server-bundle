@@ -78,9 +78,14 @@ For implementation into Symfony projects, please see [bundle documentation](docs
             # How to generate a public key: https://oauth2.thephpleague.com/installation/#generating-public-and-private-keys
             public_key:           ~ # Required, Example: /var/oauth/public.key
 
-        # Scopes that you wish to utilize in your application.
-        # This should be a simple array of strings.
-        scopes:               []
+        scopes:
+            # Scopes that you wish to utilize in your application.
+            # This should be a simple array of strings.
+            available:               []
+
+            # Scopes that will be assigned when no scope given.
+            # This should be a simple array of strings.
+            default:                 []
 
         # Configures different persistence methods that can be used by the bundle for saving client and token data.
         # Only one persistence method can be configured at a time.
@@ -140,7 +145,7 @@ security:
 ## Configuration
 
 * [Basic setup](basic-setup.md)
-* [Controlling token scopes](controlling-token-scopes.md)
+* [Token scopes](token-scopes.md)
 * [Implementing custom grant type](implementing-custom-grant-type.md)
 * [Using custom client](using-custom-client.md)
 
@@ -164,4 +169,4 @@ Use the [issue tracker](https://github.com/thephpleague/oauth2-server-bundle/iss
 
 ## License
 
-See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
+See the [LICENSE](/LICENSE) file for license rights and limitations (MIT).

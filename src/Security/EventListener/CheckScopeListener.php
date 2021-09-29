@@ -44,7 +44,7 @@ final class CheckScopeListener implements EventSubscriberInterface
         }
 
         /** @var Request $request */
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->{method_exists($this->requestStack, 'getMainRequest') ? 'getMainRequest' : 'getMasterRequest'}();
 
         /** @var list<string> $requestedScopes */
         $requestedScopes = $request->attributes->get('oauth2_scopes', []);

@@ -135,7 +135,13 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                     'public_key' => '%env(PUBLIC_KEY_PATH)%',
                 ],
                 'scopes' => [
-                    FixtureFactory::FIXTURE_SCOPE_SECOND,
+                    'available' => [
+                        FixtureFactory::FIXTURE_SCOPE_FIRST,
+                        FixtureFactory::FIXTURE_SCOPE_SECOND,
+                    ],
+                    'default' => [
+                        FixtureFactory::FIXTURE_SCOPE_SECOND,
+                    ],
                 ],
                 'persistence' => [
                     'doctrine' => [
