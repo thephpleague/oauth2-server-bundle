@@ -9,7 +9,6 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class TokenRequestResolveEvent extends Event
 {
-
     /**
      * @var Response
      */
@@ -31,7 +30,4 @@ final class TokenRequestResolveEvent extends Event
 
         return $this;
     }
-
-
-
 }

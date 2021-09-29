@@ -38,5 +38,4 @@ final class OAuth2Events
     * You could manipulate the response.
     */
     public const TOKEN_REQUEST_RESOLVE = 'league.oauth2_server.event.token_request_resolve';
-
 }
