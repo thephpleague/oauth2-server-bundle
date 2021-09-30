@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Acceptance;
 
+use League\Bundle\OAuth2ServerBundle\Event\TokenRequestResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Event\UserResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
@@ -37,6 +38,13 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
             'grant_type' => 'client_credentials',
         ]);
 
+        $this->client
+            ->getContainer()
+            ->get('event_dispatcher')
+            ->addListener(OAuth2Events::TOKEN_REQUEST_RESOLVE, static function (TokenRequestResolveEvent $event): void {
+                $event->getResponse()->headers->set('foo', 'bar');
+            });
+
         $response = $this->client->getResponse();
 
         $this->assertSame(200, $response->getStatusCode());
@@ -48,6 +56,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $this->assertLessThanOrEqual(3600, $jsonResponse['expires_in']);
         $this->assertGreaterThan(0, $jsonResponse['expires_in']);
         $this->assertNotEmpty($jsonResponse['access_token']);
+        $this->assertEmpty($response->headers->get('foo'), 'bar');
     }
 
     public function testSuccessfulPasswordRequest(): void
@@ -57,6 +66,13 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
             ->get('event_dispatcher')
             ->addListener(OAuth2Events::USER_RESOLVE, static function (UserResolveEvent $event): void {
                 $event->setUser(FixtureFactory::createUser());
+            });
+
+        $this->client
+            ->getContainer()
+            ->get('event_dispatcher')
+            ->addListener(OAuth2Events::TOKEN_REQUEST_RESOLVE, static function (TokenRequestResolveEvent $event): void {
+                $event->getResponse()->headers->set('foo', 'bar');
             });
 
         $this->client->request('POST', '/token', [
@@ -79,6 +95,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $this->assertGreaterThan(0, $jsonResponse['expires_in']);
         $this->assertNotEmpty($jsonResponse['access_token']);
         $this->assertNotEmpty($jsonResponse['refresh_token']);
+        $this->assertSame($response->headers->get('foo'), 'bar');
     }
 
     public function testSuccessfulRefreshTokenRequest(): void
@@ -95,6 +112,13 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
             'refresh_token' => TestHelper::generateEncryptedPayload($refreshToken),
         ]);
 
+        $this->client
+            ->getContainer()
+            ->get('event_dispatcher')
+            ->addListener(OAuth2Events::TOKEN_REQUEST_RESOLVE, static function (TokenRequestResolveEvent $event): void {
+                $event->getResponse()->headers->set('foo', 'bar');
+            });
+
         $response = $this->client->getResponse();
 
         $this->assertSame(200, $response->getStatusCode());
@@ -107,6 +131,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $this->assertGreaterThan(0, $jsonResponse['expires_in']);
         $this->assertNotEmpty($jsonResponse['access_token']);
         $this->assertNotEmpty($jsonResponse['refresh_token']);
+        $this->assertEmpty($response->headers->get('foo'), 'bar');
     }
 
     public function testSuccessfulAuthorizationCodeRequest(): void
@@ -124,6 +149,13 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
             'code' => TestHelper::generateEncryptedAuthCodePayload($authCode),
         ]);
 
+        $this->client
+            ->getContainer()
+            ->get('event_dispatcher')
+            ->addListener(OAuth2Events::TOKEN_REQUEST_RESOLVE, static function (TokenRequestResolveEvent $event): void {
+                $event->getResponse()->headers->set('foo', 'bar');
+            });
+
         $response = $this->client->getResponse();
 
         $this->assertSame(200, $response->getStatusCode());
@@ -135,6 +167,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $this->assertLessThanOrEqual(3600, $jsonResponse['expires_in']);
         $this->assertGreaterThan(0, $jsonResponse['expires_in']);
         $this->assertNotEmpty($jsonResponse['access_token']);
+        $this->assertEmpty($response->headers->get('foo'), 'bar');
     }
 
     public function testSuccessfulAuthorizationCodeRequestWithPublicClient(): void
@@ -143,6 +176,13 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
             ->getContainer()
             ->get(AuthorizationCodeManagerInterface::class)
             ->find(FixtureFactory::FIXTURE_AUTH_CODE_PUBLIC_CLIENT);
+
+        $this->client
+            ->getContainer()
+            ->get('event_dispatcher')
+            ->addListener(OAuth2Events::TOKEN_REQUEST_RESOLVE, static function (TokenRequestResolveEvent $event): void {
+                $event->getResponse()->headers->set('foo', 'bar');
+            });
 
         $this->client->request('POST', '/token', [
             'client_id' => FixtureFactory::FIXTURE_PUBLIC_CLIENT,
@@ -162,6 +202,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $this->assertLessThanOrEqual(3600, $jsonResponse['expires_in']);
         $this->assertGreaterThan(0, $jsonResponse['expires_in']);
         $this->assertNotEmpty($jsonResponse['access_token']);
+        $this->assertSame($response->headers->get('foo'), 'bar');
     }
 
     public function testFailedTokenRequest(): void
@@ -188,6 +229,13 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
             'grant_type' => 'client_credentials',
         ]);
 
+        $this->client
+            ->getContainer()
+            ->get('event_dispatcher')
+            ->addListener(OAuth2Events::TOKEN_REQUEST_RESOLVE, static function (TokenRequestResolveEvent $event): void {
+                $event->getResponse()->headers->set('foo', 'bar');
+            });
+
         $response = $this->client->getResponse();
 
         $this->assertSame(401, $response->getStatusCode());
@@ -197,5 +245,6 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
 
         $this->assertSame('invalid_client', $jsonResponse['error']);
         $this->assertSame('Client authentication failed', $jsonResponse['message']);
+        $this->assertEmpty($response->headers->get('foo'), 'bar');
     }
 }
