@@ -1,0 +1,31 @@
+---------------------------------------------------------------------------
+
+by jr-k at 2021-09-29T07:54:01Z
+
+Some what ? Never heard of "tests". Joke aside, I'm not very good nor familiar at writing tests (Shame on me).
+
+Here is a commit for blank lines.
+
+---------------------------------------------------------------------------
+
+by chalasr at 2021-09-29T12:24:22Z
+
+@jr-k Time to level up then? :)
+
+Jokes aside, thanks for the PR.
+If you are wiling to write that test (which will be required for merging anyway), you can probably copy an existing case in `TokenEndpointTest`. Some events close to the one you are introducing are tested there.
+
+Also, some code quality checks of our CI are broken with this change.
+Can you check the failing jobs in the CI? Their output should give you enough info to fix them.
+
+---------------------------------------------------------------------------
+
+by jr-k at 2021-09-30T11:17:57Z
+
+Here we are, no conflicts and tests, alright ?
+
+---------------------------------------------------------------------------
+
+by jr-k at 2021-10-04T08:00:03Z
+
+Is there a merge date policy ? I need this in production, I can use my fork but I would like to avoid that.
