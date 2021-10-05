@@ -87,19 +87,17 @@ final class ListClientsCommand extends Command
         /** @var list<string> $scopeStrings */
         $scopeStrings = $input->getOption('scope');
 
-        return
-            ClientFilter
-                ::create()
-                ->addGrantCriteria(...array_map(static function (string $grant): Grant {
-                    return new Grant($grant);
-                }, $grantStrings))
-                ->addRedirectUriCriteria(...array_map(static function (string $redirectUri): RedirectUri {
-                    return new RedirectUri($redirectUri);
-                }, $redirectUriStrings))
-                ->addScopeCriteria(...array_map(static function (string $scope): Scope {
-                    return new Scope($scope);
-                }, $scopeStrings))
-            ;
+        return ClientFilter::create()
+            ->addGrantCriteria(...array_map(static function (string $grant): Grant {
+                return new Grant($grant);
+            }, $grantStrings))
+            ->addRedirectUriCriteria(...array_map(static function (string $redirectUri): RedirectUri {
+                return new RedirectUri($redirectUri);
+            }, $redirectUriStrings))
+            ->addScopeCriteria(...array_map(static function (string $scope): Scope {
+                return new Scope($scope);
+            }, $scopeStrings))
+        ;
     }
 
     private function drawTable(InputInterface $input, OutputInterface $output, array $clients): void
