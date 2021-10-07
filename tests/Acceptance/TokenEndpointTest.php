@@ -105,19 +105,31 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
             ->get(RefreshTokenManagerInterface::class)
             ->find(FixtureFactory::FIXTURE_REFRESH_TOKEN);
 
-        $this->client->request('POST', '/token', [
-            'client_id' => 'foo',
-            'client_secret' => 'secret',
-            'grant_type' => 'refresh_token',
-            'refresh_token' => TestHelper::generateEncryptedPayload($refreshToken),
-        ]);
-
         $this->client
             ->getContainer()
             ->get('event_dispatcher')
             ->addListener(OAuth2Events::TOKEN_REQUEST_RESOLVE, static function (TokenRequestResolveEvent $event): void {
                 $event->getResponse()->headers->set('foo', 'bar');
             });
+
+        $this->client
+            ->getContainer()
+            ->get('event_dispatcher')
+            ->addListener(OAuth2Events::TOKEN_REQUEST_RESOLVE, static function (TokenRequestResolveEvent $event): void {
+                if ('bar' === $event->getResponse()->headers->get('foo')) {
+                    $newResponse = clone $event->getResponse();
+                    $newResponse->headers->remove('foo');
+                    $newResponse->headers->set('baz', 'qux');
+                    $event->setResponse($newResponse);
+                }
+            }, -1);
+
+        $this->client->request('POST', '/token', [
+            'client_id' => 'foo',
+            'client_secret' => 'secret',
+            'grant_type' => 'refresh_token',
+            'refresh_token' => TestHelper::generateEncryptedPayload($refreshToken),
+        ]);
 
         $response = $this->client->getResponse();
 
@@ -131,7 +143,8 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $this->assertGreaterThan(0, $jsonResponse['expires_in']);
         $this->assertNotEmpty($jsonResponse['access_token']);
         $this->assertNotEmpty($jsonResponse['refresh_token']);
-        $this->assertEmpty($response->headers->get('foo'), 'bar');
+        $this->assertFalse($response->headers->has('foo'));
+        $this->assertSame($response->headers->get('baz'), 'qux');
     }
 
     public function testSuccessfulAuthorizationCodeRequest(): void

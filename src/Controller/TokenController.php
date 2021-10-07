@@ -70,11 +70,11 @@ final class TokenController
         $renderedResponse = $this->httpFoundationFactory->createResponse($response);
 
         /** @var TokenRequestResolveEvent $event */
-        $this->eventDispatcher->dispatch(
+        $event = $this->eventDispatcher->dispatch(
             new TokenRequestResolveEvent($renderedResponse),
             OAuth2Events::TOKEN_REQUEST_RESOLVE
         );
 
-        return $renderedResponse;
+        return $event->getResponse();
     }
 }
