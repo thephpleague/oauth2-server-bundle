@@ -71,7 +71,7 @@ final class TokenController
 
         /** @var TokenRequestResolveEvent $event */
         $this->eventDispatcher->dispatch(
-            new TokenRequestResolveEvent($renderedResponse),
+            new TokenRequestResolveEvent($request, $renderedResponse),
             OAuth2Events::TOKEN_REQUEST_RESOLVE
         );
 
