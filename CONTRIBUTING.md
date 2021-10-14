@@ -49,7 +49,7 @@ Make sure your IDE is setup properly, for more information check out the [dedica
 This bundle enforces the PSR-2 and Symfony code standards during development by using the [PHP CS Fixer](https://cs.sensiolabs.org/) utility. Before committing any code, you can run the utility to fix any potential rule violations:
 
 ```sh
-dev/bin/php composer lint
+vendor/bin/php-cs-fixer fix
 ```
 
 ### Testing
