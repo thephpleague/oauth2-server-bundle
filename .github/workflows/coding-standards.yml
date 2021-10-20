@@ -3,19 +3,19 @@ name: "coding standards"
 on: ["pull_request", "push"]
 
 jobs:
-  coding-standards:
-    name: "coding standards"
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: "checkout"
-        uses: "actions/checkout@v2"
+    coding-standards:
+        name: "coding standards"
+        runs-on: "ubuntu-latest"
+        steps:
+            - name: "checkout"
+              uses: "actions/checkout@v2"
 
-      - name: "installing PHP"
-        uses: "shivammathur/setup-php@v2"
-        with:
-          php-version: "7.4"
-          ini-values: memory_limit=-1
-          tools: composer:v2, cs2pr, php-cs-fixer
+            - name: "build the environment"
+              run: "dev/bin/docker-compose build"
 
-      - name: "checking coding standards"
-        run: "php-cs-fixer fix --dry-run --diff --ansi"
+            - name: "check coding standards"
+              run: "dev/bin/php php-cs-fixer fix --dry-run --diff --ansi"
+
+            - name: clear docker volumes
+              if: ${{ always() }}
+              run: dev/bin/docker-compose down --volumes

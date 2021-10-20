@@ -17,6 +17,7 @@ if ($r && Passport::class === $r->getName()) {
      * @internal
      *
      * @psalm-suppress UnrecognizedStatement
+     * @psalm-suppress MethodSignatureMismatch
      */
     trait ForwardCompatAuthenticatorTrait
     {
