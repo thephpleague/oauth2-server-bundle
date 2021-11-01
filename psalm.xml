@@ -4,7 +4,6 @@
         forbidEcho="true"
         strictBinaryOperands="true"
         phpVersion="7.1"
-        allowPhpStormGenerics="true"
         allowStringToStandInForClass="true"
         rememberPropertyAssignmentsAfterCall="false"
         checkForThrowsInGlobalScope="true"

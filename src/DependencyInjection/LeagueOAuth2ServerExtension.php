@@ -74,7 +74,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     /**
      * {@inheritdoc}
      */
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'league_oauth2_server';
     }

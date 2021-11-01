@@ -19,9 +19,6 @@ use Symfony\Component\Security\Http\Event\CheckPassportEvent;
  */
 final class CheckScopeListener implements EventSubscriberInterface
 {
-    /**
-     * @var RequestStack
-     */
     private $requestStack;
 
     public function __construct(RequestStack $requestStack)
@@ -31,7 +28,10 @@ final class CheckScopeListener implements EventSubscriberInterface
 
     public function checkPassport(CheckPassportEvent $event): void
     {
-        /** @var Passport $passport */
+        /**
+         * @var Passport $passport
+         * @psalm-suppress DeprecatedClass
+         */
         $passport = $event->getPassport();
         if (!$passport->hasBadge(ScopeBadge::class)) {
             return;

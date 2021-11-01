@@ -18,6 +18,9 @@ jobs:
           tools: composer:v2, cs2pr
           extensions: intl, bcmath, curl, openssl, mbstring, pdo, pdo_sqlite
 
+      - name: "installing psalm"
+        run: "composer require vimeo/psalm:^4.6 psalm/plugin-symfony:^2.2 --dev --no-update && composer require --no-update"
+
       - name: "installing dependencies"
         run: "composer update --no-interaction --no-progress"
 

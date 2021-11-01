@@ -8,6 +8,7 @@ use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\User;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Security\Core\Authorization\Voter\CacheableVoterInterface;
 
 final class OAuth2TokenTest extends TestCase
 {
@@ -30,6 +31,8 @@ final class OAuth2TokenTest extends TestCase
         $this->assertSame($scopes, $token->getScopes());
         $this->assertSame([sprintf('%s%s', $rolePrefix, strtoupper($scopes[0]))], $token->getRoleNames());
 
-        $this->assertFalse($unserializedToken->isAuthenticated());
+        if (!interface_exists(CacheableVoterInterface::class)) {
+            $this->assertFalse($unserializedToken->isAuthenticated());
+        }
     }
 }
