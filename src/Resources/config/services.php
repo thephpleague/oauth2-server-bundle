@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use function Symfony\Component\DependencyInjection\Loader\Configurator\abstract_arg;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
@@ -55,7 +56,6 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
@@ -118,8 +118,8 @@ return static function (ContainerConfigurator $container): void {
             ->args([
                 service('league.oauth2_server.factory.psr_http'),
                 service(ResourceServer::class),
-                service(UserProviderInterface::class),
-                null,
+                abstract_arg('User Provider'),
+                abstract_arg('Role prefix'),
             ])
         ->alias(OAuth2Authenticator::class, 'league.oauth2_server.authenticator.oauth2')
 
