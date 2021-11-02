@@ -108,6 +108,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                 'enable_authenticator_manager' => true,
                 'firewalls' => [
                     'test' => [
+                        'provider' => 'in_memory',
                         'pattern' => '^/security-test',
                         'stateless' => true,
                         'oauth2' => true,
@@ -115,6 +116,15 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                 ],
                 'providers' => [
                     'in_memory' => [
+                        'memory' => [
+                            'users' => [
+                                FixtureFactory::FIXTURE_USER => [
+                                    'roles' => ['ROLE_USER'],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'another_provider' => [
                         'memory' => [
                             'users' => [
                                 FixtureFactory::FIXTURE_USER => [

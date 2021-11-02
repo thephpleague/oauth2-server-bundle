@@ -10,6 +10,7 @@ use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\SecurityF
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
@@ -21,10 +22,14 @@ final class OAuth2Factory implements SecurityFactoryInterface, AuthenticatorFact
         throw new \LogicException('OAuth2 is not supported when "security.enable_authenticator_manager" is not set to true.');
     }
 
-    public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProvider): string
+    public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string
     {
         $authenticator = sprintf('security.authenticator.oauth2.%s', $firewallName);
-        $container->setDefinition($authenticator, new ChildDefinition(OAuth2Authenticator::class));
+
+        $definition = new ChildDefinition(OAuth2Authenticator::class);
+        $definition->replaceArgument(2, new Reference($userProviderId));
+
+        $container->setDefinition($authenticator, $definition);
 
         return $authenticator;
     }
