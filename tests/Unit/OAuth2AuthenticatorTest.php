@@ -143,6 +143,7 @@ final class OAuth2AuthenticatorTest extends TestCase
             new ScopeBadge(['scope_one', 'scope_two']),
         ]);
         $passport->setAttribute('accessTokenId', 'accessTokenId');
+        $passport->setAttribute('oauthClientId', 'oauthClientId');
 
         $authenticator = new OAuth2Authenticator(
             $this->createMock(HttpMessageFactoryInterface::class),

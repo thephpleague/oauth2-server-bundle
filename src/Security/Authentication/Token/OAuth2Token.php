@@ -18,10 +18,12 @@ final class OAuth2Token extends AbstractToken
     public function __construct(
         ?UserInterface $user,
         string $accessTokenId,
+        string $oauthClientId,
         array $scopes,
         string $rolePrefix
     ) {
         $this->setAttribute('access_token_id', $accessTokenId);
+        $this->setAttribute('oauth_client_id', $oauthClientId);
         $this->setAttribute('scopes', $scopes);
 
         // Build roles from scope
@@ -53,5 +55,11 @@ final class OAuth2Token extends AbstractToken
     {
         /** @var string */
         return $this->getAttribute('access_token_id');
+    }
+
+    public function getOAuthClientId(): string
+    {
+        /** @var string */
+        return $this->getAttribute('oauth_client_id');
     }
 }
