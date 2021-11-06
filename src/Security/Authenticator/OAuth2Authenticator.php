@@ -92,6 +92,9 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         /** @var list<string> $scopes */
         $scopes = $psr7Request->getAttribute('oauth_scopes', []);
 
+        /** @var string $oauthClientId */
+        $oauthClientId = $psr7Request->getAttribute('oauth_client_id', '');
+
         $userLoader = function (string $userIdentifier): UserInterface {
             if ('' === $userIdentifier) {
                 return new NullUser();
@@ -108,6 +111,8 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         ]);
 
         $passport->setAttribute('accessTokenId', $accessTokenId);
+
+        $passport->setAttribute('oauthClientId', $oauthClientId);
 
         return $passport;
     }
@@ -127,7 +132,10 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         /** @var ScopeBadge $scopeBadge */
         $scopeBadge = $passport->getBadge(ScopeBadge::class);
 
-        $token = new OAuth2Token($passport->getUser(), $accessTokenId, $scopeBadge->getScopes(), $this->rolePrefix);
+        /** @var string $oauthClientId */
+        $oauthClientId = $passport->getAttribute('oauthClientId');
+
+        $token = new OAuth2Token($passport->getUser(), $accessTokenId, $oauthClientId, $scopeBadge->getScopes(), $this->rolePrefix);
         $token->setAuthenticated(true);
 
         return $token;
