@@ -23,7 +23,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
     {
         /** @var $em EntityManagerInterface */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrineClientManager = new DoctrineClientManager($em, self::$container->get(EventDispatcherInterface::class), Client::class);
+        $doctrineClientManager = new DoctrineClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class);
 
         $client = new Client('client', 'client', 'secret');
         $em->persist($client);
@@ -42,7 +42,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
     {
         /** @var $em EntityManagerInterface */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrineClientManager = new DoctrineClientManager($em, self::$container->get(EventDispatcherInterface::class), Client::class);
+        $doctrineClientManager = new DoctrineClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class);
 
         $client = new Client('client', 'client', 'secret');
         $em->persist($client);
@@ -75,7 +75,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
     {
         /** @var $em EntityManagerInterface */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrineClientManager = new DoctrineClientManager($em, self::$container->get(EventDispatcherInterface::class), Client::class);
+        $doctrineClientManager = new DoctrineClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class);
 
         $doctrineClientManager->save($client = new Client('client', 'client', 'secret'));
 
@@ -89,7 +89,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
     {
         /** @var $em EntityManagerInterface */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrineClientManager = new DoctrineClientManager($em, self::$container->get(EventDispatcherInterface::class), Client::class);
+        $doctrineClientManager = new DoctrineClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class);
 
         $client = new Client('client', 'client', 'secret');
         $em->persist($client);

@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
-use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\Event\CheckPassportEvent;
 
@@ -22,7 +22,7 @@ final class CheckScopeListenerTest extends TestCase
     {
         $event = new CheckPassportEvent(
             $this->createMock(AuthenticatorInterface::class),
-            $this->createMock(PassportInterface::class)
+            $this->createMock(Passport::class)
         );
 
         $requestStack = new RequestStack();

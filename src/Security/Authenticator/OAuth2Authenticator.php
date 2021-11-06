@@ -31,6 +31,12 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 final class OAuth2Authenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
 {
     /**
+     * @psalm-suppress UndefinedTrait
+     * @psalm-suppress MethodSignatureMismatch
+     */
+    use ForwardCompatAuthenticatorTrait;
+
+    /**
      * @var HttpMessageFactoryInterface
      */
     private $httpMessageFactory;
@@ -73,9 +79,11 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
     }
 
     /**
-     * @psalm-suppress DeprecatedMethod
+     * {@inheritdoc}
+     *
+     * @return Passport
      */
-    public function authenticate(Request $request): PassportInterface
+    public function doAuthenticate(Request $request) /*: Passport */
     {
         try {
             $psr7Request = $this->resourceServer->validateAuthenticatedRequest($this->httpMessageFactory->createRequest($request));
@@ -100,6 +108,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
                 return new NullUser();
             }
             if (!method_exists($this->userProvider, 'loadUserByIdentifier')) {
+                /** @psalm-suppress DeprecatedMethod */
                 return $this->userProvider->loadUserByUsername($userIdentifier);
             }
 
@@ -111,7 +120,6 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         ]);
 
         $passport->setAttribute('accessTokenId', $accessTokenId);
-
         $passport->setAttribute('oauthClientId', $oauthClientId);
 
         return $passport;
@@ -119,6 +127,8 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
 
     /**
      * @return OAuth2Token
+     *
+     * @psalm-suppress DeprecatedClass
      */
     public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
     {
@@ -126,6 +136,17 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
             throw new \RuntimeException(sprintf('Cannot create a OAuth2 authenticated token. $passport should be a %s', Passport::class));
         }
 
+        $token = $this->createToken($passport, $firewallName);
+        $token->setAuthenticated(true);
+
+        return $token;
+    }
+
+    /**
+     * @return OAuth2Token
+     */
+    public function createToken(Passport $passport, string $firewallName): TokenInterface
+    {
         /** @var string $accessTokenId */
         $accessTokenId = $passport->getAttribute('accessTokenId');
 
@@ -133,10 +154,9 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         $scopeBadge = $passport->getBadge(ScopeBadge::class);
 
         /** @var string $oauthClientId */
-        $oauthClientId = $passport->getAttribute('oauthClientId');
+        $oauthClientId = $passport->getAttribute('oauthClientId', '');
 
         $token = new OAuth2Token($passport->getUser(), $accessTokenId, $oauthClientId, $scopeBadge->getScopes(), $this->rolePrefix);
-        $token->setAuthenticated(true);
 
         return $token;
     }

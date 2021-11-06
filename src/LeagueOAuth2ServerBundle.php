@@ -10,6 +10,7 @@ use League\Bundle\OAuth2ServerBundle\DependencyInjection\LeagueOAuth2ServerExten
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\Security\OAuth2Factory;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 final class LeagueOAuth2ServerBundle extends Bundle
@@ -30,7 +31,7 @@ final class LeagueOAuth2ServerBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
+    public function getContainerExtension(): ExtensionInterface
     {
         return new LeagueOAuth2ServerExtension();
     }
@@ -39,6 +40,17 @@ final class LeagueOAuth2ServerBundle extends Bundle
     {
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');
+
+        if (method_exists($extension, 'addAuthenticatorFactory')) {
+            $extension->addAuthenticatorFactory(new OAuth2Factory());
+
+            return;
+        }
+
+        /**
+         * @psalm-suppress DeprecatedMethod
+         * @psalm-suppress InvalidArgument
+         */
         $extension->addSecurityListenerFactory(new OAuth2Factory());
     }
 

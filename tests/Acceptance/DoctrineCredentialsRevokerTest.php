@@ -38,7 +38,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         $em->persist($refreshToken);
         $em->flush();
 
-        $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, self::$container->get(EventDispatcherInterface::class), Client::class));
+        $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class));
 
         $revoker->revokeCredentialsForUser(FixtureFactory::createUser());
 
@@ -67,7 +67,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         $em->persist($refreshToken);
         $em->flush();
 
-        $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, self::$container->get(EventDispatcherInterface::class), Client::class));
+        $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class));
 
         $revoker->revokeCredentialsForClient($client);
 

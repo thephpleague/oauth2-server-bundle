@@ -15,7 +15,7 @@ final class AuthorizationServerCustomGrantTest extends KernelTestCase
         static::bootKernel();
 
         /** @var AuthorizationServer $authorizationServer */
-        $authorizationServer = self::$container->get(AuthorizationServer::class);
+        $authorizationServer = self::getContainer()->get(AuthorizationServer::class);
 
         $reflectionClass = new \ReflectionClass(AuthorizationServer::class);
         $reflectionProperty = $reflectionClass->getProperty('enabledGrantTypes');

@@ -18,7 +18,7 @@ final class InMemoryClientManagerTest extends AbstractAcceptanceTest
 {
     public function testSaveClientWithoutScopeAddDefaultScopes(): void
     {
-        $inMemoryClientManager = new InMemoryClientManager(self::$container->get(EventDispatcherInterface::class));
+        $inMemoryClientManager = new InMemoryClientManager(self::getContainer()->get(EventDispatcherInterface::class));
 
         $inMemoryClientManager->save($client = new Client('client', 'client', 'secret'));
 

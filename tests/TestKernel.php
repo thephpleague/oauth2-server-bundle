@@ -33,7 +33,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function registerBundles()
+    public function registerBundles(): iterable
     {
         return [
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
@@ -46,7 +46,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return sprintf('%s/tests/.kernel/cache', $this->getProjectDir());
     }
@@ -54,7 +54,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return sprintf('%s/tests/.kernel/logs', $this->getProjectDir());
     }
