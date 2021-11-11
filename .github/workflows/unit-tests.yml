@@ -9,59 +9,45 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
+                #Stable supported versions
+                php: ['7.3', '7.4', '8.0']
+                symfony: ['5.3.*']
+                composer-flags: ['--prefer-stable']
+                can-fail: [false]
                 include:
-                    # Lowest supported stable Symfony branches
-                    - php: 7.2
-                      symfony: 5.3.*
-                      composer-flags: '--prefer-stable'
+                    # Lowest supported versions
+                    - php: '7.2'
+                      symfony: '5.3.*'
+                      composer-flags: '--prefer-stable --prefer-lowest'
                       can-fail: false
-                    # Development Symfony branches
-                    - php: 7.3
-                      symfony: 5.4.*@dev
-                      composer-flags: '--prefer-stable' # Needed to force `lcobucci/jwt` to install a usable version
-                      can-fail: false
-                    - php: 7.4
-                      symfony: 5.4.*@dev
+                    # Development versions
+                    - php: '8.1-rc'
+                      symfony: '5.4.x-dev'
                       composer-flags: ''
                       can-fail: false
-                    - php: 8.0
-                      symfony: 5.4.*@dev
-                      composer-flags: ''
-                      can-fail: false
-                    - php: 8.1
-                      symfony: 6.0.*@dev
+                    - php: '8.1-rc'
+                      symfony: '6.0.x-dev'
                       composer-flags: ''
                       can-fail: false
 
         name: "PHP ${{ matrix.php }} - Symfony ${{ matrix.symfony }}${{ matrix.composer-flags != '' && format(' - Composer {0}', matrix.composer-flags) || '' }}"
 
+        env:
+            SYMFONY_REQUIRE: ${{ matrix.symfony }}
+
         steps:
-            - name: "Checkout"
+            - name: "checkout"
               uses: "actions/checkout@v2"
-              with:
-                  fetch-depth: 2
 
-            - name: "Cache Composer packages"
-              uses: "actions/cache@v2"
-              with:
-                  path: "~/.composer/cache"
-                  key: "php-${{ matrix.php }}-symfony-${{ matrix.symfony }}-composer-${{ hashFiles('composer.json') }}-flags-${{ matrix.composer-flags }}"
-                  restore-keys: "php-"
+            - name: "build the environment"
+              run: "dev/bin/docker-compose build --build-arg PHP_VERSION=${{ matrix.php }} php"
 
-            - name: "Install PHP"
-              uses: "shivammathur/setup-php@v2"
-              with:
-                  php-version: "${{ matrix.php }}"
-                  tools: "composer:v2,flex"
+            - name: "install dependencies"
+              run: "dev/bin/php composer update --ansi ${{ matrix.composer-flags }}"
 
-            - name: "Set Composer stability"
-              if: "matrix.symfony == '5.4.*@dev' || matrix.symfony == '6.0.*@dev'"
-              run: "composer config minimum-stability dev"
+            - name: "run unit tests"
+              run: "dev/bin/php-test vendor/bin/simple-phpunit --colors=always"
 
-            - name: "Install dependencies"
-              run: "composer update ${{ matrix.composer-flags }} --prefer-dist"
-              env:
-                  SYMFONY_REQUIRE: "${{ matrix.symfony }}"
-
-            - name: "Run PHPUnit Tests"
-              run: "vendor/bin/simple-phpunit"
+            - name: clear docker volumes
+              if: ${{ always() }}
+              run: dev/bin/docker-compose down --volumes

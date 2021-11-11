@@ -1,14 +1,7 @@
 ARG PHP_VERSION=7.4
 
-FROM php:${PHP_VERSION}-cli-alpine3.10
+FROM php:${PHP_VERSION}-cli-alpine
 LABEL maintainer="Petar Obradović <petar.obradovic@trikoder.net>"
-
-ARG COMPOSER_VERSION=1.9.3
-ARG FLEX_VERSION=1.6.2
-ARG PHP_CS_FIXER_VERSION=2.16.2
-ARG XDEBUG_VERSION=2.9.2
-
-ENV XDEBUG_REMOTE_AUTOSTART 0
 
 # This is where we're going to store all of our non-project specific binaries
 RUN mkdir -p /app/bin
@@ -24,18 +17,20 @@ RUN apk add --update --no-cache --virtual .build-deps \
         xml \
         zip \
     && pecl install \
-        xdebug-${XDEBUG_VERSION} \
+        xdebug \
     && docker-php-ext-enable \
         xdebug \
     && apk del --purge .build-deps
 
 RUN mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
+ENV XDEBUG_START_WITH_REQUEST 0
+
 RUN echo '[xdebug]' >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini \
-    && echo 'xdebug.remote_autostart = ${XDEBUG_REMOTE_AUTOSTART}' >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini \
-    && echo 'xdebug.remote_enable = 1' >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini \
-    && echo 'xdebug.remote_connect_back = 0' >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini \
-    && echo 'xdebug.remote_host = %XDEBUG_REMOTE_HOST%' >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini
+    && echo 'xdebug.start_with_request = ${XDEBUG_START_WITH_REQUEST}' >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.mode = debug' >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.discover_client_host = 0' >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.client_host = %XDEBUG_CLIENT_HOST%' >> ${PHP_INI_DIR}/conf.d/docker-php-ext-xdebug.ini
 
 # Utilities needed to run this image
 RUN apk add --update --no-cache \
@@ -46,21 +41,26 @@ RUN apk add --update --no-cache \
         shadow
 
 # Composer
-RUN curl --show-error https://getcomposer.org/installer | php -- \
-        --install-dir=/app/bin \
-        --filename=composer \
-        --version=${COMPOSER_VERSION}
-
-# PHP-CS-Fixer
-RUN curl --location --output /app/bin/php-cs-fixer --show-error \
-        https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v${PHP_CS_FIXER_VERSION}/php-cs-fixer.phar \
-    && chmod a+x /app/bin/php-cs-fixer
+RUN curl --location --output /app/bin/composer --show-error \
+    https://github.com/composer/composer/releases/latest/download/composer.phar \
+    && chmod a+x /app/bin/composer
 
 # Create the user that's going to run our application
 RUN useradd -ms /bin/sh app
 
+# Composer bin plugin
+RUN su-exec app composer global require --dev bamarni/composer-bin-plugin
+
+# PHP-CS-Fixer
+RUN su-exec app composer global bin php-cs-fixer require --dev friendsofphp/php-cs-fixer \
+    && ln -s /home/app/.composer/vendor/bin/php-cs-fixer /app/bin/php-cs-fixer
+
+# Psalm
+RUN su-exec app composer global bin psalm require --dev vimeo/psalm psalm/plugin-symfony \
+    && ln -s /home/app/.composer/vendor/bin/psalm /app/bin/psalm
+
 # Enable parallel package installation for Composer
-RUN su-exec app composer global require symfony/flex:${FLEX_VERSION}
+RUN su-exec app composer global require symfony/flex
 
 COPY entrypoint.sh /usr/local/bin/docker-entrypoint
 

@@ -28,10 +28,10 @@ dev/bin/docker-compose build
 
 > **NOTE:** You can target a different version of PHP during development by appending the `--build-arg PHP_VERSION=<version>` argument.
 
-After that, install all the needed packages required to develop the project:
+After that, download all the needed packages required to develop the project:
 
 ```sh
-dev/bin/php composer install
+dev/bin/php composer update --prefer-stable
 ```
 
 ### Debugging
@@ -39,7 +39,7 @@ dev/bin/php composer install
 You can run the debugger using the following command:
 
 ```sh
-dev/bin/php-debug vendor/bin/phpunit
+dev/bin/php-debug vendor/bin/simple-phpunit
 ```
 
 Make sure your IDE is setup properly, for more information check out the [dedicated documentation](docs/debugging.md).
@@ -49,7 +49,15 @@ Make sure your IDE is setup properly, for more information check out the [dedica
 This bundle enforces the PSR-2 and Symfony code standards during development by using the [PHP CS Fixer](https://cs.sensiolabs.org/) utility. Before committing any code, you can run the utility to fix any potential rule violations:
 
 ```sh
-dev/bin/php composer lint
+dev/bin/php php-cs-fixer fix
+```
+
+### Running static analysis
+
+You can run static anaysis of code using the following command:
+
+```sh
+dev/bin/php psalm --shepherd --stats
 ```
 
 ### Testing
@@ -57,7 +65,7 @@ dev/bin/php composer lint
 You can run the whole test suite using the following command:
 
 ```sh
-dev/bin/php-test composer test
+dev/bin/php-test vendor/bin/simple-phpunit
 ```
 
 **Happy coding**!
