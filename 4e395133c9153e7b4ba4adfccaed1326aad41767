@@ -1,0 +1,119 @@
+---------------------------------------------------------------------------
+
+by chalasr at 2021-11-01T14:32:43Z
+
+@ajgarlag I'm divided. I would drop the docker setup, but since you updated it here I guess we can keep it if some find it useful. What's your preference?
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2021-11-02T07:59:58Z
+
+@chalasr I've decided to submit two pull requests so you can evaluate the pros and cons of each.
+
+When I contributed the [`authorization_code`](https://github.com/trikoder/oauth2-bundle/pull/18) grant to `trikoder/oauth2-bundle`, the docker environment was a great help mainly because the `timecop` extension was used for time-sensitive tests. Without the docker environment, maybe I would not have contributed the PR. But it has a main drawback: it requires docker as a development dependency (I know several PHP developers that are not comfortable with this tool).
+
+In this project, I've not needed docker at all, and the contributing workflow was similar to other PHP projects. But @X-Coder264 already [commented](https://github.com/thephpleague/oauth2-server-bundle/issues/55#issuecomment-943161584) the advantages of keeping it.
+
+The main problem I see with keeping the docker environment is that is not being used in GitHub actions. I think that if we keep the docker environment as the official workflow for contributing to the bundle, we should update GitHub actions to make use of it so we can ensure that the docker environment is working as expected.
+
+---------------------------------------------------------------------------
+
+by chalasr at 2021-11-02T11:17:09Z
+
+Oh, I missed Antonio's comment on your issue sorry. Let's keep it.
+
+> The main problem I see with keeping the docker environment is that is not being used in GitHub actions. I think that if we keep the docker environment as the official workflow for contributing to the bundle, we should update GitHub actions to make use of it so we can ensure that the docker environment is working as expected.
+
+Agree 👍
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2021-11-02T11:41:48Z
+
+I've added two GitHub actions to check CS and execute tests using the docker environment.
+
+Does the same statement from Antonio Pauletich's (I'm Antonio too) comment about not having PHP-CS-Fixer as part of the dev dependencies applies to Psalm? Should we move Psalm from composer.json to docker environment?
+
+---------------------------------------------------------------------------
+
+by chalasr at 2021-11-02T12:01:55Z
+
+> (I'm Antonio too)
+
+Haha right, let's use gh usernames then.
+
+> Should we move Psalm from composer.json to docker environment?
+
+That makes sense to me.
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2021-11-02T12:05:08Z
+
+Ok, one last question. I think we can execute `checking coding standards`, `running static analysis`, and `running unit tests` sequentially in one GitHub action to avoid building the docker environment three times. WDYT?
+
+---------------------------------------------------------------------------
+
+by chalasr at 2021-11-02T12:16:00Z
+
+I like the fact they represent distinct checks on a PR so better keep duplicating (or reuse steps somehow?) IMO
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2021-11-02T12:25:26Z
+
+In that case, IMO the PR is ready for me. If it's OK for you, I'll squash the commits.
+
+---------------------------------------------------------------------------
+
+by chalasr at 2021-11-02T13:35:41Z
+
+@ajgarlag The added `docker-*` workflows can replace the existing (non docker) ones isn't it?
+I don't think it's relevant to have the same job runs with and without docker. Let's just run everything on docker?
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2021-11-02T13:48:22Z
+
+> @ajgarlag The added `docker-*` workflows can replace the existing (non docker) ones isn't it? I don't think it's relevant to have the same job runs with and without docker. Let's just run everything on docker?
+
+Yes, but in that case, the code will be tested only with the versions defined in Dockerfile. So my previous proposition was to keep current GitHub actions that will test the code with the latest version of each tool, and to add a new docker.yml file to run `checking coding standards`, `running static analysis`, and `running unit tests` sequentially just to ensure that the docker environment is working. If this action fails, but the other one passes, then the Dockerfile should be updated.
+
+---------------------------------------------------------------------------
+
+by X-Coder264 at 2021-11-02T13:55:55Z
+
+@ajgarlag The Dockerfile could be changed so that it fetches the latest versions of Composer/Flex/Xdebug/PHP CS fixer by default and then the same Docker file could be used to test across all supported [PHP versions](https://github.com/trikoder/oauth2-bundle/blob/v3.2.0/.github/workflows/tests.yaml#L33).
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2021-11-02T14:02:39Z
+
+@X-Coder264 Thanks, I'll try to update de Dockerfile.
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2021-11-03T11:53:19Z
+
+I've updated the Dockerfile to install always the latest version of development tools. The only build argument for the docker image is the PHP version.
+
+WDYT?
+
+---------------------------------------------------------------------------
+
+by chalasr at 2021-11-06T15:57:04Z
+
+@ajgarlag Looks great. One thing, can we reduce the number of checks?
+The coverage before this PR was good enough to me, it's ok not to test with low/high deps for all symfony/php versions.
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2021-11-11T11:48:09Z
+
+@chalasr After some vacation days, I've rebased and finished my work here. WDYT?
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2021-11-11T18:30:31Z
+
+I've changed the `8.1-rc` docker tag so the latest available version is used always
