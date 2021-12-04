@@ -36,6 +36,8 @@ use League\Bundle\OAuth2ServerBundle\Repository\ScopeRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\UserRepository;
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Security\EventListener\CheckScopeListener;
+use League\Bundle\OAuth2ServerBundle\Service\SymfonyLeagueEventListenerProvider;
+use League\Event\Emitter;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -130,6 +132,15 @@ return static function (ContainerConfigurator $container): void {
             ->tag('kernel.event_subscriber')
         ->alias(CheckScopeListener::class, 'league.oauth2_server.listener.check_scope')
 
+        ->set('league.oauth2_server.symfony_league_listener_provider', SymfonyLeagueEventListenerProvider::class)
+        ->args([
+            service('event_dispatcher'),
+        ])
+        ->alias(SymfonyLeagueEventListenerProvider::class, 'league.oauth2_server.symfony_league_listener_provider')
+
+        ->set('league.oauth2_server.emitter', Emitter::class)
+        ->call('useListenerProvider', [service('league.oauth2_server.symfony_league_listener_provider')])
+
         ->set('league.oauth2_server.authorization_server.grant_configurator', GrantConfigurator::class)
             ->args([
                 tagged_iterator('league.oauth2_server.authorization_server.grant'),
@@ -145,6 +156,7 @@ return static function (ContainerConfigurator $container): void {
                 null,
                 null,
             ])
+            ->call('setEmitter', [service('league.oauth2_server.emitter')])
             ->configurator(service(GrantConfigurator::class))
         ->alias(AuthorizationServer::class, 'league.oauth2_server.authorization_server')
 
