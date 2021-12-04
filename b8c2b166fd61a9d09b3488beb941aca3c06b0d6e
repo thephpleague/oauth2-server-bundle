@@ -1,0 +1,23 @@
+---------------------------------------------------------------------------
+
+by ajgarlag at 2021-11-28T10:19:00Z
+
+@X-Coder264 Instead of coding a partial implementation of `EmitterInterface` we can use a League event listener to forward league events to Symfony event dispatcher. Please, see https://github.com/X-Coder264/oauth2-server-bundle/pull/1
+
+---------------------------------------------------------------------------
+
+by X-Coder264 at 2021-11-28T13:19:07Z
+
+@ajgarlag Thanks, I didn't know about the existence of `ListenerProviderInterface` interface. I still think this approach is better, because even though the emitter interface is bloated so you save a couple of lines with your approach, this approach ensures that all events emitted by the server will be dispatched via the Symfony dispatcher. Your approach has only some events hardcoded, which doesn't take into consideration events that can be emitted in custom grants or events that the League Server package could add in a future release (which we'd then have to manually add to that allow list afterwards in order to make them usable to the users of this bundle).
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2021-11-28T13:34:29Z
+
+@X-Coder264 I've seen that `league\event` supports [Wilcard Listeners](https://event.thephpleague.com/2.0/listeners/wildcard/)
+
+---------------------------------------------------------------------------
+
+by X-Coder264 at 2021-11-28T13:34:50Z
+
+I was just looking into committing that `*` solution, you beat me to it :stuck_out_tongue:
