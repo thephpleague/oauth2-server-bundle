@@ -2,7 +2,7 @@
 
 This bundle provides the "glue" between  [thephpleague/oauth2-server](https://github.com/thephpleague/oauth2-server) library and the Symfony framework.
 It implements [thephpleague/oauth2-server](https://github.com/thephpleague/oauth2-server) library in a way specified by its official documentation.
-For implementation into Symfony projects, please see [bundle documentation](docs/basic-setup.md) and official [Symfony Security documentation](https://symfony.com/doc/current/security.html).
+For implementation into Symfony projects, please see [bundle documentation](basic-setup.md) and official [Symfony Security documentation](https://symfony.com/doc/current/security.html).
 
 ## Features
 
