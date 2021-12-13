@@ -77,7 +77,7 @@ final class ClientManager implements ClientManagerInterface
         $criteria = self::filterToCriteria($clientFilter);
 
         /** @var list<AbstractClient> */
-        return array_values($repository->findBy($criteria));
+        return $repository->findBy($criteria);
     }
 
     /**
