@@ -157,6 +157,11 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         $oauthClientId = $passport->getAttribute('oauthClientId', '');
 
         $token = new OAuth2Token($passport->getUser(), $accessTokenId, $oauthClientId, $scopeBadge->getScopes(), $this->rolePrefix);
+        if (method_exists(AuthenticatorInterface::class, 'createAuthenticatedToken') && !method_exists(AuthenticatorInterface::class, 'createToken')) {
+            // symfony 5.4 only
+            /** @psalm-suppress TooManyArguments */
+            $token->setAuthenticated(true, false);
+        }
 
         return $token;
     }
