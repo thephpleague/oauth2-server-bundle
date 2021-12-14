@@ -36,7 +36,7 @@ security:
 
 ## Controlling token scopes
 
-It's possible to alter issued access token's scopes by subscribing to the `league.oauth2_server.scope_resolve` event.
+It's possible to alter issued access token's scopes by subscribing to the `league.oauth2_server.event.scope_resolve` event.
 
 ### Example
 
@@ -66,5 +66,5 @@ final class ScopeResolveListener
 ```yaml
 App\EventListener\ScopeResolveListener:
     tags:
-        - { name: kernel.event_listener, event: league.oauth2_server.scope_resolve, method: onScopeResolve }
+        - { name: kernel.event_listener, event: league.oauth2_server.event.scope_resolve, method: onScopeResolve }
 ```
