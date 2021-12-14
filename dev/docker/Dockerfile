@@ -41,8 +41,7 @@ RUN apk add --update --no-cache \
         shadow
 
 # Composer
-RUN curl --location --output /app/bin/composer --show-error \
-    https://github.com/composer/composer/releases/latest/download/composer.phar \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/app/bin --filename=composer \
     && chmod a+x /app/bin/composer
 
 # Create the user that's going to run our application
