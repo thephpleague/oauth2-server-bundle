@@ -23,5 +23,8 @@ return function (RoutingConfigurator $routes) {
         ->defaults([
             'oauth2_scopes' => ['fancy'],
         ])
+
+        ->add('security_test_authorization', '/security-test-authorization')
+        ->controller([SecurityTestController::class, 'authorizationAction'])
     ;
 };

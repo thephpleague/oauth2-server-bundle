@@ -48,4 +48,11 @@ final class SecurityTestController extends AbstractController
             )
         );
     }
+
+    public function authorizationAction(): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_OAUTH2_FANCY');
+
+        return new Response('access granted');
+    }
 }
