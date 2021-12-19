@@ -23,6 +23,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('league.oauth2_server.persistence.driver', Driver::class)
             ->args([
                 null,
+                null,
             ])
         ->alias(Driver::class, 'league.oauth2_server.persistence.driver')
 
@@ -37,6 +38,7 @@ return static function (ContainerConfigurator $container): void {
 
         ->set('league.oauth2_server.manager.doctrine.access_token', AccessTokenManager::class)
             ->args([
+                null,
                 null,
             ])
         ->alias(AccessTokenManagerInterface::class, 'league.oauth2_server.manager.doctrine.access_token')

@@ -106,6 +106,10 @@ final class Configuration implements ConfigurationInterface
                     ->info('Whether to enable the implicit grant')
                     ->defaultTrue()
                 ->end()
+                ->booleanNode('persist_access_token')
+                    ->info('Whether to enable access token saving to persistence layer')
+                    ->defaultTrue()
+                ->end()
             ->end()
         ;
 
