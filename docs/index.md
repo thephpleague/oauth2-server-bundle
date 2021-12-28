@@ -131,6 +131,7 @@ security:
     ```yaml
     oauth2:
         resource: '@LeagueOAuth2ServerBundle/Resources/config/routes.php'
+        type: php
     ```
 
 You can verify that everything is working by issuing a `POST` request to the `/token` endpoint.
