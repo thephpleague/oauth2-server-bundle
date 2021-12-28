@@ -1,0 +1,11 @@
+---------------------------------------------------------------------------
+
+by X-Coder264 at 2021-11-29T18:59:49Z
+
+PHP 8.1 image will be available soon. https://github.com/docker-library/php/pull/1227 will be merged soon and after that the image should be up within ~ 12 hours. Will post here when it's available (if somebody doesn't mention it earlier) as I refresh that PR multiple times each day :joy:
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2021-11-30T09:35:28Z
+
+@X-Coder264 PHP 8.1 docker image is finally available.
