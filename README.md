@@ -3,7 +3,7 @@
 ![Unit tests status](https://github.com/thephpleague/oauth2-server-bundle/workflows/unit%20tests/badge.svg)
 ![Coding standards status](https://github.com/thephpleague/oauth2-server-bundle/workflows/coding%20standards/badge.svg)
 [![Type Coverage](https://shepherd.dev/github/thephpleague/oauth2-server-bundle/coverage.svg)](https://shepherd.dev/github/thephpleague/oauth2-server-bundle)
-[![Latest Stable Version](https://poser.pugx.org/league/oauth2-server-bundle/v/stable)](https://packagist.org/packages/thephpleague/oauth2-server-bundle)
+[![Latest Stable Version](https://poser.pugx.org/league/oauth2-server-bundle/v/stable)](https://packagist.org/packages/league/oauth2-server-bundle)
 
 OAuth2ServerBundle is a Symfony bundle integrating the [oauth2-server](https://github.com/thephpleague/oauth2-server) library into Symfony applications.
 Fork of trikoder/oauth2-bundle, for the better.
