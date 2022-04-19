@@ -8,9 +8,9 @@ use League\Bundle\OAuth2ServerBundle\Event\PreSaveClientEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientFilter;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
-use League\Bundle\OAuth2ServerBundle\Model\Grant;
-use League\Bundle\OAuth2ServerBundle\Model\RedirectUri;
-use League\Bundle\OAuth2ServerBundle\Model\Scope;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
+use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 

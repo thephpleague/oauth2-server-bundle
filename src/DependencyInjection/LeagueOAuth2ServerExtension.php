@@ -16,7 +16,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AccessTokenManager as InMemoryAccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\Scope as ScopeModel;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Scope as ScopeModel;
 use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Driver;
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker;

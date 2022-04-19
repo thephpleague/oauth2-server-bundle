@@ -8,7 +8,7 @@ use League\Bundle\OAuth2ServerBundle\Converter\UserConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Event\UserResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
-use League\Bundle\OAuth2ServerBundle\Model\Grant;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;

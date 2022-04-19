@@ -6,9 +6,9 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Acceptance;
 
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
-use League\Bundle\OAuth2ServerBundle\Model\Grant;
-use League\Bundle\OAuth2ServerBundle\Model\RedirectUri;
-use League\Bundle\OAuth2ServerBundle\Model\Scope;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
+use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use Symfony\Component\Console\Tester\CommandTester;
 
 final class UpdateClientCommandTest extends AbstractAcceptanceTest
