@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\DBAL\Type;
 
-use League\Bundle\OAuth2ServerBundle\Model\Scope as ScopeModel;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Scope as ScopeModel;
 
 /**
  * @extends ImplodedArray<ScopeModel>

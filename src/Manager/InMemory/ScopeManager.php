@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Manager\InMemory;
 
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\Scope;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 
 final class ScopeManager implements ScopeManagerInterface
 {

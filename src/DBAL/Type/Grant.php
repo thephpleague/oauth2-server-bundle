@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\DBAL\Type;
 
-use League\Bundle\OAuth2ServerBundle\Model\Grant as GrantModel;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Grant as GrantModel;
 
 /**
  * @extends ImplodedArray<GrantModel>

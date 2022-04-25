@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Event;
 
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
-use League\Bundle\OAuth2ServerBundle\Model\Grant;
-use League\Bundle\OAuth2ServerBundle\Model\Scope;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use Symfony\Contracts\EventDispatcher\Event;
 
 final class ScopeResolveEvent extends Event

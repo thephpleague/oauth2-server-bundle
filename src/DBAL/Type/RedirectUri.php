@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\DBAL\Type;
 
-use League\Bundle\OAuth2ServerBundle\Model\RedirectUri as RedirectUriModel;
+use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri as RedirectUriModel;
 
 /**
  * @template-extends ImplodedArray<RedirectUriModel>

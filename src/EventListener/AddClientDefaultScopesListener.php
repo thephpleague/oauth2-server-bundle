@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\EventListener;
 
 use League\Bundle\OAuth2ServerBundle\Event\PreSaveClientEvent;
-use League\Bundle\OAuth2ServerBundle\Model\Scope;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 
 /**
  * Sets default scopes to the client before being saved by a ClientManager if no scope is specified.
