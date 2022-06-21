@@ -9,9 +9,9 @@ use League\Bundle\OAuth2ServerBundle\Event\ScopeResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
+use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
-use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -84,7 +84,6 @@ final class ScopeRepository implements ScopeRepositoryInterface
 
         $scopes = $this->setupScopes($client, $this->scopeConverter->toDomainArray(array_values($scopes)));
 
-        /** @var ScopeResolveEvent $event */
         $event = $this->eventDispatcher->dispatch(
             new ScopeResolveEvent(
                 $scopes,

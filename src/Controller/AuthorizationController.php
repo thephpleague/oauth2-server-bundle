@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Controller;
 
 use League\Bundle\OAuth2ServerBundle\Converter\UserConverterInterface;
-use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEventFactory;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
@@ -97,7 +96,6 @@ final class AuthorizationController
                 }
             }
 
-            /** @var AuthorizationRequestResolveEvent $event */
             $event = $this->eventDispatcher->dispatch(
                 $this->eventFactory->fromAuthorizationRequest($authRequest),
                 OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE

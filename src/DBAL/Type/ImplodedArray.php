@@ -85,7 +85,7 @@ abstract class ImplodedArray extends TextType
             return;
         }
 
-        if (is_scalar($value)) {
+        if (\is_scalar($value)) {
             return;
         }
 

@@ -8,10 +8,10 @@ use League\Bundle\OAuth2ServerBundle\Event\PreSaveClientEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientFilter;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
+use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
-use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class ClientManager implements ClientManagerInterface
@@ -38,7 +38,6 @@ final class ClientManager implements ClientManagerInterface
 
     public function save(AbstractClient $client): void
     {
-        /** @var PreSaveClientEvent $event */
         $event = $this->dispatcher->dispatch(new PreSaveClientEvent($client), OAuth2Events::PRE_SAVE_CLIENT);
         $client = $event->getClient();
 

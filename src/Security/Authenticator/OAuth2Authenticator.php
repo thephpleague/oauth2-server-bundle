@@ -83,7 +83,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
      *
      * @return Passport
      */
-    public function doAuthenticate(Request $request) /*: Passport */
+    public function doAuthenticate(Request $request) /* : Passport */
     {
         try {
             $psr7Request = $this->resourceServer->validateAuthenticatedRequest($this->httpMessageFactory->createRequest($request));
