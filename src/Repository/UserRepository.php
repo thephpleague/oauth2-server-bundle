@@ -8,8 +8,8 @@ use League\Bundle\OAuth2ServerBundle\Converter\UserConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Event\UserResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
-use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
@@ -54,7 +54,6 @@ final class UserRepository implements UserRepositoryInterface
         /** @var AbstractClient $client */
         $client = $this->clientManager->find($clientEntity->getIdentifier());
 
-        /** @var UserResolveEvent $event */
         $event = $this->eventDispatcher->dispatch(
             new UserResolveEvent(
                 $username,

@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
 <psalm
-    totallyTyped="true"
-    forbidEcho="true"
+    errorLevel="1"
     strictBinaryOperands="true"
-    phpVersion="7.1"
+    phpVersion="7.2"
     allowStringToStandInForClass="true"
     rememberPropertyAssignmentsAfterCall="false"
     checkForThrowsInGlobalScope="true"
@@ -15,6 +14,7 @@
     <projectFiles>
         <directory name="src"/>
         <ignoreFiles>
+            <file name="src/Security/Authenticator/ForwardCompatAuthenticatorTrait.php"/> <!-- @see https://github.com/vimeo/psalm/issues/7863 -->
             <directory name="src/DependencyInjection"/>
             <directory name="vendor"/>
         </ignoreFiles>

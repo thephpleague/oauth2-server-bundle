@@ -6,9 +6,9 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ClientManager as InMemoryClientManager;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
-use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use League\Bundle\OAuth2ServerBundle\Tests\Acceptance\AbstractAcceptanceTest;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**

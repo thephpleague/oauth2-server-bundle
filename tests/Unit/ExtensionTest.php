@@ -168,8 +168,8 @@ final class ExtensionTest extends TestCase
                         'foo',
                     ],
                 ],
-                //Pick one for valid config:
-                //'persistence' => ['doctrine' => []]
+                // Pick one for valid config:
+                // 'persistence' => ['doctrine' => []]
                 'persistence' => ['in_memory' => 1],
             ],
         ];

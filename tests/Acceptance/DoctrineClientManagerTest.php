@@ -9,8 +9,8 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager as DoctrineC
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
-use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
