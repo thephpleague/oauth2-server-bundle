@@ -163,8 +163,6 @@ Please see [CONTRIBUTING](/CONTRIBUTING.md) for details.
 
 This project adheres to [Semantic Versioning 2.0.0](https://semver.org/). Randomly breaking public APIs is not an option.
 
-However, starting with version 4, we only promise to follow SemVer on structural elements marked with the [@api tag](https://github.com/php-fig/fig-standards/blob/2668020622d9d9eaf11d403bc1d26664dfc3ef8e/proposed/phpdoc-tags.md#51-api).
-
 ## Reporting issues
 
 Use the [issue tracker](https://github.com/thephpleague/oauth2-server-bundle/issues) to report any issues you might have.
