@@ -41,7 +41,10 @@
         "psr-4": { "League\\Bundle\\OAuth2ServerBundle\\Tests\\": "tests/" }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "bamarni/composer-bin-plugin": true
+        }
     },
     "extra": {
         "branch-alias": {

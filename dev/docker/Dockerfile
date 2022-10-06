@@ -48,7 +48,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/app/bin -
 RUN useradd -ms /bin/sh app
 
 # Composer bin plugin
-RUN su-exec app composer global require --dev bamarni/composer-bin-plugin
+RUN su-exec app composer global config --no-interaction allow-plugins.bamarni/composer-bin-plugin true \
+    && su-exec app composer global config --no-interaction allow-plugins.symfony/flex true \
+    && su-exec app composer global require --dev bamarni/composer-bin-plugin
 
 # PHP-CS-Fixer
 RUN su-exec app composer global bin php-cs-fixer require --dev friendsofphp/php-cs-fixer \
