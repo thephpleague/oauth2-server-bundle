@@ -47,11 +47,7 @@ final class DeleteClientCommandTest extends AbstractAcceptanceTest
 
     private function findClient(string $identifier): ?Client
     {
-        return
-            $this
-                ->getClientManager()
-                ->find($identifier)
-            ;
+        return $this->getClientManager()->find($identifier);
     }
 
     private function fakeAClient(string $name, string $identifier): Client
@@ -61,12 +57,10 @@ final class DeleteClientCommandTest extends AbstractAcceptanceTest
 
     private function getClientManager(): ClientManagerInterface
     {
-        return
-            $this
-                ->client
-                ->getContainer()
-                ->get(ClientManagerInterface::class)
-            ;
+        return $this->client
+            ->getContainer()
+            ->get(ClientManagerInterface::class)
+        ;
     }
 
     private function command(): Command

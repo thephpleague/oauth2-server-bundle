@@ -94,10 +94,9 @@ final class ListClientsCommandTest extends AbstractAcceptanceTest
         $clientA = $this->fakeAClient('client', 'client-a', 'client-a-secret');
         $this->getClientManager()->save($clientA);
 
-        $clientB =
-            $this
-                ->fakeAClient('client', 'client-b', 'client-b-secret')
-                ->setScopes(new Scope('client-b-scope'))
+        $clientB = $this
+            ->fakeAClient('client', 'client-b', 'client-b-secret')
+            ->setScopes(new Scope('client-b-scope'))
         ;
         $this->getClientManager()->save($clientB);
 
@@ -121,12 +120,10 @@ final class ListClientsCommandTest extends AbstractAcceptanceTest
 
     private function getClientManager(): ClientManagerInterface
     {
-        return
-            $this
-                ->client
-                ->getContainer()
-                ->get(ClientManagerInterface::class)
-            ;
+        return $this->client
+            ->getContainer()
+            ->get(ClientManagerInterface::class)
+        ;
     }
 
     private function command(): Command

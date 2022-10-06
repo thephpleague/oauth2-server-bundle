@@ -6,6 +6,7 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\abstract_
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
+
 use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator;
 use League\Bundle\OAuth2ServerBundle\Command\ClearExpiredTokensCommand;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;

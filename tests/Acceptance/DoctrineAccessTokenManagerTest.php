@@ -11,7 +11,8 @@ use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 
 /**
- * @TODO   This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
+ * @TODO This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
+ *
  * @covers \League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager
  */
 final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest

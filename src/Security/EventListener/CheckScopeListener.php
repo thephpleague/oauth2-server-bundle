@@ -30,6 +30,7 @@ final class CheckScopeListener implements EventSubscriberInterface
     {
         /**
          * @var Passport $passport
+         *
          * @psalm-suppress DeprecatedClass
          */
         $passport = $event->getPassport();

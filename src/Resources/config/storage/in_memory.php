@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
+
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;

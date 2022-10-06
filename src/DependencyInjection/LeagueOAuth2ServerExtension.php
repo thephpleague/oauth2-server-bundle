@@ -44,9 +44,9 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     /**
      * {@inheritdoc}
      *
-     * @throws \Exception
-     *
      * @return void
+     *
+     * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container)
     {

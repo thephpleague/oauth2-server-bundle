@@ -15,7 +15,8 @@ use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * @TODO   This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
+ * @TODO This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
+ *
  * @covers \League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker
  */
 final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
