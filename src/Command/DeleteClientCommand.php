@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Command;
 
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'league:oauth2-server:delete-client')]
 final class DeleteClientCommand extends Command
 {
-    protected static $defaultName = 'league:oauth2-server:delete-client';
-
     /**
      * @var ClientManagerInterface
      */
