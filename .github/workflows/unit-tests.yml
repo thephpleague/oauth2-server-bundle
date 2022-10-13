@@ -23,16 +23,12 @@ jobs:
                       symfony: '6.1.*'
                 include:
                     # Lowest supported versions
-                    - php: '7.2'
+                    - php: '8.0'
                       symfony: '5.3.*'
                       composer-flags: '--prefer-stable --prefer-lowest'
                       can-fail: false
                     # EOL PHP versions
-                    - php: '7.2'
-                      symfony: '5.4.*'
-                      composer-flags: '--prefer-stable'
-                      can-fail: false
-                    - php: '7.3'
+                    - php: 8.0'
                       symfony: '5.4.*'
                       composer-flags: '--prefer-stable'
                       can-fail: false
