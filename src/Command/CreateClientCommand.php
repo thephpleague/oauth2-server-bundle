@@ -121,7 +121,6 @@ final class CreateClientCommand extends Command
     {
         $name = $input->getArgument('name');
 
-        /** @var string $identifier */
         $identifier = $input->getArgument('identifier') ?? hash('md5', random_bytes(16));
 
         $isPublic = $input->getOption('public');
