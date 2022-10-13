@@ -20,8 +20,6 @@ final class ListClientsCommand extends Command
 {
     private const ALLOWED_COLUMNS = ['name', 'identifier', 'secret', 'scope', 'redirect uri', 'grant type'];
 
-    protected static $defaultName = 'league:oauth2-server:list-clients';
-
     /**
      * @var ClientManagerInterface
      */

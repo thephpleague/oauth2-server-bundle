@@ -15,8 +15,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class ClearExpiredTokensCommand extends Command
 {
-    protected static $defaultName = 'league:oauth2-server:clear-expired-tokens';
-
     /**
      * @var AccessTokenManagerInterface
      */

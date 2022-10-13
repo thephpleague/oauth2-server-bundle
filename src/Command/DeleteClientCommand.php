@@ -13,8 +13,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class DeleteClientCommand extends Command
 {
-    protected static $defaultName = 'league:oauth2-server:delete-client';
-
     /**
      * @var ClientManagerInterface
      */

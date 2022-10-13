@@ -18,8 +18,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class CreateClientCommand extends Command
 {
-    protected static $defaultName = 'league:oauth2-server:create-client';
-
     /**
      * @var ClientManagerInterface
      */
