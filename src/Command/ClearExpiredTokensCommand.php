@@ -7,16 +7,16 @@ namespace League\Bundle\OAuth2ServerBundle\Command;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'league:oauth2-server:clear-expired-tokens', description: 'Clears all expired access and/or refresh tokens and/or auth codes')]
 final class ClearExpiredTokensCommand extends Command
 {
-    protected static $defaultName = 'league:oauth2-server:clear-expired-tokens';
-
     /**
      * @var AccessTokenManagerInterface
      */

@@ -10,17 +10,17 @@ use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'league:oauth2-server:list-clients', description: 'Lists existing OAuth2 clients')]
 final class ListClientsCommand extends Command
 {
     private const ALLOWED_COLUMNS = ['name', 'identifier', 'secret', 'scope', 'redirect uri', 'grant type'];
-
-    protected static $defaultName = 'league:oauth2-server:list-clients';
 
     /**
      * @var ClientManagerInterface
@@ -37,7 +37,7 @@ final class ListClientsCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Lists existing oAuth2 clients')
+            ->setDescription('Lists existing OAuth2 clients')
             ->addOption(
                 'columns',
                 null,

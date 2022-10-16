@@ -235,28 +235,28 @@ return static function (ContainerConfigurator $container): void {
                 service(ClientManagerInterface::class),
                 null,
             ])
-            ->tag('console.command')
+            ->tag('console.command', ['command' => 'league:oauth2-server:create-client'])
         ->alias(CreateClientCommand::class, 'league.oauth2_server.command.create_client')
 
         ->set('league.oauth2_server.command.update_client', UpdateClientCommand::class)
             ->args([
                 service(ClientManagerInterface::class),
             ])
-            ->tag('console.command')
+            ->tag('console.command', ['command' => 'league:oauth2-server:update-client'])
         ->alias(UpdateClientCommand::class, 'league.oauth2_server.command.update_client')
 
         ->set('league.oauth2_server.command.delete_client', DeleteClientCommand::class)
             ->args([
                 service(ClientManagerInterface::class),
             ])
-            ->tag('console.command')
+            ->tag('console.command', ['command' => 'league:oauth2-server:delete-client'])
         ->alias(DeleteClientCommand::class, 'league.oauth2_server.command.delete_client')
 
         ->set('league.oauth2_server.command.list_clients', ListClientsCommand::class)
             ->args([
                 service(ClientManagerInterface::class),
             ])
-            ->tag('console.command')
+            ->tag('console.command', ['command' => 'league:oauth2-server:list-clients'])
         ->alias(ListClientsCommand::class, 'league.oauth2_server.command.list_clients')
 
         ->set('league.oauth2_server.command.clear_expired_tokens', ClearExpiredTokensCommand::class)
@@ -265,7 +265,7 @@ return static function (ContainerConfigurator $container): void {
                 service(RefreshTokenManagerInterface::class),
                 service(AuthorizationCodeManagerInterface::class),
             ])
-            ->tag('console.command')
+            ->tag('console.command', ['command' => 'league:oauth2-server:clear-expired-tokens'])
         ->alias(ClearExpiredTokensCommand::class, 'league.oauth2_server.command.clear_expired_tokens')
 
         // Utility services
