@@ -1,9 +1,11 @@
 <?php
 
-namespace Lexik\Bundle\JWTAuthenticationBundle\Tests\Functional\Command;
+declare(strict_types=1);
 
-use Lexik\Bundle\JWTAuthenticationBundle\Command\GenerateKeyPairCommand;
-use Lexik\Bundle\JWTAuthenticationBundle\Tests\Functional\TestCase;
+namespace League\Bundle\OAuth2ServerBundle\Tests\Functional\Command;
+
+use League\Bundle\OAuth2ServerBundle\Command\GenerateKeyPairCommand;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -12,7 +14,7 @@ class GenerateKeyPairCommandTest extends TestCase
     public function testCannotGenerateKeysWhenPathsAreNull()
     {
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The "lexik_jwt_authentication.secret_key" and "lexik_jwt_authentication.public_key" config options must not be empty for using the "lexik:jwt:generate-keypair" command.');
+        $this->expectExceptionMessage('The "league_oauth2_server.authorization_server.private_key" and "league_oauth2_server.resource_server.public_key" config options must not be empty for using the "league:oauth2-server:generate-keypair" command.');
 
         $command = new GenerateKeyPairCommand(new Filesystem(), null, null, null, 'RS512');
 
@@ -24,12 +26,12 @@ class GenerateKeyPairCommandTest extends TestCase
      */
     public function testItGeneratesKeyPair($algorithm, $passphrase)
     {
-        $privateKeyFile = \tempnam(\sys_get_temp_dir(), 'private_');
-        $publicKeyFile = \tempnam(\sys_get_temp_dir(), 'public_');
+        $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
+        $publicKeyFile = tempnam(sys_get_temp_dir(), 'public_');
 
         // tempnam() actually create the files, but we have to simulate they don't exist
-        \unlink($privateKeyFile);
-        \unlink($publicKeyFile);
+        unlink($privateKeyFile);
+        unlink($publicKeyFile);
 
         $tester = new CommandTester(
             new GenerateKeyPairCommand(
@@ -44,8 +46,8 @@ class GenerateKeyPairCommandTest extends TestCase
         $returnCode = $tester->execute([], ['interactive' => false]);
         $this->assertSame(0, $returnCode);
 
-        $privateKey = \file_get_contents($privateKeyFile);
-        $publicKey = \file_get_contents($publicKeyFile);
+        $privateKey = file_get_contents($privateKeyFile);
+        $publicKey = file_get_contents($publicKeyFile);
         $this->assertStringContainsString('Done!', $tester->getDisplay(true));
         $this->assertNotFalse($privateKey);
         $this->assertNotFalse($publicKey);
@@ -83,11 +85,11 @@ class GenerateKeyPairCommandTest extends TestCase
 
     public function testOverwriteAndSkipCannotBeCombined()
     {
-        $privateKeyFile = \tempnam(\sys_get_temp_dir(), 'private_');
-        $publicKeyFile = \tempnam(\sys_get_temp_dir(), 'public_');
+        $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
+        $publicKeyFile = tempnam(sys_get_temp_dir(), 'public_');
 
-        \file_put_contents($privateKeyFile, 'foobar');
-        \file_put_contents($publicKeyFile, 'foobar');
+        file_put_contents($privateKeyFile, 'foobar');
+        file_put_contents($publicKeyFile, 'foobar');
 
         $tester = new CommandTester(
             new GenerateKeyPairCommand(
@@ -106,19 +108,19 @@ class GenerateKeyPairCommandTest extends TestCase
             $tester->getDisplay(true)
         );
 
-        $privateKey = \file_get_contents($privateKeyFile);
-        $publicKey = \file_get_contents($publicKeyFile);
+        $privateKey = file_get_contents($privateKeyFile);
+        $publicKey = file_get_contents($publicKeyFile);
         $this->assertStringContainsString('foobar', $privateKey);
         $this->assertStringContainsString('foobar', $publicKey);
     }
 
     public function testNoOverwriteDoesNotOverwrite()
     {
-        $privateKeyFile = \tempnam(\sys_get_temp_dir(), 'private_');
-        $publicKeyFile = \tempnam(\sys_get_temp_dir(), 'public_');
+        $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
+        $publicKeyFile = tempnam(sys_get_temp_dir(), 'public_');
 
-        \file_put_contents($privateKeyFile, 'foobar');
-        \file_put_contents($publicKeyFile, 'foobar');
+        file_put_contents($privateKeyFile, 'foobar');
+        file_put_contents($publicKeyFile, 'foobar');
 
         $tester = new CommandTester(
             new GenerateKeyPairCommand(
@@ -134,22 +136,22 @@ class GenerateKeyPairCommandTest extends TestCase
         $this->assertSame(1, $returnCode);
         $this->assertStringContainsString(
             'Your keys already exist. Use the `--overwrite` option to force regeneration.',
-            \preg_replace('/\s+/', ' ', $tester->getDisplay(true))
+            preg_replace('/\s+/', ' ', $tester->getDisplay(true))
         );
 
-        $privateKey = \file_get_contents($privateKeyFile);
-        $publicKey = \file_get_contents($publicKeyFile);
+        $privateKey = file_get_contents($privateKeyFile);
+        $publicKey = file_get_contents($publicKeyFile);
         $this->assertStringContainsString('foobar', $privateKey);
         $this->assertStringContainsString('foobar', $publicKey);
     }
 
     public function testOverwriteActuallyOverwrites()
     {
-        $privateKeyFile = \tempnam(\sys_get_temp_dir(), 'private_');
-        $publicKeyFile = \tempnam(\sys_get_temp_dir(), 'public_');
+        $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
+        $publicKeyFile = tempnam(sys_get_temp_dir(), 'public_');
 
-        \file_put_contents($privateKeyFile, 'foobar');
-        \file_put_contents($publicKeyFile, 'foobar');
+        file_put_contents($privateKeyFile, 'foobar');
+        file_put_contents($publicKeyFile, 'foobar');
 
         $tester = new CommandTester(
             new GenerateKeyPairCommand(
@@ -162,8 +164,8 @@ class GenerateKeyPairCommandTest extends TestCase
         );
 
         $returnCode = $tester->execute(['--overwrite' => true], ['interactive' => false]);
-        $privateKey = \file_get_contents($privateKeyFile);
-        $publicKey = \file_get_contents($publicKeyFile);
+        $privateKey = file_get_contents($privateKeyFile);
+        $publicKey = file_get_contents($publicKeyFile);
 
         $this->assertSame(0, $returnCode);
         $this->assertStringContainsString('PRIVATE KEY', $privateKey);
@@ -172,12 +174,12 @@ class GenerateKeyPairCommandTest extends TestCase
 
     public function testSkipIfExistsWritesIfNotExists()
     {
-        $privateKeyFile = \tempnam(\sys_get_temp_dir(), 'private_');
-        $publicKeyFile = \tempnam(\sys_get_temp_dir(), 'public_');
+        $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
+        $publicKeyFile = tempnam(sys_get_temp_dir(), 'public_');
 
         // tempnam() actually create the files, but we have to simulate they don't exist
-        \unlink($privateKeyFile);
-        \unlink($publicKeyFile);
+        unlink($privateKeyFile);
+        unlink($publicKeyFile);
 
         $tester = new CommandTester(
             new GenerateKeyPairCommand(
@@ -191,19 +193,19 @@ class GenerateKeyPairCommandTest extends TestCase
 
         $this->assertSame(0, $tester->execute(['--skip-if-exists' => true], ['interactive' => false]));
         $this->assertStringContainsString('Done!', $tester->getDisplay(true));
-        $privateKey = \file_get_contents($privateKeyFile);
-        $publicKey = \file_get_contents($publicKeyFile);
+        $privateKey = file_get_contents($privateKeyFile);
+        $publicKey = file_get_contents($publicKeyFile);
         $this->assertStringContainsString('PRIVATE KEY', $privateKey);
         $this->assertStringContainsString('PUBLIC KEY', $publicKey);
     }
 
     public function testSkipIfExistsDoesNothingIfExists()
     {
-        $privateKeyFile = \tempnam(\sys_get_temp_dir(), 'private_');
-        $publicKeyFile = \tempnam(\sys_get_temp_dir(), 'public_');
+        $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
+        $publicKeyFile = tempnam(sys_get_temp_dir(), 'public_');
 
-        \file_put_contents($privateKeyFile, 'foobar');
-        \file_put_contents($publicKeyFile, 'foobar');
+        file_put_contents($privateKeyFile, 'foobar');
+        file_put_contents($publicKeyFile, 'foobar');
 
         $tester = new CommandTester(
             new GenerateKeyPairCommand(
@@ -221,8 +223,8 @@ class GenerateKeyPairCommandTest extends TestCase
             $tester->getDisplay(true)
         );
 
-        $privateKey = \file_get_contents($privateKeyFile);
-        $publicKey = \file_get_contents($publicKeyFile);
+        $privateKey = file_get_contents($privateKeyFile);
+        $publicKey = file_get_contents($publicKeyFile);
         $this->assertStringContainsString('foobar', $privateKey);
         $this->assertStringContainsString('foobar', $publicKey);
     }

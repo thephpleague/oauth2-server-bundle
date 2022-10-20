@@ -1,6 +1,8 @@
 <?php
 
-namespace Lexik\Bundle\JWTAuthenticationBundle\Command;
+declare(strict_types=1);
+
+namespace League\Bundle\OAuth2ServerBundle\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -14,7 +16,7 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * @author Beno!t POLASZEK <bpolaszek@gmail.com>
  */
-#[AsCommand(name: 'lexik:jwt:generate-keypair', description: 'Generate public/private keys for use in your application.')]
+#[AsCommand(name: 'league:oauth2-server:generate-keypair', description: 'Generate public/private keys for use in your application.')]
 final class GenerateKeyPairCommand extends Command
 {
     private const ACCEPTED_ALGORITHMS = [
@@ -32,7 +34,7 @@ final class GenerateKeyPairCommand extends Command
     /**
      * @deprecated
      */
-    protected static $defaultName = 'lexik:jwt:generate-keypair';
+    protected static $defaultName = 'league:oauth2-server:generate-keypair';
 
     /**
      * @var Filesystem
@@ -81,7 +83,7 @@ final class GenerateKeyPairCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        if (!in_array($this->algorithm, self::ACCEPTED_ALGORITHMS, true)) {
+        if (!\in_array($this->algorithm, self::ACCEPTED_ALGORITHMS, true)) {
             $io->error(sprintf('Cannot generate key pair with the provided algorithm `%s`.', $this->algorithm));
 
             return 1;
@@ -102,7 +104,7 @@ final class GenerateKeyPairCommand extends Command
         }
 
         if (!$this->secretKey || !$this->publicKey) {
-            throw new LogicException(sprintf('The "lexik_jwt_authentication.secret_key" and "lexik_jwt_authentication.public_key" config options must not be empty for using the "%s" command.', self::$defaultName));
+            throw new LogicException(sprintf('The "league_oauth2_server.authorization_server.private_key" and "league_oauth2_server.resource_server.public_key" config options must not be empty for using the "%s" command.', self::$defaultName));
         }
 
         $alreadyExists = $this->filesystem->exists($this->secretKey) || $this->filesystem->exists($this->publicKey);
@@ -156,21 +158,21 @@ final class GenerateKeyPairCommand extends Command
     {
         $config = $this->buildOpenSSLConfiguration();
 
-        $resource = \openssl_pkey_new($config);
+        $resource = openssl_pkey_new($config);
         if (false === $resource) {
-            throw new \RuntimeException(\openssl_error_string());
+            throw new \RuntimeException(openssl_error_string());
         }
 
-        $success = \openssl_pkey_export($resource, $privateKey, $passphrase);
+        $success = openssl_pkey_export($resource, $privateKey, $passphrase);
 
         if (false === $success) {
-            throw new \RuntimeException(\openssl_error_string());
+            throw new \RuntimeException(openssl_error_string());
         }
 
-        $publicKeyData = \openssl_pkey_get_details($resource);
+        $publicKeyData = openssl_pkey_get_details($resource);
 
         if (false === $publicKeyData) {
-            throw new \RuntimeException(\openssl_error_string());
+            throw new \RuntimeException(openssl_error_string());
         }
 
         $publicKey = $publicKeyData['key'];
