@@ -107,6 +107,10 @@ final class Configuration implements ConfigurationInterface
                     ->info('Whether to enable access token saving to persistence layer')
                     ->defaultTrue()
                 ->end()
+                ->scalarNode('response_type_class')
+                    ->info("Define a custom ResponseType")
+                    ->defaultValue(null)
+                ->end()
             ->end()
         ;
 
