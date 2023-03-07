@@ -28,10 +28,14 @@ class Driver implements MappingDriver
     /** @var bool */
     private $persistAccessToken;
 
-    public function __construct(string $clientClass, bool $persistAccessToken)
+    /** @var string */
+    private $tablePrefix;
+
+    public function __construct(string $clientClass, bool $persistAccessToken, string $tablePrefix = 'oauth2_')
     {
         $this->clientClass = $clientClass;
         $this->persistAccessToken = $persistAccessToken;
+        $this->tablePrefix = $tablePrefix;
     }
 
     public function loadMetadataForClass($className, ClassMetadata $metadata): void
@@ -97,7 +101,7 @@ class Driver implements MappingDriver
     private function buildAccessTokenMetadata(ClassMetadata $metadata): void
     {
         (new ClassMetadataBuilder($metadata))
-            ->setTable('oauth2_access_token')
+            ->setTable($this->tablePrefix . 'access_token')
             ->createField('identifier', 'string')->makePrimaryKey()->length(80)->option('fixed', true)->build()
             ->addField('expiry', 'datetime_immutable')
             ->createField('userIdentifier', 'string')->length(128)->nullable(true)->build()
@@ -110,7 +114,7 @@ class Driver implements MappingDriver
     private function buildAuthorizationCodeMetadata(ClassMetadata $metadata): void
     {
         (new ClassMetadataBuilder($metadata))
-            ->setTable('oauth2_authorization_code')
+            ->setTable($this->tablePrefix . 'authorization_code')
             ->createField('identifier', 'string')->makePrimaryKey()->length(80)->option('fixed', true)->build()
             ->addField('expiry', 'datetime_immutable')
             ->createField('userIdentifier', 'string')->length(128)->nullable(true)->build()
@@ -123,7 +127,7 @@ class Driver implements MappingDriver
     private function buildClientMetadata(ClassMetadata $metadata): void
     {
         (new ClassMetadataBuilder($metadata))
-            ->setTable('oauth2_client')
+            ->setTable($this->tablePrefix . 'client')
             ->createField('identifier', 'string')->makePrimaryKey()->length(32)->build()
         ;
     }
@@ -131,7 +135,7 @@ class Driver implements MappingDriver
     private function buildRefreshTokenMetadata(ClassMetadata $metadata): void
     {
         $classMetadataBuilder = (new ClassMetadataBuilder($metadata))
-            ->setTable('oauth2_refresh_token')
+            ->setTable($this->tablePrefix . 'refresh_token')
             ->createField('identifier', 'string')->makePrimaryKey()->length(80)->option('fixed', true)->build()
             ->addField('expiry', 'datetime_immutable')
             ->addField('revoked', 'boolean')

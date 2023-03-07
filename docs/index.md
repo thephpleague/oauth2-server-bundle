@@ -97,6 +97,9 @@ For implementation into Symfony projects, please see [bundle documentation](basi
 
                 # Name of the entity manager that you wish to use for managing clients and tokens.
                 entity_manager:       default
+
+                # Table name prefix.
+                table_prefix:         oauth2_
             in_memory:            ~
 
         # Set a custom prefix that replaces the default 'ROLE_OAUTH2_' role prefix
