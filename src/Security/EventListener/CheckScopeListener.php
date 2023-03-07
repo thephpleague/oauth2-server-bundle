@@ -31,7 +31,7 @@ final class CheckScopeListener implements EventSubscriberInterface
         /**
          * @var Passport $passport
          *
-         * @psalm-suppress DeprecatedClass
+         * @psalm-suppress DeprecatedInterface
          */
         $passport = $event->getPassport();
         if (!$passport->hasBadge(ScopeBadge::class)) {
