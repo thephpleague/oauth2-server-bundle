@@ -4,30 +4,43 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\EventListener;
 
-use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEvent;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bundle\Security\Core\Security;
+use Symfony\Component\Security\Core\Security as LegacySecurity;
 
-/**
- * Listener sets currently authenticated user to authorization request context
- */
-final class AuthorizationRequestUserResolvingListener
-{
+if (class_exists(Security::class)) {
     /**
-     * @var Security
+     * Listener sets currently authenticated user to authorization request context
      */
-    private $security;
-
-    public function __construct(Security $security)
+    final class AuthorizationRequestUserResolvingListener
     {
-        $this->security = $security;
+        use AuthorizationRequestUserResolvingListenerTrait;
+
+        /**
+         * @var Security
+         */
+        private $security;
+
+        public function __construct(Security $security)
+        {
+            $this->security = $security;
+        }
     }
-
-    public function onAuthorizationRequest(AuthorizationRequestResolveEvent $event): void
+} else {
+    /**
+     * Listener sets currently authenticated user to authorization request context
+     */
+    final class AuthorizationRequestUserResolvingListener
     {
-        $user = $this->security->getUser();
-        if ($user instanceof UserInterface) {
-            $event->setUser($user);
+        use AuthorizationRequestUserResolvingListenerTrait;
+
+        /**
+         * @var LegacySecurity
+         */
+        private $security;
+
+        public function __construct(LegacySecurity $security)
+        {
+            $this->security = $security;
         }
     }
 }
