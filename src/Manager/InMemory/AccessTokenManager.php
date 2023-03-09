@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Manager\InMemory;
 
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
+use League\Bundle\OAuth2ServerBundle\Model\AccessTokenInterface;
 
 final class AccessTokenManager implements AccessTokenManagerInterface
 {
     /**
-     * @var array<string, AccessToken>
+     * @var array<string, AccessTokenInterface>
      */
     private $accessTokens = [];
 
@@ -25,7 +25,7 @@ final class AccessTokenManager implements AccessTokenManagerInterface
     /**
      * @psalm-mutation-free
      */
-    public function find(string $identifier): ?AccessToken
+    public function find(string $identifier): ?AccessTokenInterface
     {
         if (!$this->persistAccessToken) {
             return null;
@@ -34,7 +34,7 @@ final class AccessTokenManager implements AccessTokenManagerInterface
         return $this->accessTokens[$identifier] ?? null;
     }
 
-    public function save(AccessToken $accessToken): void
+    public function save(AccessTokenInterface $accessToken): void
     {
         if (!$this->persistAccessToken) {
             return;
@@ -52,7 +52,7 @@ final class AccessTokenManager implements AccessTokenManagerInterface
         $count = \count($this->accessTokens);
 
         $now = new \DateTimeImmutable();
-        $this->accessTokens = array_filter($this->accessTokens, static function (AccessToken $accessToken) use ($now): bool {
+        $this->accessTokens = array_filter($this->accessTokens, static function (AccessTokenInterface $accessToken) use ($now): bool {
             return $accessToken->getExpiry() >= $now;
         });
 

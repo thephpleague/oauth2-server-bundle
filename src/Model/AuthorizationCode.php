@@ -6,7 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Model;
 
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 
-class AuthorizationCode
+class AuthorizationCode implements AuthorizationCodeInterface
 {
     /**
      * @var string
@@ -24,7 +24,7 @@ class AuthorizationCode
     private $userIdentifier;
 
     /**
-     * @var AbstractClient
+     * @var ClientInterface
      */
     private $client;
 
@@ -46,7 +46,7 @@ class AuthorizationCode
     public function __construct(
         string $identifier,
         \DateTimeInterface $expiry,
-        AbstractClient $client,
+        ClientInterface $client,
         ?string $userIdentifier,
         array $scopes
     ) {
@@ -92,7 +92,7 @@ class AuthorizationCode
     /**
      * @psalm-mutation-free
      */
-    public function getClient(): AbstractClient
+    public function getClient(): ClientInterface
     {
         return $this->client;
     }
@@ -115,7 +115,7 @@ class AuthorizationCode
         return $this->revoked;
     }
 
-    public function revoke(): self
+    public function revoke(): AuthorizationCodeInterface
     {
         $this->revoked = true;
 

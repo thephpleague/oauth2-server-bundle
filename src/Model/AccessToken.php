@@ -6,7 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Model;
 
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 
-class AccessToken
+class AccessToken implements AccessTokenInterface
 {
     /**
      * @var string
@@ -24,7 +24,7 @@ class AccessToken
     private $userIdentifier;
 
     /**
-     * @var AbstractClient
+     * @var ClientInterface
      */
     private $client;
 
@@ -46,7 +46,7 @@ class AccessToken
     public function __construct(
         string $identifier,
         \DateTimeInterface $expiry,
-        AbstractClient $client,
+        ClientInterface $client,
         ?string $userIdentifier,
         array $scopes
     ) {
@@ -92,7 +92,7 @@ class AccessToken
     /**
      * @psalm-mutation-free
      */
-    public function getClient(): AbstractClient
+    public function getClient(): ClientInterface
     {
         return $this->client;
     }
@@ -115,7 +115,7 @@ class AccessToken
         return $this->revoked;
     }
 
-    public function revoke(): self
+    public function revoke(): AccessTokenInterface
     {
         $this->revoked = true;
 

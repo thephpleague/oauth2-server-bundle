@@ -7,7 +7,7 @@ namespace League\Bundle\OAuth2ServerBundle\Manager\InMemory;
 use League\Bundle\OAuth2ServerBundle\Event\PreSaveClientEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientFilter;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
+use League\Bundle\OAuth2ServerBundle\Model\ClientInterface;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
@@ -17,7 +17,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 final class ClientManager implements ClientManagerInterface
 {
     /**
-     * @var array<string, AbstractClient>
+     * @var array<string, ClientInterface>
      */
     private $clients = [];
 
@@ -31,12 +31,12 @@ final class ClientManager implements ClientManagerInterface
         $this->dispatcher = $dispatcher;
     }
 
-    public function find(string $identifier): ?AbstractClient
+    public function find(string $identifier): ?ClientInterface
     {
         return $this->clients[$identifier] ?? null;
     }
 
-    public function save(AbstractClient $client): void
+    public function save(ClientInterface $client): void
     {
         $event = $this->dispatcher->dispatch(new PreSaveClientEvent($client), OAuth2Events::PRE_SAVE_CLIENT);
         $client = $event->getClient();
@@ -44,13 +44,13 @@ final class ClientManager implements ClientManagerInterface
         $this->clients[$client->getIdentifier()] = $client;
     }
 
-    public function remove(AbstractClient $client): void
+    public function remove(ClientInterface $client): void
     {
         unset($this->clients[$client->getIdentifier()]);
     }
 
     /**
-     * @return list<AbstractClient>
+     * @return list<ClientInterface>
      */
     public function list(?ClientFilter $clientFilter): array
     {
@@ -58,7 +58,7 @@ final class ClientManager implements ClientManagerInterface
             return array_values($this->clients);
         }
 
-        return array_values(array_filter($this->clients, static function (AbstractClient $client) use ($clientFilter): bool {
+        return array_values(array_filter($this->clients, static function (ClientInterface $client) use ($clientFilter): bool {
             if (!self::passesFilter($client->getGrants(), $clientFilter->getGrants())) {
                 return false;
             }

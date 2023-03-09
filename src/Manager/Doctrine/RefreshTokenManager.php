@@ -7,6 +7,7 @@ namespace League\Bundle\OAuth2ServerBundle\Manager\Doctrine;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
+use League\Bundle\OAuth2ServerBundle\Model\RefreshTokenInterface;
 
 final class RefreshTokenManager implements RefreshTokenManagerInterface
 {
@@ -20,12 +21,12 @@ final class RefreshTokenManager implements RefreshTokenManagerInterface
         $this->entityManager = $entityManager;
     }
 
-    public function find(string $identifier): ?RefreshToken
+    public function find(string $identifier): ?RefreshTokenInterface
     {
         return $this->entityManager->find(RefreshToken::class, $identifier);
     }
 
-    public function save(RefreshToken $refreshToken): void
+    public function save(RefreshTokenInterface $refreshToken): void
     {
         $this->entityManager->persist($refreshToken);
         $this->entityManager->flush();
