@@ -128,7 +128,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
     /**
      * @return OAuth2Token
      *
-     * @psalm-suppress DeprecatedClass
+     * @psalm-suppress DeprecatedInterface
      */
     public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
     {

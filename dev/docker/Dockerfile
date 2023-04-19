@@ -7,17 +7,20 @@ LABEL maintainer="Petar Obradović <petar.obradovic@trikoder.net>"
 RUN mkdir -p /app/bin
 ENV PATH /app/bin:$PATH
 
+ARG XDEBUG_VERSION=3.1.6
+
 # Install needed core and PECL extensions
 RUN apk add --update --no-cache --virtual .build-deps \
         ${PHPIZE_DEPS} \
         libxml2-dev \
         libzip-dev \
+        linux-headers \
         zlib-dev \
     && docker-php-ext-install -j $(getconf _NPROCESSORS_ONLN) \
         xml \
         zip \
     && pecl install \
-        xdebug \
+        xdebug-${XDEBUG_VERSION} \
     && docker-php-ext-enable \
         xdebug \
     && apk del --purge .build-deps
