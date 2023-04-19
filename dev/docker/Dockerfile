@@ -13,6 +13,7 @@ RUN apk add --update --no-cache --virtual .build-deps \
         libxml2-dev \
         libzip-dev \
         zlib-dev \
+        linux-headers \
     && docker-php-ext-install -j $(getconf _NPROCESSORS_ONLN) \
         xml \
         zip \
