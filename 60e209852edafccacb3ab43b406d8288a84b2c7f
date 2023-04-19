@@ -1,0 +1,23 @@
+---------------------------------------------------------------------------
+
+by ajgarlag at 2023-03-07T08:36:03Z
+
+Should we drop unsupported PHP and Symfony versions?
+
+---------------------------------------------------------------------------
+
+by X-Coder264 at 2023-03-07T11:42:40Z
+
+I think this PR should be about installing `linux-headers` as I see that's the current reason why the image cannot be built and adding PHP 8.2 / Symfony 6.2 and 6.3 to the CI matrix.
+
+Symfony 5.4, which is the latest LTS, supports PHP 7.4 so unless there's a very good reason (like a feature that we need from newer PHP versions) I wouldn't be dropping PHP 7.4 support as it kinda defeats the point of the bundle supporting the 5.4 release (at that point we might as well skip straight ahead to PHP 8.1 as the min requirement just like Symfony 6.1 did).
+
+We should IMO drop PHP 7.4 once the Symfony 6.4 LTS gets released in November.
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2023-03-07T16:55:40Z
+
+Thanks, @X-Coder264, for your review. I've restored back unsupported PHP versions.
+
+The `linux-headers` package is required in order to compile `xdebug-3.2.0` which is the first version to support PHP 8.2
