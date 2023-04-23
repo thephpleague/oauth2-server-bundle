@@ -280,6 +280,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             ->findDefinition(Driver::class)
             ->replaceArgument(0, $config['client']['classname'])
             ->replaceArgument(1, $config['authorization_server']['persist_access_token'])
+            ->replaceArgument(2, $persistenceConfig['table_prefix'])
         ;
 
         $container->setParameter('league.oauth2_server.persistence.doctrine.enabled', true);

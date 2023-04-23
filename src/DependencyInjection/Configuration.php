@@ -184,6 +184,11 @@ final class Configuration implements ConfigurationInterface
                             ->cannotBeEmpty()
                             ->defaultValue('default')
                         ->end()
+                        ->scalarNode('table_prefix')
+                            ->info('Table name prefix.')
+                            ->cannotBeEmpty()
+                            ->defaultValue('oauth2_')
+                        ->end()
                     ->end()
                 ->end()
                 // In-memory persistence
