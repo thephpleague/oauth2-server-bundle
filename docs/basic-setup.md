@@ -95,7 +95,7 @@ security:
 
     firewalls:
         api_token:
-            pattern: ^/api/token$
+            pattern: ^/token$
             security: false
         api:
             pattern: ^/api
