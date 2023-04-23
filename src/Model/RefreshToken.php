@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Model;
 
-class RefreshToken
+class RefreshToken implements RefreshTokenInterface
 {
     /**
      * @var string
@@ -63,7 +63,7 @@ class RefreshToken
     /**
      * @psalm-mutation-free
      */
-    public function getAccessToken(): ?AccessToken
+    public function getAccessToken(): ?AccessTokenInterface
     {
         return $this->accessToken;
     }
@@ -76,7 +76,7 @@ class RefreshToken
         return $this->revoked;
     }
 
-    public function revoke(): self
+    public function revoke(): RefreshTokenInterface
     {
         $this->revoked = true;
 

@@ -13,7 +13,7 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
  *
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  */
-abstract class AbstractClient
+abstract class AbstractClient implements ClientInterface
 {
     /**
      * @var string
@@ -73,7 +73,7 @@ abstract class AbstractClient
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): ClientInterface
     {
         $this->name = $name;
 
@@ -106,7 +106,7 @@ abstract class AbstractClient
         return $this->redirectUris;
     }
 
-    public function setRedirectUris(RedirectUri ...$redirectUris): self
+    public function setRedirectUris(RedirectUri ...$redirectUris): ClientInterface
     {
         /** @var list<RedirectUri> $redirectUris */
         $this->redirectUris = $redirectUris;
@@ -124,7 +124,7 @@ abstract class AbstractClient
         return $this->grants;
     }
 
-    public function setGrants(Grant ...$grants): self
+    public function setGrants(Grant ...$grants): ClientInterface
     {
         /** @var list<Grant> $grants */
         $this->grants = $grants;
@@ -142,7 +142,7 @@ abstract class AbstractClient
         return $this->scopes;
     }
 
-    public function setScopes(Scope ...$scopes): self
+    public function setScopes(Scope ...$scopes): ClientInterface
     {
         /** @var list<Scope> $scopes */
         $this->scopes = $scopes;
@@ -158,7 +158,7 @@ abstract class AbstractClient
         return $this->active;
     }
 
-    public function setActive(bool $active): self
+    public function setActive(bool $active): ClientInterface
     {
         $this->active = $active;
 
@@ -181,7 +181,7 @@ abstract class AbstractClient
         return $this->allowPlainTextPkce;
     }
 
-    public function setAllowPlainTextPkce(bool $allowPlainTextPkce): self
+    public function setAllowPlainTextPkce(bool $allowPlainTextPkce): ClientInterface
     {
         $this->allowPlainTextPkce = $allowPlainTextPkce;
 

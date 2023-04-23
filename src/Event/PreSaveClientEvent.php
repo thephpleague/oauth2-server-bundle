@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Event;
 
-use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
+use League\Bundle\OAuth2ServerBundle\Model\ClientInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -13,21 +13,21 @@ use Symfony\Contracts\EventDispatcher\Event;
 class PreSaveClientEvent extends Event
 {
     /**
-     * @var AbstractClient
+     * @var ClientInterface
      */
     private $client;
 
-    public function __construct(AbstractClient $client)
+    public function __construct(ClientInterface $client)
     {
         $this->client = $client;
     }
 
-    public function getClient(): AbstractClient
+    public function getClient(): ClientInterface
     {
         return $this->client;
     }
 
-    public function setClient(AbstractClient $client): void
+    public function setClient(ClientInterface $client): void
     {
         $this->client = $client;
     }

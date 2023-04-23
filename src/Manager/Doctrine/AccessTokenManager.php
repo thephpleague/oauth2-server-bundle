@@ -7,6 +7,7 @@ namespace League\Bundle\OAuth2ServerBundle\Manager\Doctrine;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
+use League\Bundle\OAuth2ServerBundle\Model\AccessTokenInterface;
 
 final class AccessTokenManager implements AccessTokenManagerInterface
 {
@@ -24,7 +25,7 @@ final class AccessTokenManager implements AccessTokenManagerInterface
         $this->persistAccessToken = $persistAccessToken;
     }
 
-    public function find(string $identifier): ?AccessToken
+    public function find(string $identifier): ?AccessTokenInterface
     {
         if (!$this->persistAccessToken) {
             return null;
@@ -33,7 +34,7 @@ final class AccessTokenManager implements AccessTokenManagerInterface
         return $this->entityManager->find(AccessToken::class, $identifier);
     }
 
-    public function save(AccessToken $accessToken): void
+    public function save(AccessTokenInterface $accessToken): void
     {
         if (!$this->persistAccessToken) {
             return;

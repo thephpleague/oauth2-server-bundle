@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Manager;
 
-use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
+use League\Bundle\OAuth2ServerBundle\Model\ClientInterface;
 
 interface ClientManagerInterface
 {
-    public function save(AbstractClient $client): void;
+    public function save(ClientInterface $client): void;
 
-    public function remove(AbstractClient $client): void;
+    public function remove(ClientInterface $client): void;
 
-    public function find(string $identifier): ?AbstractClient;
+    public function find(string $identifier): ?ClientInterface;
 
     /**
-     * @return list<AbstractClient>
+     * @return list<ClientInterface>
      */
     public function list(?ClientFilter $clientFilter): array;
 }

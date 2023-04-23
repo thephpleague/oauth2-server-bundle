@@ -9,6 +9,7 @@ use League\Bundle\OAuth2ServerBundle\Event\PreSaveClientEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientFilter;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
+use League\Bundle\OAuth2ServerBundle\Model\ClientInterface;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
@@ -45,14 +46,14 @@ final class ClientManager implements ClientManagerInterface
         $this->clientFqcn = $clientFqcn;
     }
 
-    public function find(string $identifier): ?AbstractClient
+    public function find(string $identifier): ?ClientInterface
     {
         $repository = $this->entityManager->getRepository($this->clientFqcn);
 
         return $repository->findOneBy(['identifier' => $identifier]);
     }
 
-    public function save(AbstractClient $client): void
+    public function save(ClientInterface $client): void
     {
         $event = $this->dispatcher->dispatch(new PreSaveClientEvent($client), OAuth2Events::PRE_SAVE_CLIENT);
         $client = $event->getClient();
@@ -61,7 +62,7 @@ final class ClientManager implements ClientManagerInterface
         $this->entityManager->flush();
     }
 
-    public function remove(AbstractClient $client): void
+    public function remove(ClientInterface $client): void
     {
         $this->entityManager->remove($client);
         $this->entityManager->flush();
