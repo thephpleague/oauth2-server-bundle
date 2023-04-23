@@ -57,7 +57,6 @@ use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
@@ -208,7 +207,7 @@ return static function (ContainerConfigurator $container): void {
         // Authorization listeners
         ->set('league.oauth2_server.listener.authorization_request_user_resolving', AuthorizationRequestUserResolvingListener::class)
             ->args([
-                service(Security::class),
+                service('security.helper'),
             ])
             ->tag('kernel.event_listener', [
                 'event' => OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE,
