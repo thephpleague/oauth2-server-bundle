@@ -19,8 +19,7 @@ class RegisterDoctrineOrmMappingPass extends DoctrineOrmMappingsPass
             new Reference(Driver::class),
             ['League\Bundle\OAuth2ServerBundle\Model'],
             ['league.oauth2_server.persistence.doctrine.manager'],
-            'league.oauth2_server.persistence.doctrine.enabled',
-            ['LeagueOAuth2ServerBundle' => 'League\Bundle\OAuth2ServerBundle\Model']
+            'league.oauth2_server.persistence.doctrine.enabled'
         );
     }
 }
