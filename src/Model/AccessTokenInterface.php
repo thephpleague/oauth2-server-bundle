@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Model;
 
-use DateTimeInterface;
-
 interface AccessTokenInterface
 {
     public function __toString(): string;
 
     public function getIdentifier(): string;
 
-    public function getExpiry(): DateTimeInterface;
+    public function getExpiry(): \DateTimeInterface;
 
     public function getUserIdentifier(): ?string;
 
