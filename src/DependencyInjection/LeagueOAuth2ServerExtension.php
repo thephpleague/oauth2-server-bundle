@@ -95,6 +95,13 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
      */
     public function prepend(ContainerBuilder $container)
     {
+        // If no doctrine connection is configured, the DBAL connection should
+        // be left alone as adding any configuration setting with no connection
+        // will result in an invalid configuration leading to a hard failure.
+        if (!self::hasDoctrineConnectionsConfigured($container->getExtensionConfig('doctrine'))) {
+            return;
+        }
+
         $container->prependExtensionConfig('doctrine', [
             'dbal' => [
                 'connections' => null,
@@ -113,6 +120,20 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     public function process(ContainerBuilder $container)
     {
         $this->assertRequiredBundlesAreEnabled($container);
+    }
+
+    /**
+     * @param mixed[] $configs
+     */
+    private static function hasDoctrineConnectionsConfigured(array $configs): bool
+    {
+        foreach ($configs as $config) {
+            if (isset($config['dbal'])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function assertRequiredBundlesAreEnabled(ContainerBuilder $container): void
@@ -254,7 +275,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         }
 
         $persistenceConfig = current($config['persistence']);
-        $persistenceMethod = key($config['persistence']);
+        $persistenceMethod = $this->getPersistenceMethod($config);
 
         switch ($persistenceMethod) {
             case 'in_memory':
@@ -269,6 +290,16 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
                 $this->configureCustomPersistence($container, $persistenceConfig);
                 break;
         }
+    }
+
+    /**
+     * @param mixed[] $config
+     */
+    private function getPersistenceMethod(array $config): ?string
+    {
+        $persistenceMethod = key($config['persistence']);
+
+        return \is_string($persistenceMethod) ? $persistenceMethod : null;
     }
 
     /**
