@@ -194,6 +194,10 @@ final class Configuration implements ConfigurationInterface
                 // In-memory persistence
                 ->scalarNode('in_memory')
                 ->end()
+                // Extensibility point
+                ->scalarNode('custom')
+                    ->cannotBeEmpty()
+                ->end()
             ->end()
         ;
 

@@ -238,7 +238,11 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
                 $loader->load('storage/doctrine.php');
                 $this->configureDoctrinePersistence($container, $config, $persistenceConfig);
                 break;
+            case 'custom':
+                $persistenceMethod = $persistenceConfig;
         }
+
+        $container->setParameter('league.oauth2_server.persistence.method', $persistenceMethod);
     }
 
     private function configureDoctrinePersistence(ContainerBuilder $container, array $config, array $persistenceConfig): void
