@@ -240,6 +240,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
                 break;
             case 'custom':
                 $persistenceMethod = $persistenceConfig;
+                break;
         }
 
         $container->setParameter('league.oauth2_server.persistence.method', $persistenceMethod);
