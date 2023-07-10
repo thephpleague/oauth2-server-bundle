@@ -104,7 +104,7 @@ security:
             oauth2: true
 ```
 
-* The `api_token` firewall will ensure that anyone can access the `/api/token` endpoint in order to be able to retrieve their access tokens.
+* The `api_token` firewall will ensure that anyone can access the `/token` endpoint in order to be able to retrieve their access tokens.
 * The `api` firewall will protect all routes prefixed with `/api` and clients will require a valid access token in order to access them.
 
 Basically, any firewall which sets the `oauth2` parameter to `true` will make any routes that match the selected pattern go through our OAuth 2.0 security layer.
