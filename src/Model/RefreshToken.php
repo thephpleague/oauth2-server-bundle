@@ -17,7 +17,7 @@ class RefreshToken implements RefreshTokenInterface
     private $expiry;
 
     /**
-     * @var AccessToken|null
+     * @var AccessTokenInterface|null
      */
     private $accessToken;
 
@@ -29,7 +29,7 @@ class RefreshToken implements RefreshTokenInterface
     /**
      * @psalm-mutation-free
      */
-    public function __construct(string $identifier, \DateTimeInterface $expiry, ?AccessToken $accessToken = null)
+    public function __construct(string $identifier, \DateTimeInterface $expiry, ?AccessTokenInterface $accessToken = null)
     {
         $this->identifier = $identifier;
         $this->expiry = $expiry;
