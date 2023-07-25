@@ -12,6 +12,7 @@ use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
 {
@@ -34,8 +35,12 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
     /**
      * @psalm-suppress DeprecatedMethod
      */
-    public function revokeCredentialsForUser(UserEntityInterface $user): void
+    public function revokeCredentialsForUser(UserInterface $user): void
     {
+        if (!$user instanceof UserEntityInterface) {
+            throw new \Exception('User must implement UserEntityInterface.');
+        }
+
         $userIdentifier = $user->getIdentifier();
 
         $this->entityManager->createQueryBuilder()

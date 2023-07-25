@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Service;
 
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
-use League\OAuth2\Server\Entities\UserEntityInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Service responsible for revoking credentials on client-level and user-level.
@@ -13,7 +13,7 @@ use League\OAuth2\Server\Entities\UserEntityInterface;
  */
 interface CredentialsRevokerInterface
 {
-    public function revokeCredentialsForUser(UserEntityInterface $user): void;
+    public function revokeCredentialsForUser(UserInterface $user): void;
 
     public function revokeCredentialsForClient(AbstractClient $client): void;
 }
