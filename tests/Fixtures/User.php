@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Fixtures;
 
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class User extends \ArrayObject implements UserInterface
+class User extends \ArrayObject implements UserInterface, UserEntityInterface
 {
     /**
      * {@inheritdoc}
@@ -53,5 +54,10 @@ class User extends \ArrayObject implements UserInterface
      */
     public function eraseCredentials()
     {
+    }
+
+    public function getIdentifier()
+    {
+        return FixtureFactory::FIXTURE_IDENTIFIER;
     }
 }

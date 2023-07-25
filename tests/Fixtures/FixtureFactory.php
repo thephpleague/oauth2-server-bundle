@@ -62,6 +62,7 @@ final class FixtureFactory
 
     public const FIXTURE_USER = 'user';
     public const FIXTURE_PASSWORD = 'password';
+    public const FIXTURE_IDENTIFIER = '000000000001';
 
     public static function createUser(array $roles = []): User
     {
