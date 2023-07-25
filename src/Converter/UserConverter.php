@@ -17,11 +17,9 @@ final class UserConverter implements UserConverterInterface
     {
         $userEntity = new User();
 
-        if (!$user instanceof UserEntityInterface) {
-            throw new \Exception('User is not an implementation of UserEntityInterface.');
+        if ($user instanceof UserInterface && $user instanceof UserEntityInterface) {
+            $userEntity->setIdentifier($user->getIdentifier());
         }
-
-        $userEntity->setIdentifier($user->getIdentifier());
 
         return $userEntity;
     }
