@@ -9,5 +9,5 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 interface UserConverterInterface
 {
-    public function toLeague(?UserInterface $user): UserEntityInterface;
+    public function toLeague(?UserEntityInterface $user): UserEntityInterface;
 }
