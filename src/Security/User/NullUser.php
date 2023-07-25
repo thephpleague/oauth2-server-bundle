@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Security\User;
 
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -11,8 +12,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  */
-final class NullUser implements UserInterface
+final class NullUser implements UserInterface, UserEntityInterface
 {
+    public function getIdentifier(): string
+    {
+        return '';
+    }
+
     /**
      * @psalm-mutation-free
      */
