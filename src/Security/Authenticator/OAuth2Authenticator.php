@@ -107,6 +107,9 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
             if ('' === $userIdentifier) {
                 return new NullUser();
             }
+
+            /** @todo create own function to get user by identifier */
+
             if (!method_exists($this->userProvider, 'loadUserByIdentifier')) {
                 /** @psalm-suppress DeprecatedMethod */
                 return $this->userProvider->loadUserByUsername($userIdentifier);
