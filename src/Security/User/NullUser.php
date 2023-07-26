@@ -4,15 +4,25 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Security\User;
 
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @psalm-immutable
  *
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
+ * @author Aurélien Pillevesse <aurelienpillevesse@hotmail.fr>
  */
-final class NullUser implements UserInterface
+final class NullUser implements UserInterface, UserEntityInterface
 {
+    /**
+     * @psalm-mutation-free
+     */
+    public function getIdentifier(): string
+    {
+        return '';
+    }
+
     /**
      * @psalm-mutation-free
      */
