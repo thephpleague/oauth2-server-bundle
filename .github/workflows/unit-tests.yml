@@ -47,7 +47,7 @@ jobs:
 
         steps:
             - name: "checkout"
-              uses: "actions/checkout@v2"
+              uses: "actions/checkout@v4"
 
             - name: "build the PHP7 environment"
               run: "dev/bin/docker-compose build --build-arg PHP_VERSION=${{ matrix.php }} php"
