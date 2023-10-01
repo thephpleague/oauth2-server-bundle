@@ -48,6 +48,10 @@
     "extra": {
         "branch-alias": {
             "dev-master": "0.4-dev"
+        },
+        "bamarni": {
+            "bin-links": false,
+            "forward-command": false
         }
     },
     "minimum-stability": "dev"
