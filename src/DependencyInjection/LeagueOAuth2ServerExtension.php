@@ -10,15 +10,20 @@ use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Grant as GrantType;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\RedirectUri as RedirectUriType;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Scope as ScopeType;
+use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AccessTokenManager as InMemoryAccessTokenManager;
+use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Driver;
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker;
+use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope as ScopeModel;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
@@ -104,9 +109,12 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     private function assertRequiredBundlesAreEnabled(ContainerBuilder $container): void
     {
         $requiredBundles = [
-            'doctrine' => DoctrineBundle::class,
             'security' => SecurityBundle::class,
         ];
+
+        if ($container->hasParameter('league.oauth2_server.persistence.doctrine.enabled')) {
+            $requiredBundles['doctrine'] = DoctrineBundle::class;
+        }
 
         foreach ($requiredBundles as $bundleAlias => $requiredBundle) {
             if (!$container->hasExtension($bundleAlias)) {
@@ -233,6 +241,9 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
                 $loader->load('storage/doctrine.php');
                 $this->configureDoctrinePersistence($container, $config, $persistenceConfig);
                 break;
+            case 'custom':
+                $this->configureCustomPersistence($container, $persistenceConfig);
+                break;
         }
     }
 
@@ -289,6 +300,17 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             ->replaceArgument(0, $config['authorization_server']['persist_access_token'])
         ;
         $container->setParameter('league.oauth2_server.persistence.in_memory.enabled', true);
+    }
+
+    private function configureCustomPersistence(ContainerBuilder $container, array $persistenceConfig): void
+    {
+        $container->setAlias(ClientManagerInterface::class, $persistenceConfig['client_manager']);
+        $container->setAlias(AccessTokenManagerInterface::class, $persistenceConfig['access_token_manager']);
+        $container->setAlias(RefreshTokenManagerInterface::class, $persistenceConfig['refresh_token_manager']);
+        $container->setAlias(AuthorizationCodeManagerInterface::class, $persistenceConfig['authorization_code_manager']);
+        $container->setAlias(CredentialsRevokerInterface::class, $persistenceConfig['credentials_revoker']);
+
+        $container->setParameter('league.oauth2_server.persistence.custom.enabled', true);
     }
 
     private function configureResourceServer(ContainerBuilder $container, array $config): void
