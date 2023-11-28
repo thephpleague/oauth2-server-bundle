@@ -16,9 +16,6 @@ final class RedirectUri extends ImplodedArray
      */
     private const NAME = 'oauth2_redirect_uri';
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return self::NAME;

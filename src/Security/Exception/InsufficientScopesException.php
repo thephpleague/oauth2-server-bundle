@@ -9,7 +9,7 @@ namespace League\Bundle\OAuth2ServerBundle\Security\Exception;
  */
 class InsufficientScopesException extends OAuth2AuthenticationException
 {
-    public static function create(?\Throwable $previous = null): self
+    public static function create(\Throwable $previous = null): self
     {
         return new self('Insufficient scopes.', 403, $previous);
     }

@@ -16,9 +16,6 @@ final class Scope extends ImplodedArray
      */
     private const NAME = 'oauth2_scope';
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return self::NAME;

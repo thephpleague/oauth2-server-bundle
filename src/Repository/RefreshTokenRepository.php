@@ -32,17 +32,11 @@ final class RefreshTokenRepository implements RefreshTokenRepositoryInterface
         $this->accessTokenManager = $accessTokenManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getNewRefreshToken()
     {
         return new RefreshTokenEntity();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity): void
     {
         $refreshToken = $this->refreshTokenManager->find($refreshTokenEntity->getIdentifier());

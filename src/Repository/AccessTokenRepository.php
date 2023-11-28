@@ -42,9 +42,6 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         $this->scopeConverter = $scopeConverter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null)
     {
         /** @var int|string|null $userIdentifier */
@@ -59,9 +56,6 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         return $accessToken;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void
     {
         $accessToken = $this->accessTokenManager->find($accessTokenEntity->getIdentifier());

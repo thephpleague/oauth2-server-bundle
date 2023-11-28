@@ -42,9 +42,6 @@ final class UserRepository implements UserRepositoryInterface
         $this->userConverter = $userConverter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getUserEntityByUserCredentials(
         $username,
         $password,

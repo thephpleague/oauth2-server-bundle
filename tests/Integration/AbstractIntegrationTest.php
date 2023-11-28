@@ -102,9 +102,6 @@ abstract class AbstractIntegrationTest extends TestCase
      */
     private $requireCodeChallengeForPublicClients = true;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->eventDispatcher = new EventDispatcher();
