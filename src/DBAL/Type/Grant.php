@@ -16,9 +16,6 @@ final class Grant extends ImplodedArray
      */
     private const NAME = 'oauth2_grant';
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return self::NAME;

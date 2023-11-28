@@ -11,11 +11,6 @@ final class Scope implements ScopeEntityInterface
 {
     use EntityTrait;
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return mixed
-     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {

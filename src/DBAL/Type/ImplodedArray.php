@@ -39,10 +39,6 @@ abstract class ImplodedArray extends TextType
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param mixed $value
-     *
      * @psalm-return list<T>
      */
     public function convertToPHPValue($value, AbstractPlatform $platform): array
@@ -58,9 +54,6 @@ abstract class ImplodedArray extends TextType
         return $this->convertDatabaseValues($values);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         $column['length'] = 65535;
@@ -68,9 +61,6 @@ abstract class ImplodedArray extends TextType
         return parent::getSQLDeclaration($column, $platform);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;
