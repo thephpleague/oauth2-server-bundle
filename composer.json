@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": ">=7.2",
+        "php": "^8.1",
         "doctrine/doctrine-bundle": "^2.0.8",
         "doctrine/orm": "^2.7.1",
         "league/oauth2-server": "^8.3",
@@ -24,7 +24,6 @@
         "psr/http-factory": "^1.0",
         "symfony/event-dispatcher": "^5.4|^6.2",
         "symfony/framework-bundle": "^5.4|^6.2",
-        "symfony/polyfill-php81": "^1.22",
         "symfony/psr-http-message-bridge": "^2.0",
         "symfony/security-bundle": "^5.4|^6.2"
     },
@@ -41,10 +40,7 @@
         "psr-4": { "League\\Bundle\\OAuth2ServerBundle\\Tests\\": "tests/" }
     },
     "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "bamarni/composer-bin-plugin": true
-        }
+        "sort-packages": true
     },
     "extra": {
         "branch-alias": {
