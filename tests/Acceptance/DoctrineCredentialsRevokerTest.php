@@ -90,7 +90,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         );
     }
 
-    private function buildAccessToken(string $identifier, string $modify, Client $client, ?string $userIdentifier = null): AccessToken
+    private function buildAccessToken(string $identifier, string $modify, Client $client, string $userIdentifier = null): AccessToken
     {
         return new AccessToken(
             $identifier,
@@ -101,7 +101,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         );
     }
 
-    private function buildAuthCode(string $identifier, string $modify, Client $client, ?string $userIdentifier = null): AuthorizationCode
+    private function buildAuthCode(string $identifier, string $modify, Client $client, string $userIdentifier = null): AuthorizationCode
     {
         return new AuthorizationCode(
             $identifier,

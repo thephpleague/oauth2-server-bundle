@@ -52,9 +52,6 @@ final class ScopeRepository implements ScopeRepositoryInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getScopeEntityByIdentifier($identifier)
     {
         $scope = $this->scopeManager->find($identifier);

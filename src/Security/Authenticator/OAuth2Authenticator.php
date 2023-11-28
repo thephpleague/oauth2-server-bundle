@@ -70,7 +70,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
 
     public function supports(Request $request): ?bool
     {
-        return 0 === strpos($request->headers->get('Authorization', ''), 'Bearer ');
+        return str_starts_with($request->headers->get('Authorization', ''), 'Bearer ');
     }
 
     public function start(Request $request, AuthenticationException $authException = null): Response
@@ -79,8 +79,6 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return Passport
      */
     public function doAuthenticate(Request $request) /* : Passport */

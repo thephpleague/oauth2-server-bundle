@@ -41,17 +41,12 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
         $this->scopeConverter = $scopeConverter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getNewAuthCode(): AuthCode
     {
         return new AuthCode();
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return void
      */
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
@@ -67,9 +62,6 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
         $this->authorizationCodeManager->save($authorizationCode);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function revokeAuthCode($codeId): void
     {
         $authorizationCode = $this->authorizationCodeManager->find($codeId);
@@ -83,9 +75,6 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
         $this->authorizationCodeManager->save($authorizationCode);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAuthCodeRevoked($codeId): bool
     {
         $authorizationCode = $this->authorizationCodeManager->find($codeId);

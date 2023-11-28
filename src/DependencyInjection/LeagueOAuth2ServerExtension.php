@@ -42,8 +42,6 @@ use Symfony\Component\DependencyInjection\Reference;
 final class LeagueOAuth2ServerExtension extends Extension implements PrependExtensionInterface, CompilerPassInterface
 {
     /**
-     * {@inheritdoc}
-     *
      * @return void
      *
      * @throws \Exception
@@ -73,17 +71,12 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAlias(): string
     {
         return 'league_oauth2_server';
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return void
      */
     public function prepend(ContainerBuilder $container)
@@ -101,8 +94,6 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @return void
      */
     public function process(ContainerBuilder $container)

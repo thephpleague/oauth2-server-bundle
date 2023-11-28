@@ -11,9 +11,6 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 
 final class NullAccessTokenRepository implements AccessTokenRepositoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null): AccessTokenEntityInterface
     {
         /** @var int|string|null $userIdentifier */
@@ -28,25 +25,16 @@ final class NullAccessTokenRepository implements AccessTokenRepositoryInterface
         return $accessToken;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void
     {
         // do nothing
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function revokeAccessToken($tokenId): void
     {
         // do nothing
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isAccessTokenRevoked($tokenId): bool
     {
         return false;

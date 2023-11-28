@@ -18,8 +18,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 final class LeagueOAuth2ServerBundle extends Bundle
 {
     /**
-     * {@inheritdoc}
-     *
      * @return void
      */
     public function build(ContainerBuilder $container)
@@ -30,9 +28,6 @@ final class LeagueOAuth2ServerBundle extends Bundle
         $this->configureSecurityExtension($container);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getContainerExtension(): ExtensionInterface
     {
         return new LeagueOAuth2ServerExtension();

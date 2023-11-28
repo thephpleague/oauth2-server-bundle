@@ -20,9 +20,6 @@ use Symfony\Component\HttpKernel\Kernel;
 
 final class TestKernel extends Kernel implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function boot()
     {
         $this->initializeEnvironmentVariables();
@@ -30,9 +27,6 @@ final class TestKernel extends Kernel implements CompilerPassInterface
         parent::boot();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerBundles(): iterable
     {
         return [
@@ -43,33 +37,21 @@ final class TestKernel extends Kernel implements CompilerPassInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCacheDir(): string
     {
         return sprintf('%s/tests/.kernel/cache', $this->getProjectDir());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getLogDir(): string
     {
         return sprintf('%s/tests/.kernel/logs', $this->getProjectDir());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         $this->exposeManagerServices($container);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(function (ContainerBuilder $container) {
