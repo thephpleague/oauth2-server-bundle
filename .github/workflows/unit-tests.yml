@@ -5,7 +5,7 @@ on:
     push: ~
     schedule:
         # Do not make it the first of the month and/or midnight since it is a very busy time
-        - cron: "* 10 5 * *"
+        - cron: "10 10 5 * *"
 
 jobs:
     tests:
@@ -18,11 +18,19 @@ jobs:
                     # Lowest Deps
                     - php: 8.1
                       symfony: 5.4.*
-                      composer-flags: '--prefer-stable'
+                      composer-flags: '--prefer-lowest --prefer-stable'
                       can-fail: false
                     # Stable deps
                     - php: 8.2
                       symfony: 6.3.*
+                      composer-flags: '--prefer-stable'
+                      can-fail: false
+                    - php: 8.2
+                      symfony: 6.4.*
+                      composer-flags: '--prefer-stable'
+                      can-fail: false
+                    - php: 8.2
+                      symfony: 7.0.*
                       composer-flags: '--prefer-stable'
                       can-fail: false
 
