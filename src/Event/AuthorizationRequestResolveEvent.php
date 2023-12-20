@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Event;
 
-use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
+use League\Bundle\OAuth2ServerBundle\Model\ClientInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +27,7 @@ final class AuthorizationRequestResolveEvent extends Event
     private $scopes;
 
     /**
-     * @var AbstractClient
+     * @var ClientInterface
      */
     private $client;
 
@@ -49,7 +49,7 @@ final class AuthorizationRequestResolveEvent extends Event
     /**
      * @param Scope[] $scopes
      */
-    public function __construct(AuthorizationRequest $authorizationRequest, array $scopes, AbstractClient $client)
+    public function __construct(AuthorizationRequest $authorizationRequest, array $scopes, ClientInterface $client)
     {
         $this->authorizationRequest = $authorizationRequest;
         $this->scopes = $scopes;
@@ -94,7 +94,7 @@ final class AuthorizationRequestResolveEvent extends Event
     /**
      * @psalm-mutation-free
      */
-    public function getClient(): AbstractClient
+    public function getClient(): ClientInterface
     {
         return $this->client;
     }

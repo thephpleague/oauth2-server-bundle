@@ -114,11 +114,6 @@ abstract class AbstractClient implements ClientInterface
         return $this;
     }
 
-    /**
-     * @return list<Grant>
-     *
-     * @psalm-mutation-free
-     */
     public function getGrants(): array
     {
         return $this->grants;

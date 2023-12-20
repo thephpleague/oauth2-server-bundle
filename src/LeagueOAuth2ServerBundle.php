@@ -33,6 +33,9 @@ final class LeagueOAuth2ServerBundle extends Bundle
         return new LeagueOAuth2ServerExtension();
     }
 
+    /**
+     * @psalm-suppress UndefinedMethod
+     */
     private function configureSecurityExtension(ContainerBuilder $container): void
     {
         /** @var SecurityExtension $extension */
@@ -61,6 +64,7 @@ final class LeagueOAuth2ServerBundle extends Bundle
                 'league.oauth2_server.persistence.doctrine.enabled'
             )
         );
+
         $container->addCompilerPass(new EncryptionKeyPass());
     }
 }

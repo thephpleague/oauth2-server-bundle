@@ -20,7 +20,7 @@ abstract class ImplodedArray extends TextType
     /**
      * @psalm-suppress MixedArgumentTypeCoercion
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?string
     {
         if (!\is_array($value)) {
             throw new \LogicException('This type can only be used in combination with arrays.');
@@ -41,7 +41,7 @@ abstract class ImplodedArray extends TextType
     /**
      * @psalm-return list<T>
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform): array
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): array
     {
         if (null === $value) {
             return [];

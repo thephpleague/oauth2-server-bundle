@@ -101,12 +101,16 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         /** @var string $oauthClientId */
         $oauthClientId = $psr7Request->getAttribute('oauth_client_id', '');
 
+        /** @psalm-suppress MixedInferredReturnType */
         $userLoader = function (string $userIdentifier): UserInterface {
             if ('' === $userIdentifier) {
                 return new NullUser();
             }
             if (!method_exists($this->userProvider, 'loadUserByIdentifier')) {
-                /** @psalm-suppress DeprecatedMethod */
+                /**
+                 * @psalm-suppress DeprecatedMethod
+                 * @psalm-suppress MixedReturnStatement
+                 */
                 return $this->userProvider->loadUserByUsername($userIdentifier);
             }
 
@@ -127,6 +131,9 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
      * @return OAuth2Token
      *
      * @psalm-suppress DeprecatedInterface
+     * @psalm-suppress UndefinedClass
+     * @psalm-suppress MixedInferredReturnType
+     * @psalm-suppress RedundantCondition
      */
     public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
     {
@@ -135,6 +142,10 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         }
 
         $token = $this->createToken($passport, $firewallName);
+        /**
+         * @psalm-suppress TooManyArguments
+         * @psalm-suppress UndefinedMethod
+         */
         $token->setAuthenticated(true);
 
         return $token;
@@ -157,7 +168,10 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         $token = new OAuth2Token($passport->getUser(), $accessTokenId, $oauthClientId, $scopeBadge->getScopes(), $this->rolePrefix);
         if (method_exists(AuthenticatorInterface::class, 'createAuthenticatedToken') && !method_exists(AuthenticatorInterface::class, 'createToken')) {
             // symfony 5.4 only
-            /** @psalm-suppress TooManyArguments */
+            /**
+             * @psalm-suppress TooManyArguments
+             * @psalm-suppress UndefinedMethod
+             */
             $token->setAuthenticated(true, false);
         }
 

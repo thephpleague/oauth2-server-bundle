@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Tests;
 
 use Doctrine\DBAL\Platforms\SqlitePlatform;
+use Doctrine\ORM\Configuration as OrmConfiguration;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
@@ -13,14 +14,16 @@ use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
 final class TestKernel extends Kernel implements CompilerPassInterface
 {
-    public function boot()
+    public function boot(): void
     {
         $this->initializeEnvironmentVariables();
 
@@ -47,29 +50,33 @@ final class TestKernel extends Kernel implements CompilerPassInterface
         return sprintf('%s/tests/.kernel/logs', $this->getProjectDir());
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $this->exposeManagerServices($container);
     }
 
-    public function registerContainerConfiguration(LoaderInterface $loader)
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $loader->load(function (ContainerBuilder $container) {
-            $container->loadFromExtension('doctrine', [
+            $doctrine = [
                 'dbal' => [
-                    'driver' => 'sqlite',
+                    'driver' => 'pdo_sqlite',
                     'charset' => 'utf8mb4',
                     'url' => 'sqlite:///:memory:',
                     'default_table_options' => [
                         'charset' => 'utf8mb4',
                         'utf8mb4_unicode_ci' => 'utf8mb4_unicode_ci',
                     ],
-                    'platform_service' => SqlitePlatform::class,
                 ],
-                'orm' => null,
-            ]);
+            ];
 
-            $container->loadFromExtension('framework', [
+            if (method_exists(OrmConfiguration::class, 'setLazyGhostObjectEnabled')) {
+                $doctrine['orm'] = ['enable_lazy_ghost_objects' => true];
+            }
+
+            $container->loadFromExtension('doctrine', $doctrine);
+
+            $framework = [
                 'secret' => 'nope',
                 'test' => null,
                 'router' => [
@@ -77,7 +84,15 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                     'type' => 'php',
                     'utf8' => true,
                 ],
-            ]);
+                'http_method_override' => true,
+                'php_errors' => ['log' => true],
+            ];
+
+            if (interface_exists(ValueResolverInterface::class)) {
+                $framework['handle_all_throwables'] = true;
+            }
+
+            $container->loadFromExtension('framework', $framework);
 
             if (!$container->hasDefinition('kernel')) {
                 $container->register('kernel', static::class)
@@ -86,8 +101,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                     ->addTag('routing.route_loader');
             }
 
-            $container->loadFromExtension('security', [
-                'enable_authenticator_manager' => true,
+            $security = [
                 'firewalls' => [
                     'test' => [
                         'provider' => 'in_memory',
@@ -116,7 +130,13 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                         ],
                     ],
                 ],
-            ]);
+            ];
+
+            if (!class_exists(Security::class)) {
+                $security['enable_authenticator_manager'] = true;
+            }
+
+            $container->loadFromExtension('security', $security);
 
             $container->loadFromExtension('league_oauth2_server', [
                 'authorization_server' => [

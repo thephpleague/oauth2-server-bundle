@@ -9,7 +9,6 @@ use League\Bundle\OAuth2ServerBundle\Security\Passport\Badge\ScopeBadge;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Event\CheckPassportEvent;
 
 /**
@@ -29,8 +28,6 @@ final class CheckScopeListener implements EventSubscriberInterface
     public function checkPassport(CheckPassportEvent $event): void
     {
         /**
-         * @var Passport $passport
-         *
          * @psalm-suppress DeprecatedInterface
          */
         $passport = $event->getPassport();

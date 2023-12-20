@@ -12,7 +12,7 @@ final class Scope implements ScopeEntityInterface
     use EntityTrait;
 
     #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->getIdentifier();
     }

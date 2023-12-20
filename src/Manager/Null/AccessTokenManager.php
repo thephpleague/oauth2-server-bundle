@@ -6,6 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Manager\Null;
 
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
+use League\Bundle\OAuth2ServerBundle\Model\AccessTokenInterface;
 
 final class AccessTokenManager implements AccessTokenManagerInterface
 {
@@ -14,7 +15,7 @@ final class AccessTokenManager implements AccessTokenManagerInterface
         return null;
     }
 
-    public function save(AccessToken $accessToken): void
+    public function save(AccessTokenInterface $accessToken): void
     {
     }
 

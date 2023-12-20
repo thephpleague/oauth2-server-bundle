@@ -2,7 +2,7 @@
 <psalm
     errorLevel="1"
     strictBinaryOperands="true"
-    phpVersion="7.2"
+    phpVersion="8.1"
     allowStringToStandInForClass="true"
     rememberPropertyAssignmentsAfterCall="false"
     checkForThrowsInGlobalScope="true"
