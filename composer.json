@@ -24,7 +24,8 @@
         "psr/http-factory": "^1.0",
         "symfony/event-dispatcher": "^5.4|^6.2",
         "symfony/framework-bundle": "^5.4|^6.2",
-        "symfony/psr-http-message-bridge": "^2.0",
+        "symfony/polyfill-php81": "^1.22",
+        "symfony/psr-http-message-bridge": "^2.0|^6|^7",
         "symfony/security-bundle": "^5.4|^6.2"
     },
     "require-dev": {
