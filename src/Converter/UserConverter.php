@@ -12,6 +12,7 @@ final class UserConverter implements UserConverterInterface
 {
     /**
      * @psalm-suppress DeprecatedMethod
+     * @psalm-suppress UndefinedInterfaceMethod
      */
     public function toLeague(?UserInterface $user): UserEntityInterface
     {

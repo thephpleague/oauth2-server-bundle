@@ -33,9 +33,13 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
 
     /**
      * @psalm-suppress DeprecatedMethod
+     * @psalm-suppress UndefinedInterfaceMethod
      */
     public function revokeCredentialsForUser(UserInterface $user): void
     {
+        /**
+         * @psalm-suppress MixedAssignment
+         */
         $userIdentifier = method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : $user->getUsername();
 
         $this->entityManager->createQueryBuilder()

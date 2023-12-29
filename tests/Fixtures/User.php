@@ -33,7 +33,7 @@ class User extends \ArrayObject implements UserInterface
         return FixtureFactory::FIXTURE_USER;
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
     }
 }

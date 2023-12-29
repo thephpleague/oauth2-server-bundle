@@ -6,6 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Command;
 
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
+use League\Bundle\OAuth2ServerBundle\Model\ClientInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
@@ -117,20 +118,16 @@ final class CreateClientCommand extends Command
         return 0;
     }
 
-    private function buildClientFromInput(InputInterface $input): AbstractClient
+    private function buildClientFromInput(InputInterface $input): ClientInterface
     {
         $name = $input->getArgument('name');
-
-        /** @var string $identifier */
-        $identifier = $input->getArgument('identifier') ?? hash('md5', random_bytes(16));
-
+        $identifier = (string) $input->getArgument('identifier') ?: hash('md5', random_bytes(16));
         $isPublic = $input->getOption('public');
 
         if ($isPublic && null !== $input->getArgument('secret')) {
             throw new \InvalidArgumentException('The client cannot have a secret and be public.');
         }
 
-        /** @var string $secret */
         $secret = $isPublic ? null : $input->getArgument('secret') ?? hash('sha512', random_bytes(32));
 
         /** @var AbstractClient $client */
