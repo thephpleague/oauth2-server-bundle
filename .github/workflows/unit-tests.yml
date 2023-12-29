@@ -30,7 +30,7 @@ jobs:
               uses: "actions/checkout@v4"
 
             - name: "build the PHP8 environment"
-              run: "dev/bin/docker-compose build --build-arg PHP_VERSION=${{ matrix.php }} --build-arg XDEBUG_VERSION='3.2.0' php"
+              run: "dev/bin/docker-compose build --build-arg PHP_VERSION=${{ matrix.php }} --build-arg XDEBUG_VERSION='3.3.1' php"
               if: startsWith(matrix.php, '8')
 
             - name: "install dependencies"
