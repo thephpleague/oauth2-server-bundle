@@ -5,7 +5,7 @@ on:
     push: ~
     schedule:
         # Do not make it the first of the month and/or midnight since it is a very busy time
-        - cron: "* 10 5 * *"
+        - cron: "10 10 5 * *"
 
 jobs:
     tests:
@@ -14,17 +14,13 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                include:
-                    # Lowest Deps
-                    - php: 8.1
-                      symfony: 5.4.*
-                      composer-flags: '--prefer-stable'
-                      can-fail: false
-                    # Stable deps
-                    - php: 8.2
-                      symfony: 6.3.*
-                      composer-flags: '--prefer-stable'
-                      can-fail: false
+                php: ['8.1', '8.2', '8.3']
+                symfony: ['5.4.*', '6.4.*', '7.0.*']
+                composer-flags: ['--prefer-stable']
+                can-fail: [false]
+                exclude:
+                    - php: "8.1"
+                      symfony: "7.0.*"
 
         name: "PHP ${{ matrix.php }} - Symfony ${{ matrix.symfony }}${{ matrix.composer-flags != '' && format(' - Composer {0}', matrix.composer-flags) || '' }}"
 
@@ -35,9 +31,8 @@ jobs:
             - name: "checkout"
               uses: "actions/checkout@v4"
 
-            - name: "build the PHP8 environment"
-              run: "dev/bin/docker-compose build --build-arg PHP_VERSION=${{ matrix.php }} --build-arg XDEBUG_VERSION='3.2.0' php"
-              if: startsWith(matrix.php, '8')
+            - name: "build the PHP environment"
+              run: "dev/bin/docker-compose build --build-arg PHP_VERSION=${{ matrix.php }} --build-arg XDEBUG_VERSION='3.3.1' php"
 
             - name: "install dependencies"
               run: "dev/bin/php composer update --ansi ${{ matrix.composer-flags }}"

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\EventListener;
 
-use Symfony\Bundle\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Security as LegacySecurity;
 
 if (class_exists(Security::class)) {

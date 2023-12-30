@@ -7,7 +7,7 @@ LABEL maintainer="Petar Obradović <petar.obradovic@trikoder.net>"
 RUN mkdir -p /app/bin
 ENV PATH /app/bin:$PATH
 
-ARG XDEBUG_VERSION=3.1.6
+ARG XDEBUG_VERSION=3.3.1
 
 # Install needed core and PECL extensions
 RUN apk add --update --no-cache --virtual .build-deps \
