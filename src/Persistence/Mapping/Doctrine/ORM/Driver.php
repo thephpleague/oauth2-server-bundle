@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace League\Bundle\OAuth2ServerBundle\Persistence\Mapping;
+namespace League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Doctrine\ORM;
 
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Doctrine\Persistence\Mapping\ClassMetadata;

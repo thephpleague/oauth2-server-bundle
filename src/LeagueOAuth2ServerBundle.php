@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle;
 
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
+use Doctrine\Bundle\MongoDBBundle\DependencyInjection\Compiler\DoctrineMongoDBMappingsPass;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\CompilerPass\EncryptionKeyPass;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\LeagueOAuth2ServerExtension;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\Security\OAuth2Factory;
-use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Driver;
+use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Doctrine\ODM\Driver as DoctrineODMDriver;
+use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Doctrine\ORM\Driver as DoctrineORMDriver;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
@@ -56,14 +58,26 @@ final class LeagueOAuth2ServerBundle extends Bundle
 
     private function configureDoctrineExtension(ContainerBuilder $container): void
     {
-        $container->addCompilerPass(
-            new DoctrineOrmMappingsPass(
-                new Reference(Driver::class),
-                ['League\Bundle\OAuth2ServerBundle\Model'],
-                ['league.oauth2_server.persistence.doctrine.manager'],
-                'league.oauth2_server.persistence.doctrine.enabled'
-            )
-        );
+        if (class_exists(DoctrineOrmMappingsPass::class)) {
+            $container->addCompilerPass(
+                new DoctrineOrmMappingsPass(
+                    new Reference(DoctrineORMDriver::class),
+                    ['League\Bundle\OAuth2ServerBundle\Model'],
+                    ['league.oauth2_server.persistence.doctrine.manager'],
+                    'league.oauth2_server.persistence.doctrine.enabled'
+                )
+            );
+        }
+        if (class_exists(DoctrineMongoDBMappingsPass::class)) {
+            $container->addCompilerPass(
+                new DoctrineMongoDBMappingsPass(
+                    new Reference(DoctrineODMDriver::class),
+                    ['League\Bundle\OAuth2ServerBundle\Model'],
+                    ['league.oauth2_server.persistence.doctrine_odm.manager'],
+                    'league.oauth2_server.persistence.doctrine_odm.enabled'
+                )
+            );
+        }
 
         $container->addCompilerPass(new EncryptionKeyPass());
     }
