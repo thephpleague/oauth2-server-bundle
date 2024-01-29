@@ -100,6 +100,9 @@ For implementation into Symfony projects, please see [bundle documentation](basi
 
                 # Table name prefix.
                 table_prefix:         oauth2_
+            doctrine_odm:
+                document_manager:     default
+                collection_prefix:    oauth2_
             in_memory:            ~
 
         # Set a custom prefix that replaces the default 'ROLE_OAUTH2_' role prefix

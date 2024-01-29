@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Manager\Doctrine;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
 use League\Bundle\OAuth2ServerBundle\Event\PreSaveClientEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientFilter;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
@@ -19,9 +19,9 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 final class ClientManager implements ClientManagerInterface
 {
     /**
-     * @var EntityManagerInterface
+     * @var ObjectManager
      */
-    private $entityManager;
+    private $objectManager;
 
     /**
      * @var class-string<AbstractClient>
@@ -37,18 +37,19 @@ final class ClientManager implements ClientManagerInterface
      * @param class-string<AbstractClient> $clientFqcn
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
+        ObjectManager $objectManager,
         EventDispatcherInterface $dispatcher,
         string $clientFqcn
-    ) {
-        $this->entityManager = $entityManager;
+    )
+    {
+        $this->objectManager = $objectManager;
         $this->dispatcher = $dispatcher;
         $this->clientFqcn = $clientFqcn;
     }
 
     public function find(string $identifier): ?ClientInterface
     {
-        $repository = $this->entityManager->getRepository($this->clientFqcn);
+        $repository = $this->objectManager->getRepository($this->clientFqcn);
 
         return $repository->findOneBy(['identifier' => $identifier]);
     }
@@ -58,14 +59,14 @@ final class ClientManager implements ClientManagerInterface
         $event = $this->dispatcher->dispatch(new PreSaveClientEvent($client), OAuth2Events::PRE_SAVE_CLIENT);
         $client = $event->getClient();
 
-        $this->entityManager->persist($client);
-        $this->entityManager->flush();
+        $this->objectManager->persist($client);
+        $this->objectManager->flush();
     }
 
     public function remove(ClientInterface $client): void
     {
-        $this->entityManager->remove($client);
-        $this->entityManager->flush();
+        $this->objectManager->remove($client);
+        $this->objectManager->flush();
     }
 
     /**
@@ -73,7 +74,7 @@ final class ClientManager implements ClientManagerInterface
      */
     public function list(?ClientFilter $clientFilter): array
     {
-        $repository = $this->entityManager->getRepository($this->clientFqcn);
+        $repository = $this->objectManager->getRepository($this->clientFqcn);
         $criteria = self::filterToCriteria($clientFilter);
 
         /** @var list<AbstractClient> */

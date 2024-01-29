@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\DependencyInjection;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Doctrine\Bundle\MongoDBBundle\DoctrineMongoDBBundle;
 use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Grant as GrantType;
@@ -16,7 +17,8 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AccessTokenManager as InMemoryAccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Driver;
+use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Doctrine\ODM\Driver as DoctrineODMDriver;
+use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Doctrine\ORM\Driver as DoctrineORMDrive;
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope as ScopeModel;
@@ -105,6 +107,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     {
         $requiredBundles = [
             'doctrine' => DoctrineBundle::class,
+            'doctrine_mongodb' => DoctrineMongoDBBundle::class,
             'security' => SecurityBundle::class,
         ];
 
@@ -227,55 +230,62 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
                 break;
             case 'doctrine':
                 $loader->load('storage/doctrine.php');
-                $this->configureDoctrinePersistence($container, $config, $persistenceConfig);
+                $this->configureDoctrinePersistence($container, $config, $persistenceConfig, 'doctrine');
+                break;
+            case 'doctrine_odm':
+                $loader->load('storage/doctrine_odm.php');
+                $this->configureDoctrinePersistence($container, $config, $persistenceConfig, 'doctrine_odm');
                 break;
         }
     }
 
-    private function configureDoctrinePersistence(ContainerBuilder $container, array $config, array $persistenceConfig): void
+    private function configureDoctrinePersistence(ContainerBuilder $container, array $config, array $persistenceConfig, string $type): void
     {
-        $entityManagerName = $persistenceConfig['entity_manager'];
+        $doctrineManager = $type === 'doctrine_odm' ? 'document_manager' : 'entity_manager';
+        $doctrineConfigPrefix = $type === 'doctrine_odm' ? 'doctrine_mongodb.odm' : 'doctrine.orm';
 
-        $entityManager = new Reference(
-            sprintf('doctrine.orm.%s_entity_manager', $entityManagerName)
+        $objectManagerName = $persistenceConfig[$doctrineManager];
+
+        $objectManager = new Reference(
+            sprintf('%s.%s_%s', $doctrineConfigPrefix, $objectManagerName, $doctrineManager)
         );
 
         $container
             ->findDefinition(AccessTokenManager::class)
-            ->replaceArgument(0, $entityManager)
+            ->replaceArgument(0, $objectManager)
             ->replaceArgument(1, $config['authorization_server']['persist_access_token'])
         ;
 
         $container
             ->findDefinition(ClientManager::class)
-            ->replaceArgument(0, $entityManager)
+            ->replaceArgument(0, $objectManager)
             ->replaceArgument(2, $config['client']['classname'])
         ;
 
         $container
             ->findDefinition(RefreshTokenManager::class)
-            ->replaceArgument(0, $entityManager)
+            ->replaceArgument(0, $objectManager)
         ;
 
         $container
             ->findDefinition(AuthorizationCodeManager::class)
-            ->replaceArgument(0, $entityManager)
+            ->replaceArgument(0, $objectManager)
         ;
 
         $container
             ->findDefinition(DoctrineCredentialsRevoker::class)
-            ->replaceArgument(0, $entityManager)
+            ->replaceArgument(0, $objectManager)
         ;
 
         $container
-            ->findDefinition(Driver::class)
+            ->findDefinition($type === 'doctrine_odm'? DoctrineODMDriver::class : DoctrineORMDrive::class)
             ->replaceArgument(0, $config['client']['classname'])
             ->replaceArgument(1, $config['authorization_server']['persist_access_token'])
             ->replaceArgument(2, $persistenceConfig['table_prefix'])
         ;
 
-        $container->setParameter('league.oauth2_server.persistence.doctrine.enabled', true);
-        $container->setParameter('league.oauth2_server.persistence.doctrine.manager', $entityManagerName);
+        $container->setParameter("league.oauth2_server.persistence.$type.enabled", true);
+        $container->setParameter("league.oauth2_server.persistence.$type.manager", $objectManagerName);
     }
 
     private function configureInMemoryPersistence(ContainerBuilder $container, array $config): void
