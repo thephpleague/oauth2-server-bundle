@@ -12,12 +12,9 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
  */
 class OAuth2AuthenticationException extends AuthenticationException implements HttpExceptionInterface
 {
-    /**
-     * @var int
-     */
-    private $statusCode;
+    private int $statusCode;
 
-    public function __construct(string $message, int $statusCode, \Throwable $previous = null)
+    public function __construct(string $message, int $statusCode, ?\Throwable $previous = null)
     {
         $this->statusCode = $statusCode;
 

@@ -36,25 +36,10 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
      */
     use ForwardCompatAuthenticatorTrait;
 
-    /**
-     * @var HttpMessageFactoryInterface
-     */
-    private $httpMessageFactory;
-
-    /**
-     * @var ResourceServer
-     */
-    private $resourceServer;
-
-    /**
-     * @var UserProviderInterface
-     */
-    private $userProvider;
-
-    /**
-     * @var string
-     */
-    private $rolePrefix;
+    private HttpMessageFactoryInterface $httpMessageFactory;
+    private ResourceServer $resourceServer;
+    private UserProviderInterface $userProvider;
+    private string $rolePrefix;
 
     public function __construct(
         HttpMessageFactoryInterface $httpMessageFactory,
@@ -73,7 +58,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         return str_starts_with($request->headers->get('Authorization', ''), 'Bearer ');
     }
 
-    public function start(Request $request, AuthenticationException $authException = null): Response
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
         return new Response('', 401, ['WWW-Authenticate' => 'Bearer']);
     }
