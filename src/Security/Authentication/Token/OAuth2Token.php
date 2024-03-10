@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  */
-final class OAuth2Token extends AbstractToken
+class OAuth2Token extends AbstractToken
 {
     /**
      * @param list<string> $scopes
