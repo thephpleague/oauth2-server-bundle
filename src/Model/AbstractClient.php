@@ -15,45 +15,21 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
  */
 abstract class AbstractClient implements ClientInterface
 {
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
+    protected string $identifier;
+    private ?string $secret;
 
-    /**
-     * @var string
-     */
-    protected $identifier;
+    /** @var list<RedirectUri> */
+    private array $redirectUris = [];
 
-    /**
-     * @var string|null
-     */
-    private $secret;
+    /** @var list<Grant> */
+    private array $grants = [];
 
-    /**
-     * @var list<RedirectUri>
-     */
-    private $redirectUris = [];
+    /** @var list<Scope> */
+    private array $scopes = [];
 
-    /**
-     * @var list<Grant>
-     */
-    private $grants = [];
-
-    /**
-     * @var list<Scope>
-     */
-    private $scopes = [];
-
-    /**
-     * @var bool
-     */
-    private $active = true;
-
-    /**
-     * @var bool
-     */
-    private $allowPlainTextPkce = false;
+    private bool $active = true;
+    private bool $allowPlainTextPkce = false;
 
     /**
      * @psalm-mutation-free
@@ -165,7 +141,7 @@ abstract class AbstractClient implements ClientInterface
      */
     public function isConfidential(): bool
     {
-        return !empty($this->secret);
+        return null !== $this->secret && '' !== $this->secret;
     }
 
     /**

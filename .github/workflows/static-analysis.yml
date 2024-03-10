@@ -11,6 +11,12 @@ jobs:
     static-analysis:
         name: "static analysis"
         runs-on: "ubuntu-latest"
+        strategy:
+            fail-fast: false
+            matrix:
+                doctrine-orm: ['2.14.*', '2.18.*', '3.0.*']
+                composer-flags: ['--prefer-stable']
+
         steps:
             - name: "checkout"
               uses: "actions/checkout@v4"
@@ -18,8 +24,11 @@ jobs:
             - name: "build the environment"
               run: "dev/bin/docker-compose build"
 
+            - name: "require specific Doctrine ORM version"
+              run: "dev/bin/php composer require --ansi ${{ matrix.composer-flags }} doctrine/orm:${{ matrix.doctrine-orm }}"
+
             - name: "install dependencies"
-              run: "dev/bin/php composer update --prefer-stable"
+              run: "dev/bin/php composer update --ansi ${{ matrix.composer-flags }}"
 
             - name: "run static analysis"
               run: "dev/bin/php psalm --shepherd --stats"

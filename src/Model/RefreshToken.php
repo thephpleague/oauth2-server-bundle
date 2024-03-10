@@ -6,25 +6,10 @@ namespace League\Bundle\OAuth2ServerBundle\Model;
 
 class RefreshToken implements RefreshTokenInterface
 {
-    /**
-     * @var string
-     */
-    private $identifier;
-
-    /**
-     * @var \DateTimeInterface
-     */
-    private $expiry;
-
-    /**
-     * @var AccessTokenInterface|null
-     */
-    private $accessToken;
-
-    /**
-     * @var bool
-     */
-    private $revoked = false;
+    private string $identifier;
+    private \DateTimeInterface $expiry;
+    private ?AccessTokenInterface $accessToken;
+    private bool $revoked = false;
 
     /**
      * @psalm-mutation-free
