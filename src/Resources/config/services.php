@@ -145,6 +145,7 @@ return static function (ContainerConfigurator $container): void {
                 service(ScopeRepositoryInterface::class),
                 null,
                 null,
+                null,
             ])
             ->call('setEmitter', [service('league.oauth2_server.emitter')])
             ->configurator(service(GrantConfigurator::class))
