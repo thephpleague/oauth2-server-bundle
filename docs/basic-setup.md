@@ -13,7 +13,7 @@ Description:
   Creates a new oAuth2 client
 
 Usage:
-  league:oauth2-server:create-client [options] [--] [<identifier> [<secret>]]
+  league:oauth2-server:create-client [options] [--] <name> [<identifier> [<secret>]]
 
 Arguments:
   name                               The client name
