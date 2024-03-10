@@ -157,6 +157,7 @@ security:
 * [Using custom client](using-custom-client.md)
 * [Listening to League OAuth Server events](listening-to-league-events.md)
 * [Password Grant Handling](password-grant-handling.md)
+* [Using custom persistence managers](using-custom-persistence-managers.md)
 
 ## Contributing
 

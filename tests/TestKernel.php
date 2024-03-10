@@ -11,7 +11,12 @@ use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeAccessTokenManager;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeAuthorizationCodeManager;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeClientManager;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeCredentialsRevoker;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeRefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -23,6 +28,11 @@ use Symfony\Component\HttpKernel\Kernel;
 
 final class TestKernel extends Kernel implements CompilerPassInterface
 {
+    public function __construct(string $environment, bool $debug, private array $persistenceConfig = ['doctrine' => ['entity_manager' => 'default']])
+    {
+        parent::__construct($environment, $debug);
+    }
+
     public function boot(): void
     {
         $this->initializeEnvironmentVariables();
@@ -155,15 +165,12 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                         FixtureFactory::FIXTURE_SCOPE_SECOND,
                     ],
                 ],
-                'persistence' => [
-                    'doctrine' => [
-                        'entity_manager' => 'default',
-                    ],
-                ],
+                'persistence' => $this->persistenceConfig,
             ]);
 
             $this->configureControllers($container);
             $this->configureDatabaseServices($container);
+            $this->configureCustomPersistenceServices($container);
             $this->registerFakeGrant($container);
         });
     }
@@ -212,6 +219,15 @@ final class TestKernel extends Kernel implements CompilerPassInterface
             ->setAutoconfigured(true)
             ->setAutowired(true)
         ;
+    }
+
+    private function configureCustomPersistenceServices(ContainerBuilder $container): void
+    {
+        $container->register('test.access_token_manager', FakeAccessTokenManager::class)->setPublic(true);
+        $container->register('test.authorization_code_manager', FakeAuthorizationCodeManager::class)->setPublic(true);
+        $container->register('test.client_manager', FakeClientManager::class)->setPublic(true);
+        $container->register('test.refresh_token_manager', FakeRefreshTokenManager::class)->setPublic(true);
+        $container->register('test.credentials_revoker', FakeCredentialsRevoker::class)->setPublic(true);
     }
 
     private function registerFakeGrant(ContainerBuilder $container): void
