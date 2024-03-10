@@ -1,0 +1,43 @@
+---------------------------------------------------------------------------
+
+by icanhazstring at 2024-03-01T15:07:11Z
+
+Can we get this merged? @chalasr
+I am directly looking for that, to get https://github.com/steverhoades/oauth2-openid-connect-server working.
+
+Otherwise there is not suitable way to inject a custom `ResponseTypeInterface` into the `AuthorizationServer`.
+
+---------------------------------------------------------------------------
+
+by chalasr at 2024-03-10T16:42:16Z
+
+I'm waiting for the `(draft)` to be removed from the PR title :)
+
+---------------------------------------------------------------------------
+
+by chalasr at 2024-03-10T16:43:15Z
+
+Dunno why the GHA builds didn't run though
+
+---------------------------------------------------------------------------
+
+by develth at 2024-03-10T16:51:59Z
+
+> I'm waiting for the `(draft)` to be removed from the PR title :)
+
+Removed it :)
+Should I apply the fix by @mrardon or do you add it?
+And why the laugh @mrardon ?
+
+---------------------------------------------------------------------------
+
+by chalasr at 2024-03-10T16:55:55Z
+
+Thanks!
+Given this is open for more than a year, I’ll happily take care of making the change if you don’t (+ rebase to trigger the CI)
+
+---------------------------------------------------------------------------
+
+by develth at 2024-03-10T17:08:12Z
+
+Go for it, i can't do it until tomorrow ✌️👍
