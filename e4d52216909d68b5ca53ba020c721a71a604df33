@@ -1,0 +1,13 @@
+---------------------------------------------------------------------------
+
+by Nattfarinn at 2023-11-30T12:51:19Z
+
+You probably will have to add support for https://github.com/thephpleague/oauth2-server-bundle/blob/master/src/Service/CredentialsRevokerInterface.php as its implementation also relies on ORM ("been there, done that"). I like your approach more, even if is a bit more invasive.
+
+---------------------------------------------------------------------------
+
+by frankdekker at 2023-11-30T17:01:57Z
+
+> You probably will have to add support for https://github.com/thephpleague/oauth2-server-bundle/blob/master/src/Service/CredentialsRevokerInterface.php as its implementation also relies on ORM ("been there, done that"). I like your approach more, even if is a bit more invasive.
+
+Thanks, i've added support for the credentials revoker :).
