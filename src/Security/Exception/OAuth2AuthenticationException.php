@@ -17,7 +17,7 @@ class OAuth2AuthenticationException extends AuthenticationException implements H
      */
     private $statusCode;
 
-    public function __construct(string $message, int $statusCode, \Throwable $previous = null)
+    public function __construct(string $message, int $statusCode, ?\Throwable $previous = null)
     {
         $this->statusCode = $statusCode;
 

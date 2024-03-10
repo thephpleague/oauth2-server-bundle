@@ -73,7 +73,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         return str_starts_with($request->headers->get('Authorization', ''), 'Bearer ');
     }
 
-    public function start(Request $request, AuthenticationException $authException = null): Response
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
         return new Response('', 401, ['WWW-Authenticate' => 'Bearer']);
     }

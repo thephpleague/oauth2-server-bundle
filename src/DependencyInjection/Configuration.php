@@ -108,7 +108,7 @@ final class Configuration implements ConfigurationInterface
                     ->defaultTrue()
                 ->end()
                 ->scalarNode('response_type_class')
-                    ->info("Define a custom ResponseType")
+                    ->info('Define a custom ResponseType')
                     ->defaultValue(null)
                 ->end()
             ->end()
