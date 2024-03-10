@@ -126,8 +126,11 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
                 $config['private_key'],
                 $config['private_key_passphrase'],
                 false,
-            ]))
-            ->replaceArgument(5, new Reference($config['response_type_class']));
+            ]));
+
+        if ($config['response_type_class']) {
+            $authorizationServer->replaceArgument(5, new Reference($config['response_type_class']));
+        }
 
         if ($config['enable_client_credentials_grant']) {
             $authorizationServer->addMethodCall('enableGrantType', [
