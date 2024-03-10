@@ -1,0 +1,19 @@
+---------------------------------------------------------------------------
+
+by wmouwen at 2024-02-16T14:07:46Z
+
+@chalasr Allow me to tag you here. Could you enable the workflows to run?
+
+---------------------------------------------------------------------------
+
+by wmouwen at 2024-02-17T09:18:35Z
+
+The package `symfony/doctrine-bridge` versions `6.4` and above [conflict](https://github.com/symfony/doctrine-bridge/blob/e4fb1e141b00cee5de8b8a2fe7008301b6b4dabd/composer.json#L55) with `doctrine/orm` version `2.14.*`. Removed those combinations from the GitHub workflows.
+
+Fixed the errors thrown by psalm and php-cs-fixer.
+
+---------------------------------------------------------------------------
+
+by abozhinov at 2024-03-08T11:43:50Z
+
+When to expect the new release?  I've saw that all tests are passed.
