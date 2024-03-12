@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Tests;
 
 use Doctrine\DBAL\Platforms\SqlitePlatform;
-use Doctrine\ORM\Configuration as OrmConfiguration;
+use Doctrine\ORM\Mapping\Annotation;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
@@ -80,9 +80,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                 ],
             ];
 
-            if (method_exists(OrmConfiguration::class, 'setLazyGhostObjectEnabled')) {
-                $doctrine['orm'] = ['enable_lazy_ghost_objects' => true];
-            }
+            $doctrine['orm'] = ['enable_lazy_ghost_objects' => !interface_exists(Annotation::class)];
 
             $container->loadFromExtension('doctrine', $doctrine);
 
