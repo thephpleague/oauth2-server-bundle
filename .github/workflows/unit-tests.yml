@@ -16,15 +16,17 @@ jobs:
             matrix:
                 php: ['8.1', '8.2', '8.3']
                 symfony: ['5.4.*', '6.4.*', '7.0.*']
-                doctrine-orm: ['2.14.*', '2.18.*', '3.0.*']
+                doctrine-orm: ['^2.14', '^3.0']
                 composer-flags: ['--prefer-stable']
                 can-fail: [false]
+                include:
+                    - php: "8.1"
+                      symfony: "5.4.*"
+                      doctrine-orm: "^2.14"
+                      composer-flags: '--prefer-stable --prefer-lowest'
+                      can-fail: false
                 exclude:
                     - php: "8.1"
-                      symfony: "7.0.*"
-                    - doctrine-orm: "2.14.*"
-                      symfony: "6.4.*"
-                    - doctrine-orm: "2.14.*"
                       symfony: "7.0.*"
 
         name: "PHP ${{ matrix.php }} - Doctrine ${{ matrix.doctrine-orm }} - Symfony ${{ matrix.symfony }}${{ matrix.composer-flags != '' && format(' - Composer {0}', matrix.composer-flags) || '' }}"
@@ -40,7 +42,7 @@ jobs:
               run: "dev/bin/docker-compose build --build-arg PHP_VERSION=${{ matrix.php }} --build-arg XDEBUG_VERSION='3.3.1' php"
 
             - name: "require specific Doctrine ORM version"
-              run: "dev/bin/php composer require --ansi ${{ matrix.composer-flags }} doctrine/orm:${{ matrix.doctrine-orm }}"
+              run: "dev/bin/php composer require --ansi ${{ matrix.composer-flags }} --no-install doctrine/orm:${{ matrix.doctrine-orm }}"
 
             - name: "install dependencies"
               run: "dev/bin/php composer update --ansi ${{ matrix.composer-flags }}"
