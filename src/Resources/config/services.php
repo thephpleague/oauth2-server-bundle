@@ -11,6 +11,7 @@ use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator;
 use League\Bundle\OAuth2ServerBundle\Command\ClearExpiredTokensCommand;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Command\DeleteClientCommand;
+use League\Bundle\OAuth2ServerBundle\Command\GenerateKeyPairCommand;
 use League\Bundle\OAuth2ServerBundle\Command\ListClientsCommand;
 use League\Bundle\OAuth2ServerBundle\Command\UpdateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Controller\AuthorizationController;
@@ -267,6 +268,16 @@ return static function (ContainerConfigurator $container): void {
             ])
             ->tag('console.command', ['command' => 'league:oauth2-server:clear-expired-tokens'])
         ->alias(ClearExpiredTokensCommand::class, 'league.oauth2_server.command.clear_expired_tokens')
+
+        ->set('league.oauth2_server.command.generate_keypair', GenerateKeyPairCommand::class)
+            ->args([
+                service('filesystem'),
+                abstract_arg('Private key'),
+                abstract_arg('Public key'),
+                abstract_arg('Private key passphrase'),
+            ])
+            ->tag('consome.command', ['command' => 'league:oauth2-server:generate-keypair'])
+        ->alias(GenerateKeyPairCommand::class, 'league.oauth2_server.command.generate_keypair')
 
         // Utility services
         ->set('league.oauth2_server.converter.user', UserConverter::class)

@@ -7,6 +7,7 @@ namespace League\Bundle\OAuth2ServerBundle\DependencyInjection;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
+use League\Bundle\OAuth2ServerBundle\Command\GenerateKeyPairCommand;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Grant as GrantType;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\RedirectUri as RedirectUriType;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Scope as ScopeType;
@@ -73,6 +74,13 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container
             ->findDefinition(CreateClientCommand::class)
             ->replaceArgument(1, $config['client']['classname'])
+        ;
+
+        $container
+            ->findDefinition(GenerateKeyPairCommand::class)
+            ->replaceArgument(1, $config['authorization_server']['private_key'])
+            ->replaceArgument(2, $config['resource_server']['public_key'])
+            ->replaceArgument(3, $config['authorization_server']['private_key_passphrase'])
         ;
     }
 

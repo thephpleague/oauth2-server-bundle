@@ -22,6 +22,9 @@
         <testsuite name="acceptance">
             <directory>./tests/Acceptance</directory>
         </testsuite>
+        <testsuite name="functional">
+            <directory>./tests/Functional</directory>
+        </testsuite>
         <testsuite name="integration">
             <directory>./tests/Integration</directory>
         </testsuite>
