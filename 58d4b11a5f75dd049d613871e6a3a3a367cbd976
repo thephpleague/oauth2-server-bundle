@@ -1,0 +1,32 @@
+---------------------------------------------------------------------------
+
+by fbourigault at 2022-11-03T19:54:39Z
+
+Can someone approve the workflows so I can get feedback from the whole matrix?
+
+---------------------------------------------------------------------------
+
+by chalasr at 2023-08-07T17:42:19Z
+
+My apologies for the delay Fabien, my OSS time was very limited lately I totally forgot to get back on this PR.
+Could you please rebase?
+
+---------------------------------------------------------------------------
+
+by stefantalen at 2024-04-04T09:45:46Z
+
+ping @fbourigault @chalasr
+
+I think this still is a valuable addition, any updates on this?
+
+---------------------------------------------------------------------------
+
+by fbourigault at 2024-04-04T14:15:20Z
+
+I've rebased this PR and applied changes from LexikJWTAuthenticationBundle.
+
+---------------------------------------------------------------------------
+
+by chalasr at 2024-04-06T13:51:52Z
+
+@fbourigault Apologies for the delay here. I'm wiling to move forward :) Can you please have a look at failing tests?
