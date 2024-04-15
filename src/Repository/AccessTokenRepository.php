@@ -42,12 +42,13 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         $this->scopeConverter = $scopeConverter;
     }
 
-    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null)
+    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, ?string $userIdentifier = null): AccessTokenEntityInterface
     {
-        /** @var int|string|null $userIdentifier */
         $accessToken = new AccessTokenEntity();
         $accessToken->setClient($clientEntity);
-        $accessToken->setUserIdentifier($userIdentifier);
+        if (null !== $userIdentifier && '' !== $userIdentifier) {
+            $accessToken->setUserIdentifier($userIdentifier);
+        }
 
         foreach ($scopes as $scope) {
             $accessToken->addScope($scope);
@@ -69,10 +70,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         $this->accessTokenManager->save($accessToken);
     }
 
-    /**
-     * @param string $tokenId
-     */
-    public function revokeAccessToken($tokenId): void
+    public function revokeAccessToken(string $tokenId): void
     {
         $accessToken = $this->accessTokenManager->find($tokenId);
 
@@ -85,10 +83,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         $this->accessTokenManager->save($accessToken);
     }
 
-    /**
-     * @param string $tokenId
-     */
-    public function isAccessTokenRevoked($tokenId): bool
+    public function isAccessTokenRevoked(string $tokenId): bool
     {
         $accessToken = $this->accessTokenManager->find($tokenId);
 
@@ -105,9 +100,6 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         $client = $this->clientManager->find($accessTokenEntity->getClient()->getIdentifier());
 
         $userIdentifier = $accessTokenEntity->getUserIdentifier();
-        if (null !== $userIdentifier) {
-            $userIdentifier = (string) $userIdentifier;
-        }
 
         return new AccessTokenModel(
             $accessTokenEntity->getIdentifier(),

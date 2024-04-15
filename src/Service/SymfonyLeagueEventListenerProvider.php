@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Service;
 
-use League\Event\EventInterface;
-use League\Event\ListenerAcceptorInterface;
-use League\Event\ListenerProviderInterface;
+use League\Event\ListenerRegistry;
+use League\Event\ListenerSubscriber;
+use League\OAuth2\Server\RequestEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-final class SymfonyLeagueEventListenerProvider implements ListenerProviderInterface
+final class SymfonyLeagueEventListenerProvider implements ListenerSubscriber
 {
     /**
      * @var EventDispatcherInterface
@@ -21,17 +21,15 @@ final class SymfonyLeagueEventListenerProvider implements ListenerProviderInterf
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function provideListeners(ListenerAcceptorInterface $listenerAcceptor)
+    public function subscribeListeners(ListenerRegistry $acceptor): void
     {
         $listener = \Closure::fromCallable([$this, 'dispatchLeagueEventWithSymfonyEventDispatcher']);
 
-        $listenerAcceptor->addListener('*', $listener);
-
-        return $this;
+        $acceptor->subscribeTo(RequestEvent::class, $listener);
     }
 
-    private function dispatchLeagueEventWithSymfonyEventDispatcher(EventInterface $event): void
+    private function dispatchLeagueEventWithSymfonyEventDispatcher(RequestEvent $event): void
     {
-        $this->eventDispatcher->dispatch($event, $event->getName());
+        $this->eventDispatcher->dispatch($event, $event->eventName());
     }
 }

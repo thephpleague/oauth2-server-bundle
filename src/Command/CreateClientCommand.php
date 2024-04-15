@@ -135,11 +135,11 @@ final class CreateClientCommand extends Command
         $client->setActive(true);
         $client->setAllowPlainTextPkce($input->getOption('allow-plain-text-pkce'));
 
-        /** @var list<string> $redirectUriStrings */
+        /** @var list<non-empty-string> $redirectUriStrings */
         $redirectUriStrings = $input->getOption('redirect-uri');
-        /** @var list<string> $grantStrings */
+        /** @var list<non-empty-string> $grantStrings */
         $grantStrings = $input->getOption('grant-type');
-        /** @var list<string> $scopeStrings */
+        /** @var list<non-empty-string> $scopeStrings */
         $scopeStrings = $input->getOption('scope');
 
         return $client

@@ -7,6 +7,7 @@ namespace League\Bundle\OAuth2ServerBundle\Repository;
 use League\Bundle\OAuth2ServerBundle\Entity\Client as ClientEntity;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\ClientInterface;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 
 final class ClientRepository implements ClientRepositoryInterface
@@ -21,7 +22,7 @@ final class ClientRepository implements ClientRepositoryInterface
         $this->clientManager = $clientManager;
     }
 
-    public function getClientEntity($clientIdentifier)
+    public function getClientEntity(string $clientIdentifier): ?ClientEntityInterface
     {
         $client = $this->clientManager->find($clientIdentifier);
 
@@ -32,7 +33,7 @@ final class ClientRepository implements ClientRepositoryInterface
         return $this->buildClientEntity($client);
     }
 
-    public function validateClient($clientIdentifier, $clientSecret, $grantType): bool
+    public function validateClient(string $clientIdentifier, ?string $clientSecret, ?string $grantType): bool
     {
         $client = $this->clientManager->find($clientIdentifier);
 
