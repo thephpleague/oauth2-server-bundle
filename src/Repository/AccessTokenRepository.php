@@ -42,7 +42,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         $this->scopeConverter = $scopeConverter;
     }
 
-    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null)
+    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, mixed $userIdentifier = null): AccessTokenEntityInterface
     {
         /** @var int|string|null $userIdentifier */
         $accessToken = new AccessTokenEntity();

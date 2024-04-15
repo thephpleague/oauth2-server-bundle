@@ -32,7 +32,7 @@ final class RefreshTokenRepository implements RefreshTokenRepositoryInterface
         $this->accessTokenManager = $accessTokenManager;
     }
 
-    public function getNewRefreshToken()
+    public function getNewRefreshToken(): RefreshTokenEntityInterface
     {
         return new RefreshTokenEntity();
     }

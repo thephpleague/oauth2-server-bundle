@@ -46,10 +46,7 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
         return new AuthCode();
     }
 
-    /**
-     * @return void
-     */
-    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
+    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity): void
     {
         $authorizationCode = $this->authorizationCodeManager->find($authCodeEntity->getIdentifier());
 
