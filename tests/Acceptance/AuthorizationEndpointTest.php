@@ -158,7 +158,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
         $jsonResponse = json_decode($response->getContent(), true);
 
         $this->assertSame('invalid_request', $jsonResponse['error']);
-        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $jsonResponse['message']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $jsonResponse['error_description']);
         $this->assertSame('Code challenge must be provided for public clients', $jsonResponse['hint']);
     }
 
@@ -198,7 +198,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
         $jsonResponse = json_decode($response->getContent(), true);
 
         $this->assertSame('invalid_request', $jsonResponse['error']);
-        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $jsonResponse['message']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $jsonResponse['error_description']);
         $this->assertSame('Plain code challenge method is not allowed for this client', $jsonResponse['hint']);
     }
 
@@ -425,7 +425,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
         $jsonResponse = json_decode($response->getContent(), true);
 
         $this->assertSame('invalid_client', $jsonResponse['error']);
-        $this->assertSame('Client authentication failed', $jsonResponse['message']);
+        $this->assertSame('Client authentication failed', $jsonResponse['error_description']);
     }
 
     public function testFailedAuthorizeRequest(): void
@@ -443,7 +443,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
         $jsonResponse = json_decode($response->getContent(), true);
 
         $this->assertSame('unsupported_grant_type', $jsonResponse['error']);
-        $this->assertSame('The authorization grant type is not supported by the authorization server.', $jsonResponse['message']);
+        $this->assertSame('The authorization grant type is not supported by the authorization server.', $jsonResponse['error_description']);
         $this->assertSame('Check that all required parameters have been provided', $jsonResponse['hint']);
     }
 }
