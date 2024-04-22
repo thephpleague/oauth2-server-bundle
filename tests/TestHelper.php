@@ -91,7 +91,7 @@ final class TestHelper
             $accessTokenEntity->addScope($scopeEntity);
         }
 
-        return (string) $accessTokenEntity;
+        return $accessTokenEntity->toString();
     }
 
     /**
