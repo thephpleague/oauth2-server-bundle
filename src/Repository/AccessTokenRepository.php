@@ -69,10 +69,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         $this->accessTokenManager->save($accessToken);
     }
 
-    /**
-     * @param string $tokenId
-     */
-    public function revokeAccessToken($tokenId): void
+    public function revokeAccessToken(string $tokenId): void
     {
         $accessToken = $this->accessTokenManager->find($tokenId);
 
@@ -85,10 +82,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         $this->accessTokenManager->save($accessToken);
     }
 
-    /**
-     * @param string $tokenId
-     */
-    public function isAccessTokenRevoked($tokenId): bool
+    public function isAccessTokenRevoked(string $tokenId): bool
     {
         $accessToken = $this->accessTokenManager->find($tokenId);
 

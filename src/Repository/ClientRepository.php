@@ -22,7 +22,7 @@ final class ClientRepository implements ClientRepositoryInterface
         $this->clientManager = $clientManager;
     }
 
-    public function getClientEntity($clientIdentifier): ?ClientEntityInterface
+    public function getClientEntity(string $clientIdentifier): ?ClientEntityInterface
     {
         $client = $this->clientManager->find($clientIdentifier);
 
@@ -33,7 +33,7 @@ final class ClientRepository implements ClientRepositoryInterface
         return $this->buildClientEntity($client);
     }
 
-    public function validateClient($clientIdentifier, $clientSecret, $grantType): bool
+    public function validateClient(string $clientIdentifier, ?string $clientSecret, ?string $grantType): bool
     {
         $client = $this->clientManager->find($clientIdentifier);
 
