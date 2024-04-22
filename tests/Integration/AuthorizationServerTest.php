@@ -387,7 +387,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $response = $this->handleTokenRequest($request);
 
         // Response assertions.
-        $this->assertSame('invalid_request', $response['error']);
+        $this->assertSame('invalid_grant', $response['error']);
         $this->assertSame('The refresh token is invalid.', $response['error_description']);
         $this->assertSame('Token is not linked to client', $response['hint']);
     }
@@ -422,7 +422,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $response = $this->handleTokenRequest($request);
 
         // Response assertions.
-        $this->assertSame('invalid_request', $response['error']);
+        $this->assertSame('invalid_grant', $response['error']);
         $this->assertSame('The refresh token is invalid.', $response['error_description']);
         $this->assertSame('Token has expired', $response['hint']);
     }
@@ -439,7 +439,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $response = $this->handleTokenRequest($request);
 
         // Response assertions.
-        $this->assertSame('invalid_request', $response['error']);
+        $this->assertSame('invalid_grant', $response['error']);
         $this->assertSame('The refresh token is invalid.', $response['error_description']);
         $this->assertSame('Token has been revoked', $response['hint']);
     }
@@ -468,7 +468,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $response = $this->handleTokenRequest($request);
 
         // Response assertions.
-        $this->assertSame('invalid_request', $response['error']);
+        $this->assertSame('invalid_grant', $response['error']);
         $this->assertSame('The refresh token is invalid.', $response['error_description']);
         $this->assertSame('Cannot decrypt the refresh token', $response['hint']);
     }
