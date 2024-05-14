@@ -90,7 +90,7 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
 
         $userIdentifier = $authCodeEntity->getUserIdentifier();
         if (null !== $userIdentifier) {
-            $userIdentifier = (string) $userIdentifier;
+            $userIdentifier = $userIdentifier;
         }
 
         return new AuthorizationCode(

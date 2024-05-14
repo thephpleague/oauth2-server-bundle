@@ -18,7 +18,11 @@ final class UserConverter implements UserConverterInterface
     {
         $userEntity = new User();
         if ($user instanceof UserInterface) {
-            $userEntity->setIdentifier(method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : $user->getUsername());
+            $identifier = method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : $user->getUsername();
+            if ('' === $identifier) {
+                throw new \RuntimeException('Emtpy identifier not allowed');
+            }
+            $userEntity->setIdentifier($identifier);
         }
 
         return $userEntity;
