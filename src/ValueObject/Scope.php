@@ -10,12 +10,14 @@ namespace League\Bundle\OAuth2ServerBundle\ValueObject;
 class Scope
 {
     /**
-     * @var string
+     * @var non-empty-string
      */
     private $scope;
 
     /**
      * @psalm-mutation-free
+     *
+     * @param non-empty-string $scope
      */
     public function __construct(string $scope)
     {
@@ -24,6 +26,8 @@ class Scope
 
     /**
      * @psalm-mutation-free
+     *
+     * @return non-empty-string
      */
     public function __toString(): string
     {

@@ -82,7 +82,7 @@ final class TestHelper
         $accessTokenEntity->setIdentifier($accessToken->getIdentifier());
         $accessTokenEntity->setExpiryDateTime($accessToken->getExpiry());
         $accessTokenEntity->setClient($clientEntity);
-        $accessTokenEntity->setUserIdentifier($accessToken->getUserIdentifier());
+        $accessTokenEntity->setUserIdentifier((string) $accessToken->getUserIdentifier());
 
         foreach ($accessToken->getScopes() as $scope) {
             $scopeEntity = new ScopeEntity();
@@ -91,7 +91,7 @@ final class TestHelper
             $accessTokenEntity->addScope($scopeEntity);
         }
 
-        return (string) $accessTokenEntity;
+        return $accessTokenEntity->toString();
     }
 
     /**

@@ -46,10 +46,7 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
         return new AuthCode();
     }
 
-    /**
-     * @return void
-     */
-    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
+    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity): void
     {
         $authorizationCode = $this->authorizationCodeManager->find($authCodeEntity->getIdentifier());
 
@@ -62,7 +59,7 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
         $this->authorizationCodeManager->save($authorizationCode);
     }
 
-    public function revokeAuthCode($codeId): void
+    public function revokeAuthCode(string $codeId): void
     {
         $authorizationCode = $this->authorizationCodeManager->find($codeId);
 
@@ -75,7 +72,7 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
         $this->authorizationCodeManager->save($authorizationCode);
     }
 
-    public function isAuthCodeRevoked($codeId): bool
+    public function isAuthCodeRevoked(string $codeId): bool
     {
         $authorizationCode = $this->authorizationCodeManager->find($codeId);
 
@@ -93,7 +90,7 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
 
         $userIdentifier = $authCodeEntity->getUserIdentifier();
         if (null !== $userIdentifier) {
-            $userIdentifier = (string) $userIdentifier;
+            $userIdentifier = $userIdentifier;
         }
 
         return new AuthorizationCode(

@@ -6,7 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Event;
 
 use League\Bundle\OAuth2ServerBundle\Model\ClientInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
-use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\Event;
@@ -17,7 +17,7 @@ final class AuthorizationRequestResolveEvent extends Event
     public const AUTHORIZATION_DENIED = false;
 
     /**
-     * @var AuthorizationRequest
+     * @var AuthorizationRequestInterface
      */
     private $authorizationRequest;
 
@@ -49,7 +49,7 @@ final class AuthorizationRequestResolveEvent extends Event
     /**
      * @param Scope[] $scopes
      */
-    public function __construct(AuthorizationRequest $authorizationRequest, array $scopes, ClientInterface $client)
+    public function __construct(AuthorizationRequestInterface $authorizationRequest, array $scopes, ClientInterface $client)
     {
         $this->authorizationRequest = $authorizationRequest;
         $this->scopes = $scopes;
@@ -137,12 +137,12 @@ final class AuthorizationRequestResolveEvent extends Event
         return $this->authorizationRequest->getState();
     }
 
-    public function getCodeChallenge(): string
+    public function getCodeChallenge(): ?string
     {
         return $this->authorizationRequest->getCodeChallenge();
     }
 
-    public function getCodeChallengeMethod(): string
+    public function getCodeChallengeMethod(): ?string
     {
         return $this->authorizationRequest->getCodeChallengeMethod();
     }

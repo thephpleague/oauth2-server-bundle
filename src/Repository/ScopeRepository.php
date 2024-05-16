@@ -52,7 +52,7 @@ final class ScopeRepository implements ScopeRepositoryInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function getScopeEntityByIdentifier($identifier)
+    public function getScopeEntityByIdentifier($identifier): ?ScopeEntityInterface
     {
         $scope = $this->scopeManager->find($identifier);
 
@@ -65,16 +65,15 @@ final class ScopeRepository implements ScopeRepositoryInterface
 
     /**
      * @param ScopeEntityInterface[] $scopes
-     * @param string $grantType
-     * @param string|null $userIdentifier
      *
      * @return list<ScopeEntityInterface>
      */
     public function finalizeScopes(
         array $scopes,
-        $grantType,
+        string $grantType,
         ClientEntityInterface $clientEntity,
-        $userIdentifier = null
+        string|int|null $userIdentifier = null,
+        ?string $authCodeId = null
     ): array {
         /** @var AbstractClient $client */
         $client = $this->clientManager->find($clientEntity->getIdentifier());

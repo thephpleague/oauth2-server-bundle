@@ -10,6 +10,19 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 final class UserConverter implements UserConverterInterface
 {
+    public const DEFAULT_ANONYMOUS_USER_IDENTIFIER = 'anonymous';
+
+    /** @var non-empty-string */
+    private string $anonymousUserIdentifier;
+
+    /**
+     * @param non-empty-string $anonymousUserIdentifier
+     */
+    public function __construct(string $anonymousUserIdentifier = self::DEFAULT_ANONYMOUS_USER_IDENTIFIER)
+    {
+        $this->anonymousUserIdentifier = $anonymousUserIdentifier;
+    }
+
     /**
      * @psalm-suppress DeprecatedMethod
      * @psalm-suppress UndefinedInterfaceMethod
@@ -18,8 +31,15 @@ final class UserConverter implements UserConverterInterface
     {
         $userEntity = new User();
         if ($user instanceof UserInterface) {
-            $userEntity->setIdentifier(method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : $user->getUsername());
+            $identifier = method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : $user->getUsername();
+            if ('' === $identifier) {
+                $identifier = $this->anonymousUserIdentifier;
+            }
+        } else {
+            $identifier = $this->anonymousUserIdentifier;
         }
+
+        $userEntity->setIdentifier($identifier);
 
         return $userEntity;
     }

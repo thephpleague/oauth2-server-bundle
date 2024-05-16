@@ -43,9 +43,9 @@ final class UserRepository implements UserRepositoryInterface
     }
 
     public function getUserEntityByUserCredentials(
-        $username,
-        $password,
-        $grantType,
+        string $username,
+        string $password,
+        string $grantType,
         ClientEntityInterface $clientEntity
     ): ?UserEntityInterface {
         /** @var AbstractClient $client */

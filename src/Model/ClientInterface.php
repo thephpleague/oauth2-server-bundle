@@ -13,6 +13,9 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
  */
 interface ClientInterface
 {
+    /**
+     * @return non-empty-string
+     */
     public function getIdentifier(): string;
 
     public function getSecret(): ?string;

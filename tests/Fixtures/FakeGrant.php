@@ -12,12 +12,12 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final class FakeGrant extends AbstractGrant implements GrantTypeInterface
 {
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return 'fake_grant';
     }
 
-    public function respondToAccessTokenRequest(ServerRequestInterface $request, ResponseTypeInterface $responseType, \DateInterval $accessTokenTTL)
+    public function respondToAccessTokenRequest(ServerRequestInterface $request, ResponseTypeInterface $responseType, \DateInterval $accessTokenTTL): ResponseTypeInterface
     {
         return new Response();
     }
