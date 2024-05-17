@@ -101,11 +101,11 @@ final class AuthorizationController
                 OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE
             );
 
-            $authRequest->setUser($this->userConverter->toLeague($event->getUser()));
-
             if ($response = $event->getResponse()) {
                 return $response;
             }
+
+            $authRequest->setUser($this->userConverter->toLeague($event->getUser()));
 
             $authRequest->setAuthorizationApproved($event->getAuthorizationResolution());
 
