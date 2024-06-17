@@ -60,7 +60,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
 
     public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
-        return new Response('', 401, ['WWW-Authenticate' => 'Bearer']);
+        return new Response($authException?->getMessage() ?? 'Authentication required', 401, ['WWW-Authenticate' => 'Bearer']);
     }
 
     /**
