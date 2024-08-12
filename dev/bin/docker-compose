@@ -5,4 +5,4 @@ set -e
 export HOST_USER_ID=$(id -u)
 export HOST_GROUP_ID=$(id -g)
 
-docker-compose "$@"
+docker compose "$@"
