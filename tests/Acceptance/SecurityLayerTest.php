@@ -35,7 +35,7 @@ final class SecurityLayerTest extends AbstractAcceptanceTest
             ->find(FixtureFactory::FIXTURE_ACCESS_TOKEN_PUBLIC);
 
         $this->client->request('GET', '/security-test', [], [], [
-            'HTTP_AUTHORIZATION' => sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
+            'HTTP_AUTHORIZATION' => \sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
         ]);
 
         $response = $this->client->getResponse();
@@ -52,7 +52,7 @@ final class SecurityLayerTest extends AbstractAcceptanceTest
             ->find(FixtureFactory::FIXTURE_ACCESS_TOKEN_WITH_SCOPES);
 
         $this->client->request('GET', '/security-test-scopes', [], [], [
-            'HTTP_AUTHORIZATION' => sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
+            'HTTP_AUTHORIZATION' => \sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
         ]);
 
         $response = $this->client->getResponse();
@@ -69,7 +69,7 @@ final class SecurityLayerTest extends AbstractAcceptanceTest
             ->find(FixtureFactory::FIXTURE_ACCESS_TOKEN_USER_BOUND);
 
         $this->client->request('GET', '/security-test', [], [], [
-            'HTTP_AUTHORIZATION' => sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
+            'HTTP_AUTHORIZATION' => \sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
         ]);
 
         $response = $this->client->getResponse();
@@ -86,7 +86,7 @@ final class SecurityLayerTest extends AbstractAcceptanceTest
             ->find(FixtureFactory::FIXTURE_ACCESS_TOKEN_USER_BOUND_WITH_SCOPES);
 
         $this->client->request('GET', '/security-test-roles', [], [], [
-            'HTTP_AUTHORIZATION' => sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
+            'HTTP_AUTHORIZATION' => \sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
         ]);
 
         $response = $this->client->getResponse();
@@ -103,7 +103,7 @@ final class SecurityLayerTest extends AbstractAcceptanceTest
             ->find(FixtureFactory::FIXTURE_ACCESS_TOKEN_USER_BOUND_WITH_SCOPES);
 
         $this->client->request('GET', '/security-test-authorization', [], [], [
-            'HTTP_AUTHORIZATION' => sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
+            'HTTP_AUTHORIZATION' => \sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
         ]);
 
         $response = $this->client->getResponse();
@@ -120,7 +120,7 @@ final class SecurityLayerTest extends AbstractAcceptanceTest
             ->find(FixtureFactory::FIXTURE_ACCESS_TOKEN_USER_BOUND);
 
         $this->client->request('GET', '/security-test-authorization', [], [], [
-            'HTTP_AUTHORIZATION' => sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
+            'HTTP_AUTHORIZATION' => \sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
         ]);
 
         $response = $this->client->getResponse();
@@ -137,7 +137,7 @@ final class SecurityLayerTest extends AbstractAcceptanceTest
             ->find(FixtureFactory::FIXTURE_ACCESS_TOKEN_EXPIRED);
 
         $this->client->request('GET', '/security-test', [], [], [
-            'HTTP_AUTHORIZATION' => sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
+            'HTTP_AUTHORIZATION' => \sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
         ]);
 
         $response = $this->client->getResponse();
@@ -153,7 +153,7 @@ final class SecurityLayerTest extends AbstractAcceptanceTest
             ->find(FixtureFactory::FIXTURE_ACCESS_TOKEN_REVOKED);
 
         $this->client->request('GET', '/security-test', [], [], [
-            'HTTP_AUTHORIZATION' => sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
+            'HTTP_AUTHORIZATION' => \sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
         ]);
 
         $response = $this->client->getResponse();
@@ -169,7 +169,7 @@ final class SecurityLayerTest extends AbstractAcceptanceTest
             ->find(FixtureFactory::FIXTURE_ACCESS_TOKEN_PUBLIC);
 
         $this->client->request('GET', '/security-test-scopes', [], [], [
-            'HTTP_AUTHORIZATION' => sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
+            'HTTP_AUTHORIZATION' => \sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
         ]);
 
         $response = $this->client->getResponse();

@@ -173,7 +173,7 @@ abstract class AbstractIntegrationTest extends TestCase
         ;
 
         if (null !== $credentials) {
-            $request = $request->withHeader('Authorization', sprintf('Basic %s', base64_encode($credentials)));
+            $request = $request->withHeader('Authorization', \sprintf('Basic %s', base64_encode($credentials)));
         }
 
         return $request;
@@ -184,7 +184,7 @@ abstract class AbstractIntegrationTest extends TestCase
         return $this
             ->psrFactory
             ->createServerRequest('', '')
-            ->withHeader('Authorization', sprintf('Bearer %s', $jwtToken))
+            ->withHeader('Authorization', \sprintf('Bearer %s', $jwtToken))
         ;
     }
 
@@ -196,7 +196,7 @@ abstract class AbstractIntegrationTest extends TestCase
             ->withQueryParams($query)
         ;
 
-        return \is_string($credentials) ? $serverRequest->withHeader('Authorization', sprintf('Basic %s', base64_encode($credentials))) : $serverRequest;
+        return \is_string($credentials) ? $serverRequest->withHeader('Authorization', \sprintf('Basic %s', base64_encode($credentials))) : $serverRequest;
     }
 
     protected function handleTokenRequest(ServerRequestInterface $serverRequest): array

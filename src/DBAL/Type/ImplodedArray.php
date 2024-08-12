@@ -83,7 +83,7 @@ abstract class ImplodedArray extends TextType
             return;
         }
 
-        throw new \InvalidArgumentException(sprintf('The value of \'%s\' type cannot be imploded.', \gettype($value)));
+        throw new \InvalidArgumentException(\sprintf('The value of \'%s\' type cannot be imploded.', \gettype($value)));
     }
 
     /**

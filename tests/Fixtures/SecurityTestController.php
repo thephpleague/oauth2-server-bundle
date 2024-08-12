@@ -28,7 +28,7 @@ final class SecurityTestController extends AbstractController
         $user = $this->getUser();
 
         return new Response(
-            sprintf('Hello, %s', null === $user || $user instanceof NullUser ? 'guest' : (method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : $user->getUsername()))
+            \sprintf('Hello, %s', null === $user || $user instanceof NullUser ? 'guest' : (method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : $user->getUsername()))
         );
     }
 
@@ -42,7 +42,7 @@ final class SecurityTestController extends AbstractController
         $roles = $this->tokenStorage->getToken()->getRoleNames();
 
         return new Response(
-            sprintf(
+            \sprintf(
                 'These are the roles I have currently assigned: %s',
                 implode(', ', $roles)
             )

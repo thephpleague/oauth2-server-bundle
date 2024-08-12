@@ -33,7 +33,7 @@ class AuthorizationRequestResolveEventFactory
         $client = $this->clientManager->find($authorizationRequest->getClient()->getIdentifier());
 
         if (null === $client) {
-            throw new \RuntimeException(sprintf('No client found for the given identifier \'%s\'.', $authorizationRequest->getClient()->getIdentifier()));
+            throw new \RuntimeException(\sprintf('No client found for the given identifier \'%s\'.', $authorizationRequest->getClient()->getIdentifier()));
         }
 
         return new AuthorizationRequestResolveEvent($authorizationRequest, $scopes, $client);

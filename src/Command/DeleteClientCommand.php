@@ -44,7 +44,7 @@ final class DeleteClientCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         if (null === $client = $this->clientManager->find($input->getArgument('identifier'))) {
-            $io->error(sprintf('OAuth2 client identified as "%s" does not exist.', $input->getArgument('identifier')));
+            $io->error(\sprintf('OAuth2 client identified as "%s" does not exist.', $input->getArgument('identifier')));
 
             return 1;
         }

@@ -68,7 +68,7 @@ final class GenerateKeyPairCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         if (!\in_array($this->algorithm, self::ACCEPTED_ALGORITHMS, true)) {
-            $io->error(sprintf('Cannot generate key pair with the provided algorithm `%s`.', $this->algorithm));
+            $io->error(\sprintf('Cannot generate key pair with the provided algorithm `%s`.', $this->algorithm));
 
             return Command::FAILURE;
         }
@@ -78,10 +78,10 @@ final class GenerateKeyPairCommand extends Command
         if ($input->getOption('dry-run')) {
             $io->success('Your keys have been generated!');
             $io->newLine();
-            $io->writeln(sprintf('Update your private key in <info>%s</info>:', $this->secretKey));
+            $io->writeln(\sprintf('Update your private key in <info>%s</info>:', $this->secretKey));
             $io->writeln($secretKey);
             $io->newLine();
-            $io->writeln(sprintf('Update your public key in <info>%s</info>:', $this->publicKey));
+            $io->writeln(\sprintf('Update your public key in <info>%s</info>:', $this->publicKey));
             $io->writeln($publicKey);
 
             return Command::SUCCESS;

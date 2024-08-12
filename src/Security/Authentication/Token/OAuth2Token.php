@@ -28,7 +28,7 @@ class OAuth2Token extends AbstractToken
 
         // Build roles from scope
         $roles = array_map(function (string $scope) use ($rolePrefix): string {
-            return strtoupper(trim(sprintf('%s%s', $rolePrefix, $scope)));
+            return strtoupper(trim(\sprintf('%s%s', $rolePrefix, $scope)));
         }, $scopes);
 
         if (null !== $user) {

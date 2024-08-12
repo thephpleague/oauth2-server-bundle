@@ -23,7 +23,7 @@ trait OAuth2FactoryTrait
 
     public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string
     {
-        $authenticator = sprintf('security.authenticator.oauth2.%s', $firewallName);
+        $authenticator = \sprintf('security.authenticator.oauth2.%s', $firewallName);
 
         $definition = new ChildDefinition(OAuth2Authenticator::class);
         $definition->replaceArgument(2, new Reference($userProviderId));
