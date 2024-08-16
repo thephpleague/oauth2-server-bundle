@@ -1,0 +1,93 @@
+---------------------------------------------------------------------------
+
+by wmouwen at 2024-06-24T11:52:37Z
+
+Would love to see this PR to be released when stable! :rocket:
+
+---------------------------------------------------------------------------
+
+by chalasr at 2024-07-20T16:30:47Z
+
+@ajgarlag would you appreciate some help finishing this? thanks for the PR!
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2024-07-20T18:07:28Z
+
+> @ajgarlag would you appreciate some help finishing this? thanks for the PR!
+
+@chalasr Sure! Any help is welcome!
+
+I think that there is a supported use case that we should deprecate: calling the authorization controller without any authenticated user (in other PR). WDYT?
+
+---------------------------------------------------------------------------
+
+by chalasr at 2024-08-12T07:51:20Z
+
+>  I think that there is a supported use case that we should deprecate: calling the authorization controller without any authenticated user (in other PR). WDYT?
+
+I agree. We should also disallow passing `null` to `UserConverterInterface::toLeague()` isn't it?
+
+---------------------------------------------------------------------------
+
+by chalasr at 2024-08-12T07:53:31Z
+
+> Sure! Any help is welcome!
+
+Is there anything missing actually? I just see WIP in the title but this looks good
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2024-08-12T08:26:27Z
+
+> > Sure! Any help is welcome!
+>
+> Is there anything missing actually? I just see WIP in the title but this looks good
+
+My main concern is with the last commit, but I think this will affect only a minimal number of users.
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2024-08-12T08:30:25Z
+
+> > I think that there is a supported use case that we should deprecate: calling the authorization controller without any authenticated user (in other PR). WDYT?
+>
+> I agree. We should also disallow passing `null` to `UserConverterInterface::toLeague()` isn't it?
+
+I would merge this PR and disallow passing `null` to `UserConverterInterface::toLeague()` in a new PR before tagging a new version. WDYT?
+
+Does Symfony allow an empty string as a user identifier?
+
+---------------------------------------------------------------------------
+
+by chalasr at 2024-08-12T09:25:59Z
+
+> I would merge this PR and disallow passing null to UserConverterInterface::toLeague() in a new PR before tagging a new version. WDYT?
+
+Works for me 👍
+
+> Does Symfony allow an empty string as a user identifier?
+
+No, built-in authenticators forbid it https://github.com/symfony/symfony/blob/dd9fa153d344593c7fe12eb761158558377d98a4/src/Symfony/Component/Security/Http/Authenticator/JsonLoginAuthenticator.php#L149
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2024-08-12T10:13:09Z
+
+> > I would merge this PR and disallow passing null to UserConverterInterface::toLeague() in a new PR before tagging a new version. WDYT?
+>
+> Works for me 👍
+>
+> > Does Symfony allow an empty string as a user identifier?
+>
+> No, built-in authenticators forbid it https://github.com/symfony/symfony/blob/dd9fa153d344593c7fe12eb761158558377d98a4/src/Symfony/Component/Security/Http/Authenticator/JsonLoginAuthenticator.php#L149
+
+But the interface allows it. Maybe a `/** @return non-empty-string */` annotation should be added to the `UserInterface`. I'll submit a PR to deprecate this behavior in Symfony 7
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2024-08-14T07:38:41Z
+
+> But the interface allows it. Maybe a `/** @return non-empty-string */` annotation should be added to the `UserInterface`. I'll submit a PR to deprecate this behavior in Symfony 7
+
+See https://github.com/symfony/symfony/pull/58007
