@@ -38,8 +38,8 @@ use League\Bundle\OAuth2ServerBundle\Repository\UserRepository;
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Security\EventListener\CheckScopeListener;
 use League\Bundle\OAuth2ServerBundle\Service\SymfonyLeagueEventListenerProvider;
-use League\Event\Emitter;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\EventEmitting\EventEmitter;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
@@ -129,8 +129,8 @@ return static function (ContainerConfigurator $container): void {
         ])
         ->alias(SymfonyLeagueEventListenerProvider::class, 'league.oauth2_server.symfony_league_listener_provider')
 
-        ->set('league.oauth2_server.emitter', Emitter::class)
-        ->call('useListenerProvider', [service('league.oauth2_server.symfony_league_listener_provider')])
+        ->set('league.oauth2_server.emitter', EventEmitter::class)
+        ->call('subscribeListenersFrom', [service('league.oauth2_server.symfony_league_listener_provider')])
 
         ->set('league.oauth2_server.authorization_server.grant_configurator', GrantConfigurator::class)
             ->args([

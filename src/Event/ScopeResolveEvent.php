@@ -27,14 +27,14 @@ final class ScopeResolveEvent extends Event
     private $client;
 
     /**
-     * @var string|null
+     * @var string|int|null
      */
     private $userIdentifier;
 
     /**
      * @param list<Scope> $scopes
      */
-    public function __construct(array $scopes, Grant $grant, AbstractClient $client, ?string $userIdentifier)
+    public function __construct(array $scopes, Grant $grant, AbstractClient $client, string|int|null $userIdentifier)
     {
         $this->scopes = $scopes;
         $this->grant = $grant;
@@ -68,7 +68,7 @@ final class ScopeResolveEvent extends Event
         return $this->client;
     }
 
-    public function getUserIdentifier(): ?string
+    public function getUserIdentifier(): string|int|null
     {
         return $this->userIdentifier;
     }

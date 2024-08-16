@@ -65,7 +65,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_request', $response['error']);
-        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['message']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['error_description']);
         $this->assertSame('Check the `client_id` parameter', $response['hint']);
     }
 
@@ -79,7 +79,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_client', $response['error']);
-        $this->assertSame('Client authentication failed', $response['message']);
+        $this->assertSame('Client authentication failed', $response['error_description']);
     }
 
     public function testMissingClient(): void
@@ -92,7 +92,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_client', $response['error']);
-        $this->assertSame('Client authentication failed', $response['message']);
+        $this->assertSame('Client authentication failed', $response['error_description']);
     }
 
     public function testInactiveClient(): void
@@ -105,7 +105,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_client', $response['error']);
-        $this->assertSame('Client authentication failed', $response['message']);
+        $this->assertSame('Client authentication failed', $response['error_description']);
     }
 
     public function testRestrictedGrantClient(): void
@@ -118,7 +118,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_client', $response['error']);
-        $this->assertSame('Client authentication failed', $response['message']);
+        $this->assertSame('Client authentication failed', $response['error_description']);
     }
 
     public function testRestrictedScopeClient(): void
@@ -132,7 +132,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_scope', $response['error']);
-        $this->assertSame('The requested scope is invalid, unknown, or malformed', $response['message']);
+        $this->assertSame('The requested scope is invalid, unknown, or malformed', $response['error_description']);
         $this->assertSame('Check the `fancy` scope', $response['hint']);
     }
 
@@ -146,7 +146,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('unsupported_grant_type', $response['error']);
-        $this->assertSame('The authorization grant type is not supported by the authorization server.', $response['message']);
+        $this->assertSame('The authorization grant type is not supported by the authorization server.', $response['error_description']);
         $this->assertSame('Check that all required parameters have been provided', $response['hint']);
     }
 
@@ -161,7 +161,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_scope', $response['error']);
-        $this->assertSame('The requested scope is invalid, unknown, or malformed', $response['message']);
+        $this->assertSame('The requested scope is invalid, unknown, or malformed', $response['error_description']);
         $this->assertSame('Check the `non_existing` scope', $response['hint']);
     }
 
@@ -326,7 +326,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_request', $response['error']);
-        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['message']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['error_description']);
         $this->assertSame('Check the `username` parameter', $response['hint']);
     }
 
@@ -341,7 +341,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_request', $response['error']);
-        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['message']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['error_description']);
         $this->assertSame('Check the `password` parameter', $response['hint']);
     }
 
@@ -387,8 +387,8 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $response = $this->handleTokenRequest($request);
 
         // Response assertions.
-        $this->assertSame('invalid_request', $response['error']);
-        $this->assertSame('The refresh token is invalid.', $response['message']);
+        $this->assertSame('invalid_grant', $response['error']);
+        $this->assertSame('The refresh token is invalid.', $response['error_description']);
         $this->assertSame('Token is not linked to client', $response['hint']);
     }
 
@@ -406,7 +406,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_scope', $response['error']);
-        $this->assertSame('The requested scope is invalid, unknown, or malformed', $response['message']);
+        $this->assertSame('The requested scope is invalid, unknown, or malformed', $response['error_description']);
         $this->assertSame('Check the `rock` scope', $response['hint']);
     }
 
@@ -422,8 +422,8 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $response = $this->handleTokenRequest($request);
 
         // Response assertions.
-        $this->assertSame('invalid_request', $response['error']);
-        $this->assertSame('The refresh token is invalid.', $response['message']);
+        $this->assertSame('invalid_grant', $response['error']);
+        $this->assertSame('The refresh token is invalid.', $response['error_description']);
         $this->assertSame('Token has expired', $response['hint']);
     }
 
@@ -439,8 +439,8 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $response = $this->handleTokenRequest($request);
 
         // Response assertions.
-        $this->assertSame('invalid_request', $response['error']);
-        $this->assertSame('The refresh token is invalid.', $response['message']);
+        $this->assertSame('invalid_grant', $response['error']);
+        $this->assertSame('The refresh token is invalid.', $response['error_description']);
         $this->assertSame('Token has been revoked', $response['hint']);
     }
 
@@ -454,7 +454,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_request', $response['error']);
-        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['message']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['error_description']);
         $this->assertSame('Check the `refresh_token` parameter', $response['hint']);
     }
 
@@ -468,8 +468,8 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $response = $this->handleTokenRequest($request);
 
         // Response assertions.
-        $this->assertSame('invalid_request', $response['error']);
-        $this->assertSame('The refresh token is invalid.', $response['message']);
+        $this->assertSame('invalid_grant', $response['error']);
+        $this->assertSame('The refresh token is invalid.', $response['error_description']);
         $this->assertSame('Cannot decrypt the refresh token', $response['hint']);
     }
 
@@ -543,7 +543,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $response->getHeaderLine('Location'));
         $queryData = $this->extractQueryDataFromUri($response->getHeaderLine('Location'));
         $this->assertSame('invalid_scope', $queryData['error']);
-        $this->assertSame('The requested scope is invalid, unknown, or malformed', $queryData['message']);
+        $this->assertSame('The requested scope is invalid, unknown, or malformed', $queryData['error_description']);
         $this->assertSame('Check the `non_existing` scope', $queryData['hint']);
     }
 
@@ -561,7 +561,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $this->assertSame(401, $response->getStatusCode());
         $responseData = json_decode((string) $response->getBody(), true);
         $this->assertSame('invalid_client', $responseData['error']);
-        $this->assertSame('Client authentication failed', $responseData['message']);
+        $this->assertSame('Client authentication failed', $responseData['error_description']);
     }
 
     public function testDeniedCodeRequest(): void
@@ -579,7 +579,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $response->getHeaderLine('Location'));
         $queryData = $this->extractQueryDataFromUri($response->getHeaderLine('Location'));
         $this->assertSame('access_denied', $queryData['error']);
-        $this->assertSame('The resource owner or authorization server denied the request.', $queryData['message']);
+        $this->assertSame('The resource owner or authorization server denied the request.', $queryData['error_description']);
         $this->assertSame('The user denied the request', $queryData['hint']);
     }
 
@@ -596,7 +596,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $this->assertSame(401, $response->getStatusCode());
         $responseData = json_decode((string) $response->getBody(), true);
         $this->assertSame('invalid_client', $responseData['error']);
-        $this->assertSame('Client authentication failed', $responseData['message']);
+        $this->assertSame('Client authentication failed', $responseData['error_description']);
     }
 
     public function testCodeRequestWithInactiveClient(): void
@@ -612,7 +612,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $this->assertSame(401, $response->getStatusCode());
         $responseData = json_decode((string) $response->getBody(), true);
         $this->assertSame('invalid_client', $responseData['error']);
-        $this->assertSame('Client authentication failed', $responseData['message']);
+        $this->assertSame('Client authentication failed', $responseData['error_description']);
     }
 
     public function testCodeRequestWithRestrictedGrantClient(): void
@@ -628,7 +628,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $this->assertSame(401, $response->getStatusCode());
         $responseData = json_decode((string) $response->getBody(), true);
         $this->assertSame('invalid_client', $responseData['error']);
-        $this->assertSame('Client authentication failed', $responseData['message']);
+        $this->assertSame('Client authentication failed', $responseData['error_description']);
     }
 
     public function testSuccessfulAuthorizationWithCode(): void
@@ -665,7 +665,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_request', $response['error']);
-        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['message']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['error_description']);
         $this->assertSame('Authorization code was not issued to this client', $response['hint']);
     }
 
@@ -683,7 +683,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_request', $response['error']);
-        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['message']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['error_description']);
         $this->assertSame('Authorization code has expired', $response['hint']);
     }
 
@@ -701,7 +701,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_client', $response['error']);
-        $this->assertSame('Client authentication failed', $response['message']);
+        $this->assertSame('Client authentication failed', $response['error_description']);
     }
 
     public function testSuccessfulImplicitRequest(): void
@@ -786,7 +786,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_scope', $responseData['error']);
-        $this->assertSame('The requested scope is invalid, unknown, or malformed', $responseData['message']);
+        $this->assertSame('The requested scope is invalid, unknown, or malformed', $responseData['error_description']);
         $this->assertSame('Check the `non_existing` scope', $responseData['hint']);
     }
 
@@ -804,7 +804,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_client', $responseData['error']);
-        $this->assertSame('Client authentication failed', $responseData['message']);
+        $this->assertSame('Client authentication failed', $responseData['error_description']);
     }
 
     public function testDeniedImplicitRequest(): void
@@ -821,7 +821,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('access_denied', $responseData['error']);
-        $this->assertSame('The resource owner or authorization server denied the request.', $responseData['message']);
+        $this->assertSame('The resource owner or authorization server denied the request.', $responseData['error_description']);
         $this->assertSame('The user denied the request', $responseData['hint']);
     }
 
@@ -838,7 +838,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_client', $responseData['error']);
-        $this->assertSame('Client authentication failed', $responseData['message']);
+        $this->assertSame('Client authentication failed', $responseData['error_description']);
     }
 
     public function testImplicitRequestWithInactiveClient(): void
@@ -854,7 +854,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_client', $responseData['error']);
-        $this->assertSame('Client authentication failed', $responseData['message']);
+        $this->assertSame('Client authentication failed', $responseData['error_description']);
     }
 
     public function testImplicitRequestWithRestrictedGrantClient(): void
@@ -870,6 +870,6 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('invalid_client', $responseData['error']);
-        $this->assertSame('Client authentication failed', $responseData['message']);
+        $this->assertSame('Client authentication failed', $responseData['error_description']);
     }
 }

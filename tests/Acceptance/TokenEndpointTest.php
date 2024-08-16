@@ -303,7 +303,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $jsonResponse = json_decode($response->getContent(), true);
 
         $this->assertSame('unsupported_grant_type', $jsonResponse['error']);
-        $this->assertSame('The authorization grant type is not supported by the authorization server.', $jsonResponse['message']);
+        $this->assertSame('The authorization grant type is not supported by the authorization server.', $jsonResponse['error_description']);
         $this->assertSame('Check that all required parameters have been provided', $jsonResponse['hint']);
     }
 
@@ -335,7 +335,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $jsonResponse = json_decode($response->getContent(), true);
 
         $this->assertSame('invalid_client', $jsonResponse['error']);
-        $this->assertSame('Client authentication failed', $jsonResponse['message']);
+        $this->assertSame('Client authentication failed', $jsonResponse['error_description']);
         $this->assertSame('bar', $response->headers->get('foo'));
 
         $this->assertTrue($wasClientAuthenticationEventDispatched);

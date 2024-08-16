@@ -6,7 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Event;
 
 use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
-use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 
 class AuthorizationRequestResolveEventFactory
 {
@@ -26,7 +26,7 @@ class AuthorizationRequestResolveEventFactory
         $this->clientManager = $clientManager;
     }
 
-    public function fromAuthorizationRequest(AuthorizationRequest $authorizationRequest): AuthorizationRequestResolveEvent
+    public function fromAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest): AuthorizationRequestResolveEvent
     {
         $scopes = $this->scopeConverter->toDomainArray(array_values($authorizationRequest->getScopes()));
 

@@ -80,11 +80,11 @@ final class ListClientsCommand extends Command
 
     private function getFindByCriteria(InputInterface $input): ClientFilter
     {
-        /** @var list<string> $grantStrings */
+        /** @var list<non-empty-string> $grantStrings */
         $grantStrings = $input->getOption('grant-type');
-        /** @var list<string> $redirectUriStrings */
+        /** @var list<non-empty-string> $redirectUriStrings */
         $redirectUriStrings = $input->getOption('redirect-uri');
-        /** @var list<string> $scopeStrings */
+        /** @var list<non-empty-string> $scopeStrings */
         $scopeStrings = $input->getOption('scope');
 
         return ClientFilter::create()
