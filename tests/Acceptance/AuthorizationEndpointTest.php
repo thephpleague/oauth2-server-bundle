@@ -31,6 +31,13 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
         );
     }
 
+    private function loginUser(string $username = FixtureFactory::FIXTURE_USER, string $firewallContext = 'authorization'): void
+    {
+        $userProvider = static::getContainer()->get('security.user_providers');
+        $user = method_exists($userProvider, 'loadUserByIdentifier') ? $userProvider->loadUserByIdentifier($username) : $userProvider->loadUserByUsername($username);
+        $this->client->loginUser($user, $firewallContext);
+    }
+
     public function testSuccessfulCodeRequest(): void
     {
         $this->client
@@ -39,6 +46,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
             ->addListener(OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE, static function (AuthorizationRequestResolveEvent $event): void {
                 $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
             });
+
+        $this->loginUser();
 
         $this->client->request(
             'GET',
@@ -74,6 +83,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
             '+/',
             '-_'
         );
+
+        $this->loginUser();
 
         $this->client
             ->getContainer()
@@ -138,6 +149,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 $this->fail('This event should not have been dispatched.');
             });
 
+        $this->loginUser();
+
         $this->client->request(
             'GET',
             '/authorize',
@@ -175,6 +188,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
             ->addListener(OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE, function (AuthorizationRequestResolveEvent $event): void {
                 $this->fail('This event should not have been dispatched.');
             });
+
+        $this->loginUser();
 
         $this->client->request(
             'GET',
@@ -219,6 +234,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
 
                 $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
             });
+
+        $this->loginUser();
 
         $this->client->request(
             'GET',
@@ -272,6 +289,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
             });
 
+        $this->loginUser();
+
         $this->client->request(
             'GET',
             '/authorize',
@@ -308,6 +327,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 ]));
             });
 
+        $this->loginUser();
+
         $this->client->request(
             'GET',
             '/authorize',
@@ -340,6 +361,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 'Location' => '/authorize/consent',
             ]));
         }, 200);
+
+        $this->loginUser();
 
         $this->client->request(
             'GET',
@@ -374,6 +397,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
             );
         }, 100);
 
+        $this->loginUser();
+
         $this->client->request(
             'GET',
             '/authorize',
@@ -406,6 +431,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
             });
 
+        $this->loginUser();
+
         $this->client->request(
             'GET',
             '/authorize',
@@ -430,6 +457,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
 
     public function testFailedAuthorizeRequest(): void
     {
+        $this->loginUser();
         $this->client->request(
             'GET',
             '/authorize'

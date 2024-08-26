@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\DependencyInjection;
 
 use Defuse\Crypto\Key;
-use League\Bundle\OAuth2ServerBundle\Converter\UserConverter;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
@@ -30,11 +29,6 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('role_prefix')
                     ->info('Set a custom prefix that replaces the default \'ROLE_OAUTH2_\' role prefix')
                     ->defaultValue('ROLE_OAUTH2_')
-                    ->cannotBeEmpty()
-                ->end()
-                ->scalarNode('anonymous_user_identifier')
-                    ->info('Set a default user identifier for anonymous users')
-                    ->defaultValue(UserConverter::DEFAULT_ANONYMOUS_USER_IDENTIFIER)
                     ->cannotBeEmpty()
                 ->end()
             ->end();

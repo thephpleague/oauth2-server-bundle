@@ -22,7 +22,6 @@ use League\Bundle\OAuth2ServerBundle\Converter\UserConverter;
 use League\Bundle\OAuth2ServerBundle\Converter\UserConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEventFactory;
 use League\Bundle\OAuth2ServerBundle\EventListener\AddClientDefaultScopesListener;
-use League\Bundle\OAuth2ServerBundle\EventListener\AuthorizationRequestUserResolvingListener;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
@@ -55,9 +54,11 @@ use League\OAuth2\Server\ResourceServer;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security as LegacySecurity;
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
@@ -206,18 +207,6 @@ return static function (ContainerConfigurator $container): void {
             ->tag('controller.service_arguments')
         ->alias(AuthorizationController::class, 'league.oauth2_server.controller.authorization')
 
-        // Authorization listeners
-        ->set('league.oauth2_server.listener.authorization_request_user_resolving', AuthorizationRequestUserResolvingListener::class)
-            ->args([
-                service('security.helper'),
-            ])
-            ->tag('kernel.event_listener', [
-                'event' => OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE,
-                'method' => 'onAuthorizationRequest',
-                'priority' => 1024,
-            ])
-        ->alias(AuthorizationRequestUserResolvingListener::class, 'league.oauth2_server.listener.authorization_request_user_resolving')
-
         // Token controller
         ->set('league.oauth2_server.controller.token', TokenController::class)
             ->args([
@@ -292,6 +281,7 @@ return static function (ContainerConfigurator $container): void {
             ->args([
                 service(ScopeConverterInterface::class),
                 service(ClientManagerInterface::class),
+                service(class_exists(Security::class) ? Security::class : LegacySecurity::class),
             ])
         ->alias(AuthorizationRequestResolveEventFactory::class, 'league.oauth2_server.factory.authorization_request_resolve_event')
 

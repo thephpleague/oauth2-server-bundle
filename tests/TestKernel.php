@@ -117,6 +117,12 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                         'stateless' => true,
                         'oauth2' => true,
                     ],
+                    'authorization' => [
+                        'provider' => 'in_memory',
+                        'pattern' => '^/authorize',
+                        'http_basic' => true,
+                        'stateless' => true,
+                    ],
                 ],
                 'providers' => [
                     'in_memory' => [
@@ -136,6 +142,12 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                                 ],
                             ],
                         ],
+                    ],
+                ],
+                'access_control' => [
+                    [
+                        'path' => '^/authorize',
+                        'roles' => class_exists(Security::class) ? 'IS_AUTHENTICATED' : 'IS_AUTHENTICATED_REMEMBERED',
                     ],
                 ],
             ];

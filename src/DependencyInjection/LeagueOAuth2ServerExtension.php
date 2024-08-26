@@ -8,7 +8,6 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Command\GenerateKeyPairCommand;
-use League\Bundle\OAuth2ServerBundle\Converter\UserConverter;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Grant as GrantType;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\RedirectUri as RedirectUriType;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Scope as ScopeType;
@@ -68,9 +67,6 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $container->findDefinition(OAuth2Authenticator::class)
             ->setArgument(3, $config['role_prefix']);
-
-        $container->findDefinition(UserConverter::class)
-            ->setArgument(0, $config['anonymous_user_identifier']);
 
         $container->registerForAutoconfiguration(GrantTypeInterface::class)
             ->addTag('league.oauth2_server.authorization_server.grant');

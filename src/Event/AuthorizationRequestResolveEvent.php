@@ -42,18 +42,19 @@ final class AuthorizationRequestResolveEvent extends Event
     private $response;
 
     /**
-     * @var UserInterface|null
+     * @var UserInterface
      */
     private $user;
 
     /**
      * @param Scope[] $scopes
      */
-    public function __construct(AuthorizationRequestInterface $authorizationRequest, array $scopes, ClientInterface $client)
+    public function __construct(AuthorizationRequestInterface $authorizationRequest, array $scopes, ClientInterface $client, UserInterface $user)
     {
         $this->authorizationRequest = $authorizationRequest;
         $this->scopes = $scopes;
         $this->client = $client;
+        $this->user = $user;
     }
 
     public function getAuthorizationResolution(): bool
@@ -102,16 +103,9 @@ final class AuthorizationRequestResolveEvent extends Event
     /**
      * @psalm-mutation-free
      */
-    public function getUser(): ?UserInterface
+    public function getUser(): UserInterface
     {
         return $this->user;
-    }
-
-    public function setUser(?UserInterface $user): self
-    {
-        $this->user = $user;
-
-        return $this;
     }
 
     /**
