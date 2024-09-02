@@ -16,6 +16,7 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 abstract class AbstractClient implements ClientInterface
 {
     private string $name;
+    /** @var non-empty-string */
     protected string $identifier;
     private ?string $secret;
 
@@ -33,6 +34,8 @@ abstract class AbstractClient implements ClientInterface
 
     /**
      * @psalm-mutation-free
+     *
+     * @param non-empty-string $identifier
      */
     public function __construct(string $name, string $identifier, ?string $secret)
     {

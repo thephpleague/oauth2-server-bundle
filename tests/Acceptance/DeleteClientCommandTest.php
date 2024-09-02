@@ -42,7 +42,7 @@ final class DeleteClientCommandTest extends AbstractAcceptanceTest
             'identifier' => $identifierName,
         ]);
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString(sprintf('OAuth2 client identified as "%s" does not exist.', $identifierName), $output);
+        $this->assertStringContainsString(\sprintf('OAuth2 client identified as "%s" does not exist.', $identifierName), $output);
     }
 
     private function findClient(string $identifier): ?Client

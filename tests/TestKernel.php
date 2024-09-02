@@ -52,12 +52,12 @@ final class TestKernel extends Kernel implements CompilerPassInterface
 
     public function getCacheDir(): string
     {
-        return sprintf('%s/tests/.kernel/cache', $this->getProjectDir());
+        return \sprintf('%s/tests/.kernel/cache', $this->getProjectDir());
     }
 
     public function getLogDir(): string
     {
-        return sprintf('%s/tests/.kernel/logs', $this->getProjectDir());
+        return \sprintf('%s/tests/.kernel/logs', $this->getProjectDir());
     }
 
     public function process(ContainerBuilder $container): void
@@ -117,6 +117,12 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                         'stateless' => true,
                         'oauth2' => true,
                     ],
+                    'authorization' => [
+                        'provider' => 'in_memory',
+                        'pattern' => '^/authorize',
+                        'http_basic' => true,
+                        'stateless' => true,
+                    ],
                 ],
                 'providers' => [
                     'in_memory' => [
@@ -136,6 +142,12 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                                 ],
                             ],
                         ],
+                    ],
+                ],
+                'access_control' => [
+                    [
+                        'path' => '^/authorize',
+                        'roles' => class_exists(Security::class) ? 'IS_AUTHENTICATED' : 'IS_AUTHENTICATED_REMEMBERED',
                     ],
                 ],
             ];
@@ -235,8 +247,8 @@ final class TestKernel extends Kernel implements CompilerPassInterface
 
     private function initializeEnvironmentVariables(): void
     {
-        putenv(sprintf('PRIVATE_KEY_PATH=%s', TestHelper::PRIVATE_KEY_PATH));
-        putenv(sprintf('PUBLIC_KEY_PATH=%s', TestHelper::PUBLIC_KEY_PATH));
-        putenv(sprintf('ENCRYPTION_KEY=%s', TestHelper::ENCRYPTION_KEY));
+        putenv(\sprintf('PRIVATE_KEY_PATH=%s', TestHelper::PRIVATE_KEY_PATH));
+        putenv(\sprintf('PUBLIC_KEY_PATH=%s', TestHelper::PUBLIC_KEY_PATH));
+        putenv(\sprintf('ENCRYPTION_KEY=%s', TestHelper::ENCRYPTION_KEY));
     }
 }

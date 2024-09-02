@@ -60,7 +60,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
 
     public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
-        return new Response('', 401, ['WWW-Authenticate' => 'Bearer']);
+        return new Response($authException?->getMessage() ?? 'Authentication required', 401, ['WWW-Authenticate' => 'Bearer']);
     }
 
     /**
@@ -123,7 +123,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
     public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
     {
         if (!$passport instanceof Passport) {
-            throw new \RuntimeException(sprintf('Cannot create a OAuth2 authenticated token. $passport should be a %s', Passport::class));
+            throw new \RuntimeException(\sprintf('Cannot create a OAuth2 authenticated token. $passport should be a %s', Passport::class));
         }
 
         $token = $this->createToken($passport, $firewallName);

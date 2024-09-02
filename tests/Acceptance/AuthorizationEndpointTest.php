@@ -31,6 +31,13 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
         );
     }
 
+    private function loginUser(string $username = FixtureFactory::FIXTURE_USER, string $firewallContext = 'authorization'): void
+    {
+        $userProvider = static::getContainer()->get('security.user_providers');
+        $user = method_exists($userProvider, 'loadUserByIdentifier') ? $userProvider->loadUserByIdentifier($username) : $userProvider->loadUserByUsername($username);
+        $this->client->loginUser($user, $firewallContext);
+    }
+
     public function testSuccessfulCodeRequest(): void
     {
         $this->client
@@ -39,6 +46,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
             ->addListener(OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE, static function (AuthorizationRequestResolveEvent $event): void {
                 $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
             });
+
+        $this->loginUser();
 
         $this->client->request(
             'GET',
@@ -74,6 +83,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
             '+/',
             '-_'
         );
+
+        $this->loginUser();
 
         $this->client
             ->getContainer()
@@ -138,6 +149,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 $this->fail('This event should not have been dispatched.');
             });
 
+        $this->loginUser();
+
         $this->client->request(
             'GET',
             '/authorize',
@@ -158,7 +171,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
         $jsonResponse = json_decode($response->getContent(), true);
 
         $this->assertSame('invalid_request', $jsonResponse['error']);
-        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $jsonResponse['message']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $jsonResponse['error_description']);
         $this->assertSame('Code challenge must be provided for public clients', $jsonResponse['hint']);
     }
 
@@ -175,6 +188,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
             ->addListener(OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE, function (AuthorizationRequestResolveEvent $event): void {
                 $this->fail('This event should not have been dispatched.');
             });
+
+        $this->loginUser();
 
         $this->client->request(
             'GET',
@@ -197,9 +212,9 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
         $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $redirectUri);
         $query = [];
         parse_str(parse_url($redirectUri, \PHP_URL_QUERY), $query);
-        $this->assertEquals('invalid_request', $query['error']);
-        $this->assertEquals('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $query['message']);
-        $this->assertEquals('Plain code challenge method is not allowed for this client', $query['hint']);
+        $this->assertSame('invalid_request', $query['error']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $query['error_description']);
+        $this->assertSame('Plain code challenge method is not allowed for this client', $query['hint']);
     }
 
     public function testAuthCodeRequestWithClientWhoIsAllowedToMakeARequestWithPlainCodeChallengeMethod(): void
@@ -219,6 +234,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
 
                 $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
             });
+
+        $this->loginUser();
 
         $this->client->request(
             'GET',
@@ -272,6 +289,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
             });
 
+        $this->loginUser();
+
         $this->client->request(
             'GET',
             '/authorize',
@@ -308,6 +327,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 ]));
             });
 
+        $this->loginUser();
+
         $this->client->request(
             'GET',
             '/authorize',
@@ -340,6 +361,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 'Location' => '/authorize/consent',
             ]));
         }, 200);
+
+        $this->loginUser();
 
         $this->client->request(
             'GET',
@@ -374,6 +397,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
             );
         }, 100);
 
+        $this->loginUser();
+
         $this->client->request(
             'GET',
             '/authorize',
@@ -406,6 +431,8 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
                 $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
             });
 
+        $this->loginUser();
+
         $this->client->request(
             'GET',
             '/authorize',
@@ -425,11 +452,12 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
         $jsonResponse = json_decode($response->getContent(), true);
 
         $this->assertSame('invalid_client', $jsonResponse['error']);
-        $this->assertSame('Client authentication failed', $jsonResponse['message']);
+        $this->assertSame('Client authentication failed', $jsonResponse['error_description']);
     }
 
     public function testFailedAuthorizeRequest(): void
     {
+        $this->loginUser();
         $this->client->request(
             'GET',
             '/authorize'
@@ -443,7 +471,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
         $jsonResponse = json_decode($response->getContent(), true);
 
         $this->assertSame('unsupported_grant_type', $jsonResponse['error']);
-        $this->assertSame('The authorization grant type is not supported by the authorization server.', $jsonResponse['message']);
+        $this->assertSame('The authorization grant type is not supported by the authorization server.', $jsonResponse['error_description']);
         $this->assertSame('Check that all required parameters have been provided', $jsonResponse['hint']);
     }
 }

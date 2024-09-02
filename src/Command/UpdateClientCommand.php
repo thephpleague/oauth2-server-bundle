@@ -57,7 +57,7 @@ final class UpdateClientCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         if (null === $client = $this->clientManager->find($input->getArgument('identifier'))) {
-            $io->error(sprintf('OAuth2 client identified as "%s" does not exist.', $input->getArgument('identifier')));
+            $io->error(\sprintf('OAuth2 client identified as "%s" does not exist.', $input->getArgument('identifier')));
 
             return 1;
         }
@@ -107,13 +107,13 @@ final class UpdateClientCommand extends Command
     private function getClientRelatedModelsFromInput(InputInterface $input, string $modelFqcn, array $actual, string $argument): array
     {
         /** @var list<string> $toAdd */
-        $toAdd = $input->getOption($addArgument = sprintf('add-%s', $argument));
+        $toAdd = $input->getOption($addArgument = \sprintf('add-%s', $argument));
 
         /** @var list<string> $toRemove */
-        $toRemove = $input->getOption($removeArgument = sprintf('remove-%s', $argument));
+        $toRemove = $input->getOption($removeArgument = \sprintf('remove-%s', $argument));
 
         if ([] !== $colliding = array_intersect($toAdd, $toRemove)) {
-            throw new \RuntimeException(sprintf('Cannot specify "%s" in either "--%s" and "--%s".', implode('", "', $colliding), $addArgument, $removeArgument));
+            throw new \RuntimeException(\sprintf('Cannot specify "%s" in either "--%s" and "--%s".', implode('", "', $colliding), $addArgument, $removeArgument));
         }
 
         $filtered = array_filter($actual, static function ($model) use ($toRemove): bool {

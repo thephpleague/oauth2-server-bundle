@@ -126,7 +126,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         foreach ($requiredBundles as $bundleAlias => $requiredBundle) {
             if (!$container->hasExtension($bundleAlias)) {
-                throw new \LogicException(sprintf('Bundle \'%s\' needs to be enabled in your application kernel.', $requiredBundle));
+                throw new \LogicException(\sprintf('Bundle \'%s\' needs to be enabled in your application kernel.', $requiredBundle));
             }
         }
     }
@@ -260,7 +260,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $entityManagerName = $persistenceConfig['entity_manager'];
 
         $entityManager = new Reference(
-            sprintf('doctrine.orm.%s_entity_manager', $entityManagerName)
+            \sprintf('doctrine.orm.%s_entity_manager', $entityManagerName)
         );
 
         $container
@@ -339,7 +339,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $defaultScopes = $scopes['default'];
 
         if ([] !== $invalidDefaultScopes = array_diff($defaultScopes, $availableScopes)) {
-            throw new \LogicException(sprintf('Invalid default scopes "%s" for path "league_oauth2_server.scopes.default". Permissible values: "%s"', implode('", "', $invalidDefaultScopes), implode('", "', $availableScopes)));
+            throw new \LogicException(\sprintf('Invalid default scopes "%s" for path "league_oauth2_server.scopes.default". Permissible values: "%s"', implode('", "', $invalidDefaultScopes), implode('", "', $availableScopes)));
         }
 
         $container->setParameter('league.oauth2_server.scopes.default', $defaultScopes);

@@ -11,15 +11,17 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class UserConverter implements UserConverterInterface
 {
     /**
+     * @psalm-suppress ArgumentTypeCoercion
      * @psalm-suppress DeprecatedMethod
      * @psalm-suppress UndefinedInterfaceMethod
      */
-    public function toLeague(?UserInterface $user): UserEntityInterface
+    public function toLeague(UserInterface $user): UserEntityInterface
     {
         $userEntity = new User();
-        if ($user instanceof UserInterface) {
-            $userEntity->setIdentifier(method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : $user->getUsername());
-        }
+
+        $identifier = method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : $user->getUsername();
+
+        $userEntity->setIdentifier($identifier);
 
         return $userEntity;
     }

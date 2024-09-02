@@ -62,7 +62,7 @@ class Driver implements MappingDriver
 
                 break;
             default:
-                throw new \RuntimeException(sprintf('%s cannot load metadata for class %s', __CLASS__, $className));
+                throw new \RuntimeException(\sprintf('%s cannot load metadata for class %s', __CLASS__, $className));
         }
     }
 

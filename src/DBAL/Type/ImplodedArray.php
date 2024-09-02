@@ -49,6 +49,7 @@ abstract class ImplodedArray extends TextType
 
         \assert(\is_string($value), 'Expected $value of be either a string or null.');
 
+        /** @var list<non-empty-string> $values */
         $values = explode(self::VALUE_DELIMITER, $value);
 
         return $this->convertDatabaseValues($values);
@@ -83,11 +84,11 @@ abstract class ImplodedArray extends TextType
             return;
         }
 
-        throw new \InvalidArgumentException(sprintf('The value of \'%s\' type cannot be imploded.', \gettype($value)));
+        throw new \InvalidArgumentException(\sprintf('The value of \'%s\' type cannot be imploded.', \gettype($value)));
     }
 
     /**
-     * @param list<string> $values
+     * @param list<non-empty-string> $values
      *
      * @return list<T>
      */

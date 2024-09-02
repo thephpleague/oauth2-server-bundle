@@ -29,21 +29,21 @@ final class UpdateClientCommandTest extends AbstractAcceptanceTest
         $commandTester->execute([
             'command' => $command->getName(),
             'identifier' => $client->getIdentifier(),
-            sprintf('--add-%s', $argument) => $toAdd,
-            sprintf('--remove-%s', $argument) => $toRemove,
+            \sprintf('--add-%s', $argument) => $toAdd,
+            \sprintf('--remove-%s', $argument) => $toRemove,
         ]);
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('OAuth2 client updated successfully.', $output);
         $this->assertEquals($expected, $client->{$getter}());
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage(sprintf('Cannot specify "%s" in either "--add-%2$s" and "--remove-%2$s".', $toAdd[0], $argument));
+        $this->expectExceptionMessage(\sprintf('Cannot specify "%s" in either "--add-%2$s" and "--remove-%2$s".', $toAdd[0], $argument));
 
         $commandTester->execute([
             'command' => $command->getName(),
             'identifier' => $client->getIdentifier(),
-            sprintf('--add-%s', $argument) => [$toAdd[0]],
-            sprintf('--remove-%s', $argument) => [$toAdd[0]],
+            \sprintf('--add-%s', $argument) => [$toAdd[0]],
+            \sprintf('--remove-%s', $argument) => [$toAdd[0]],
         ]);
     }
 

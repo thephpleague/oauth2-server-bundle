@@ -29,7 +29,7 @@ final class OAuth2TokenTest extends TestCase
         $this->assertSame($accessTokenId, $token->getCredentials());
         $this->assertSame($oauthClientId, $token->getOAuthClientId());
         $this->assertSame($scopes, $token->getScopes());
-        $this->assertSame([sprintf('%s%s', $rolePrefix, strtoupper($scopes[0]))], $token->getRoleNames());
+        $this->assertSame([\sprintf('%s%s', $rolePrefix, strtoupper($scopes[0]))], $token->getRoleNames());
 
         if (!interface_exists(CacheableVoterInterface::class)) {
             $this->assertFalse($unserializedToken->isAuthenticated());

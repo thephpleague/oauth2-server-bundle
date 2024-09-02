@@ -103,7 +103,7 @@ final class ClearExpiredTokensCommand extends Command
     private function clearExpiredAccessTokens(SymfonyStyle $io): void
     {
         $numOfClearedAccessTokens = $this->accessTokenManager->clearExpired();
-        $io->success(sprintf(
+        $io->success(\sprintf(
             'Cleared %d expired access token%s.',
             $numOfClearedAccessTokens,
             1 === $numOfClearedAccessTokens ? '' : 's'
@@ -113,7 +113,7 @@ final class ClearExpiredTokensCommand extends Command
     private function clearExpiredRefreshTokens(SymfonyStyle $io): void
     {
         $numOfClearedRefreshTokens = $this->refreshTokenManager->clearExpired();
-        $io->success(sprintf(
+        $io->success(\sprintf(
             'Cleared %d expired refresh token%s.',
             $numOfClearedRefreshTokens,
             1 === $numOfClearedRefreshTokens ? '' : 's'
@@ -123,7 +123,7 @@ final class ClearExpiredTokensCommand extends Command
     private function clearExpiredAuthCodes(SymfonyStyle $io): void
     {
         $numOfClearedAuthCodes = $this->authorizationCodeManager->clearExpired();
-        $io->success(sprintf(
+        $io->success(\sprintf(
             'Cleared %d expired auth code%s.',
             $numOfClearedAuthCodes,
             1 === $numOfClearedAuthCodes ? '' : 's'

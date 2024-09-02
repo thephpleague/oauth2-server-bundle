@@ -44,6 +44,6 @@ class EncryptionKeyPass implements CompilerPassInterface
             return;
         }
 
-        throw new \RuntimeException(sprintf('The value "%s" is not allowed for path "league_oauth2_server.authorization_server.encryption_key_type". Permissible values: "plain", "defuse"', $encryptionKeyType));
+        throw new \RuntimeException(\sprintf('The value "%s" is not allowed for path "league_oauth2_server.authorization_server.encryption_key_type". Permissible values: "plain", "defuse"', $encryptionKeyType));
     }
 }
