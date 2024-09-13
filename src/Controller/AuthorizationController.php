@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Controller;
 
+use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Converter\UserConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEventFactory;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
@@ -41,6 +42,11 @@ final class AuthorizationController
     private $userConverter;
 
     /**
+     * @var ScopeConverterInterface
+     */
+    private $scopeConverter;
+
+    /**
      * @var ClientManagerInterface
      */
     private $clientManager;
@@ -65,6 +71,7 @@ final class AuthorizationController
         EventDispatcherInterface $eventDispatcher,
         AuthorizationRequestResolveEventFactory $eventFactory,
         UserConverterInterface $userConverter,
+        ScopeConverterInterface $scopeConverter,
         ClientManagerInterface $clientManager,
         HttpMessageFactoryInterface $httpMessageFactory,
         HttpFoundationFactoryInterface $httpFoundationFactory,
@@ -74,6 +81,7 @@ final class AuthorizationController
         $this->eventDispatcher = $eventDispatcher;
         $this->eventFactory = $eventFactory;
         $this->userConverter = $userConverter;
+        $this->scopeConverter = $scopeConverter;
         $this->clientManager = $clientManager;
         $this->httpMessageFactory = $httpMessageFactory;
         $this->httpFoundationFactory = $httpFoundationFactory;
@@ -102,6 +110,7 @@ final class AuthorizationController
             );
 
             $authRequest->setUser($this->userConverter->toLeague($event->getUser()));
+            $authRequest->setScopes($this->scopeConverter->toLeagueArray($event->getScopes()));
 
             if ($response = $event->getResponse()) {
                 return $response;
