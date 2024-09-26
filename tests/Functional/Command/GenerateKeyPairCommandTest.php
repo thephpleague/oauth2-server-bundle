@@ -14,7 +14,7 @@ class GenerateKeyPairCommandTest extends TestCase
     /**
      * @dataProvider providePassphrase
      */
-    public function testItGeneratesKeyPair($algorithm, $passphrase)
+    public function testItGeneratesKeyPair($passphrase)
     {
         $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
         $publicKeyFile = tempnam(sys_get_temp_dir(), 'public_');
@@ -28,8 +28,7 @@ class GenerateKeyPairCommandTest extends TestCase
                 new Filesystem(),
                 $privateKeyFile,
                 $publicKeyFile,
-                $passphrase,
-                $algorithm
+                $passphrase
             )
         );
 
@@ -86,8 +85,7 @@ class GenerateKeyPairCommandTest extends TestCase
                 new Filesystem(),
                 $privateKeyFile,
                 $publicKeyFile,
-                null,
-                'RS256'
+                null
             )
         );
         $input = ['--overwrite' => true, '--skip-if-exists' => true];
@@ -117,8 +115,7 @@ class GenerateKeyPairCommandTest extends TestCase
                 new Filesystem(),
                 $privateKeyFile,
                 $publicKeyFile,
-                null,
-                'RS256'
+                null
             )
         );
 
@@ -148,8 +145,7 @@ class GenerateKeyPairCommandTest extends TestCase
                 new Filesystem(),
                 $privateKeyFile,
                 $publicKeyFile,
-                null,
-                'RS256'
+                null
             )
         );
 
@@ -176,8 +172,7 @@ class GenerateKeyPairCommandTest extends TestCase
                 new Filesystem(),
                 $privateKeyFile,
                 $publicKeyFile,
-                null,
-                'RS256'
+                null
             )
         );
 
@@ -202,8 +197,7 @@ class GenerateKeyPairCommandTest extends TestCase
                 new Filesystem(),
                 $privateKeyFile,
                 $publicKeyFile,
-                null,
-                'RS256'
+                null
             )
         );
 

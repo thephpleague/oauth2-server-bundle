@@ -8,6 +8,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
@@ -43,16 +44,13 @@ final class GenerateKeyPairCommand extends Command
 
     private ?string $passphrase;
 
-    private string $algorithm;
-
-    public function __construct(Filesystem $filesystem, string $secretKey, string $publicKey, ?string $passphrase, string $algorithm)
+    public function __construct(Filesystem $filesystem, string $secretKey, string $publicKey, ?string $passphrase)
     {
         parent::__construct();
         $this->filesystem = $filesystem;
         $this->secretKey = $secretKey;
         $this->publicKey = $publicKey;
         $this->passphrase = $passphrase;
-        $this->algorithm = $algorithm;
     }
 
     protected function configure(): void
@@ -61,19 +59,20 @@ final class GenerateKeyPairCommand extends Command
         $this->addOption('dry-run', null, InputOption::VALUE_NONE, 'Do not update key files.');
         $this->addOption('skip-if-exists', null, InputOption::VALUE_NONE, 'Do not update key files if they already exist.');
         $this->addOption('overwrite', null, InputOption::VALUE_NONE, 'Overwrite key files if they already exist.');
+        $this->addArgument('algorithm', InputArgument::OPTIONAL, sprintf('The algorithm code, possible values : %s', implode(self::ACCEPTED_ALGORITHMS)), 'RS256');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-
-        if (!\in_array($this->algorithm, self::ACCEPTED_ALGORITHMS, true)) {
-            $io->error(\sprintf('Cannot generate key pair with the provided algorithm `%s`.', $this->algorithm));
+        $algorithm = $input->getArgument('algorithm');
+        if (!\in_array($algorithm, self::ACCEPTED_ALGORITHMS, true)) {
+            $io->error(\sprintf('Cannot generate key pair with the provided algorithm `%s`.', $algorithm));
 
             return Command::FAILURE;
         }
 
-        [$secretKey, $publicKey] = $this->generateKeyPair($this->passphrase);
+        [$secretKey, $publicKey] = $this->generateKeyPair($this->passphrase, $algorithm);
 
         if ($input->getOption('dry-run')) {
             $io->success('Your keys have been generated!');
@@ -137,9 +136,9 @@ final class GenerateKeyPairCommand extends Command
     /**
      * @return array{0: string, 1: string}
      */
-    private function generateKeyPair(?string $passphrase): array
+    private function generateKeyPair(?string $passphrase, string $algorithm): array
     {
-        $config = $this->buildOpenSSLConfiguration();
+        $config = $this->buildOpenSSLConfiguration($algorithm);
 
         $resource = openssl_pkey_new($config);
         if (false === $resource) {
@@ -165,7 +164,7 @@ final class GenerateKeyPairCommand extends Command
         return [$privateKey, $publicKeyData['key']];
     }
 
-    private function buildOpenSSLConfiguration(): array
+    private function buildOpenSSLConfiguration(string $algorithm): array
     {
         $digestAlgorithms = [
             'RS256' => 'sha256',
@@ -208,13 +207,13 @@ final class GenerateKeyPairCommand extends Command
         ];
 
         $config = [
-            'digest_alg' => $digestAlgorithms[$this->algorithm],
-            'private_key_type' => $privateKeyTypes[$this->algorithm],
-            'private_key_bits' => $privateKeyBits[$this->algorithm],
+            'digest_alg' => $digestAlgorithms[$algorithm],
+            'private_key_type' => $privateKeyTypes[$algorithm],
+            'private_key_bits' => $privateKeyBits[$algorithm],
         ];
 
-        if (isset($curves[$this->algorithm])) {
-            $config['curve_name'] = $curves[$this->algorithm];
+        if (isset($curves[$algorithm])) {
+            $config['curve_name'] = $curves[$algorithm];
         }
 
         return $config;
