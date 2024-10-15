@@ -137,10 +137,13 @@ security:
         type: php
     ```
 
+## Post-installation
+
 You can verify that everything is working by issuing a `POST` request to the `/token` endpoint.
 
-**❮ NOTE ❯** It is recommended to control the access to the authorization endpoint
-so that only logged in users can approve authorization requests.
+It is required to control access to the authorization endpoint
+so that only logged-in users can approve authorization requests.
+
 You should review your `config/security.yaml` file. Here is a sample configuration:
 
 ```yaml
@@ -148,6 +151,9 @@ security:
     access_control:
         - { path: ^/authorize, roles: IS_AUTHENTICATED_REMEMBERED }
 ```
+
+> [!IMPORTANT]
+> The requirement for a logged-in user to approve authorization requests was introduced in version `0.9.0`. In previous versions, it was only a recommendation.
 
 ## Configuration
 
