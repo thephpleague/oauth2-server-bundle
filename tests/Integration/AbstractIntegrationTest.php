@@ -223,7 +223,7 @@ abstract class AbstractIntegrationTest extends TestCase
         return $serverRequest;
     }
 
-    protected function handleAuthorizationRequest(ServerRequestInterface $serverRequest, $approved = true): ResponseInterface
+    protected function handleAuthorizationRequest(ServerRequestInterface $serverRequest, $approved = true, $isImplicitGrantFlow = false): ResponseInterface
     {
         $response = $this->psrFactory->createResponse();
 
@@ -236,7 +236,7 @@ abstract class AbstractIntegrationTest extends TestCase
 
             $response = $this->authorizationServer->completeAuthorizationRequest($authRequest, $response);
         } catch (OAuthServerException $e) {
-            $response = $e->generateHttpResponse($response);
+            $response = $e->generateHttpResponse($response, $isImplicitGrantFlow);
         }
 
         return $response;
