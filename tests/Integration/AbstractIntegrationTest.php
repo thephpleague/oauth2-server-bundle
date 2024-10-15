@@ -268,7 +268,7 @@ abstract class AbstractIntegrationTest extends TestCase
         AccessTokenRepositoryInterface $accessTokenRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository,
         UserRepositoryInterface $userRepository,
-        AuthCodeRepositoryInterface $authCodeRepository
+        AuthCodeRepositoryInterface $authCodeRepository,
     ): AuthorizationServer {
         $authorizationServer = new AuthorizationServer(
             $clientRepository,

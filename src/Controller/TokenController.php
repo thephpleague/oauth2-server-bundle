@@ -47,7 +47,7 @@ final class TokenController
         HttpMessageFactoryInterface $httpMessageFactory,
         HttpFoundationFactoryInterface $httpFoundationFactory,
         ResponseFactoryInterface $responseFactory,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
     ) {
         $this->server = $server;
         $this->httpMessageFactory = $httpMessageFactory;

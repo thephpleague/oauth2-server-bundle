@@ -70,7 +70,7 @@ final class ExtensionTest extends TestCase
      */
     public function testAuthCodeGrantDisableRequireCodeChallengeForPublicClientsConfig(
         ?bool $requireCodeChallengeForPublicClients,
-        bool $shouldTheRequirementBeDisabled
+        bool $shouldTheRequirementBeDisabled,
     ): void {
         $container = new ContainerBuilder();
 

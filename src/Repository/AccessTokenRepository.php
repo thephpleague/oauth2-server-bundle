@@ -35,7 +35,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
     public function __construct(
         AccessTokenManagerInterface $accessTokenManager,
         ClientManagerInterface $clientManager,
-        ScopeConverterInterface $scopeConverter
+        ScopeConverterInterface $scopeConverter,
     ) {
         $this->accessTokenManager = $accessTokenManager;
         $this->clientManager = $clientManager;

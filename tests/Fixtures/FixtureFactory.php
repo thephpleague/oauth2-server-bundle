@@ -76,7 +76,7 @@ final class FixtureFactory
         ClientManagerInterface $clientManager,
         AccessTokenManagerInterface $accessTokenManager,
         RefreshTokenManagerInterface $refreshTokenManager,
-        AuthorizationCodeManagerInterface $authCodeManager
+        AuthorizationCodeManagerInterface $authCodeManager,
     ): void {
         foreach (self::createScopes() as $scope) {
             $scopeManager->save($scope);
