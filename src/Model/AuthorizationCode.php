@@ -48,7 +48,7 @@ class AuthorizationCode implements AuthorizationCodeInterface
         \DateTimeInterface $expiry,
         ClientInterface $client,
         ?string $userIdentifier,
-        array $scopes
+        array $scopes,
     ) {
         $this->identifier = $identifier;
         $this->expiry = $expiry;

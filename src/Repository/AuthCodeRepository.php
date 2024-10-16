@@ -34,7 +34,7 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
     public function __construct(
         AuthorizationCodeManagerInterface $authorizationCodeManager,
         ClientManagerInterface $clientManager,
-        ScopeConverterInterface $scopeConverter
+        ScopeConverterInterface $scopeConverter,
     ) {
         $this->authorizationCodeManager = $authorizationCodeManager;
         $this->clientManager = $clientManager;

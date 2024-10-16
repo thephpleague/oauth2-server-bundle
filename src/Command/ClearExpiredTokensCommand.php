@@ -35,7 +35,7 @@ final class ClearExpiredTokensCommand extends Command
     public function __construct(
         AccessTokenManagerInterface $accessTokenManager,
         RefreshTokenManagerInterface $refreshTokenManager,
-        AuthorizationCodeManagerInterface $authorizationCodeManager
+        AuthorizationCodeManagerInterface $authorizationCodeManager,
     ) {
         parent::__construct();
 

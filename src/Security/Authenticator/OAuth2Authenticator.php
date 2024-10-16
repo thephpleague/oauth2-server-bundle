@@ -45,7 +45,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         HttpMessageFactoryInterface $httpMessageFactory,
         ResourceServer $resourceServer,
         UserProviderInterface $userProvider,
-        string $rolePrefix
+        string $rolePrefix,
     ) {
         $this->httpMessageFactory = $httpMessageFactory;
         $this->resourceServer = $resourceServer;

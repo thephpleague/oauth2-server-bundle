@@ -39,7 +39,7 @@ final class ClientManager implements ClientManagerInterface
     public function __construct(
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $dispatcher,
-        string $clientFqcn
+        string $clientFqcn,
     ) {
         $this->entityManager = $entityManager;
         $this->dispatcher = $dispatcher;
