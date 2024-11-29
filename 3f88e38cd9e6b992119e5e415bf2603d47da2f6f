@@ -1,0 +1,6 @@
+---------------------------------------------------------------------------
+
+by rvanginneken at 2024-11-26T14:47:58Z
+
+FYI, the command still doesn't, since $algorithm is a required property and not set.
+I would create a PR, but I don't have enough knowledge from the project to find out where this should come from.
