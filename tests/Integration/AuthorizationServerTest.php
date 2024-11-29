@@ -682,8 +682,8 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $response = $this->handleTokenRequest($request);
 
         // Response assertions.
-        $this->assertSame('invalid_request', $response['error']);
-        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['error_description']);
+        $this->assertSame('invalid_grant', $response['error']);
+        $this->assertSame('The provided authorization grant (e.g., authorization code, resource owner credentials) or refresh token is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client.', $response['error_description']);
         $this->assertSame('Authorization code has expired', $response['hint']);
     }
 
