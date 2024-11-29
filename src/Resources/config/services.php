@@ -265,7 +265,7 @@ return static function (ContainerConfigurator $container): void {
                 abstract_arg('Public key'),
                 abstract_arg('Private key passphrase'),
             ])
-            ->tag('consome.command', ['command' => 'league:oauth2-server:generate-keypair'])
+            ->tag('console.command', ['command' => 'league:oauth2-server:generate-keypair'])
         ->alias(GenerateKeyPairCommand::class, 'league.oauth2_server.command.generate_keypair')
 
         // Utility services
