@@ -6,9 +6,9 @@ namespace League\Bundle\OAuth2ServerBundle\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
@@ -59,7 +59,7 @@ final class GenerateKeyPairCommand extends Command
         $this->addOption('dry-run', null, InputOption::VALUE_NONE, 'Do not update key files.');
         $this->addOption('skip-if-exists', null, InputOption::VALUE_NONE, 'Do not update key files if they already exist.');
         $this->addOption('overwrite', null, InputOption::VALUE_NONE, 'Overwrite key files if they already exist.');
-        $this->addArgument('algorithm', InputArgument::OPTIONAL, sprintf('The algorithm code, possible values : %s', implode(self::ACCEPTED_ALGORITHMS)), 'RS256');
+        $this->addArgument('algorithm', InputArgument::OPTIONAL, \sprintf('The algorithm code, possible values : %s', implode('', self::ACCEPTED_ALGORITHMS)), 'RS256');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
