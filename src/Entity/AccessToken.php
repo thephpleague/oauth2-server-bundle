@@ -14,4 +14,9 @@ final class AccessToken implements AccessTokenEntityInterface
     use AccessTokenTrait;
     use EntityTrait;
     use TokenEntityTrait;
+
+    public function getSubjectIdentifier(): string
+    {
+        return $this->userIdentifier ?? '';
+    }
 }

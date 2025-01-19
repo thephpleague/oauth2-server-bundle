@@ -95,4 +95,20 @@ final class ResourceServerTest extends AbstractIntegrationTest
 
         $this->assertNull($request);
     }
+
+    public function testValidClientCredentialsGrant(): void
+    {
+        $tokenResponse = $this->handleTokenRequest(
+            $this->createAuthorizationRequest(null, [
+                'client_id' => 'foo',
+                'client_secret' => 'secret',
+                'grant_type' => 'client_credentials',
+            ])
+        );
+
+        $resourceRequest = $this->handleResourceRequest($this->createResourceRequest($tokenResponse['access_token']));
+        $this->assertSame(FixtureFactory::FIXTURE_CLIENT_FIRST, $resourceRequest->getAttribute('oauth_client_id'));
+        $this->assertSame('', $resourceRequest->getAttribute('oauth_user_id'));
+        $this->assertSame([], $resourceRequest->getAttribute('oauth_scopes'));
+    }
 }
