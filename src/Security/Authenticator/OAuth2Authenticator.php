@@ -87,8 +87,8 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         $oauthClientId = $psr7Request->getAttribute('oauth_client_id', '');
 
         /** @psalm-suppress MixedInferredReturnType */
-        $userLoader = function (string $userIdentifier): UserInterface {
-            if ('' === $userIdentifier) {
+        $userLoader = function (string $userIdentifier) use ($oauthClientId): UserInterface {
+            if ('' === $userIdentifier || $oauthClientId === $userIdentifier) {
                 return new NullUser();
             }
             if (!method_exists($this->userProvider, 'loadUserByIdentifier')) {
