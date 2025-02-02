@@ -116,6 +116,16 @@ final class AuthorizationRequestResolveEvent extends Event
         return $this->scopes;
     }
 
+    /**
+     * @param Scope[] $scopes
+     */
+    public function setScopes(array $scopes): self
+    {
+        $this->scopes = $scopes;
+
+        return $this;
+    }
+
     public function isAuthorizationApproved(): bool
     {
         return $this->authorizationRequest->isAuthorizationApproved();
