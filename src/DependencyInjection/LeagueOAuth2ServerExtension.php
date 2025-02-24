@@ -148,6 +148,12 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             $authorizationServer->replaceArgument(5, new Reference($config['response_type_class']));
         }
 
+        if ($config['revoke_refresh_tokens']) {
+            $authorizationServer->addMethodCall('revokeRefreshTokens', [
+                $config['revoke_refresh_tokens'],
+            ]);
+        }
+
         if ($config['enable_client_credentials_grant']) {
             $authorizationServer->addMethodCall('enableGrantType', [
                 new Reference(ClientCredentialsGrant::class),
