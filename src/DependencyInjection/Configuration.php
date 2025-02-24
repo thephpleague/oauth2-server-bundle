@@ -111,6 +111,10 @@ final class Configuration implements ConfigurationInterface
                     ->info('Define a custom ResponseType')
                     ->defaultValue(null)
                 ->end()
+                ->booleanNode('revoke_refresh_tokens')
+                    ->info('Whether to revoke refresh tokens after they were used for all grant types')
+                    ->defaultTrue()
+                ->end()
             ->end()
         ;
 
