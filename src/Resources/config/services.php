@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\abstract_arg;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
@@ -153,11 +154,20 @@ return static function (ContainerConfigurator $container): void {
             ->configurator(service(GrantConfigurator::class))
         ->alias(AuthorizationServer::class, 'league.oauth2_server.authorization_server')
 
+        // League bearer token validator
+        ->set('league.oauth2_server.bearer_token_validator', BearerTokenValidator::class)
+            ->args([
+                service(AccessTokenRepositoryInterface::class),
+                null
+            ])
+        ->alias(BearerTokenValidator::class, 'league.oauth2_server.authorization_server')
+
         // League resource server
         ->set('league.oauth2_server.resource_server', ResourceServer::class)
             ->args([
                 service(AccessTokenRepositoryInterface::class),
                 null,
+                service(BearerTokenValidator::class)
             ])
         ->alias(ResourceServer::class, 'league.oauth2_server.resource_server')
 

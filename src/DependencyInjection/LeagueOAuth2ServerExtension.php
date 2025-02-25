@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\DependencyInjection;
 
+use DateInterval;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
@@ -27,6 +28,7 @@ use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredenti
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope as ScopeModel;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -331,6 +333,9 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
                 false,
             ]))
         ;
+        $container
+            ->findDefinition(BearerTokenValidator::class)
+            ->replaceArgument(1, new Definition(DateInterval::class, $config['jwt_leeway']));
     }
 
     private function configureScopes(ContainerBuilder $container, array $scopes): void
