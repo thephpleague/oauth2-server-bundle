@@ -333,9 +333,11 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
                 false,
             ]))
         ;
-        $container
-            ->findDefinition(BearerTokenValidator::class)
-            ->replaceArgument(1, new Definition(DateInterval::class, [$config['jwt_leeway']]));
+        if ($config['jwt_leeway'] !== null) {
+            $container
+                ->findDefinition(BearerTokenValidator::class)
+                ->replaceArgument(1, new Definition(DateInterval::class, [$config['jwt_leeway']]));
+        }
     }
 
     private function configureScopes(ContainerBuilder $container, array $scopes): void
