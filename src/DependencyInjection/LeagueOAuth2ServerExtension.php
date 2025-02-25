@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\DependencyInjection;
 
-use DateInterval;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
@@ -336,7 +335,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         if ($config['jwt_leeway'] !== null) {
             $container
                 ->findDefinition(BearerTokenValidator::class)
-                ->replaceArgument(1, new Definition(DateInterval::class, [$config['jwt_leeway']]));
+                ->replaceArgument(1, new Definition(\DateInterval::class, [$config['jwt_leeway']]));
         }
     }
 

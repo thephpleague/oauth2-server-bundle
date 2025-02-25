@@ -158,7 +158,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('league.oauth2_server.bearer_token_validator', BearerTokenValidator::class)
             ->args([
                 service(AccessTokenRepositoryInterface::class),
-                null
+                null,
             ])
         ->alias(BearerTokenValidator::class, 'league.oauth2_server.bearer_token_validator')
 
@@ -167,7 +167,7 @@ return static function (ContainerConfigurator $container): void {
             ->args([
                 service(AccessTokenRepositoryInterface::class),
                 null,
-                service(BearerTokenValidator::class)
+                service(BearerTokenValidator::class),
             ])
         ->alias(ResourceServer::class, 'league.oauth2_server.resource_server')
 
