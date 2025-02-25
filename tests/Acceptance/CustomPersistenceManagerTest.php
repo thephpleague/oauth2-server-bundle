@@ -159,6 +159,7 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTest
         return new TestKernel(
             'test',
             false,
+            null,
             [
                 'custom' => [
                     'access_token_manager' => 'test.access_token_manager',

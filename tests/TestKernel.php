@@ -28,8 +28,12 @@ use Symfony\Component\HttpKernel\Kernel;
 
 final class TestKernel extends Kernel implements CompilerPassInterface
 {
-    public function __construct(string $environment, bool $debug, private array $persistenceConfig = ['doctrine' => ['entity_manager' => 'default']])
-    {
+    public function __construct(
+        string $environment,
+        bool $debug,
+        private ?array $resourceServiceConfig = null,
+        private ?array $persistenceConfig = null,
+    ) {
         parent::__construct($environment, $debug);
     }
 
@@ -52,7 +56,14 @@ final class TestKernel extends Kernel implements CompilerPassInterface
 
     public function getCacheDir(): string
     {
-        return \sprintf('%s/tests/.kernel/cache', $this->getProjectDir());
+        $cacheDirectory = 'cache';
+
+        // create unique cache directory when custom config is provided
+        if (null !== $this->resourceServiceConfig || null !== $this->persistenceConfig) {
+            $cacheDirectory = '/cache/' . hash('sha256', serialize(($this->resourceServiceConfig ?? []) + ($this->persistenceConfig ?? [])));
+        }
+
+        return \sprintf('%s/tests/.kernel/' . $cacheDirectory, $this->getProjectDir());
     }
 
     public function getLogDir(): string
@@ -163,9 +174,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                     'private_key' => '%env(PRIVATE_KEY_PATH)%',
                     'encryption_key' => '%env(ENCRYPTION_KEY)%',
                 ],
-                'resource_server' => [
-                    'public_key' => '%env(PUBLIC_KEY_PATH)%',
-                ],
+                'resource_server' => $this->resourceServiceConfig ?? ['public_key' => '%env(PUBLIC_KEY_PATH)%'],
                 'scopes' => [
                     'available' => [
                         FixtureFactory::FIXTURE_SCOPE_FIRST,
@@ -175,7 +184,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                         FixtureFactory::FIXTURE_SCOPE_SECOND,
                     ],
                 ],
-                'persistence' => $this->persistenceConfig,
+                'persistence' => $this->persistenceConfig ?? ['doctrine' => ['entity_manager' => 'default']],
             ]);
 
             $this->configureControllers($container);
