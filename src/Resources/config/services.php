@@ -160,7 +160,7 @@ return static function (ContainerConfigurator $container): void {
                 service(AccessTokenRepositoryInterface::class),
                 null
             ])
-        ->alias(BearerTokenValidator::class, 'league.oauth2_server.authorization_server')
+        ->alias(BearerTokenValidator::class, 'league.oauth2_server.bearer_token_validator')
 
         // League resource server
         ->set('league.oauth2_server.resource_server', ResourceServer::class)
