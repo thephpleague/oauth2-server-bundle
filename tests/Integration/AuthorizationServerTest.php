@@ -700,8 +700,8 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $response = $this->handleTokenRequest($request);
 
         // Response assertions.
-        $this->assertSame('invalid_client', $response['error']);
-        $this->assertSame('Client authentication failed', $response['error_description']);
+        $this->assertSame('invalid_request', $response['error']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['error_description']);
     }
 
     public function testSuccessfulImplicitRequest(): void
