@@ -68,7 +68,7 @@ final class AuthorizationController
         ClientManagerInterface $clientManager,
         HttpMessageFactoryInterface $httpMessageFactory,
         HttpFoundationFactoryInterface $httpFoundationFactory,
-        ResponseFactoryInterface $responseFactory
+        ResponseFactoryInterface $responseFactory,
     ) {
         $this->server = $server;
         $this->eventDispatcher = $eventDispatcher;

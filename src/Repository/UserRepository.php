@@ -35,7 +35,7 @@ final class UserRepository implements UserRepositoryInterface
     public function __construct(
         ClientManagerInterface $clientManager,
         EventDispatcherInterface $eventDispatcher,
-        UserConverterInterface $userConverter
+        UserConverterInterface $userConverter,
     ) {
         $this->clientManager = $clientManager;
         $this->eventDispatcher = $eventDispatcher;
@@ -46,7 +46,7 @@ final class UserRepository implements UserRepositoryInterface
         string $username,
         string $password,
         string $grantType,
-        ClientEntityInterface $clientEntity
+        ClientEntityInterface $clientEntity,
     ): ?UserEntityInterface {
         /** @var AbstractClient $client */
         $client = $this->clientManager->find($clientEntity->getIdentifier());

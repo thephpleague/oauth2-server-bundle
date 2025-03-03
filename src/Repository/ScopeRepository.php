@@ -44,7 +44,7 @@ final class ScopeRepository implements ScopeRepositoryInterface
         ScopeManagerInterface $scopeManager,
         ClientManagerInterface $clientManager,
         ScopeConverterInterface $scopeConverter,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
     ) {
         $this->scopeManager = $scopeManager;
         $this->clientManager = $clientManager;
@@ -73,7 +73,7 @@ final class ScopeRepository implements ScopeRepositoryInterface
         string $grantType,
         ClientEntityInterface $clientEntity,
         string|int|null $userIdentifier = null,
-        ?string $authCodeId = null
+        ?string $authCodeId = null,
     ): array {
         /** @var AbstractClient $client */
         $client = $this->clientManager->find($clientEntity->getIdentifier());

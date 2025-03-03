@@ -682,8 +682,8 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $response = $this->handleTokenRequest($request);
 
         // Response assertions.
-        $this->assertSame('invalid_request', $response['error']);
-        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $response['error_description']);
+        $this->assertSame('invalid_grant', $response['error']);
+        $this->assertSame('The provided authorization grant (e.g., authorization code, resource owner credentials) or refresh token is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client.', $response['error_description']);
         $this->assertSame('Authorization code has expired', $response['hint']);
     }
 
@@ -711,7 +711,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
             'client_id' => 'foo',
         ]);
 
-        $response = $this->handleAuthorizationRequest($request);
+        $response = $this->handleAuthorizationRequest($request, true, true);
         $this->assertSame(302, $response->getStatusCode());
         $responseData = [];
         parse_str(parse_url($response->getHeaderLine('Location'), \PHP_URL_FRAGMENT), $responseData);
@@ -733,7 +733,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
             'state' => 'quzbaz',
         ]);
 
-        $response = $this->handleAuthorizationRequest($request);
+        $response = $this->handleAuthorizationRequest($request, true, true);
 
         $this->assertSame(302, $response->getStatusCode());
         $responseData = [];
@@ -757,7 +757,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
             'redirect_uri' => 'https://example.org/oauth2/redirect-uri',
         ]);
 
-        $response = $this->handleAuthorizationRequest($request);
+        $response = $this->handleAuthorizationRequest($request, true, true);
         $this->assertSame(302, $response->getStatusCode());
         $responseData = [];
         parse_str(parse_url($response->getHeaderLine('Location'), \PHP_URL_FRAGMENT), $responseData);
@@ -779,10 +779,10 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
             'scope' => 'non_existing',
         ]);
 
-        $response = $this->handleAuthorizationRequest($request);
+        $response = $this->handleAuthorizationRequest($request, true, true);
         $this->assertSame(302, $response->getStatusCode());
         $responseData = [];
-        parse_str(parse_url($response->getHeaderLine('Location'), \PHP_URL_QUERY), $responseData);
+        parse_str(parse_url($response->getHeaderLine('Location'), \PHP_URL_FRAGMENT), $responseData);
 
         // Response assertions.
         $this->assertSame('invalid_scope', $responseData['error']);
@@ -798,7 +798,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
             'redirect_uri' => 'https://example.org/oauth2/other-uri',
         ]);
 
-        $response = $this->handleAuthorizationRequest($request);
+        $response = $this->handleAuthorizationRequest($request, true, true);
         $this->assertSame(401, $response->getStatusCode());
         $responseData = json_decode((string) $response->getBody(), true);
 
@@ -814,10 +814,10 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
             'client_id' => 'foo',
         ]);
 
-        $response = $this->handleAuthorizationRequest($request, false);
+        $response = $this->handleAuthorizationRequest($request, false, true);
         $this->assertSame(302, $response->getStatusCode());
         $responseData = [];
-        parse_str(parse_url($response->getHeaderLine('Location'), \PHP_URL_QUERY), $responseData);
+        parse_str(parse_url($response->getHeaderLine('Location'), \PHP_URL_FRAGMENT), $responseData);
 
         // Response assertions.
         $this->assertSame('access_denied', $responseData['error']);
@@ -832,7 +832,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
             'client_id' => 'yolo',
         ]);
 
-        $response = $this->handleAuthorizationRequest($request, false);
+        $response = $this->handleAuthorizationRequest($request, false, true);
         $this->assertSame(401, $response->getStatusCode());
         $responseData = json_decode((string) $response->getBody(), true);
 
@@ -848,7 +848,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
             'client_id' => 'baz_inactive',
         ]);
 
-        $response = $this->handleAuthorizationRequest($request, false);
+        $response = $this->handleAuthorizationRequest($request, false, true);
         $this->assertSame(401, $response->getStatusCode());
         $responseData = json_decode((string) $response->getBody(), true);
 
@@ -864,7 +864,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
             'client_id' => 'qux_restricted',
         ]);
 
-        $response = $this->handleAuthorizationRequest($request, false);
+        $response = $this->handleAuthorizationRequest($request, false, true);
         $this->assertSame(401, $response->getStatusCode());
         $responseData = json_decode((string) $response->getBody(), true);
 

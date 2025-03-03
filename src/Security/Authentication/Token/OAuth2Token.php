@@ -20,7 +20,7 @@ class OAuth2Token extends AbstractToken
         string $accessTokenId,
         string $oauthClientId,
         array $scopes,
-        string $rolePrefix
+        string $rolePrefix,
     ) {
         $this->setAttribute('access_token_id', $accessTokenId);
         $this->setAttribute('oauth_client_id', $oauthClientId);

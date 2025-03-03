@@ -26,7 +26,7 @@ final class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 
     public function __construct(
         RefreshTokenManagerInterface $refreshTokenManager,
-        AccessTokenManagerInterface $accessTokenManager
+        AccessTokenManagerInterface $accessTokenManager,
     ) {
         $this->refreshTokenManager = $refreshTokenManager;
         $this->accessTokenManager = $accessTokenManager;

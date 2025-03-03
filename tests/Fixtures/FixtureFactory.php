@@ -16,6 +16,7 @@ use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 
 /**
  * Development hints:
@@ -76,7 +77,7 @@ final class FixtureFactory
         ClientManagerInterface $clientManager,
         AccessTokenManagerInterface $accessTokenManager,
         RefreshTokenManagerInterface $refreshTokenManager,
-        AuthorizationCodeManagerInterface $authCodeManager
+        AuthorizationCodeManagerInterface $authCodeManager,
     ): void {
         foreach (self::createScopes() as $scope) {
             $scopeManager->save($scope);
@@ -143,7 +144,7 @@ final class FixtureFactory
             self::FIXTURE_ACCESS_TOKEN_PUBLIC,
             new \DateTimeImmutable('+1 hour'),
             $clientManager->find(self::FIXTURE_CLIENT_FIRST),
-            null,
+            interface_exists(AuthorizationRequestInterface::class) ? self::FIXTURE_CLIENT_FIRST : null,
             []
         );
 
@@ -151,7 +152,7 @@ final class FixtureFactory
             self::FIXTURE_ACCESS_TOKEN_WITH_SCOPES,
             new \DateTimeImmutable('+1 hour'),
             $clientManager->find(self::FIXTURE_CLIENT_FIRST),
-            null,
+            interface_exists(AuthorizationRequestInterface::class) ? self::FIXTURE_CLIENT_FIRST : null,
             [$scopeManager->find(self::FIXTURE_SCOPE_FIRST)]
         ));
 
