@@ -126,7 +126,7 @@ final class AuthorizationController
             //
             // so if redirectUri is not already set, we try to set request redirect_uri params, fallback to first redirectUri of client
             /** @psalm-suppress RiskyTruthyFalsyComparison !empty($e->getHint()),empty($e->getRedirectUri()) we really want to check null and empty */
-            if (!empty($client)
+            if (isset($client) && $client !== null
                 && ('invalid_client' === $e->getErrorType()
                     || ('invalid_request' === $e->getErrorType() && !empty($e->getHint())
                         && !\in_array(sscanf($e->getHint() ?? '', 'Check the `%s` parameter')[0] ?? null, ['client_id', 'client_secret', 'redirect_uri'])))
