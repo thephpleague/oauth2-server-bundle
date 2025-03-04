@@ -127,15 +127,15 @@ final class AuthorizationController
             // so if redirectUri is not already set, we try to set request redirect_uri params, fallback to first redirectUri of client
             if (isset($client) && null !== $client
                 && ('invalid_client' === $e->getErrorType()
-                    || ('invalid_request' === $e->getErrorType() && null !== $e->getHint() && 0 < \strlen($e->getHint())
+                    || ('invalid_request' === $e->getErrorType() && null !== $e->getHint() && '' !== $e->getHint()
                         && !\in_array(sscanf($e->getHint() ?? '', 'Check the `%s` parameter')[0] ?? null, ['client_id', 'client_secret', 'redirect_uri'])))
-                && (null === $e->getRedirectUri() || 0 === \strlen($e->getRedirectUri()))) {
+                && (null === $e->getRedirectUri() || '' === $e->getRedirectUri())) {
                 /** @var \League\Bundle\OAuth2ServerBundle\Model\ClientInterface $client */
-                $redirectUri = $request->query->get('redirect_uri',     // query string has priority
-                    (string) $request->request->get('redirect_uri',     // then we check body to support POST request
-                    $client->getRedirectUris()[0]?->__toString() ?? '') // then first client redirect uri
+                $redirectUri = $request->query->get('redirect_uri',         // query string has priority
+                    (string) $request->request->get('redirect_uri',         // then we check body to support POST request
+                        $client->getRedirectUris()[0]?->__toString() ?? '') // then first client redirect uri
                 );
-                if (0 < \strlen($redirectUri)) {
+                if ('' !== $redirectUri) {
                     $e = new OAuthServerException(
                         $e->getMessage(),
                         $e->getCode(),
