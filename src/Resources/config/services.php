@@ -38,6 +38,7 @@ use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Security\EventListener\CheckScopeListener;
 use League\Bundle\OAuth2ServerBundle\Service\SymfonyLeagueEventListenerProvider;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\EventEmitting\EventEmitter;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -153,11 +154,20 @@ return static function (ContainerConfigurator $container): void {
             ->configurator(service(GrantConfigurator::class))
         ->alias(AuthorizationServer::class, 'league.oauth2_server.authorization_server')
 
+        // League bearer token validator
+        ->set('league.oauth2_server.bearer_token_validator', BearerTokenValidator::class)
+            ->args([
+                service(AccessTokenRepositoryInterface::class),
+                null,
+            ])
+        ->alias(BearerTokenValidator::class, 'league.oauth2_server.bearer_token_validator')
+
         // League resource server
         ->set('league.oauth2_server.resource_server', ResourceServer::class)
             ->args([
                 service(AccessTokenRepositoryInterface::class),
                 null,
+                service(BearerTokenValidator::class),
             ])
         ->alias(ResourceServer::class, 'league.oauth2_server.resource_server')
 

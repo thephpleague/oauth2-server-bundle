@@ -27,6 +27,7 @@ use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredenti
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope as ScopeModel;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -331,6 +332,11 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
                 false,
             ]))
         ;
+        if (null !== $config['jwt_leeway']) {
+            $container
+                ->findDefinition(BearerTokenValidator::class)
+                ->replaceArgument(1, new Definition(\DateInterval::class, [$config['jwt_leeway']]));
+        }
     }
 
     private function configureScopes(ContainerBuilder $container, array $scopes): void
