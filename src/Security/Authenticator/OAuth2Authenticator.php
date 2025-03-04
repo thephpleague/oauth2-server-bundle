@@ -8,7 +8,7 @@ use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\OAuth2AuthenticationException;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\OAuth2AuthenticationFailedException;
 use League\Bundle\OAuth2ServerBundle\Security\Passport\Badge\ScopeBadge;
-use League\Bundle\OAuth2ServerBundle\Security\User\NullUser;
+use League\Bundle\OAuth2ServerBundle\Security\User\ClientCredentialsUser;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
@@ -89,7 +89,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         /** @psalm-suppress MixedInferredReturnType */
         $userLoader = function (string $userIdentifier) use ($oauthClientId): UserInterface {
             if ('' === $userIdentifier || $oauthClientId === $userIdentifier) {
-                return new NullUser();
+                return new ClientCredentialsUser($oauthClientId);
             }
             if (!method_exists($this->userProvider, 'loadUserByIdentifier')) {
                 /**
