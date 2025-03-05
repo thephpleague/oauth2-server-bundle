@@ -19,7 +19,6 @@ use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeRefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -147,14 +146,10 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                 'access_control' => [
                     [
                         'path' => '^/authorize',
-                        'roles' => class_exists(Security::class) ? 'IS_AUTHENTICATED' : 'IS_AUTHENTICATED_REMEMBERED',
+                        'roles' => 'IS_AUTHENTICATED',
                     ],
                 ],
             ];
-
-            if (!class_exists(Security::class)) {
-                $security['enable_authenticator_manager'] = true;
-            }
 
             $container->loadFromExtension('security', $security);
 

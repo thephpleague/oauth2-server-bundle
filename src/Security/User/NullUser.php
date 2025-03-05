@@ -13,33 +13,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 final class NullUser implements UserInterface
 {
-    /**
-     * @psalm-mutation-free
-     */
-    public function getUsername(): string
-    {
-        return '';
-    }
-
     public function getUserIdentifier(): string
     {
         return '';
-    }
-
-    /**
-     * @psalm-mutation-free
-     */
-    public function getPassword(): ?string
-    {
-        return null;
-    }
-
-    /**
-     * @psalm-mutation-free
-     */
-    public function getSalt(): ?string
-    {
-        return null;
     }
 
     /**
