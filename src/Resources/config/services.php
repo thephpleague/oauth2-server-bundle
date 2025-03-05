@@ -58,7 +58,6 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security as LegacySecurity;
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
@@ -281,7 +280,7 @@ return static function (ContainerConfigurator $container): void {
             ->args([
                 service(ScopeConverterInterface::class),
                 service(ClientManagerInterface::class),
-                service(class_exists(Security::class) ? Security::class : LegacySecurity::class),
+                service(Security::class),
             ])
         ->alias(AuthorizationRequestResolveEventFactory::class, 'league.oauth2_server.factory.authorization_request_resolve_event')
 
