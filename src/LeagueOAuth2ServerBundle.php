@@ -41,17 +41,7 @@ final class LeagueOAuth2ServerBundle extends Bundle
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');
 
-        if (method_exists($extension, 'addAuthenticatorFactory')) {
-            $extension->addAuthenticatorFactory(new OAuth2Factory());
-
-            return;
-        }
-
-        /**
-         * @psalm-suppress DeprecatedMethod
-         * @psalm-suppress InvalidArgument
-         */
-        $extension->addSecurityListenerFactory(new OAuth2Factory());
+        $extension->addAuthenticatorFactory(new OAuth2Factory());
     }
 
     private function configureDoctrineExtension(ContainerBuilder $container): void

@@ -32,7 +32,6 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
     }
 
     /**
-     * @psalm-suppress DeprecatedMethod
      * @psalm-suppress UndefinedInterfaceMethod
      */
     public function revokeCredentialsForUser(UserInterface $user): void
@@ -40,7 +39,7 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
         /**
          * @psalm-suppress MixedAssignment
          */
-        $userIdentifier = method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : $user->getUsername();
+        $userIdentifier = $user->getUserIdentifier();
 
         $this->entityManager->createQueryBuilder()
             ->update(AccessToken::class, 'at')

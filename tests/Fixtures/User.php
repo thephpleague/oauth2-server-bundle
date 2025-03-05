@@ -23,11 +23,6 @@ class User extends \ArrayObject implements UserInterface
         return null;
     }
 
-    public function getUsername(): string
-    {
-        return $this->getUserIdentifier();
-    }
-
     public function getUserIdentifier(): string
     {
         return FixtureFactory::FIXTURE_USER;

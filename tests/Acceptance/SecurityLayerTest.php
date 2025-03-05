@@ -41,7 +41,7 @@ final class SecurityLayerTest extends AbstractAcceptanceTest
         $response = $this->client->getResponse();
 
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('Hello, guest', $response->getContent());
+        $this->assertSame('Hello, foo', $response->getContent());
     }
 
     public function testAuthenticatedGuestScopedRequest(): void

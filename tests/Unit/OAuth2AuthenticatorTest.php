@@ -139,13 +139,9 @@ final class OAuth2AuthenticatorTest extends TestCase
             $this->markTestSkipped('Irrelevant on Symfony 6+');
         }
 
-        if (!class_exists(UserBadge::class)) {
-            $userBadge = new ClientCredentialsUser('oauthClientId');
-        } else {
-            $userBadge = new UserBadge('oauthClientId', static function (): UserInterface {
-                return new ClientCredentialsUser('oauthClientId');
-            });
-        }
+        $userBadge = new UserBadge('oauthClientId', static function (): UserInterface {
+            return new ClientCredentialsUser('oauthClientId');
+        });
 
         $passport = new SelfValidatingPassport($userBadge, [
             new ScopeBadge(['scope_one', 'scope_two']),
@@ -171,10 +167,6 @@ final class OAuth2AuthenticatorTest extends TestCase
 
     public function testCreateToken(): void
     {
-        if (interface_exists(PassportInterface::class)) {
-            $this->markTestSkipped('Irrelevant on Symfony <5.4');
-        }
-
         $userBadge = new UserBadge('userIdentifier', static function (): UserInterface {
             return new ClientCredentialsUser('client_one');
         });

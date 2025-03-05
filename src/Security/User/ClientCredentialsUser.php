@@ -23,33 +23,9 @@ final class ClientCredentialsUser implements UserInterface
         $this->clientId = $clientId;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
-    public function getUsername(): string
-    {
-        return $this->getUserIdentifier();
-    }
-
     public function getUserIdentifier(): string
     {
         return $this->clientId;
-    }
-
-    /**
-     * @psalm-mutation-free
-     */
-    public function getPassword(): ?string
-    {
-        return null;
-    }
-
-    /**
-     * @psalm-mutation-free
-     */
-    public function getSalt(): ?string
-    {
-        return null;
     }
 
     /**

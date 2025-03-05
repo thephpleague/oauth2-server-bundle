@@ -12,16 +12,13 @@ final class UserConverter implements UserConverterInterface
 {
     /**
      * @psalm-suppress ArgumentTypeCoercion
-     * @psalm-suppress DeprecatedMethod
      * @psalm-suppress UndefinedInterfaceMethod
      */
     public function toLeague(UserInterface $user): UserEntityInterface
     {
         $userEntity = new User();
 
-        $identifier = method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : $user->getUsername();
-
-        $userEntity->setIdentifier($identifier);
+        $userEntity->setIdentifier($user->getUserIdentifier());
 
         return $userEntity;
     }

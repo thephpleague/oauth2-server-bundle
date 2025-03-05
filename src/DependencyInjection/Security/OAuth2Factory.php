@@ -4,38 +4,53 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\DependencyInjection\Security;
 
+use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AuthenticatorFactoryInterface;
-use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\SecurityFactoryInterface;
-use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
+use Symfony\Component\DependencyInjection\ChildDefinition;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
-if (interface_exists(SecurityFactoryInterface::class) && !interface_exists(AuthenticatorFactoryInterface::class)) {
-    /**
-     * Wires the "oauth" authenticator from user configuration.
-     *
-     * @author Mathias Arlaud <mathias.arlaud@gmail.com>
-     */
-    class OAuth2Factory implements SecurityFactoryInterface
+/**
+ * Wires the "oauth" authenticator from user configuration.
+ *
+ * @author Mathias Arlaud <mathias.arlaud@gmail.com>
+ */
+class OAuth2Factory implements AuthenticatorFactoryInterface
+{
+    public function create(ContainerBuilder $container, $id, $config, $userProvider, $defaultEntryPoint): array
     {
-        use OAuth2FactoryTrait;
+        throw new \LogicException('OAuth2 is not supported when "security.enable_authenticator_manager" is not set to true.');
     }
-} elseif (!method_exists(SecurityExtension::class, 'addAuthenticatorFactory')) {
-    /**
-     * Wires the "oauth" authenticator from user configuration.
-     *
-     * @author Mathias Arlaud <mathias.arlaud@gmail.com>
-     */
-    class OAuth2Factory implements AuthenticatorFactoryInterface, SecurityFactoryInterface
+
+    public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string
     {
-        use OAuth2FactoryTrait;
+        $authenticator = \sprintf('security.authenticator.oauth2.%s', $firewallName);
+
+        $definition = new ChildDefinition(OAuth2Authenticator::class);
+        $definition->replaceArgument(2, new Reference($userProviderId));
+
+        $container->setDefinition($authenticator, $definition);
+
+        return $authenticator;
     }
-} else {
-    /**
-     * Wires the "oauth" authenticator from user configuration.
-     *
-     * @author Mathias Arlaud <mathias.arlaud@gmail.com>
-     */
-    class OAuth2Factory implements AuthenticatorFactoryInterface
+
+    public function getPosition(): string
     {
-        use OAuth2FactoryTrait;
+        return 'pre_auth';
+    }
+
+    public function getPriority(): int
+    {
+        return -10;
+    }
+
+    public function getKey(): string
+    {
+        return 'oauth2';
+    }
+
+    public function addConfiguration(NodeDefinition $builder): void
+    {
     }
 }
