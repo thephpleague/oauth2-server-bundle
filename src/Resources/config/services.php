@@ -199,6 +199,7 @@ return static function (ContainerConfigurator $container): void {
                 service(EventDispatcherInterface::class),
                 service(AuthorizationRequestResolveEventFactory::class),
                 service(UserConverterInterface::class),
+                service(ScopeConverterInterface::class),
                 service(ClientManagerInterface::class),
                 service('league.oauth2_server.factory.psr_http'),
                 service('league.oauth2_server.factory.http_foundation'),
