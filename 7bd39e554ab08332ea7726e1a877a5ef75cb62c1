@@ -1,0 +1,25 @@
+---------------------------------------------------------------------------
+
+by chalasr at 2025-03-04T13:47:31Z
+
+I was about to remove Symfony 5.4 support ^^ what do you think?
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2025-03-04T14:06:45Z
+
+I'm unsure if Symfony 5.4 support should be dropped before or after tagging v1.0, but we should remove the related BC layer too.
+
+Anyway, this PR is not related to the Symfony version, but to the league/server-bundle version.
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2025-03-05T09:40:16Z
+
+See #218
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2025-03-13T10:47:53Z
+
+@chalasr I see you have approved all my PRs except this one, but this is needed to fix the `--prefer-lowest` unit test job.
