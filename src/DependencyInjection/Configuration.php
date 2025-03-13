@@ -131,6 +131,11 @@ final class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
+                ->scalarNode('jwt_leeway')
+                    ->info('The leeway in seconds to allow for clock skew in JWT verification. Default PT0S (no leeway).')
+                    ->example('PT60S')
+                    ->defaultValue(null)
+                ->end()
             ->end()
         ;
 

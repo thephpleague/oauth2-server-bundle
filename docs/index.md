@@ -81,6 +81,9 @@ For implementation into Symfony projects, please see [bundle documentation](basi
             # How to generate a public key: https://oauth2.thephpleague.com/installation/#generating-public-and-private-keys
             public_key:           ~ # Required, Example: /var/oauth/public.key
 
+            # The leeway in seconds to allow for clock skew in JWT verification. Default PT0S (no leeway).
+            jwt_leeway: null
+
         scopes:
             # Scopes that you wish to utilize in your application.
             # This should be a simple array of strings.
