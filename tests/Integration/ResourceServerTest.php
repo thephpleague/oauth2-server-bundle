@@ -6,7 +6,6 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Integration;
 
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
-use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 
 final class ResourceServerTest extends AbstractIntegrationTest
 {
@@ -35,7 +34,7 @@ final class ResourceServerTest extends AbstractIntegrationTest
 
         $this->assertSame(FixtureFactory::FIXTURE_ACCESS_TOKEN_PUBLIC, $request->getAttribute('oauth_access_token_id'));
         $this->assertSame(FixtureFactory::FIXTURE_CLIENT_FIRST, $request->getAttribute('oauth_client_id'));
-        $this->assertSame(interface_exists(AuthorizationRequestInterface::class) ? FixtureFactory::FIXTURE_CLIENT_FIRST : '', $request->getAttribute('oauth_user_id'));
+        $this->assertSame(FixtureFactory::FIXTURE_CLIENT_FIRST, $request->getAttribute('oauth_user_id'));
         $this->assertSame([], $request->getAttribute('oauth_scopes'));
     }
 
@@ -51,7 +50,7 @@ final class ResourceServerTest extends AbstractIntegrationTest
 
         $this->assertSame(FixtureFactory::FIXTURE_ACCESS_TOKEN_WITH_SCOPES, $request->getAttribute('oauth_access_token_id'));
         $this->assertSame(FixtureFactory::FIXTURE_CLIENT_FIRST, $request->getAttribute('oauth_client_id'));
-        $this->assertSame(interface_exists(AuthorizationRequestInterface::class) ? FixtureFactory::FIXTURE_CLIENT_FIRST : '', $request->getAttribute('oauth_user_id'));
+        $this->assertSame(FixtureFactory::FIXTURE_CLIENT_FIRST, $request->getAttribute('oauth_user_id'));
         $this->assertSame([FixtureFactory::FIXTURE_SCOPE_FIRST], $request->getAttribute('oauth_scopes'));
     }
 
