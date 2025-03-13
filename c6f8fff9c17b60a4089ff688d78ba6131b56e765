@@ -1,0 +1,11 @@
+---------------------------------------------------------------------------
+
+by chalasr at 2025-03-13T14:40:23Z
+
+Unless I'm mistaken we can also get rid of https://github.com/thephpleague/oauth2-server-bundle/blob/master/src/Security/Authenticator/ForwardCompatAuthenticatorTrait.php, renaming `doAuthenticate()` to `authenticate()` + uncommenting the return type in https://github.com/thephpleague/oauth2-server-bundle/blob/master/src/Security/Authenticator/OAuth2Authenticator.php
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2025-03-13T15:32:16Z
+
+You aren't mistaken! PR ready.
