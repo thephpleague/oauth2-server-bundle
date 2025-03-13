@@ -7,7 +7,7 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\OAuth2AuthenticationFailedException;
 use League\Bundle\OAuth2ServerBundle\Security\Passport\Badge\ScopeBadge;
-use League\Bundle\OAuth2ServerBundle\Security\User\NullUser;
+use League\Bundle\OAuth2ServerBundle\Security\User\ClientCredentialsUser;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Nyholm\Psr7\ServerRequest;
@@ -93,7 +93,7 @@ final class OAuth2AuthenticatorTest extends TestCase
         $passport->getUser();
     }
 
-    public function testAuthenticateCreatePassportWithNullUser(): void
+    public function testAuthenticateCreatePassportWithClientCredentialsUser(): void
     {
         $serverRequest = (new ServerRequest('GET', '/foo'))
             ->withAttribute('oauth_access_token_id', 'accessTokenId')
@@ -127,7 +127,7 @@ final class OAuth2AuthenticatorTest extends TestCase
         /** @var Passport $passport */
         $passport = $authenticator->authenticate(new Request());
 
-        $this->assertInstanceOf(NullUser::class, $passport->getUser());
+        $this->assertInstanceOf(ClientCredentialsUser::class, $passport->getUser());
     }
 
     /**
@@ -140,10 +140,10 @@ final class OAuth2AuthenticatorTest extends TestCase
         }
 
         if (!class_exists(UserBadge::class)) {
-            $userBadge = new NullUser();
+            $userBadge = new ClientCredentialsUser('oauthClientId');
         } else {
-            $userBadge = new UserBadge('userIdentifier', static function (): UserInterface {
-                return new NullUser();
+            $userBadge = new UserBadge('oauthClientId', static function (): UserInterface {
+                return new ClientCredentialsUser('oauthClientId');
             });
         }
 
@@ -164,7 +164,8 @@ final class OAuth2AuthenticatorTest extends TestCase
 
         $this->assertSame(['scope_one', 'scope_two'], $token->getScopes());
         $this->assertSame('accessTokenId', $token->getCredentials());
-        $this->assertInstanceOf(NullUser::class, $token->getUser());
+        $this->assertInstanceOf(ClientCredentialsUser::class, $token->getUser());
+        $this->assertSame('oauthClientId', $token->getUser()->getUserIdentifier());
         $this->assertTrue($token->isAuthenticated());
     }
 
@@ -175,7 +176,7 @@ final class OAuth2AuthenticatorTest extends TestCase
         }
 
         $userBadge = new UserBadge('userIdentifier', static function (): UserInterface {
-            return new NullUser();
+            return new ClientCredentialsUser('client_one');
         });
 
         $passport = new SelfValidatingPassport($userBadge, [
@@ -194,7 +195,8 @@ final class OAuth2AuthenticatorTest extends TestCase
 
         $this->assertSame(['scope_one', 'scope_two'], $token->getScopes());
         $this->assertSame('accessTokenId', $token->getCredentials());
-        $this->assertInstanceOf(NullUser::class, $token->getUser());
+        $this->assertInstanceOf(ClientCredentialsUser::class, $token->getUser());
+        $this->assertSame('client_one', $token->getUser()->getUserIdentifier());
     }
 }
 
