@@ -91,13 +91,6 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
             if ('' === $userIdentifier || $oauthClientId === $userIdentifier) {
                 return new ClientCredentialsUser($oauthClientId);
             }
-            if (!method_exists($this->userProvider, 'loadUserByIdentifier')) {
-                /**
-                 * @psalm-suppress DeprecatedMethod
-                 * @psalm-suppress MixedReturnStatement
-                 */
-                return $this->userProvider->loadUserByUsername($userIdentifier);
-            }
 
             return $this->userProvider->loadUserByIdentifier($userIdentifier);
         };
@@ -150,17 +143,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         /** @var string $oauthClientId */
         $oauthClientId = $passport->getAttribute('oauthClientId', '');
 
-        $token = new OAuth2Token($passport->getUser(), $accessTokenId, $oauthClientId, $scopeBadge->getScopes(), $this->rolePrefix);
-        if (method_exists(AuthenticatorInterface::class, 'createAuthenticatedToken') && !method_exists(AuthenticatorInterface::class, 'createToken')) {
-            // symfony 5.4 only
-            /**
-             * @psalm-suppress TooManyArguments
-             * @psalm-suppress UndefinedMethod
-             */
-            $token->setAuthenticated(true, false);
-        }
-
-        return $token;
+        return new OAuth2Token($passport->getUser(), $accessTokenId, $oauthClientId, $scopeBadge->getScopes(), $this->rolePrefix);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response

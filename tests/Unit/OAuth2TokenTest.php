@@ -25,7 +25,7 @@ final class OAuth2TokenTest extends TestCase
         /** @var OAuth2Token $unserializedToken */
         $unserializedToken = unserialize(serialize($token));
 
-        $this->assertSame($user->getUsername(), $unserializedToken->getUser()->getUsername());
+        $this->assertSame($user->getUserIdentifier(), $unserializedToken->getUser()->getUserIdentifier());
         $this->assertSame($accessTokenId, $token->getCredentials());
         $this->assertSame($oauthClientId, $token->getOAuthClientId());
         $this->assertSame($scopes, $token->getScopes());

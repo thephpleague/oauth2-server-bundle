@@ -34,7 +34,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
     private function loginUser(string $username = FixtureFactory::FIXTURE_USER, string $firewallContext = 'authorization'): void
     {
         $userProvider = static::getContainer()->get('security.user_providers');
-        $user = method_exists($userProvider, 'loadUserByIdentifier') ? $userProvider->loadUserByIdentifier($username) : $userProvider->loadUserByUsername($username);
+        $user = $userProvider->loadUserByIdentifier($username);
         $this->client->loginUser($user, $firewallContext);
     }
 
