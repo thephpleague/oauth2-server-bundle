@@ -21,7 +21,6 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
@@ -30,12 +29,6 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
  */
 final class OAuth2Authenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
 {
-    /**
-     * @psalm-suppress UndefinedTrait
-     * @psalm-suppress MethodSignatureMismatch
-     */
-    use ForwardCompatAuthenticatorTrait;
-
     private HttpMessageFactoryInterface $httpMessageFactory;
     private ResourceServer $resourceServer;
     private UserProviderInterface $userProvider;
@@ -63,10 +56,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         return new Response($authException?->getMessage() ?? 'Authentication required', 401, ['WWW-Authenticate' => 'Bearer']);
     }
 
-    /**
-     * @return Passport
-     */
-    public function doAuthenticate(Request $request) /* : Passport */
+    public function authenticate(Request $request): Passport
     {
         try {
             $psr7Request = $this->resourceServer->validateAuthenticatedRequest($this->httpMessageFactory->createRequest($request));
@@ -103,30 +93,6 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         $passport->setAttribute('oauthClientId', $oauthClientId);
 
         return $passport;
-    }
-
-    /**
-     * @return OAuth2Token
-     *
-     * @psalm-suppress DeprecatedInterface
-     * @psalm-suppress UndefinedClass
-     * @psalm-suppress MixedInferredReturnType
-     * @psalm-suppress RedundantCondition
-     */
-    public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
-    {
-        if (!$passport instanceof Passport) {
-            throw new \RuntimeException(\sprintf('Cannot create a OAuth2 authenticated token. $passport should be a %s', Passport::class));
-        }
-
-        $token = $this->createToken($passport, $firewallName);
-        /**
-         * @psalm-suppress TooManyArguments
-         * @psalm-suppress UndefinedMethod
-         */
-        $token->setAuthenticated(true);
-
-        return $token;
     }
 
     /**
