@@ -22,8 +22,6 @@ interface ClientInterface
 
     /**
      * @return list<RedirectUri>
-     *
-     * @psalm-mutation-free
      */
     public function getRedirectUris(): array;
 
@@ -31,8 +29,6 @@ interface ClientInterface
 
     /**
      * @return list<Grant>
-     *
-     * @psalm-mutation-free
      */
     public function getGrants(): array;
 
@@ -40,8 +36,6 @@ interface ClientInterface
 
     /**
      * @return list<Scope>
-     *
-     * @psalm-mutation-free
      */
     public function getScopes(): array;
 

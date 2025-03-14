@@ -25,9 +25,6 @@ final class ClientFilter
      */
     private $scopes = [];
 
-    /**
-     * @psalm-pure
-     */
     public static function create(): self
     {
         return new static();
@@ -62,8 +59,6 @@ final class ClientFilter
 
     /**
      * @return list<Grant>
-     *
-     * @psalm-mutation-free
      */
     public function getGrants(): array
     {
@@ -72,8 +67,6 @@ final class ClientFilter
 
     /**
      * @return list<RedirectUri>
-     *
-     * @psalm-mutation-free
      */
     public function getRedirectUris(): array
     {
@@ -82,17 +75,12 @@ final class ClientFilter
 
     /**
      * @return list<Scope>
-     *
-     * @psalm-mutation-free
      */
     public function getScopes(): array
     {
         return $this->scopes;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function hasFilters(): bool
     {
         return

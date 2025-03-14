@@ -26,6 +26,9 @@ class OAuth2AuthenticationException extends AuthenticationException implements H
         return $this->statusCode;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getHeaders(): array
     {
         return ['WWW-Authenticate' => 'Bearer'];

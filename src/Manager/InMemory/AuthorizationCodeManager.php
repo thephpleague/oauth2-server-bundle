@@ -14,9 +14,6 @@ final class AuthorizationCodeManager implements AuthorizationCodeManagerInterfac
      */
     private $authorizationCodes = [];
 
-    /**
-     * @psalm-mutation-free
-     */
     public function find(string $identifier): ?AuthorizationCodeInterface
     {
         return $this->authorizationCodes[$identifier] ?? null;

@@ -14,9 +14,6 @@ final class RefreshTokenManager implements RefreshTokenManagerInterface
      */
     private $refreshTokens = [];
 
-    /**
-     * @psalm-mutation-free
-     */
     public function find(string $identifier): ?RefreshTokenInterface
     {
         return $this->refreshTokens[$identifier] ?? null;

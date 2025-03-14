@@ -131,6 +131,9 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         }
     }
 
+    /**
+     * @param mixed[] $config
+     */
     private function configureAuthorizationServer(ContainerBuilder $container, array $config): void
     {
         $container->setParameter('league.oauth2_server.encryption_key', $config['encryption_key']);
@@ -186,6 +189,9 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $this->configureGrants($container, $config);
     }
 
+    /**
+     * @param mixed[] $config
+     */
     private function configureGrants(ContainerBuilder $container, array $config): void
     {
         $container
@@ -219,6 +225,9 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         ;
     }
 
+    /**
+     * @param mixed[] $config
+     */
     private function configureAccessTokenSaving(LoaderInterface $loader, ContainerBuilder $container, array $config): void
     {
         if ($config['persist_access_token']) {
@@ -229,6 +238,8 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     }
 
     /**
+     * @param mixed[] $config
+     *
      * @throws \Exception
      */
     private function configurePersistence(LoaderInterface $loader, ContainerBuilder $container, array $config): void
@@ -255,6 +266,10 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         }
     }
 
+    /**
+     * @param mixed[] $config
+     * @param mixed[] $persistenceConfig
+     */
     private function configureDoctrinePersistence(ContainerBuilder $container, array $config, array $persistenceConfig): void
     {
         $entityManagerName = $persistenceConfig['entity_manager'];
@@ -301,6 +316,9 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container->setParameter('league.oauth2_server.persistence.doctrine.manager', $entityManagerName);
     }
 
+    /**
+     * @param mixed[] $config
+     */
     private function configureInMemoryPersistence(ContainerBuilder $container, array $config): void
     {
         $container
@@ -310,6 +328,9 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container->setParameter('league.oauth2_server.persistence.in_memory.enabled', true);
     }
 
+    /**
+     * @param mixed[] $persistenceConfig
+     */
     private function configureCustomPersistence(ContainerBuilder $container, array $persistenceConfig): void
     {
         $container->setAlias(ClientManagerInterface::class, $persistenceConfig['client_manager']);
@@ -321,6 +342,9 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container->setParameter('league.oauth2_server.persistence.custom.enabled', true);
     }
 
+    /**
+     * @param mixed[] $config
+     */
     private function configureResourceServer(ContainerBuilder $container, array $config): void
     {
         $container
@@ -333,6 +357,9 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         ;
     }
 
+    /**
+     * @param mixed[] $scopes
+     */
     private function configureScopes(ContainerBuilder $container, array $scopes): void
     {
         $availableScopes = $scopes['available'];

@@ -10,10 +10,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 final class UserConverter implements UserConverterInterface
 {
-    /**
-     * @psalm-suppress ArgumentTypeCoercion
-     * @psalm-suppress UndefinedInterfaceMethod
-     */
     public function toLeague(UserInterface $user): UserEntityInterface
     {
         $userEntity = new User();

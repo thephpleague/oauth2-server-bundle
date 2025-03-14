@@ -4,27 +4,21 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\ValueObject;
 
-/**
- * @psalm-immutable
- */
 class Grant
 {
     /**
-     * @var string
+     * @var non-empty-string
      */
     private $grant;
 
     /**
-     * @psalm-mutation-free
+     * @param non-empty-string $grant
      */
     public function __construct(string $grant)
     {
         $this->grant = $grant;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function __toString(): string
     {
         return $this->grant;

@@ -94,22 +94,19 @@ final class UpdateClientCommand extends Command
     }
 
     /**
-     * @template T1 of RedirectUri
-     * @template T2 of Grant
-     * @template T3 of Scope
+     * @template T of RedirectUri|Grant|Scope
      *
-     * @param class-string<T1>|class-string<T2>|class-string<T3> $modelFqcn
+     * @param list<\Stringable> $actual
+     * @param class-string<T> $modelFqcn
      *
-     * @return list<T1>|list<T2>|list<T3>
-     *
-     * @psalm-suppress UnsafeInstantiation
+     * @return list<T>
      */
     private function getClientRelatedModelsFromInput(InputInterface $input, string $modelFqcn, array $actual, string $argument): array
     {
-        /** @var list<string> $toAdd */
+        /** @var list<non-empty-string> $toAdd */
         $toAdd = $input->getOption($addArgument = \sprintf('add-%s', $argument));
 
-        /** @var list<string> $toRemove */
+        /** @var list<non-empty-string> $toRemove */
         $toRemove = $input->getOption($removeArgument = \sprintf('remove-%s', $argument));
 
         if ([] !== $colliding = array_intersect($toAdd, $toRemove)) {
@@ -120,7 +117,7 @@ final class UpdateClientCommand extends Command
             return !\in_array((string) $model, $toRemove);
         });
 
-        /** @var list<T1>|list<T2>|list<T3> */
+        /** @var list<T> */
         return array_merge($filtered, array_map(static function (string $value) use ($modelFqcn) {
             return new $modelFqcn($value);
         }, $toAdd));

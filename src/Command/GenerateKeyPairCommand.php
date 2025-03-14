@@ -31,11 +31,6 @@ final class GenerateKeyPairCommand extends Command
         'ES512',
     ];
 
-    /**
-     * @deprecated
-     */
-    protected static $defaultName = 'league:oauth2-server:generate-keypair';
-
     private Filesystem $filesystem;
 
     private string $secretKey;
@@ -142,19 +137,19 @@ final class GenerateKeyPairCommand extends Command
 
         $resource = openssl_pkey_new($config);
         if (false === $resource) {
-            throw new \RuntimeException(openssl_error_string());
+            throw new \RuntimeException(openssl_error_string() ?: '');
         }
 
         $success = openssl_pkey_export($resource, $privateKey, $passphrase);
 
         if (false === $success) {
-            throw new \RuntimeException(openssl_error_string());
+            throw new \RuntimeException(openssl_error_string() ?: '');
         }
 
         $publicKeyData = openssl_pkey_get_details($resource);
 
         if (!\is_array($publicKeyData)) {
-            throw new \RuntimeException(openssl_error_string());
+            throw new \RuntimeException(openssl_error_string() ?: '');
         }
 
         if (!\array_key_exists('key', $publicKeyData) || !\is_string($publicKeyData['key'])) {
@@ -164,6 +159,9 @@ final class GenerateKeyPairCommand extends Command
         return [$privateKey, $publicKeyData['key']];
     }
 
+    /**
+     * @return mixed[]
+     */
     private function buildOpenSSLConfiguration(string $algorithm): array
     {
         $digestAlgorithms = [

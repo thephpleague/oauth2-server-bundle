@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\ValueObject;
 
-/**
- * @psalm-immutable
- */
 class Scope
 {
     /**
@@ -15,8 +12,6 @@ class Scope
     private $scope;
 
     /**
-     * @psalm-mutation-free
-     *
      * @param non-empty-string $scope
      */
     public function __construct(string $scope)
@@ -25,8 +20,6 @@ class Scope
     }
 
     /**
-     * @psalm-mutation-free
-     *
      * @return non-empty-string
      */
     public function __toString(): string

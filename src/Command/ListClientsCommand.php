@@ -6,7 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Command;
 
 use League\Bundle\OAuth2ServerBundle\Manager\ClientFilter;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
+use League\Bundle\OAuth2ServerBundle\Model\ClientInterface;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
@@ -100,6 +100,9 @@ final class ListClientsCommand extends Command
         ;
     }
 
+    /**
+     * @param array<ClientInterface> $clients
+     */
     private function drawTable(InputInterface $input, OutputInterface $output, array $clients): void
     {
         $io = new SymfonyStyle($input, $output);
@@ -108,9 +111,15 @@ final class ListClientsCommand extends Command
         $io->table($columns, $rows);
     }
 
+    /**
+     * @param array<ClientInterface> $clients
+     * @param array<string> $columns
+     *
+     * @return array<array<string>>
+     */
     private function getRows(array $clients, array $columns): array
     {
-        return array_map(static function (AbstractClient $client) use ($columns): array {
+        return array_map(static function (ClientInterface $client) use ($columns): array {
             $values = [
                 'name' => $client->getName(),
                 'identifier' => $client->getIdentifier(),
@@ -126,6 +135,9 @@ final class ListClientsCommand extends Command
         }, $clients);
     }
 
+    /**
+     * @return array<string>
+     */
     private function getColumns(InputInterface $input): array
     {
         $requestedColumns = $input->getOption('columns');
