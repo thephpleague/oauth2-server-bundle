@@ -18,11 +18,6 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class OAuth2Factory implements AuthenticatorFactoryInterface
 {
-    public function create(ContainerBuilder $container, $id, $config, $userProvider, $defaultEntryPoint): array
-    {
-        throw new \LogicException('OAuth2 is not supported when "security.enable_authenticator_manager" is not set to true.');
-    }
-
     public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string
     {
         $authenticator = \sprintf('security.authenticator.oauth2.%s', $firewallName);
