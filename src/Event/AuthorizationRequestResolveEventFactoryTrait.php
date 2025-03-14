@@ -8,7 +8,6 @@ use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Security\Core\Security as LegacySecurity;
 
 /**
  * @internal
@@ -26,7 +25,7 @@ trait AuthorizationRequestResolveEventFactoryTrait
     private $clientManager;
 
     /**
-     * @var Security|LegacySecurity
+     * @var Security
      */
     private $security;
 

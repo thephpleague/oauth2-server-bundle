@@ -31,11 +31,6 @@ final class GenerateKeyPairCommand extends Command
         'ES512',
     ];
 
-    /**
-     * @deprecated
-     */
-    protected static $defaultName = 'league:oauth2-server:generate-keypair';
-
     private Filesystem $filesystem;
 
     private string $secretKey;
