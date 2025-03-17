@@ -6,7 +6,7 @@ use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 return function (RoutingConfigurator $routes) {
-    $routes->import('@LeagueOAuth2ServerBundle/Resources/config/routes.php');
+    $routes->import('@LeagueOAuth2ServerBundle/config/routes.php');
 
     $routes
         ->add('security_test', '/security-test')

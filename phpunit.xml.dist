@@ -35,7 +35,6 @@
             <directory>.</directory>
         </include>
         <exclude>
-            <directory>./resources</directory>
             <directory>./tests</directory>
             <directory>./vendor</directory>
         </exclude>
