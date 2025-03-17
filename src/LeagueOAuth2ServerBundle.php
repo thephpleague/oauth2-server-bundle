@@ -54,4 +54,11 @@ final class LeagueOAuth2ServerBundle extends Bundle
 
         $container->addCompilerPass(new EncryptionKeyPass());
     }
+
+    public function getPath(): string
+    {
+        $reflected = new \ReflectionObject($this);
+
+        return \dirname($reflected->getFileName() ?: __FILE__, 2);
+    }
 }
