@@ -1,0 +1,48 @@
+---------------------------------------------------------------------------
+
+by chalasr at 2025-03-03T17:09:20Z
+
+👍 for this, though the failing test seems related isn't it? Can you please have a look?
+I'd like to tag v1.0 stable after merging this one. /cc @ro0NL
+
+---------------------------------------------------------------------------
+
+by chalasr at 2025-03-03T17:20:21Z
+
+Failure is not related actually. I'm going to have a look asap, help welcome.
+
+---------------------------------------------------------------------------
+
+by chalasr at 2025-03-03T23:13:58Z
+
+Failure fixed, rebase needed :)
+
+---------------------------------------------------------------------------
+
+by frankdekker at 2025-03-04T20:59:07Z
+
+> Failure fixed, rebase needed :)
+
+Hey, thanks for the test fix. It seems to have improved a lot but not all the way. Looking at your PR for the fix, that's also not green yet.
+
+---------------------------------------------------------------------------
+
+by chalasr at 2025-03-11T11:06:06Z
+
+Remaining failures need some work to go away, not right now :) Can you add a test case for this?
+
+---------------------------------------------------------------------------
+
+by frankdekker at 2025-03-16T10:25:15Z
+
+> Remaining failures need some work to go away, not right now :) Can you add a test case for this?
+
+Added an acceptance test.
+
+I had a bit of struggles with the cache in `/tests/.kernel`. Changing the TestKernel configuration was ignored by the existing cache. I added separate cache directories for when TestKernel configuration is given. Let me know if you agree with this approach, or you have another suggestion :).
+
+---------------------------------------------------------------------------
+
+by chalasr at 2025-03-22T15:40:12Z
+
+@frankdekker Already suffered from this as well, we should do something to improve the situation. All good here
