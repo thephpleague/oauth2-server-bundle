@@ -75,6 +75,9 @@ For implementation into Symfony projects, please see [bundle documentation](basi
             # Whether to enable access token saving to persistence layer (default to true)
             persist_access_token: true
 
+            # Whether to revoke refresh tokens after they were used for all grant types (default to true)
+            revoke_refresh_tokens: true
+
         resource_server:      # Required
 
             # Full path to the public key file
