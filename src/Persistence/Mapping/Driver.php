@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Persistence\Mapping;
 
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
+use Doctrine\ORM\Mapping\ClassMetadata as ORMClassMetadata;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
@@ -40,6 +41,10 @@ class Driver implements MappingDriver
 
     public function loadMetadataForClass($className, ClassMetadata $metadata): void
     {
+        if (!$metadata instanceof ORMClassMetadata) {
+            throw new \InvalidArgumentException(\sprintf('"$metadata" must be an instance of "%s"', ORMClassMetadata::class));
+        }
+
         switch ($className) {
             case AbstractClient::class:
                 $this->buildAbstractClientMetadata($metadata);
@@ -84,7 +89,10 @@ class Driver implements MappingDriver
         return false;
     }
 
-    private function buildAbstractClientMetadata(ClassMetadata $metadata): void
+    /**
+     * @param ORMClassMetadata<AbstractClient> $metadata
+     */
+    private function buildAbstractClientMetadata(ORMClassMetadata $metadata): void
     {
         (new ClassMetadataBuilder($metadata))
             ->setMappedSuperClass()
@@ -98,7 +106,10 @@ class Driver implements MappingDriver
         ;
     }
 
-    private function buildAccessTokenMetadata(ClassMetadata $metadata): void
+    /**
+     * @param ORMClassMetadata<AccessToken> $metadata
+     */
+    private function buildAccessTokenMetadata(ORMClassMetadata $metadata): void
     {
         (new ClassMetadataBuilder($metadata))
             ->setTable($this->tablePrefix . 'access_token')
@@ -111,7 +122,10 @@ class Driver implements MappingDriver
         ;
     }
 
-    private function buildAuthorizationCodeMetadata(ClassMetadata $metadata): void
+    /**
+     * @param ORMClassMetadata<AuthorizationCode> $metadata
+     */
+    private function buildAuthorizationCodeMetadata(ORMClassMetadata $metadata): void
     {
         (new ClassMetadataBuilder($metadata))
             ->setTable($this->tablePrefix . 'authorization_code')
@@ -124,7 +138,10 @@ class Driver implements MappingDriver
         ;
     }
 
-    private function buildClientMetadata(ClassMetadata $metadata): void
+    /**
+     * @param ORMClassMetadata<Client> $metadata
+     */
+    private function buildClientMetadata(ORMClassMetadata $metadata): void
     {
         (new ClassMetadataBuilder($metadata))
             ->setTable($this->tablePrefix . 'client')
@@ -132,7 +149,10 @@ class Driver implements MappingDriver
         ;
     }
 
-    private function buildRefreshTokenMetadata(ClassMetadata $metadata): void
+    /**
+     * @param ORMClassMetadata<RefreshToken> $metadata
+     */
+    private function buildRefreshTokenMetadata(ORMClassMetadata $metadata): void
     {
         $classMetadataBuilder = (new ClassMetadataBuilder($metadata))
             ->setTable($this->tablePrefix . 'refresh_token')

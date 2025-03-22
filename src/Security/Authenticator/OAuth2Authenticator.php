@@ -31,9 +31,13 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
 {
     private HttpMessageFactoryInterface $httpMessageFactory;
     private ResourceServer $resourceServer;
+    /** @var UserProviderInterface<UserInterface> */
     private UserProviderInterface $userProvider;
     private string $rolePrefix;
 
+    /**
+     * @param UserProviderInterface<UserInterface> $userProvider
+     */
     public function __construct(
         HttpMessageFactoryInterface $httpMessageFactory,
         ResourceServer $resourceServer,
@@ -46,7 +50,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         $this->rolePrefix = $rolePrefix;
     }
 
-    public function supports(Request $request): ?bool
+    public function supports(Request $request): bool
     {
         return str_starts_with($request->headers->get('Authorization', ''), 'Bearer ');
     }
@@ -73,10 +77,9 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         /** @var list<string> $scopes */
         $scopes = $psr7Request->getAttribute('oauth_scopes', []);
 
-        /** @var string $oauthClientId */
+        /** @var non-empty-string $oauthClientId */
         $oauthClientId = $psr7Request->getAttribute('oauth_client_id', '');
 
-        /** @psalm-suppress MixedInferredReturnType */
         $userLoader = function (string $userIdentifier) use ($oauthClientId): UserInterface {
             if ('' === $userIdentifier || $oauthClientId === $userIdentifier) {
                 return new ClientCredentialsUser($oauthClientId);
@@ -117,7 +120,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         return null;
     }
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
     {
         if ($exception instanceof OAuth2AuthenticationException) {
             return new Response($exception->getMessage(), $exception->getStatusCode(), $exception->getHeaders());

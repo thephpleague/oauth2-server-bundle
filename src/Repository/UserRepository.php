@@ -42,6 +42,9 @@ final class UserRepository implements UserRepositoryInterface
         $this->userConverter = $userConverter;
     }
 
+    /**
+     * @param non-empty-string $grantType
+     */
     public function getUserEntityByUserCredentials(
         string $username,
         string $password,

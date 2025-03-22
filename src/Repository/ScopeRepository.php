@@ -65,6 +65,7 @@ final class ScopeRepository implements ScopeRepositoryInterface
 
     /**
      * @param ScopeEntityInterface[] $scopes
+     * @param non-empty-string $grantType
      *
      * @return list<ScopeEntityInterface>
      */

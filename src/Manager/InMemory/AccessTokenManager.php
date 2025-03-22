@@ -22,9 +22,6 @@ final class AccessTokenManager implements AccessTokenManagerInterface
         $this->persistAccessToken = $persistAccessToken;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function find(string $identifier): ?AccessTokenInterface
     {
         if (!$this->persistAccessToken) {

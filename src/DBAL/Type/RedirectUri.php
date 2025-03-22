@@ -22,7 +22,7 @@ final class RedirectUri extends ImplodedArray
     }
 
     /**
-     * @param list<string> $values
+     * @param list<non-empty-string> $values
      *
      * @return list<RedirectUriModel>
      */

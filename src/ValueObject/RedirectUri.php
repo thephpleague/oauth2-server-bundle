@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\ValueObject;
 
-/**
- * @psalm-immutable
- */
 class RedirectUri
 {
     /**
-     * @var string
+     * @var non-empty-string
      */
     private $redirectUri;
 
     /**
-     * @psalm-mutation-free
+     * @param non-empty-string $redirectUri
      */
     public function __construct(string $redirectUri)
     {
@@ -26,9 +23,6 @@ class RedirectUri
         $this->redirectUri = $redirectUri;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function __toString(): string
     {
         return $this->redirectUri;

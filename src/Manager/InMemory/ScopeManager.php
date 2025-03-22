@@ -14,9 +14,6 @@ final class ScopeManager implements ScopeManagerInterface
      */
     private $scopes = [];
 
-    /**
-     * @psalm-mutation-free
-     */
     public function find(string $identifier): ?Scope
     {
         return $this->scopes[$identifier] ?? null;

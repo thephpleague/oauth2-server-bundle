@@ -1,0 +1,11 @@
+includes:
+    - /home/app/.composer/vendor-bin/phpstan/vendor/phpstan/phpstan-symfony/extension.neon
+    - /home/app/.composer/vendor-bin/phpstan/vendor/phpstan/phpstan-symfony/rules.neon
+
+parameters:
+    level: 8
+    paths:
+        - src/
+    scanFiles:
+      - vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php
+    treatPhpDocTypesAsCertain: false

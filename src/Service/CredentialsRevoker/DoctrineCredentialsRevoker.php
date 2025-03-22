@@ -31,14 +31,8 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
         $this->clientManager = $clientManager;
     }
 
-    /**
-     * @psalm-suppress UndefinedInterfaceMethod
-     */
     public function revokeCredentialsForUser(UserInterface $user): void
     {
-        /**
-         * @psalm-suppress MixedAssignment
-         */
         $userIdentifier = $user->getUserIdentifier();
 
         $this->entityManager->createQueryBuilder()

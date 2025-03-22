@@ -9,8 +9,6 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 
 /**
- * @psalm-consistent-constructor
- *
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  */
 abstract class AbstractClient implements ClientInterface
@@ -33,8 +31,6 @@ abstract class AbstractClient implements ClientInterface
     private bool $allowPlainTextPkce = false;
 
     /**
-     * @psalm-mutation-free
-     *
      * @param non-empty-string $identifier
      */
     public function __construct(string $name, string $identifier, ?string $secret)
@@ -44,9 +40,6 @@ abstract class AbstractClient implements ClientInterface
         $this->secret = $secret;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function getName(): string
     {
         return $this->name;
@@ -59,17 +52,11 @@ abstract class AbstractClient implements ClientInterface
         return $this;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function getSecret(): ?string
     {
         return $this->secret;
@@ -77,8 +64,6 @@ abstract class AbstractClient implements ClientInterface
 
     /**
      * @return list<RedirectUri>
-     *
-     * @psalm-mutation-free
      */
     public function getRedirectUris(): array
     {
@@ -108,8 +93,6 @@ abstract class AbstractClient implements ClientInterface
 
     /**
      * @return list<Scope>
-     *
-     * @psalm-mutation-free
      */
     public function getScopes(): array
     {
@@ -124,9 +107,6 @@ abstract class AbstractClient implements ClientInterface
         return $this;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function isActive(): bool
     {
         return $this->active;
@@ -139,17 +119,11 @@ abstract class AbstractClient implements ClientInterface
         return $this;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function isConfidential(): bool
     {
         return null !== $this->secret && '' !== $this->secret;
     }
 
-    /**
-     * @psalm-mutation-free
-     */
     public function isPlainTextPkceAllowed(): bool
     {
         return $this->allowPlainTextPkce;

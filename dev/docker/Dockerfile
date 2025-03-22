@@ -59,9 +59,9 @@ RUN su-exec app composer global config --no-interaction allow-plugins.bamarni/co
 RUN su-exec app composer global bin php-cs-fixer require --dev friendsofphp/php-cs-fixer \
     && ln -s /home/app/.composer/vendor/bin/php-cs-fixer /app/bin/php-cs-fixer
 
-# Psalm
-RUN su-exec app composer global bin psalm require --dev vimeo/psalm psalm/plugin-symfony \
-    && ln -s /home/app/.composer/vendor/bin/psalm /app/bin/psalm
+# PHPstan
+RUN su-exec app composer global bin phpstan require --dev phpstan/phpstan phpstan/phpstan-symfony \
+&& ln -s /home/app/.composer/vendor/bin/phpstan /app/bin/phpstan
 
 # Enable parallel package installation for Composer
 RUN su-exec app composer global require symfony/flex
