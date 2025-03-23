@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\DependencyInjection\CompilerPass;
 
@@ -11,9 +13,6 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class GrantTypePass implements CompilerPassInterface
 {
-    /**
-     * @inheritDoc
-     */
     public function process(ContainerBuilder $container): void
     {
         // check if AuthorizationServer service is defined
