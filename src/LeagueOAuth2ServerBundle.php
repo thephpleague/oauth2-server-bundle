@@ -6,6 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle;
 
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\CompilerPass\EncryptionKeyPass;
+use League\Bundle\OAuth2ServerBundle\DependencyInjection\CompilerPass\GrantTypePass;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\LeagueOAuth2ServerExtension;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\Security\OAuth2Factory;
 use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Driver;
@@ -26,6 +27,8 @@ final class LeagueOAuth2ServerBundle extends Bundle
 
         $this->configureDoctrineExtension($container);
         $this->configureSecurityExtension($container);
+
+        $container->addCompilerPass(new GrantTypePass());
     }
 
     public function getContainerExtension(): ExtensionInterface
