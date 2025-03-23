@@ -6,6 +6,9 @@ namespace League\Bundle\OAuth2ServerBundle\AuthorizationServer;
 
 use League\OAuth2\Server\AuthorizationServer;
 
+/**
+ * @deprecated
+ */
 final class GrantConfigurator
 {
     /**
@@ -24,7 +27,9 @@ final class GrantConfigurator
     public function __invoke(AuthorizationServer $authorizationServer): void
     {
         foreach ($this->grants as $grant) {
-            $authorizationServer->enableGrantType($grant, $grant->getAccessTokenTTL());
+            if ($grant instanceof GrantTypeInterface) {
+                $authorizationServer->enableGrantType($grant, $grant->getAccessTokenTTL());
+            }
         }
     }
 }
