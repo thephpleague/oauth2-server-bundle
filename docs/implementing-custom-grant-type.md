@@ -63,6 +63,21 @@ And the service must be tagged with the `league.oauth2_server.authorization_serv
           - {name: league.oauth2_server.authorization_server.grant, accessTokenTTL: PT5H}
     ```
 
+    If you prefer php configuration, you could use `AutoconfigureTag` symfony attribute for the same result :
+
+    ```php
+   <?php
+   ...
+
+   use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+   #[AutoconfigureTag(name: 'league.oauth2_server.authorization_server.grant', attributes: [accessTokenTTL: 'PT5H'])]
+   final class FakeGrant extends AbstractGrant implements GrantTypeInterface
+   {
+       ...
+   }
+    ```
+
     If `accessTokenTTL` tag attribute is not defined, then bundle config is used `league_oauth2_server.authorization_server.access_token_ttl` (same as `league.oauth2_server.access_token_ttl.default` service container parameter). \
     `null` is considered as defined, to allow to unset ttl. \
    `league_oauth2_server.authorization_server.refresh_token_ttl` is also accessible for your implementation using `league.oauth2_server.refresh_token_ttl.default` service container parameter.
