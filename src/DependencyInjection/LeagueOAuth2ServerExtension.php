@@ -31,6 +31,7 @@ use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Grant\GrantTypeInterface as LeagueGrantTypeInterface;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
@@ -68,6 +69,9 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $container->findDefinition(OAuth2Authenticator::class)
             ->setArgument(3, $config['role_prefix']);
+
+        $container->registerForAutoconfiguration(LeagueGrantTypeInterface::class)
+            ->addTag('league.oauth2_server.authorization_server.grant');
 
         // TODO remove code bloc when bundle interface and configurator will be deleted
         $container->registerForAutoconfiguration(GrantTypeInterface::class)
