@@ -10,11 +10,11 @@ use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class FakeGrant extends AbstractGrant implements GrantTypeInterface
+final class FakeGrantUndefinedAccessTokenTTL extends AbstractGrant implements GrantTypeInterface
 {
     public function getIdentifier(): string
     {
-        return 'fake_grant';
+        return self::class;
     }
 
     public function respondToAccessTokenRequest(ServerRequestInterface $request, ResponseTypeInterface $responseType, \DateInterval $accessTokenTTL): ResponseTypeInterface

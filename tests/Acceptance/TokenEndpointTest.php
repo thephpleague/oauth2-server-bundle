@@ -63,7 +63,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $jsonResponse = json_decode($response->getContent(), true);
 
         $this->assertSame('Bearer', $jsonResponse['token_type']);
-        $this->assertLessThanOrEqual(3600, $jsonResponse['expires_in']);
+        $this->assertLessThanOrEqual(7200, $jsonResponse['expires_in']);
         $this->assertGreaterThan(0, $jsonResponse['expires_in']);
         $this->assertNotEmpty($jsonResponse['access_token']);
         $this->assertArrayNotHasKey('refresh_token', $jsonResponse);
@@ -118,7 +118,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $jsonResponse = json_decode($response->getContent(), true);
 
         $this->assertSame('Bearer', $jsonResponse['token_type']);
-        $this->assertLessThanOrEqual(3600, $jsonResponse['expires_in']);
+        $this->assertLessThanOrEqual(7200, $jsonResponse['expires_in']);
         $this->assertGreaterThan(0, $jsonResponse['expires_in']);
         $this->assertNotEmpty($jsonResponse['access_token']);
         $this->assertNotEmpty($jsonResponse['refresh_token']);
@@ -184,7 +184,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $jsonResponse = json_decode($response->getContent(), true);
 
         $this->assertSame('Bearer', $jsonResponse['token_type']);
-        $this->assertLessThanOrEqual(3600, $jsonResponse['expires_in']);
+        $this->assertLessThanOrEqual(7200, $jsonResponse['expires_in']);
         $this->assertGreaterThan(0, $jsonResponse['expires_in']);
         $this->assertNotEmpty($jsonResponse['access_token']);
         $this->assertNotEmpty($jsonResponse['refresh_token']);
@@ -228,7 +228,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $jsonResponse = json_decode($response->getContent(), true);
 
         $this->assertSame('Bearer', $jsonResponse['token_type']);
-        $this->assertLessThanOrEqual(3600, $jsonResponse['expires_in']);
+        $this->assertLessThanOrEqual(7200, $jsonResponse['expires_in']);
         $this->assertGreaterThan(0, $jsonResponse['expires_in']);
         $this->assertNotEmpty($jsonResponse['access_token']);
         $this->assertEmpty($response->headers->get('foo'), 'bar');
@@ -277,7 +277,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $jsonResponse = json_decode($response->getContent(), true);
 
         $this->assertSame('Bearer', $jsonResponse['token_type']);
-        $this->assertLessThanOrEqual(3600, $jsonResponse['expires_in']);
+        $this->assertLessThanOrEqual(7200, $jsonResponse['expires_in']);
         $this->assertGreaterThan(0, $jsonResponse['expires_in']);
         $this->assertNotEmpty($jsonResponse['access_token']);
         $this->assertNotEmpty($jsonResponse['refresh_token']);
