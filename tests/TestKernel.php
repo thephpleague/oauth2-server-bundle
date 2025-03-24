@@ -16,6 +16,11 @@ use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeAuthorizationCodeManager
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeClientManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeCredentialsRevoker;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantNullAccessTokenTTL;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantNullAccessTokenTTLWithAttribute;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantUndefinedAccessTokenTTL;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantUndefinedAccessTokenTTLOnlyAutoconfigured;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantWithAttribute;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeLegacyGrant;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeRefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
@@ -169,6 +174,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                 'authorization_server' => [
                     'private_key' => '%env(PRIVATE_KEY_PATH)%',
                     'encryption_key' => '%env(ENCRYPTION_KEY)%',
+                    'access_token_ttl' => 'PT2H' // to have a different value as league/oauth2-server lib
                 ],
                 'resource_server' => $this->resourceServiceConfig ?? ['public_key' => '%env(PUBLIC_KEY_PATH)%'],
                 'scopes' => [
@@ -247,8 +253,21 @@ final class TestKernel extends Kernel implements CompilerPassInterface
 
     private function registerFakeGrant(ContainerBuilder $container): void
     {
-        $container->register(FakeGrant::class)
-            ->addTag('league.oauth2_server.authorization_server.grant', ['accessTokenTTL' => 'PT5H']);
+        $container->register(FakeGrant::class)->setAutoconfigured(true)
+            // tagged twice to test this case, only first one is used
+            ->addTag('league.oauth2_server.authorization_server.grant', ['accessTokenTTL' => 'PT5H'])
+            ->addTag('league.oauth2_server.authorization_server.grant', ['accessTokenTTL' => 'PT3H']);
+
+        $container->register(FakeGrantNullAccessTokenTTL::class)->setAutoconfigured(true)
+            ->addTag('league.oauth2_server.authorization_server.grant', ['accessTokenTTL' => null]);
+
+        $container->register(FakeGrantUndefinedAccessTokenTTL::class)->setAutoconfigured(true)
+            ->addTag('league.oauth2_server.authorization_server.grant');
+
+        $container->register(FakeGrantWithAttribute::class)->setAutoconfigured(true);
+        $container->register(FakeGrantNullAccessTokenTTLWithAttribute::class)->setAutoconfigured(true);
+        $container->register(FakeGrantUndefinedAccessTokenTTLOnlyAutoconfigured::class)->setAutoconfigured(true);
+
         // TODO remove line when bundle interface and configurator will be deleted
         $container->register(FakeLegacyGrant::class)->setAutoconfigured(true);
     }

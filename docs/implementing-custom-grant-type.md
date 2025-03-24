@@ -43,7 +43,9 @@
     ```
 
 1. In order to enable the new grant type in the authorization server you must register the service in the container.
-And the service must be tagged with the `league.oauth2_server.authorization_server.grant` tag:
+`\League\OAuth2\Server\Grant\GrantTypeInterface` is registered for autoconfiguration
+
+    - but you can manually declare the service with the `league.oauth2_server.authorization_server.grant` tag:
 
     ```yaml
     services:
@@ -53,7 +55,24 @@ And the service must be tagged with the `league.oauth2_server.authorization_serv
           - {name: league.oauth2_server.authorization_server.grant}
     ```
 
-    You could define a custom access token TTL for your grant using `accessTokenTTL` tag attribute :
+   - If you prefer php configuration, you could use `AutoconfigureTag` symfony attribute for the same result :
+
+    ```php
+   <?php
+   ...
+
+   use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+   #[AutoconfigureTag(name: 'league.oauth2_server.authorization_server.grant')]
+   final class FakeGrant extends AbstractGrant implements GrantTypeInterface
+   {
+       ...
+   }
+    ```
+
+1. In order to defined access token TTL for your custom grant, you could:
+
+    - define a custom access token TTL for your grant using `accessTokenTTL` tag attribute :
 
     ```yaml
     services:
@@ -63,7 +82,7 @@ And the service must be tagged with the `league.oauth2_server.authorization_serv
           - {name: league.oauth2_server.authorization_server.grant, accessTokenTTL: PT5H}
     ```
 
-    If you prefer php configuration, you could use `AutoconfigureTag` symfony attribute for the same result :
+    - or via `AutoconfigureTag` :
 
     ```php
    <?php
@@ -78,7 +97,22 @@ And the service must be tagged with the `league.oauth2_server.authorization_serv
    }
     ```
 
-    If `accessTokenTTL` tag attribute is not defined, then bundle config is used `league_oauth2_server.authorization_server.access_token_ttl` (same as `league.oauth2_server.access_token_ttl.default` service container parameter). \
+    - and last option is usage of `\League\Bundle\OAuth2ServerBundle\Attribute\WithAccessTokenTTL` attribute (note: service must be registered with correct tag before, this is already done if autoconfiguration is activated):
+
+    ```php
+   <?php
+   ...
+
+   use League\Bundle\OAuth2ServerBundle\Attribute\WithAccessTokenTTL;
+
+   #[WithAccessTokenTTL(accessTokenTTL: 'PT5H')]
+   final class FakeGrant extends AbstractGrant implements GrantTypeInterface
+   {
+       ...
+   }
+    ```
+
+    For all of these options, if `accessTokenTTL` is not defined, then bundle config is used `league_oauth2_server.authorization_server.access_token_ttl` (same as `league.oauth2_server.access_token_ttl.default` service container parameter). \
     `null` is considered as defined, to allow to unset ttl. \
    `league_oauth2_server.authorization_server.refresh_token_ttl` is also accessible for your implementation using `league.oauth2_server.refresh_token_ttl.default` service container parameter.
 
