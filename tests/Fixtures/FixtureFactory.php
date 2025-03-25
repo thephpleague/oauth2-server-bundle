@@ -7,11 +7,13 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Fixtures;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
@@ -43,6 +45,11 @@ final class FixtureFactory
     public const FIXTURE_AUTH_CODE_PUBLIC_CLIENT = 'xaa70e8152259988b3c8e9e8cff604019bb986eb226bd126da189829b95a2be631e2506042064e12';
     public const FIXTURE_AUTH_CODE_DIFFERENT_CLIENT = 'e8fe264053cb346f4437af05c8cc9036931cfec3a0d5b54bdae349304ca4a83fd2f4590afd51e559';
     public const FIXTURE_AUTH_CODE_EXPIRED = 'a7bdbeb26c9f095d842f5e5b8e313b24318d6b26728d1c543136727bbe9525f7a7930305a09b7401';
+
+    public const FIXTURE_DEVICE_CODE = '0aa70e8152259988b3c8e9e8cff604019bb986eb226bd126da189829b95a2be631e2506042064e12';
+    public const FIXTURE_DEVICE_CODE_PUBLIC_CLIENT = 'xaa70e8152259988b3c8e9e8cff604019bb986eb226bd126da189829b95a2be631e2506042064e12';
+    public const FIXTURE_DEVICE_CODE_APPROVED = 'e8fe264053cb346f4437af05c8cc9036931cfec3a0d5b54bdae349304ca4a83fd2f4590afd51e559';
+    public const FIXTURE_DEVICE_CODE_EXPIRED = 'a7bdbeb26c9f095d842f5e5b8e313b24318d6b26728d1c543136727bbe9525f7a7930305a09b7401';
 
     public const FIXTURE_CLIENT_FIRST = 'foo';
     public const FIXTURE_CLIENT_SECOND = 'bar';
@@ -78,6 +85,7 @@ final class FixtureFactory
         AccessTokenManagerInterface $accessTokenManager,
         RefreshTokenManagerInterface $refreshTokenManager,
         AuthorizationCodeManagerInterface $authCodeManager,
+        DeviceCodeManagerInterface $deviceCodeManager,
     ): void {
         foreach (self::createScopes() as $scope) {
             $scopeManager->save($scope);
@@ -97,6 +105,10 @@ final class FixtureFactory
 
         foreach (self::createAuthorizationCodes($clientManager) as $authorizationCode) {
             $authCodeManager->save($authorizationCode);
+        }
+
+        foreach (self::createDeviceCodes($clientManager) as $deviceCode) {
+            $deviceCodeManager->save($deviceCode);
         }
     }
 
@@ -248,6 +260,68 @@ final class FixtureFactory
         );
 
         return $authorizationCodes;
+    }
+
+    /**
+     * @return DeviceCode[]
+     */
+    public static function createDeviceCodes(ClientManagerInterface $clientManager): array
+    {
+        $deviceCodes = [];
+
+        $deviceCodes[] = new DeviceCode(
+            self::FIXTURE_DEVICE_CODE,
+            new \DateTimeImmutable('+10 minute'),
+            $clientManager->find(self::FIXTURE_CLIENT_FIRST),
+            null,
+            [],
+            'XQMWNGSP',
+            false,
+            '',
+            null,
+            5
+        );
+
+        $deviceCodes[] = new DeviceCode(
+            self::FIXTURE_DEVICE_CODE_PUBLIC_CLIENT,
+            new \DateTimeImmutable('+10 minute'),
+            $clientManager->find(self::FIXTURE_PUBLIC_CLIENT),
+            null,
+            [],
+            'XQMWNGSP',
+            false,
+            '',
+            null,
+            5
+        );
+
+        $deviceCodes[] = new DeviceCode(
+            self::FIXTURE_DEVICE_CODE_APPROVED,
+            new \DateTimeImmutable('+10 minute'),
+            $clientManager->find(self::FIXTURE_CLIENT_SECOND),
+            self::FIXTURE_USER,
+            [],
+            'XQMWNGSP',
+            true,
+            '',
+            null,
+            5
+        );
+
+        $deviceCodes[] = new DeviceCode(
+            self::FIXTURE_DEVICE_CODE_EXPIRED,
+            new \DateTimeImmutable('-30 minute'),
+            $clientManager->find(self::FIXTURE_CLIENT_FIRST),
+            null,
+            [],
+            'XQMWNGSP',
+            false,
+            '',
+            null,
+            5
+        );
+
+        return $deviceCodes;
     }
 
     /**
