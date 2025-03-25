@@ -28,7 +28,7 @@ final class DeviceCodeManager implements DeviceCodeManagerInterface
 
     public function findByUserCode(string $code): ?DeviceCodeInterface
     {
-        /** @var DeviceCodeInterface */
+        /** @var ?DeviceCodeInterface */
         return $this->entityManager->createQueryBuilder()
                                    ->select('dc')
                                    ->from(DeviceCode::class, 'dc')
@@ -43,6 +43,7 @@ final class DeviceCodeManager implements DeviceCodeManagerInterface
         if ($persist) {
             $this->entityManager->persist($deviceCode);
         }
+
         $this->entityManager->flush();
     }
 
@@ -56,5 +57,4 @@ final class DeviceCodeManager implements DeviceCodeManagerInterface
             ->getQuery()
             ->execute();
     }
-
 }

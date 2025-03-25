@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\DeviceCodeManager as InMemoryDeviceCodeManager;
-use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -16,7 +16,7 @@ final class InMemoryDeviceCodeManagerTest extends TestCase
 {
     public function testClearExpired(): void
     {
-        $inMemoryDeviceCodeManager = new InMemoryDeviceCodeManager;
+        $inMemoryDeviceCodeManager = new InMemoryDeviceCodeManager();
 
         $testData = $this->buildClearExpiredTestData();
 
@@ -61,7 +61,6 @@ final class InMemoryDeviceCodeManagerTest extends TestCase
             null,
             [],
             '',
-            false,
             false,
             '',
             null,

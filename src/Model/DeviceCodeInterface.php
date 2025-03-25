@@ -10,6 +10,9 @@ interface DeviceCodeInterface
 {
     public function __toString(): string;
 
+    /**
+     * @return non-empty-string
+     */
     public function getIdentifier(): string;
 
     public function getExpiry(): \DateTimeImmutable;
@@ -44,5 +47,4 @@ interface DeviceCodeInterface
     public function setLastPolledAt(\DateTimeImmutable $lastPolledAt): self;
 
     public function getInterval(): int;
-
 }

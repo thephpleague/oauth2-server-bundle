@@ -2,11 +2,6 @@
 
 declare(strict_types=1);
 
-use League\Bundle\OAuth2ServerBundle\Controller\DeviceCodeController;
-use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Repository\DeviceCodeRepository;
-use League\OAuth2\Server\Grant\DeviceCodeGrant;
-use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\abstract_arg;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
@@ -20,6 +15,7 @@ use League\Bundle\OAuth2ServerBundle\Command\GenerateKeyPairCommand;
 use League\Bundle\OAuth2ServerBundle\Command\ListClientsCommand;
 use League\Bundle\OAuth2ServerBundle\Command\UpdateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Controller\AuthorizationController;
+use League\Bundle\OAuth2ServerBundle\Controller\DeviceCodeController;
 use League\Bundle\OAuth2ServerBundle\Controller\TokenController;
 use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverter;
 use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverterInterface;
@@ -30,12 +26,14 @@ use League\Bundle\OAuth2ServerBundle\EventListener\AddClientDefaultScopesListene
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ScopeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\Bundle\OAuth2ServerBundle\Repository\AuthCodeRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\ClientRepository;
+use League\Bundle\OAuth2ServerBundle\Repository\DeviceCodeRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\RefreshTokenRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\ScopeRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\UserRepository;
@@ -47,12 +45,14 @@ use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\EventEmitting\EventEmitter;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Grant\DeviceCodeGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
@@ -216,7 +216,7 @@ return static function (ContainerConfigurator $container): void {
                 service(RefreshTokenRepositoryInterface::class),
                 null,
                 null,
-                null
+                null,
             ])
         ->alias(DeviceCodeGrant::class, 'league.oauth2_server.grant.device_code')
 
@@ -244,10 +244,6 @@ return static function (ContainerConfigurator $container): void {
         ->set('league.oauth2_server.controller.device_code', DeviceCodeController::class)
             ->args([
                 service(AuthorizationServer::class),
-                service(EventDispatcherInterface::class),
-                service(AuthorizationRequestResolveEventFactory::class),
-                service(UserConverterInterface::class),
-                service(ClientManagerInterface::class),
                 service('league.oauth2_server.factory.psr_http'),
                 service('league.oauth2_server.factory.http_foundation'),
                 service('league.oauth2_server.factory.psr17'),

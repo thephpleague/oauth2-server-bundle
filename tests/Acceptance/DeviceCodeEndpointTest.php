@@ -64,5 +64,4 @@ final class DeviceCodeEndpointTest extends AbstractAcceptanceTest
         $this->assertNotEmpty($jsonResponse['error_description']);
         $this->assertSame('invalid_client', $jsonResponse['error']);
     }
-
 }
