@@ -14,9 +14,11 @@ use League\Bundle\OAuth2ServerBundle\DBAL\Type\Scope as ScopeType;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
+use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\DeviceCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AccessTokenManager as InMemoryAccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
@@ -31,6 +33,7 @@ use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Grant\DeviceCodeGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
@@ -197,6 +200,13 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             ]);
         }
 
+        if ($config['enable_device_code_grant']) {
+            $authorizationServer->addMethodCall('enableGrantType', [
+                new Reference(DeviceCodeGrant::class),
+                new Definition(\DateInterval::class, [$config['access_token_ttl']]),
+            ]);
+        }
+
         if ($config['enable_implicit_grant']) {
             $authorizationServer->addMethodCall('enableGrantType', [
                 new Reference(ImplicitGrant::class),
@@ -228,6 +238,16 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $authCodeGrantDefinition = $container->findDefinition(AuthCodeGrant::class);
         $authCodeGrantDefinition->replaceArgument(2, new Definition(\DateInterval::class, [$config['auth_code_ttl']]))
+            ->addMethodCall('setRefreshTokenTTL', [
+                new Definition(\DateInterval::class, [$config['refresh_token_ttl']]),
+            ])
+        ;
+
+        $deviceCodeGrantDefinition = $container->findDefinition(DeviceCodeGrant::class);
+        $deviceCodeGrantDefinition
+            ->replaceArgument(2, new Definition(\DateInterval::class, [$config['device_code_ttl']]))
+            ->replaceArgument(3, $config['device_code_verification_uri'])
+            ->replaceArgument(4, $config['device_code_polling_interval'])
             ->addMethodCall('setRefreshTokenTTL', [
                 new Definition(\DateInterval::class, [$config['refresh_token_ttl']]),
             ])
@@ -329,6 +349,11 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         ;
 
         $container
+            ->findDefinition(DeviceCodeManager::class)
+            ->replaceArgument(0, $entityManager)
+        ;
+
+        $container
             ->findDefinition(DoctrineCredentialsRevoker::class)
             ->replaceArgument(0, $entityManager)
         ;
@@ -364,6 +389,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container->setAlias(ClientManagerInterface::class, $persistenceConfig['client_manager']);
         $container->setAlias(AccessTokenManagerInterface::class, $persistenceConfig['access_token_manager']);
         $container->setAlias(RefreshTokenManagerInterface::class, $persistenceConfig['refresh_token_manager']);
+        $container->setAlias(DeviceCodeManagerInterface::class, $persistenceConfig['device_code_manager']);
         $container->setAlias(AuthorizationCodeManagerInterface::class, $persistenceConfig['authorization_code_manager']);
         $container->setAlias(CredentialsRevokerInterface::class, $persistenceConfig['credentials_revoker']);
 

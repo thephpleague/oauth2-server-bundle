@@ -9,6 +9,7 @@ use League\Bundle\OAuth2ServerBundle\Event\UserResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
@@ -29,7 +30,8 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
             $this->client->getContainer()->get(ClientManagerInterface::class),
             $this->client->getContainer()->get(AccessTokenManagerInterface::class),
             $this->client->getContainer()->get(RefreshTokenManagerInterface::class),
-            $this->client->getContainer()->get(AuthorizationCodeManagerInterface::class)
+            $this->client->getContainer()->get(AuthorizationCodeManagerInterface::class),
+            $this->client->getContainer()->get(DeviceCodeManagerInterface::class)
         );
     }
 
@@ -340,4 +342,110 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
 
         $this->assertTrue($wasClientAuthenticationEventDispatched);
     }
+
+    public function testSuccessfulDeviceCodeRequestWithPublicClient(): void
+    {
+        $deviceCode = $this->client
+            ->getContainer()
+            ->get(DeviceCodeManagerInterface::class)
+            ->find(FixtureFactory::FIXTURE_DEVICE_CODE_APPROVED);
+
+        $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
+
+        $eventDispatcher->addListener(OAuth2Events::TOKEN_REQUEST_RESOLVE, static function (TokenRequestResolveEvent $event): void {
+            $event->getResponse()->headers->set('foo', 'bar');
+        });
+
+        $wasRequestAccessTokenEventDispatched = false;
+        $wasRequestRefreshTokenEventDispatched = false;
+        $accessToken = null;
+        $refreshToken = null;
+
+        $eventDispatcher->addListener(RequestEvent::ACCESS_TOKEN_ISSUED, static function (RequestAccessTokenEvent $event) use (&$wasRequestAccessTokenEventDispatched, &$accessToken): void {
+            $wasRequestAccessTokenEventDispatched = true;
+            $accessToken = $event->getAccessToken();
+        });
+
+        $eventDispatcher->addListener(RequestEvent::REFRESH_TOKEN_ISSUED, static function (RequestRefreshTokenEvent $event) use (&$wasRequestRefreshTokenEventDispatched, &$refreshToken): void {
+            $wasRequestRefreshTokenEventDispatched = true;
+            $refreshToken = $event->getRefreshToken();
+        });
+
+        $this->client->request('POST', '/token', [
+            'client_id' => $deviceCode->getClient()->getIdentifier(),
+            'client_secret' => 'top_secret',
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
+            'device_code' => $deviceCode->getIdentifier(),
+        ]);
+
+        $response = $this->client->getResponse();
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('application/json; charset=UTF-8', $response->headers->get('Content-Type'));
+
+        $jsonResponse = json_decode($response->getContent(), true);
+
+        $this->assertSame('Bearer', $jsonResponse['token_type']);
+        $this->assertLessThanOrEqual(3600, $jsonResponse['expires_in']);
+        $this->assertGreaterThan(0, $jsonResponse['expires_in']);
+        $this->assertNotEmpty($jsonResponse['access_token']);
+        $this->assertNotEmpty($jsonResponse['refresh_token']);
+
+        $this->assertTrue($wasRequestAccessTokenEventDispatched);
+        $this->assertTrue($wasRequestRefreshTokenEventDispatched);
+
+        $this->assertSame($deviceCode->getClient()->getIdentifier(), $accessToken->getClient()->getIdentifier());
+        $this->assertSame($deviceCode->getUserIdentifier(), $accessToken->getUserIdentifier());
+        $this->assertSame($accessToken->getIdentifier(), $refreshToken->getAccessToken()->getIdentifier());
+    }
+
+    public function testFailedDeviceCodeRequestWithExpiredCode(): void
+    {
+        $deviceCode = $this->client
+            ->getContainer()
+            ->get(DeviceCodeManagerInterface::class)
+            ->find(FixtureFactory::FIXTURE_DEVICE_CODE_EXPIRED);
+
+        $this->client->request('POST', '/token', [
+            'client_id' => $deviceCode->getClient()->getIdentifier(),
+            'client_secret' => 'secret',
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
+            'device_code' => $deviceCode->getIdentifier(),
+        ]);
+
+        $response = $this->client->getResponse();
+
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('application/json', $response->headers->get('Content-Type'));
+
+        $jsonResponse = json_decode($response->getContent(), true);
+
+        $this->assertSame('expired_token', $jsonResponse['error']);
+        $this->assertSame('device_code', $jsonResponse['hint']);
+    }
+
+    public function testFailedDeviceCodeWithPendingCode(): void
+    {
+        $deviceCode = $this->client
+            ->getContainer()
+            ->get(DeviceCodeManagerInterface::class)
+            ->find(FixtureFactory::FIXTURE_DEVICE_CODE_PUBLIC_CLIENT);
+
+        $this->client->request('POST', '/token', [
+            'client_id' => $deviceCode->getClient()->getIdentifier(),
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
+            'device_code' => $deviceCode->getIdentifier(),
+        ]);
+
+        $response = $this->client->getResponse();
+
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('application/json', $response->headers->get('Content-Type'));
+
+        $jsonResponse = json_decode($response->getContent(), true);
+
+        $this->assertSame('authorization_pending', $jsonResponse['error']);
+        $this->assertSame('', $jsonResponse['hint']);
+    }
+
 }

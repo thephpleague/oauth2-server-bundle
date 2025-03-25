@@ -56,7 +56,7 @@ final class ClientRepository implements ClientRepositoryInterface
         return false;
     }
 
-    private function buildClientEntity(ClientInterface $client): ClientEntity
+    public function buildClientEntity(ClientInterface $client): ClientEntity
     {
         $clientEntity = new ClientEntity();
         $clientEntity->setName($client->getName());
