@@ -46,5 +46,4 @@ final class DeviceCodeManager implements DeviceCodeManagerInterface
 
         return $count - \count($this->deviceCodes);
     }
-
 }

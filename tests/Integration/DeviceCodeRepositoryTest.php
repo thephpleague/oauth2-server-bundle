@@ -24,7 +24,6 @@ final class DeviceCodeRepositoryTest extends AbstractIntegrationTest
             [],
             '',
             false,
-            false,
             '',
             null,
             5

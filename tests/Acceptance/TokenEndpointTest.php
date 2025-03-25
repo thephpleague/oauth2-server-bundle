@@ -447,5 +447,4 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $this->assertSame('authorization_pending', $jsonResponse['error']);
         $this->assertSame('', $jsonResponse['hint']);
     }
-
 }

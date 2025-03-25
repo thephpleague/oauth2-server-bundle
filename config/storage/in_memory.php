@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
-use League\Bundle\OAuth2ServerBundle\Manager\InMemory\DeviceCodeManager;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AuthorizationCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ClientManager;
+use League\Bundle\OAuth2ServerBundle\Manager\InMemory\DeviceCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\RefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;

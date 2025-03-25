@@ -84,7 +84,7 @@ final class FixtureFactory
         AccessTokenManagerInterface $accessTokenManager,
         RefreshTokenManagerInterface $refreshTokenManager,
         AuthorizationCodeManagerInterface $authCodeManager,
-        DeviceCodeManagerInterface $deviceCodeManager
+        DeviceCodeManagerInterface $deviceCodeManager,
     ): void {
         foreach (self::createScopes() as $scope) {
             $scopeManager->save($scope);
@@ -276,7 +276,6 @@ final class FixtureFactory
             [],
             'XQMWNGSP',
             false,
-            false,
             '',
             null,
             5
@@ -289,7 +288,6 @@ final class FixtureFactory
             null,
             [],
             'XQMWNGSP',
-            false,
             false,
             '',
             null,
@@ -304,7 +302,6 @@ final class FixtureFactory
             [],
             'XQMWNGSP',
             true,
-            false,
             '',
             null,
             5
@@ -317,7 +314,6 @@ final class FixtureFactory
             null,
             [],
             'XQMWNGSP',
-            false,
             false,
             '',
             null,

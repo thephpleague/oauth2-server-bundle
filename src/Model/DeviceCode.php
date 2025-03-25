@@ -9,12 +9,12 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 class DeviceCode implements DeviceCodeInterface
 {
     /**
-     * @var string
+     * @var non-empty-string
      */
     private $identifier;
 
     /**
-     * @var \DateTimeInterface
+     * @var \DateTimeImmutable
      */
     private $expiry;
 
@@ -51,7 +51,7 @@ class DeviceCode implements DeviceCodeInterface
     /**
      * @var bool
      */
-    private $includeVerificationUriComplete;
+    private $includeVerificationUriComplete = false;
 
     /**
      * @var string
@@ -59,7 +59,7 @@ class DeviceCode implements DeviceCodeInterface
     private $verificationUri;
 
     /**
-     * @var \DateTimeInterface|null
+     * @var \DateTimeImmutable|null
      */
     private $lastPolledAt;
 
@@ -69,6 +69,7 @@ class DeviceCode implements DeviceCodeInterface
     private $interval;
 
     /**
+     * @param non-empty-string $identifier
      * @param list<Scope> $scopes
      */
     public function __construct(
@@ -79,10 +80,9 @@ class DeviceCode implements DeviceCodeInterface
         array $scopes,
         string $userCode,
         bool $userApproved,
-        bool $includeVerificationUriComplete,
         string $verificationUri,
         ?\DateTimeImmutable $lastPolledAt,
-        int $interval
+        int $interval,
     ) {
         $this->identifier = $identifier;
         $this->expiry = $expiry;
@@ -91,7 +91,6 @@ class DeviceCode implements DeviceCodeInterface
         $this->scopes = $scopes;
         $this->userCode = $userCode;
         $this->userApproved = $userApproved;
-        $this->includeVerificationUriComplete = $includeVerificationUriComplete;
         $this->verificationUri = $verificationUri;
         $this->lastPolledAt = $lastPolledAt;
         $this->interval = $interval;
@@ -117,7 +116,7 @@ class DeviceCode implements DeviceCodeInterface
         return $this->userIdentifier;
     }
 
-    public function setUserIdentifier($userIdentifier): DeviceCodeInterface
+    public function setUserIdentifier(?string $userIdentifier): DeviceCodeInterface
     {
         $this->userIdentifier = $userIdentifier;
 
@@ -189,5 +188,4 @@ class DeviceCode implements DeviceCodeInterface
     {
         return $this->interval;
     }
-
 }

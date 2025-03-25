@@ -131,7 +131,6 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
             [],
             '',
             false,
-            false,
             '',
             null,
             5
