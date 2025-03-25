@@ -9,6 +9,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
+use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -69,6 +70,15 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
             ->setParameter('userIdentifier', $userIdentifier)
             ->getQuery()
             ->execute();
+
+        $this->entityManager->createQueryBuilder()
+            ->update(DeviceCode::class, 'dc')
+            ->set('dc.revoked', ':revoked')
+            ->where('dc.userIdentifier = :userIdentifier')
+            ->setParameter('revoked', true)
+            ->setParameter('userIdentifier', $userIdentifier)
+            ->getQuery()
+            ->execute();
     }
 
     public function revokeCredentialsForClient(AbstractClient $client): void
@@ -105,6 +115,15 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
             ->update(AuthorizationCode::class, 'ac')
             ->set('ac.revoked', ':revoked')
             ->where('ac.client = :client')
+            ->setParameter('client', $doctrineClient->getIdentifier(), 'string')
+            ->setParameter('revoked', true)
+            ->getQuery()
+            ->execute();
+
+        $this->entityManager->createQueryBuilder()
+            ->update(DeviceCode::class, 'dc')
+            ->set('dc.revoked', ':revoked')
+            ->where('dc.client = :client')
             ->setParameter('client', $doctrineClient->getIdentifier(), 'string')
             ->setParameter('revoked', true)
             ->getQuery()
