@@ -12,6 +12,7 @@ use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 
 /**
@@ -54,6 +55,10 @@ class Driver implements MappingDriver
                 $this->buildAccessTokenMetadata($metadata);
 
                 break;
+            case DeviceCode::class:
+                $this->buildDeviceCodeMetadata($metadata);
+
+                break;
             case AuthorizationCode::class:
                 $this->buildAuthorizationCodeMetadata($metadata);
 
@@ -76,6 +81,7 @@ class Driver implements MappingDriver
         return array_merge(
             [
                 AbstractClient::class,
+                DeviceCode::class,
                 AuthorizationCode::class,
                 RefreshToken::class,
             ],
@@ -118,6 +124,28 @@ class Driver implements MappingDriver
             ->createField('userIdentifier', 'string')->length(128)->nullable(true)->build()
             ->createField('scopes', 'oauth2_scope')->nullable(true)->build()
             ->addField('revoked', 'boolean')
+            ->createManyToOne('client', $this->clientClass)->addJoinColumn('client', 'identifier', false, false, 'CASCADE')->build()
+        ;
+    }
+
+    /**
+     * @param ORMClassMetadata<AccessToken> $metadata
+     */
+    private function buildDeviceCodeMetadata(ORMClassMetadata $metadata): void
+    {
+        (new ClassMetadataBuilder($metadata))
+            ->setTable($this->tablePrefix . 'device_code')
+            ->createField('identifier', 'string')->makePrimaryKey()->length(80)->option('fixed', true)->build()
+            ->addField('expiry', 'datetime_immutable')
+            ->createField('userIdentifier', 'string')->length(128)->nullable(true)->build()
+            ->createField('scopes', 'oauth2_scope')->nullable(true)->build()
+            ->addField('revoked', 'boolean')
+            ->createField('userCode', 'string')->length(255)->nullable(true)->build()
+            ->addField('userApproved', 'boolean')
+            ->addField('includeVerificationUriComplete', 'boolean')
+            ->createField('verificationUri', 'string')->length(255)->nullable(true)->build()
+            ->createField('lastPolledAt', 'datetime_immutable')->nullable(true)->build()
+            ->addField('interval', 'integer')
             ->createManyToOne('client', $this->clientClass)->addJoinColumn('client', 'identifier', false, false, 'CASCADE')->build()
         ;
     }

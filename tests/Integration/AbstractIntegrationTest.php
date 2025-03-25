@@ -15,6 +15,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AuthorizationCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ClientManager;
+use League\Bundle\OAuth2ServerBundle\Manager\InMemory\DeviceCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\RefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ScopeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
@@ -24,6 +25,7 @@ use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\Repository\AccessTokenRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\AuthCodeRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\ClientRepository;
+use League\Bundle\OAuth2ServerBundle\Repository\DeviceCodeRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\RefreshTokenRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\ScopeRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\UserRepository;
@@ -33,6 +35,7 @@ use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Grant\DeviceCodeGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
@@ -73,6 +76,11 @@ abstract class AbstractIntegrationTest extends TestCase
     protected $authCodeManager;
 
     /**
+     * @var DeviceCodeManager
+     */
+    protected $deviceCodeManager;
+
+    /**
      * @var RefreshTokenManagerInterface
      */
     protected $refreshTokenManager;
@@ -110,6 +118,7 @@ abstract class AbstractIntegrationTest extends TestCase
         $this->accessTokenManager = new AccessTokenManager(true);
         $this->refreshTokenManager = new RefreshTokenManager();
         $this->authCodeManager = new AuthorizationCodeManager();
+        $this->deviceCodeManager = new DeviceCodeManager();
 
         $scopeConverter = new ScopeConverter();
         $scopeRepository = new ScopeRepository($this->scopeManager, $this->clientManager, $scopeConverter, $this->eventDispatcher);
@@ -119,6 +128,7 @@ abstract class AbstractIntegrationTest extends TestCase
         $userConverter = new UserConverter();
         $userRepository = new UserRepository($this->clientManager, $this->eventDispatcher, $userConverter);
         $authCodeRepository = new AuthCodeRepository($this->authCodeManager, $this->clientManager, $scopeConverter);
+        $deviceCodeRepository = new DeviceCodeRepository($this->deviceCodeManager, $this->clientManager, $scopeConverter, $clientRepository);
 
         $this->authorizationServer = $this->createAuthorizationServer(
             $scopeRepository,
@@ -126,7 +136,8 @@ abstract class AbstractIntegrationTest extends TestCase
             $accessTokenRepository,
             $refreshTokenRepository,
             $userRepository,
-            $authCodeRepository
+            $authCodeRepository,
+            $deviceCodeRepository
         );
 
         $this->resourceServer = $this->createResourceServer($accessTokenRepository);
@@ -269,6 +280,7 @@ abstract class AbstractIntegrationTest extends TestCase
         RefreshTokenRepositoryInterface $refreshTokenRepository,
         UserRepositoryInterface $userRepository,
         AuthCodeRepositoryInterface $authCodeRepository,
+        DeviceCodeRepository $deviceCodeRepository
     ): AuthorizationServer {
         $authorizationServer = new AuthorizationServer(
             $clientRepository,
@@ -289,6 +301,7 @@ abstract class AbstractIntegrationTest extends TestCase
         $authorizationServer->enableGrantType(new PasswordGrant($userRepository, $refreshTokenRepository));
         $authorizationServer->enableGrantType($authCodeGrant);
         $authorizationServer->enableGrantType(new ImplicitGrant(new \DateInterval('PT10M')));
+        $authorizationServer->enableGrantType(new DeviceCodeGrant($deviceCodeRepository, $refreshTokenRepository, new \DateInterval('PT10M'), 'http://localhost/verify-url', 5));
 
         return $authorizationServer;
     }

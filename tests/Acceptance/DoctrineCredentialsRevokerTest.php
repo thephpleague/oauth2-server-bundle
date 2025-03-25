@@ -9,6 +9,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
@@ -33,10 +34,12 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         $authCode = $this->buildAuthCode('foo', '+1 minute', $client, $userIdentifier);
         $accessToken = $this->buildAccessToken('bar', '+1 minute', $client, $userIdentifier);
         $refreshToken = $this->buildRefreshToken('baz', '+1 minute', $accessToken);
+        $deviceCode = $this->buildDeviceCode('baz', '+1 minute', $client, $userIdentifier);
 
         $em->persist($authCode);
         $em->persist($accessToken);
         $em->persist($refreshToken);
+        $em->persist($deviceCode);
         $em->flush();
 
         $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class));
@@ -46,10 +49,12 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         $em->refresh($authCode);
         $em->refresh($accessToken);
         $em->refresh($refreshToken);
+        $em->refresh($deviceCode);
 
         $this->assertTrue($authCode->isRevoked());
         $this->assertTrue($accessToken->isRevoked());
         $this->assertTrue($refreshToken->isRevoked());
+        $this->assertTrue($deviceCode->isRevoked());
     }
 
     public function testRevokesAllCredentialsForClient(): void
@@ -62,10 +67,12 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         $authCode = $this->buildAuthCode('foo', '+1 minute', $client, 'john');
         $accessToken = $this->buildAccessToken('bar', '+1 minute', $client);
         $refreshToken = $this->buildRefreshToken('baz', '+1 minute', $accessToken);
+        $deviceCode = $this->buildDeviceCode('baz', '+1 minute', $client, 'john');
 
         $em->persist($authCode);
         $em->persist($accessToken);
         $em->persist($refreshToken);
+        $em->persist($deviceCode);
         $em->flush();
 
         $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class));
@@ -75,10 +82,12 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         $em->refresh($authCode);
         $em->refresh($accessToken);
         $em->refresh($refreshToken);
+        $em->refresh($deviceCode);
 
         $this->assertTrue($authCode->isRevoked());
         $this->assertTrue($accessToken->isRevoked());
         $this->assertTrue($refreshToken->isRevoked());
+        $this->assertTrue($deviceCode->isRevoked());
     }
 
     private function buildRefreshToken(string $identifier, string $modify, AccessToken $accessToken): RefreshToken
@@ -109,6 +118,23 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
             $client,
             $userIdentifier,
             []
+        );
+    }
+
+    private function buildDeviceCode(string $identifier, string $modify, Client $client, ?string $userIdentifier = null): DeviceCode
+    {
+        return new DeviceCode(
+            $identifier,
+            new \DateTimeImmutable($modify),
+            $client,
+            $userIdentifier,
+            [],
+            '',
+            false,
+            false,
+            '',
+            null,
+            5
         );
     }
 }

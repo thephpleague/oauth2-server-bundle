@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\InMemory\DeviceCodeManager;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
@@ -38,6 +40,13 @@ return static function (ContainerConfigurator $container): void {
             ])
         ->alias(RefreshTokenManagerInterface::class, 'league.oauth2_server.manager.in_memory.refresh_token')
         ->alias(RefreshTokenManager::class, 'league.oauth2_server.manager.in_memory.refresh_token')
+
+        ->set('league.oauth2_server.manager.in_memory.device_code', DeviceCodeManager::class)
+            ->args([
+                null,
+            ])
+        ->alias(DeviceCodeManagerInterface::class, 'league.oauth2_server.manager.in_memory.device_code')
+        ->alias(DeviceCodeManager::class, 'league.oauth2_server.manager.in_memory.device_code')
 
         ->set('league.oauth2_server.manager.in_memory.authorization_code', AuthorizationCodeManager::class)
             ->args([
