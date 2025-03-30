@@ -1,0 +1,48 @@
+---------------------------------------------------------------------------
+
+by chalasr at 2025-03-11T11:06:49Z
+
+Can you rebase your PR and add a test case for this?
+
+---------------------------------------------------------------------------
+
+by fschmtt at 2025-03-13T08:33:46Z
+
+Yes, will do. Please allow me some days to get back to this! 😄
+
+---------------------------------------------------------------------------
+
+by chalasr at 2025-03-13T09:55:29Z
+
+Of course, thank you.
+
+---------------------------------------------------------------------------
+
+by fschmtt at 2025-03-21T06:24:12Z
+
+Hey @chalasr I'm honestly struggling to execute the PHPUnit tests locally.
+
+Any tips, guide or README I can consult?
+
+---------------------------------------------------------------------------
+
+by chalasr at 2025-03-21T17:48:28Z
+
+@fschmtt Here you go, https://github.com/thephpleague/oauth2-server-bundle/blob/master/CONTRIBUTING.md#testing.
+Please tell me if it's not enough
+
+---------------------------------------------------------------------------
+
+by fschmtt at 2025-03-22T13:39:43Z
+
+Hey thanks for your reply. I got the local setup for running the tests working.
+
+I suppose you'd like me to to test that setting the option in the YAML configuration properly configures the `AuthorizationServer`, am I correct?
+
+I'm not super familiar with testing a bundle or its configuration and couldn't find a similar test case, so I'm a bit at loss how and where to start 😅 I'd appreciate a helping hand if possible.
+
+---------------------------------------------------------------------------
+
+by fschmtt at 2025-03-22T13:41:43Z
+
+Oh wait, I overlooked the `ExtensionTest`, which seems what I should have been looking for!
