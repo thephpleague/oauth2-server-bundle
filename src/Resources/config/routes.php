@@ -2,15 +2,6 @@
 
 declare(strict_types=1);
 
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+trigger_deprecation('league/oauth2-server-bundle', '0.11', 'Loading file "%s" is deprecated. Load "%s" instead.', __FILE__, realpath(__DIR__ . '/../../../config/routes.php'));
 
-return function (RoutingConfigurator $routes) {
-    $routes
-        ->add('oauth2_authorize', '/authorize')
-        ->controller(['league.oauth2_server.controller.authorization', 'indexAction'])
-
-        ->add('oauth2_token', '/token')
-        ->controller(['league.oauth2_server.controller.token', 'indexAction'])
-        ->methods(['POST'])
-    ;
-};
+return require __DIR__ . '/../../../config/routes.php';

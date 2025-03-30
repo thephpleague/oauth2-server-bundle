@@ -55,7 +55,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
         $loader->load('services.php');
 
         $config = $this->processConfiguration(new Configuration(), $configs);
