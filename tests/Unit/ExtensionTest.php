@@ -130,6 +130,30 @@ final class ExtensionTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
+    /**
+     * @dataProvider revokeRefreshTokensProvider
+     */
+    public function testEnablingAndDisablingRevocationOfRefreshTokens(bool $shouldRevokeRefreshTokens): void
+    {
+        $container = new ContainerBuilder();
+        $extension = new LeagueOAuth2ServerExtension();
+
+        $extension->load($this->getValidConfiguration(['revoke_refresh_tokens' => $shouldRevokeRefreshTokens]), $container);
+
+        $authorizationServer = $container->findDefinition(AuthorizationServer::class);
+        $methodCalls = $authorizationServer->getMethodCalls();
+        $revokeRefreshTokens = null;
+
+        foreach ($methodCalls as $methodCall) {
+            if ('revokeRefreshTokens' === $methodCall[0]) {
+                $revokeRefreshTokens = $methodCall[1][0];
+                break;
+            }
+        }
+
+        $this->assertSame($shouldRevokeRefreshTokens, $revokeRefreshTokens);
+    }
+
     public function scopeProvider(): iterable
     {
         yield 'when a default scope is part of available scopes' => [
@@ -155,6 +179,7 @@ final class ExtensionTest extends TestCase
                     'enable_client_credentials_grant' => $options['enable_client_credentials_grant'] ?? true,
                     'enable_password_grant' => $options['enable_password_grant'] ?? true,
                     'enable_refresh_token_grant' => $options['enable_refresh_token_grant'] ?? true,
+                    'revoke_refresh_tokens' => $options['revoke_refresh_tokens'] ?? true,
                 ],
                 'resource_server' => [
                     'public_key' => 'foo',
@@ -173,6 +198,12 @@ final class ExtensionTest extends TestCase
                 'persistence' => ['in_memory' => 1],
             ],
         ];
+    }
+
+    public function revokeRefreshTokensProvider(): iterable
+    {
+        yield 'do revoke refresh tokens' => [true];
+        yield 'do not revoke refresh tokens' => [false];
     }
 
     private function setupContainer(ContainerBuilder $container): void
