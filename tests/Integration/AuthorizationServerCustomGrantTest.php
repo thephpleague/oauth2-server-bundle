@@ -6,10 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Integration;
 
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantNullAccessTokenTTL;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantNullAccessTokenTTLWithAttribute;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantUndefinedAccessTokenTTL;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantUndefinedAccessTokenTTLOnlyAutoconfigured;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantWithAttribute;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeLegacyGrant;
 use League\OAuth2\Server\AuthorizationServer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -33,13 +30,9 @@ final class AuthorizationServerCustomGrantTest extends KernelTestCase
         $enabledGrantTypes = $reflectionProperty->getValue($authorizationServer);
         $grantTypeAccessTokenTTL = $reflectionTTLProperty->getValue($authorizationServer);
 
-        $this->assertGrantConfig('fake_grant', new \DateInterval('PT5H'), $enabledGrantTypes, $grantTypeAccessTokenTTL, FakeGrant::class);
+        $this->assertGrantConfig('fake_grant', new \DateInterval('PT3H'), $enabledGrantTypes, $grantTypeAccessTokenTTL, FakeGrant::class);
         $this->assertGrantConfig(FakeGrantNullAccessTokenTTL::class, new \DateInterval('PT1H'), $enabledGrantTypes, $grantTypeAccessTokenTTL);
         $this->assertGrantConfig(FakeGrantUndefinedAccessTokenTTL::class, new \DateInterval('PT2H'), $enabledGrantTypes, $grantTypeAccessTokenTTL);
-
-        $this->assertGrantConfig(FakeGrantWithAttribute::class, new \DateInterval('PT5H'), $enabledGrantTypes, $grantTypeAccessTokenTTL);
-        $this->assertGrantConfig(FakeGrantNullAccessTokenTTLWithAttribute::class, new \DateInterval('PT1H'), $enabledGrantTypes, $grantTypeAccessTokenTTL);
-        $this->assertGrantConfig(FakeGrantUndefinedAccessTokenTTLOnlyAutoconfigured::class, new \DateInterval('PT2H'), $enabledGrantTypes, $grantTypeAccessTokenTTL);
 
         // TODO remove code bloc when bundle interface and configurator will be deleted
         $this->assertGrantConfig('fake_legacy_grant', new \DateInterval('PT5H'), $enabledGrantTypes, $grantTypeAccessTokenTTL, FakeLegacyGrant::class);

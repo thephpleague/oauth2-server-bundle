@@ -16,10 +16,7 @@ use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeClientManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeCredentialsRevoker;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantNullAccessTokenTTL;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantNullAccessTokenTTLWithAttribute;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantUndefinedAccessTokenTTL;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantUndefinedAccessTokenTTLOnlyAutoconfigured;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantWithAttribute;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeLegacyGrant;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeRefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
@@ -252,20 +249,16 @@ final class TestKernel extends Kernel implements CompilerPassInterface
 
     private function registerFakeGrant(ContainerBuilder $container): void
     {
-        $container->register(FakeGrant::class)->setAutoconfigured(true)
-            // tagged twice to test this case, only first one is used
+        $container->register(FakeGrant::class)
+            // tagged twice to test this case, last one win
             ->addTag('league.oauth2_server.authorization_server.grant', ['accessTokenTTL' => 'PT5H'])
             ->addTag('league.oauth2_server.authorization_server.grant', ['accessTokenTTL' => 'PT3H']);
 
-        $container->register(FakeGrantNullAccessTokenTTL::class)->setAutoconfigured(true)
+        $container->register(FakeGrantNullAccessTokenTTL::class)
             ->addTag('league.oauth2_server.authorization_server.grant', ['accessTokenTTL' => null]);
 
-        $container->register(FakeGrantUndefinedAccessTokenTTL::class)->setAutoconfigured(true)
+        $container->register(FakeGrantUndefinedAccessTokenTTL::class)
             ->addTag('league.oauth2_server.authorization_server.grant');
-
-        $container->register(FakeGrantWithAttribute::class)->setAutoconfigured(true);
-        $container->register(FakeGrantNullAccessTokenTTLWithAttribute::class)->setAutoconfigured(true);
-        $container->register(FakeGrantUndefinedAccessTokenTTLOnlyAutoconfigured::class)->setAutoconfigured(true);
 
         // TODO remove line when bundle interface and configurator will be deleted
         $container->register(FakeLegacyGrant::class)->setAutoconfigured(true);
