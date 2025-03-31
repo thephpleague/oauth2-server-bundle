@@ -186,7 +186,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                     'encryption_key' => '%env(ENCRYPTION_KEY)%',
                     'enable_password_grant' => true,
                     'enable_implicit_grant' => true,
-                    'access_token_ttl' => 'PT2H' // to have a different value as league/oauth2-server lib
+                    'access_token_ttl' => 'PT2H', // to have a different value as league/oauth2-server lib
                 ],
                 'resource_server' => $this->resourceServiceConfig ?? ['public_key' => '%env(PUBLIC_KEY_PATH)%'],
                 'scopes' => [

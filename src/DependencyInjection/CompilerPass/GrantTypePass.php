@@ -49,9 +49,8 @@ class GrantTypePass implements CompilerPassInterface
 
                     // read of accessTokenTTL from WithAccessTokenTTL attribute
                     $withAccessTokenTTLAttributes = $refGrantClass->getAttributes(WithAccessTokenTTL::class);
-                    if (count($withAccessTokenTTLAttributes) > 0) {
+                    if (\count($withAccessTokenTTLAttributes) > 0) {
                         // we only use first attribute, because WithAccessTokenTTL is not repeatable
-                        /** @var \ReflectionAttribute<WithAccessTokenTTL> $withAccessTokenTTLAttribute */
                         $withAccessTokenTTLAttributeArguments = array_shift($withAccessTokenTTLAttributes)->getArguments();
                         $attributes['accessTokenTTL'] = array_shift($withAccessTokenTTLAttributeArguments);
                     }
@@ -67,7 +66,7 @@ class GrantTypePass implements CompilerPassInterface
 
             $definition->addMethodCall('enableGrantType', [
                 new Reference($id),
-                (is_string($accessTokenTTLValue))
+                (\is_string($accessTokenTTLValue))
                     ? new Definition(\DateInterval::class, [$accessTokenTTLValue])
                     : $accessTokenTTLValue,
             ]);
