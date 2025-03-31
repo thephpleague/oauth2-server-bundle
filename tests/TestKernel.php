@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Tests;
 
 use Doctrine\DBAL\Platforms\SqlitePlatform;
-use Doctrine\ORM\Mapping\Annotation;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
@@ -174,7 +173,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                 'authorization_server' => [
                     'private_key' => '%env(PRIVATE_KEY_PATH)%',
                     'encryption_key' => '%env(ENCRYPTION_KEY)%',
-                    'access_token_ttl' => 'PT2H' // to have a different value as league/oauth2-server lib
+                    'access_token_ttl' => 'PT2H', // to have a different value as league/oauth2-server lib
                 ],
                 'resource_server' => $this->resourceServiceConfig ?? ['public_key' => '%env(PUBLIC_KEY_PATH)%'],
                 'scopes' => [

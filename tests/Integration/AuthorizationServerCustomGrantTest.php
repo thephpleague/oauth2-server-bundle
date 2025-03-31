@@ -45,7 +45,7 @@ final class AuthorizationServerCustomGrantTest extends KernelTestCase
         $this->assertGrantConfig('fake_legacy_grant', new \DateInterval('PT5H'), $enabledGrantTypes, $grantTypeAccessTokenTTL, FakeLegacyGrant::class);
     }
 
-    private function assertGrantConfig(string $grantId, \DateInterval|null $accessTokenTTL, array $enabledGrantTypes, array $grantTypeAccessTokenTTL, string|null $grantClass = null): void
+    private function assertGrantConfig(string $grantId, ?\DateInterval $accessTokenTTL, array $enabledGrantTypes, array $grantTypeAccessTokenTTL, ?string $grantClass = null): void
     {
         $grantClass ??= $grantId;
 
