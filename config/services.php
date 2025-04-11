@@ -133,6 +133,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('league.oauth2_server.emitter', EventEmitter::class)
         ->call('subscribeListenersFrom', [service('league.oauth2_server.symfony_league_listener_provider')])
 
+        // TODO remove code bloc when bundle interface and configurator will be deleted
         ->set('league.oauth2_server.authorization_server.grant_configurator', GrantConfigurator::class)
             ->args([
                 tagged_iterator('league.oauth2_server.authorization_server.grant'),
@@ -150,6 +151,7 @@ return static function (ContainerConfigurator $container): void {
                 null,
             ])
             ->call('setEmitter', [service('league.oauth2_server.emitter')])
+            // TODO remove next line when bundle interface and configurator will be deleted
             ->configurator(service(GrantConfigurator::class))
         ->alias(AuthorizationServer::class, 'league.oauth2_server.authorization_server')
 

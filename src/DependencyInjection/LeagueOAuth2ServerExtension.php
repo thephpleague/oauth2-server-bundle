@@ -69,6 +69,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container->findDefinition(OAuth2Authenticator::class)
             ->setArgument(3, $config['role_prefix']);
 
+        // TODO remove code bloc when bundle interface and configurator will be deleted
         $container->registerForAutoconfiguration(GrantTypeInterface::class)
             ->addTag('league.oauth2_server.authorization_server.grant');
 
@@ -139,6 +140,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     {
         $container->setParameter('league.oauth2_server.encryption_key', $config['encryption_key']);
         $container->setParameter('league.oauth2_server.encryption_key.type', $config['encryption_key_type']);
+        $container->setParameter('league.oauth2_server.access_token_ttl.default', $config['access_token_ttl']);
 
         $authorizationServer = $container
             ->findDefinition(AuthorizationServer::class)
@@ -199,6 +201,8 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
      */
     private function configureGrants(ContainerBuilder $container, array $config): void
     {
+        $container->setParameter('league.oauth2_server.refresh_token_ttl.default', $config['refresh_token_ttl']);
+
         $container
             ->findDefinition(PasswordGrant::class)
             ->addMethodCall('setRefreshTokenTTL', [
