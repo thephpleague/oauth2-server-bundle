@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Acceptance;
 
-use Doctrine\DBAL\Platforms\SqlitePlatform;
+use Doctrine\DBAL\Platforms\SQLitePlatform;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -31,7 +31,7 @@ abstract class AbstractAcceptanceTest extends WebTestCase
         TestHelper::initializeDoctrineSchema($this->application);
 
         $connection = $this->client->getContainer()->get('database_connection');
-        if ($connection->getDatabasePlatform() instanceof SqlitePlatform) {
+        if ($connection->getDatabasePlatform() instanceof SQLitePlatform) {
             // https://www.sqlite.org/foreignkeys.html
             $connection->executeQuery('PRAGMA foreign_keys = ON');
         }
