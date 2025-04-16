@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests;
 
-use Doctrine\DBAL\Platforms\SqlitePlatform;
+use Doctrine\DBAL\Platforms\SQLitePlatform;
 use Doctrine\ORM\Mapping\Annotation;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
@@ -229,7 +229,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     private function configureDatabaseServices(ContainerBuilder $container): void
     {
         $container
-            ->register(SqlitePlatform::class)
+            ->register(SQLitePlatform::class)
             ->setAutoconfigured(true)
             ->setAutowired(true)
         ;
