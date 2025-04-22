@@ -17,6 +17,12 @@ Replacement of trikoder/oauth2-bundle made in coordination with [trikoder](https
     composer require league/oauth2-server-bundle
     ```
 
+2. Require Doctrine to use it as persistence layer:
+
+    ```sh
+    composer require doctrine/doctrine-bundle doctrine/orm
+    ```
+
 ## Documentation
 
 The docs [can be found in the `docs/` directory](docs/index.md) of this repository.
