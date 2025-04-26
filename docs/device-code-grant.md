@@ -1,4 +1,4 @@
-# Password grant handling
+# Device grant handling
 
 The device code grant type is designed for devices without a browser or with limited input capabilities. In this flow, the user authenticates on another device—like a smartphone or computer—and receives a code to enter on the original device.
 
@@ -23,47 +23,37 @@ namespace App\Controller;
 
 use League\Bundle\OAuth2ServerBundle\Repository\DeviceCodeRepository;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class DeviceCodeController extends AbstractController
-{
+public function __construct(
+    private readonly DeviceCodeRepository $deviceCodeRepository
+) {
+}
 
-    public function __construct(
-        private readonly DeviceCodeRepository $deviceCodeRepository
-    ) {
-    }
+#[Route(path: '/verify-device', name: 'app_verify_device', methods: ['GET', 'POST'])]
+public function verifyDevice(
+    Request $request
+): Response {
+    $form = $this->createFormBuilder()
+                 ->add('userCode', TextType::class, [
+                     'required' => true,
+                 ])
+                 ->getForm()
+                 ->handleRequest($request);
 
-    #[Route(path: '/verify-device', name: 'app_verify_device', methods: ['GET', 'POST'])]
-    public function verifyDevice(
-        Request $request
-    ): Response {
-        $form = $this->createFormBuilder()
-                     ->add('userCode', TextType::class, [
-                         'required' => true,
-                     ])
-                     ->getForm()
-                     ->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $this->deviceCodeRepository->approveDeviceCode($form->get('userCode')->getData(), $this->getUser()->getId());
-                // Device code approved, show success message to user
-            } catch (OAuthServerException $e) {
-                // Handle exception (invalid code or missing user ID)
-            }
+    if ($form->isSubmitted() && $form->isValid()) {
+        try {
+            $this->deviceCodeRepository->approveDeviceCode($form->get('userCode')->getData(), $this->getUser()->getId());
+            // Device code approved, show success message to user
+        } catch (OAuthServerException $e) {
+            // Handle exception (invalid code or missing user ID)
         }
-
-        return $this->render(
-            'verify_device.html.twig',
-            ['form' => $form]
-        );
     }
 
+    // Render the form to the user
 }
 ```
 

@@ -30,12 +30,12 @@ final class DeviceCodeManager implements DeviceCodeManagerInterface
     {
         /** @var ?DeviceCodeInterface */
         return $this->entityManager->createQueryBuilder()
-                                   ->select('dc')
-                                   ->from(DeviceCode::class, 'dc')
-                                   ->where('dc.userCode = :code')
-                                   ->setParameter('code', $code)
-                                   ->getQuery()
-                                   ->getOneOrNullResult();
+           ->select('dc')
+           ->from(DeviceCode::class, 'dc')
+           ->where('dc.userCode = :code')
+           ->setParameter('code', $code)
+           ->getQuery()
+           ->getOneOrNullResult();
     }
 
     public function save(DeviceCodeInterface $deviceCode, bool $persist = true): void
