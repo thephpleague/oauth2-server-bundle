@@ -1,0 +1,17 @@
+---------------------------------------------------------------------------
+
+by chalasr at 2025-04-22T08:06:40Z
+
+Is it a use case of yours? I think I prefer to be pragmatic and not complicate the setup unless someone actually complains about it
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2025-04-23T10:08:32Z
+
+I added the bundle to a small app without any doctrine package, which got me wondering if we should make this change before 1.0, but I'm OK with your pragmatic point of view
+
+---------------------------------------------------------------------------
+
+by chalasr at 2025-04-26T15:04:48Z
+
+Thinking twice about it, the 98% use case probably installs the ORM first so I'm fine with this.
