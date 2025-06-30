@@ -16,7 +16,7 @@ We accept contributions via Pull Requests on [Github](https://github.com/thephpl
 
 ## Development
 
-[Docker](https://www.docker.com/) 18.03+ and [Docker Compose](https://github.com/docker/compose) 1.13+ are required for the development environment.
+[Docker](https://www.docker.com/) and [Docker Compose](https://github.com/docker/compose) are required for the development environment.
 
 ### Building the environment
 
@@ -46,7 +46,7 @@ Make sure your IDE is setup properly, for more information check out the [dedica
 
 ### Code linting
 
-This bundle enforces the PSR-2 and Symfony code standards during development by using the [PHP CS Fixer](https://cs.sensiolabs.org/) utility. Before committing any code, you can run the utility to fix any potential rule violations:
+This bundle enforces the PSR-2 and Symfony code standards during development by using the [PHP CS Fixer](https://cs.symfony.com/) utility. Before committing any code, you can run the utility to fix any potential rule violations:
 
 ```sh
 dev/bin/php php-cs-fixer fix
@@ -57,7 +57,7 @@ dev/bin/php php-cs-fixer fix
 You can run static anaysis of code using the following command:
 
 ```sh
-dev/bin/php psalm --shepherd --stats
+dev/bin/php phpstan --memory-limit=256M
 ```
 
 ### Testing
