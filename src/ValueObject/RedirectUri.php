@@ -16,7 +16,7 @@ class RedirectUri
      */
     public function __construct(string $redirectUri)
     {
-        if (!filter_var($redirectUri, \FILTER_VALIDATE_URL)) {
+        if (1 !== preg_match('/^[a-zA-Z][a-zA-Z0-9+.-]*:(?:\/\/[^\/\s?#]+(?:\/[^\s?#]*)?|\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?$/', $redirectUri)) {
             throw new \RuntimeException(\sprintf('The \'%s\' string is not a valid URI.', $redirectUri));
         }
 
