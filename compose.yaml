@@ -5,7 +5,7 @@ services:
             HOST_USER_ID: ${HOST_USER_ID}
             HOST_GROUP_ID: ${HOST_GROUP_ID}
             HOST_IP: ${HOST_IP:-}
-            SYMFONY_REQUIRE: ${SYMFONY_REQUIRE:-5.4.*}
+            SYMFONY_REQUIRE: ${SYMFONY_REQUIRE:-6.4.*}
         image: league/oauth2-server-bundle
         volumes:
             - .:/app/src
