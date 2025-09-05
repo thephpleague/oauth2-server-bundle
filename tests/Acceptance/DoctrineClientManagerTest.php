@@ -22,7 +22,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
 {
     public function testSimpleDelete(): void
     {
-        /** @var $em EntityManagerInterface */
+        /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
         $doctrineClientManager = new DoctrineClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class);
 
@@ -41,7 +41,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
 
     public function testClientDeleteCascadesToAccessTokens(): void
     {
-        /** @var $em EntityManagerInterface */
+        /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
         $doctrineClientManager = new DoctrineClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class);
 
@@ -74,7 +74,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
 
     public function testSaveClientWithoutScopeAddDefaultScopes(): void
     {
-        /** @var $em EntityManagerInterface */
+        /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
         $doctrineClientManager = new DoctrineClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class);
 
@@ -88,7 +88,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
 
     public function testClientDeleteCascadesToAccessTokensAndRefreshTokens(): void
     {
-        /** @var $em EntityManagerInterface */
+        /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
         $doctrineClientManager = new DoctrineClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class);
 
@@ -122,7 +122,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTest
                 ->find($accessToken->getIdentifier())
         );
 
-        /** @var $refreshToken RefreshToken */
+        /** @var RefreshToken $refreshToken */
         $refreshToken = $em
             ->getRepository(RefreshToken::class)
             ->find($refreshToken->getIdentifier())
