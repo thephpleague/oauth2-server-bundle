@@ -16,6 +16,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\User\AttributesBasedUserProviderInterface;
+use Symfony\Component\Security\Core\User\ChainUserProvider;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
@@ -70,6 +72,14 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
 
         /** @var string $userIdentifier */
         $userIdentifier = $psr7Request->getAttribute('oauth_user_id', '');
+        if ('' === $userIdentifier) {
+            /**
+             * BC layer for Symfony < 8.0
+             */
+            if (is_a(ChainUserProvider::class, AttributesBasedUserProviderInterface::class, true)) {
+                throw OAuth2AuthenticationFailedException::create('The access token has either an empty or missing "oauth_user_id" attribute.');
+            }
+        }
 
         /** @var string $accessTokenId */
         $accessTokenId = $psr7Request->getAttribute('oauth_access_token_id');
@@ -81,7 +91,10 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         $oauthClientId = $psr7Request->getAttribute('oauth_client_id', '');
 
         $userLoader = function (string $userIdentifier) use ($oauthClientId): UserInterface {
-            if ('' === $userIdentifier || $oauthClientId === $userIdentifier) {
+            if (
+                $oauthClientId === $userIdentifier
+                || ('' === $userIdentifier && is_a(ChainUserProvider::class, AttributesBasedUserProviderInterface::class, true)) // BC layer for Symfony < 8.0
+            ) {
                 return new ClientCredentialsUser($oauthClientId);
             }
 
