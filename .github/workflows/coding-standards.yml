@@ -15,12 +15,16 @@ jobs:
             - name: "checkout"
               uses: "actions/checkout@v4"
 
-            - name: "build the environment"
-              run: "dev/bin/docker-compose build"
+            - name: "setup php"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                php-version: "latest"
+                tools: "composer, flex"
+
+            - name: "install composer dependencies"
+              uses: "ramsey/composer-install@v3"
+              env:
+                COMPOSER_PREFER_STABLE: 1
 
             - name: "check coding standards"
-              run: "dev/bin/php php-cs-fixer fix --dry-run --diff --ansi"
-
-            - name: clear docker volumes
-              if: ${{ always() }}
-              run: dev/bin/docker-compose down --volumes
+              run: "vendor/bin/php-cs-fixer fix --dry-run --diff --ansi"
