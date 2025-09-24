@@ -1,0 +1,35 @@
+---------------------------------------------------------------------------
+
+by maitre-hibou at 2025-09-01T14:12:09Z
+
+Hi ! Had the issue when installing the bundle today. (issue here https://github.com/thephpleague/oauth2-server-bundle/issues/248)
+
+I would also suggest (if doctrine is not required) to not set the default persistence engine to doctrine and instead use 'in_memory' to avoid issue with this :
+
+```php
+// vendor/league/oauth2-server-bundle/src/DependencyInjection/LeagueOAuth2ServerExtension.php
+
+private function assertRequiredBundlesAreEnabled(ContainerBuilder $container): void
+{
+    $requiredBundles = [
+        'security' => SecurityBundle::class,
+    ];
+
+    if ($container->hasParameter('league.oauth2_server.persistence.doctrine.enabled')) {
+        $requiredBundles['doctrine'] = DoctrineBundle::class;
+    }
+
+    foreach ($requiredBundles as $bundleAlias => $requiredBundle) {
+        if (!$container->hasExtension($bundleAlias)) {
+            throw new \LogicException(\sprintf('Bundle \'%s\' needs to be enabled in your application kernel.', $requiredBundle));
+        }
+    }
+}
+```
+
+---------------------------------------------------------------------------
+
+by frankdekker at 2025-09-24T07:46:53Z
+
+@chalasr  @ajgarlag
+Any update on when this will be merged and released?
