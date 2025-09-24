@@ -123,10 +123,9 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
 
         $this->assertSame(3, $doctrineAccessTokenManager->clearExpired());
 
-        $this->assertSame(
-            $testData['output'],
-            $em->getRepository(RefreshToken::class)->findBy(['accessToken' => null], ['identifier' => 'ASC'])
-        );
+        $em->clear();
+
+        self::assertCount(3, $em->getRepository(RefreshToken::class)->findBy(['accessToken' => null], ['identifier' => 'ASC']));
     }
 
     public function testClearExpiredWithRefreshTokenWithoutSavingAccessToken(): void

@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\AccessTokenInterface;
+use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 
 final class AccessTokenManager implements AccessTokenManagerInterface
 {
@@ -50,12 +51,39 @@ final class AccessTokenManager implements AccessTokenManagerInterface
             return 0;
         }
 
-        /** @var int */
-        return $this->entityManager->createQueryBuilder()
-            ->delete(AccessToken::class, 'at')
+        /** @var array{identifier: string}[] */
+        $results = $this->entityManager->createQueryBuilder()
+            ->select('at.identifier')
+            ->from(AccessToken::class, 'at')
             ->where('at.expiry < :expiry')
             ->setParameter('expiry', new \DateTimeImmutable(), 'datetime_immutable')
             ->getQuery()
+            ->getScalarResult();
+        if (0 === \count($results)) {
+            return 0;
+        }
+
+        /** @var string[] */
+        $ids = array_column($results, 'identifier');
+
+        // unlink access tokens from refresh tokens
+        $this->entityManager->createQueryBuilder()
+            ->update(RefreshToken::class, 'rt')
+            ->set('rt.accessToken', ':null')
+            ->where('rt.accessToken IN (:ids)')
+            ->setParameter('null', null)
+            ->setParameter('ids', $ids)
+            ->getQuery()
             ->execute();
+
+        // delete expired access tokens
+        $this->entityManager->createQueryBuilder()
+            ->delete(AccessToken::class, 'at')
+            ->where('at.identifier IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->execute();
+
+        return \count($ids);
     }
 }
