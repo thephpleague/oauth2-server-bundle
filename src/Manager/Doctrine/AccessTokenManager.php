@@ -62,7 +62,7 @@ final class AccessTokenManager implements AccessTokenManagerInterface
         /** @var string[] */
         $ids = array_column($results, 'identifier');
 
-        if (count($results) === 0) {
+        if (0 === \count($results)) {
             return 0;
         }
 
@@ -84,6 +84,6 @@ final class AccessTokenManager implements AccessTokenManagerInterface
             ->getQuery()
             ->execute();
 
-        return count($ids);
+        return \count($ids);
     }
 }
