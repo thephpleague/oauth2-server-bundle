@@ -8,9 +8,7 @@ Implement the 4 interfaces from the `League\Bundle\OAuth2ServerBundle\Manager` n
 And the interface for `CredentialsRevokerInterface`:
 - [CredentialsRevokerInterface](../src/Service/CredentialsRevokerInterface.php)
 
-```php
-
-Example:
+## Example:
 
 ```php
 class MyAccessTokenManager implements AccessTokenManagerInterface
