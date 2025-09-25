@@ -6,7 +6,7 @@ For implementation into Symfony projects, please see [bundle documentation](basi
 
 ## Features
 
-* API endpoint for client authorization and token issuing
+* API endpoint for client authorization, device code and token issuing
 * Configurable client and token persistance (includes [Doctrine](https://www.doctrine-project.org/) support)
 * Integration with Symfony's [Security](https://symfony.com/doc/current/security.html) layer
 
@@ -77,6 +77,15 @@ For implementation into Symfony projects, please see [bundle documentation](basi
 
             # Whether to revoke refresh tokens after they were used for all grant types (default to true)
             revoke_refresh_tokens: true
+
+            # Whether to enable the device code grant
+            enable_device_code_grant: true
+
+            # The full URI the user will need to visit to enter the user code
+            device_code_verification_uri: ''
+
+            # How soon (in seconds) can the device code be used to poll for the access token without being throttled
+            device_code_polling_interval: 5
 
         resource_server:      # Required
 
