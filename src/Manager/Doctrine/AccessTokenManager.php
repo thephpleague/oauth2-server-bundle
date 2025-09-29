@@ -59,12 +59,12 @@ final class AccessTokenManager implements AccessTokenManagerInterface
             ->setParameter('expiry', new \DateTimeImmutable(), 'datetime_immutable')
             ->getQuery()
             ->getScalarResult();
-        /** @var string[] */
-        $ids = array_column($results, 'identifier');
-
         if (0 === \count($results)) {
             return 0;
         }
+
+        /** @var string[] */
+        $ids = array_column($results, 'identifier');
 
         // unlink access tokens from refresh tokens
         $this->entityManager->createQueryBuilder()
