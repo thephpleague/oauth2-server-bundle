@@ -111,7 +111,7 @@ final class AuthorizationController
 
             $response = $this->server->completeAuthorizationRequest($authRequest, $serverResponse);
         } catch (OAuthServerException $e) {
-            $response = $e->generateHttpResponse($serverResponse);
+            $response = $e->generateHttpResponse($serverResponse, str_contains($e->getRedirectUri() ?? '', '#'));
         }
 
         return $this->httpFoundationFactory->createResponse($response);

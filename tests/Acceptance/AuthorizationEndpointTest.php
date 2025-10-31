@@ -545,4 +545,33 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
         $this->assertSame('The authorization grant type is not supported by the authorization server.', $jsonResponse['error_description']);
         $this->assertSame('Check that all required parameters have been provided', $jsonResponse['hint']);
     }
+
+    public function testUnathorizedImplicitRequest(): void
+    {
+        $this->loginUser();
+
+        $this->client->request(
+            'GET',
+            '/authorize',
+            [
+                'client_id' => FixtureFactory::FIXTURE_CLIENT_FIRST,
+                'response_type' => 'token',
+                'state' => 'foobar',
+            ]
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertSame(302, $response->getStatusCode());
+        $redirectUri = $response->headers->get('Location');
+
+        $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $redirectUri);
+        $fragment = [];
+        parse_str(parse_url($redirectUri, \PHP_URL_FRAGMENT), $fragment);
+        $this->assertArrayHasKey('error', $fragment);
+        $this->assertArrayHasKey('error_description', $fragment);
+        $this->assertArrayHasKey('state', $fragment);
+        $this->assertEquals('access_denied', $fragment['error']);
+        $this->assertEquals('foobar', $fragment['state']);
+    }
 }
