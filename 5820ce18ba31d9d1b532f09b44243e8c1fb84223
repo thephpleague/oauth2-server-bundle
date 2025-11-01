@@ -1,0 +1,11 @@
+---------------------------------------------------------------------------
+
+by chalasr at 2025-07-10T19:26:09Z
+
+Would you mind covering this with a test to prevent regressions?
+
+---------------------------------------------------------------------------
+
+by MarvinG92 at 2025-07-11T06:00:41Z
+
+Sure, I'd be happy to. I've added a test case.
