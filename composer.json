@@ -31,7 +31,7 @@
     "require-dev": {
         "ext-pdo": "*",
         "ext-pdo_sqlite": "*",
-        "doctrine/doctrine-bundle": "^2.8.0",
+        "doctrine/doctrine-bundle": "^2.8|^3.0",
         "doctrine/orm": "^2.14|^3.0",
         "php-cs-fixer/shim": "^3.38",
         "phpstan/phpstan": "^2.1",
