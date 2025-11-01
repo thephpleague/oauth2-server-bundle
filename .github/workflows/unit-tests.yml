@@ -5,25 +5,27 @@ on:
     push: ~
     schedule:
         # Do not make it the first of the month and/or midnight since it is a very busy time
-        - cron: "10 10 5 * *"
+        - cron: "* 10 5 * *"
 
 jobs:
     tests:
-        runs-on: ubuntu-latest
-        continue-on-error: ${{ matrix.can-fail }}
+        runs-on: "ubuntu-latest"
+        continue-on-error: "${{ matrix.can-fail }}"
         strategy:
             fail-fast: false
             matrix:
-                php: ['8.1', '8.2', '8.3', '8.4']
-                symfony: ['6.4.*', '7.1.*', '7.2.*']
-                doctrine-orm: ['^2.14', '^3.0']
-                composer-flags: ['--prefer-stable']
+                php: ["8.1", "8.2", "8.3", "8.4"]
+                symfony: ["6.4.*", "7.1.*", "7.2.*"]
+                doctrine-orm: ["^2.14", "^3.0"]
+                dependency-versions: ["highest"]
+                composer-stable: ["1"]
                 can-fail: [false]
                 include:
                     - php: "8.1"
                       symfony: "6.4.*"
                       doctrine-orm: "^2.14"
-                      composer-flags: '--prefer-stable --prefer-lowest'
+                      dependency-versions: "lowest"
+                      composer-stable: "1"
                       can-fail: false
                 exclude:
                     - php: "8.1"
@@ -31,27 +33,34 @@ jobs:
                     - php: "8.1"
                       symfony: "7.2.*"
 
-        name: "PHP ${{ matrix.php }} - Doctrine ${{ matrix.doctrine-orm }} - Symfony ${{ matrix.symfony }}${{ matrix.composer-flags != '' && format(' - Composer {0}', matrix.composer-flags) || '' }}"
-
-        env:
-            SYMFONY_REQUIRE: ${{ matrix.symfony }}
+        name: "PHP ${{ matrix.php }} - Symfony ${{ matrix.symfony }} - Doctrine ORM ${{ matrix.doctrine-orm }} - Composer ${{ matrix.dependency-versions }}"
 
         steps:
             - name: "checkout"
               uses: "actions/checkout@v4"
 
-            - name: "build the PHP environment"
-              run: "dev/bin/docker-compose build --build-arg PHP_VERSION=${{ matrix.php }} --build-arg XDEBUG_VERSION='3.4.0' php"
+            - name: "setup php"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                php-version: "${{ matrix.php }}"
+                tools: "composer, flex"
+
+            - name: "enable Symfony Flex plugin"
+              run: "composer global config --no-interaction allow-plugins.symfony/flex true"
 
             - name: "require specific Doctrine ORM version"
-              run: "dev/bin/php composer require --ansi ${{ matrix.composer-flags }} --no-install doctrine/orm:${{ matrix.doctrine-orm }}"
+              env:
+                SYMFONY_REQUIRE: "${{ matrix.symfony }}"
+                COMPOSER_PREFER_STABLE: "${{ matrix.composer-stable }}"
+              run: "composer require --no-scripts --no-install --dev doctrine/orm:${{ matrix.doctrine-orm }} --ansi"
 
-            - name: "install dependencies"
-              run: "dev/bin/php composer update --ansi ${{ matrix.composer-flags }}"
+            - name: "install composer dependencies"
+              uses: "ramsey/composer-install@v3"
+              env:
+                SYMFONY_REQUIRE: "${{ matrix.symfony }}"
+                COMPOSER_PREFER_STABLE: "${{ matrix.composer-stable }}"
+              with:
+                dependency-versions: "${{ matrix.dependency-versions }}"
 
             - name: "run unit tests"
-              run: "dev/bin/php-test vendor/bin/simple-phpunit --colors=always"
-
-            - name: clear docker volumes
-              if: ${{ always() }}
-              run: dev/bin/docker-compose down --volumes
+              run: "vendor/bin/simple-phpunit --colors=always"

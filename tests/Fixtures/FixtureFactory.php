@@ -21,7 +21,7 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
  * Development hints:
  *
  * You can easily generate token identifiers using the following command:
- * --- dev/bin/php -r "echo bin2hex(random_bytes(40)) . PHP_EOL;"
+ * --- php -r "echo bin2hex(random_bytes(40)) . PHP_EOL;"
  */
 final class FixtureFactory
 {

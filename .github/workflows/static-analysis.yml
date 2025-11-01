@@ -11,29 +11,20 @@ jobs:
     static-analysis:
         name: "static analysis"
         runs-on: "ubuntu-latest"
-        strategy:
-            fail-fast: false
-            matrix:
-                php: ['8.4']
-                symfony: ['7.2.*']
-                composer-flags: ['--prefer-stable']
-
-        env:
-          SYMFONY_REQUIRE: ${{ matrix.symfony }}
-
         steps:
             - name: "checkout"
               uses: "actions/checkout@v4"
 
-            - name: "build the environment"
-              run: "dev/bin/docker-compose build --build-arg PHP_VERSION=${{ matrix.php }} php"
+            - name: "setup php"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                php-version: "latest"
+                tools: "composer, flex"
 
-            - name: "install dependencies"
-              run: "dev/bin/php composer update --ansi ${{ matrix.composer-flags }}"
+            - name: "install composer dependencies"
+              uses: "ramsey/composer-install@v3"
+              env:
+                COMPOSER_PREFER_STABLE: 1
 
             - name: "run phpstan static analysis"
-              run: "dev/bin/php phpstan --memory-limit=256M --ansi"
-
-            - name: clear docker volumes
-              if: ${{ always() }}
-              run: dev/bin/docker-compose down --volumes
+              run: "vendor/bin/phpstan --ansi"

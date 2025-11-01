@@ -33,6 +33,9 @@
         "ext-pdo_sqlite": "*",
         "doctrine/doctrine-bundle": "^2.8.0",
         "doctrine/orm": "^2.14|^3.0",
+        "php-cs-fixer/shim": "^3.38",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-symfony": "2.0",
         "symfony/browser-kit": "^6.4|^7.0",
         "symfony/phpunit-bridge": "^7.2"
     },
