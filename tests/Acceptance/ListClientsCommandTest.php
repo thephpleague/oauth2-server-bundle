@@ -91,20 +91,27 @@ final class ListClientsCommandTest extends AbstractAcceptanceTest
 
     public function testListFiltersClients(): void
     {
-        $clientA = $this->fakeAClient('client', 'client-a', 'client-a-secret');
+        $clientA = $this->fakeAClient('client', 'client-a', 'client-a-secret')
+            ->setScopes(new Scope('client-a-scope'), new Scope('other-scope-1'));
         $this->getClientManager()->save($clientA);
 
         $clientB = $this
             ->fakeAClient('client', 'client-b', 'client-b-secret')
-            ->setScopes(new Scope('client-b-scope'))
+            ->setScopes(new Scope('client-b-scope'), new Scope('other-scope'))
         ;
         $this->getClientManager()->save($clientB);
+
+        $clientC = $this
+            ->fakeAClient('client', 'client-c', 'client-c-secret')
+            ->setScopes(new Scope('client-c-scope'), new Scope('1-other-scope'))
+        ;
+        $this->getClientManager()->save($clientC);
 
         $command = $this->command();
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            '--scope' => $clientB->getScopes(),
+            '--scope' => ['other-scope'],
         ]);
         $output = $commandTester->getDisplay();
 

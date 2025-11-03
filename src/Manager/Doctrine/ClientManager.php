@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Manager\Doctrine;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use League\Bundle\OAuth2ServerBundle\Event\PreSaveClientEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientFilter;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
@@ -74,38 +75,45 @@ final class ClientManager implements ClientManagerInterface
     public function list(?ClientFilter $clientFilter): array
     {
         $repository = $this->entityManager->getRepository($this->clientFqcn);
-        $criteria = self::filterToCriteria($clientFilter);
+        $qb = $repository->createQueryBuilder('c');
+        self::setQueryBuilderFilters($qb, $clientFilter);
 
         /** @var list<AbstractClient> */
-        return $repository->findBy($criteria);
+        return $qb->getQuery()->getResult();
+    }
+
+    private static function setQueryBuilderFilters(QueryBuilder $qb, ?ClientFilter $clientFilter): void
+    {
+        if (null === $clientFilter || false === $clientFilter->hasFilters()) {
+            return;
+        }
+
+        self::setFieldFilter($qb, 'grants', $clientFilter->getGrants());
+
+        self::setFieldFilter($qb, 'redirect_uris', $clientFilter->getRedirectUris());
+
+        self::setFieldFilter($qb, 'scopes', $clientFilter->getScopes());
     }
 
     /**
-     * @return array{grants?: list<Grant>, redirect_uris?: list<RedirectUri>, scopes?: list<Scope>}
+     * @param list<Scope>|list<RedirectUri>|list<Grant> $values
      */
-    private static function filterToCriteria(?ClientFilter $clientFilter): array
+    private static function setFieldFilter(QueryBuilder $qb, string $field, array $values): void
     {
-        if (null === $clientFilter || false === $clientFilter->hasFilters()) {
-            return [];
+        foreach ($values as $key => $value) {
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('c.' . $field, ':' . $field . $key),
+                    $qb->expr()->like('c.' . $field, ':space_' . $field . $key),
+                    $qb->expr()->like('c.' . $field, ':' . $field . '_space' . $key),
+                    $qb->expr()->like('c.' . $field, ':space_' . $field . '_space' . $key),
+                )
+            )
+                ->setParameter($field . $key, (string) $value)
+                ->setParameter('space_' . $field . $key, '% ' . (string) $value)
+                ->setParameter($field . '_space' . $key, (string) $value . ' %')
+                ->setParameter('space_' . $field . '_space' . $key, '% ' . (string) $value . ' %')
+            ;
         }
-
-        $criteria = [];
-
-        $grants = $clientFilter->getGrants();
-        if ($grants) {
-            $criteria['grants'] = $grants;
-        }
-
-        $redirectUris = $clientFilter->getRedirectUris();
-        if ($redirectUris) {
-            $criteria['redirect_uris'] = $redirectUris;
-        }
-
-        $scopes = $clientFilter->getScopes();
-        if ($scopes) {
-            $criteria['scopes'] = $scopes;
-        }
-
-        return $criteria;
     }
 }
