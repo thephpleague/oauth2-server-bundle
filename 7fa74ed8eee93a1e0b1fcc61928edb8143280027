@@ -1,0 +1,17 @@
+---------------------------------------------------------------------------
+
+by chalasr at 2025-11-01T00:29:12Z
+
+> Includes https://github.com/thephpleague/oauth2-server-bundle/pull/243
+
+I guess you meant #254 which is merged now. Can you please rebase this one?
+
+---------------------------------------------------------------------------
+
+by ajgarlag at 2025-11-03T09:03:40Z
+
+> > Includes #243
+>
+> I guess you meant #254 which is merged now. Can you please rebase this one?
+
+Yes, my bad! It's rebased now. Unit tests failures are unrelated and fixed in #257
