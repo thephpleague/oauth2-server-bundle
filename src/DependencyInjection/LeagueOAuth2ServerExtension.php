@@ -49,11 +49,9 @@ use Symfony\Component\DependencyInjection\Reference;
 final class LeagueOAuth2ServerExtension extends Extension implements PrependExtensionInterface, CompilerPassInterface
 {
     /**
-     * @return void
-     *
      * @throws \Exception
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
         $loader->load('services.php');
@@ -90,10 +88,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         return 'league_oauth2_server';
     }
 
-    /**
-     * @return void
-     */
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         // If no doctrine connection is configured, the DBAL connection should
         // be left alone as adding any configuration setting with no connection
@@ -114,10 +109,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         ]);
     }
 
-    /**
-     * @return void
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $this->assertRequiredBundlesAreEnabled($container);
     }

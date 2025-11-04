@@ -97,6 +97,8 @@ final class OAuth2AuthenticatorTest extends TestCase
     {
         $serverRequest = (new ServerRequest('GET', '/foo'))
             ->withAttribute('oauth_access_token_id', 'accessTokenId')
+            ->withAttribute('oauth_user_id', 'clientId')
+            ->withAttribute('oauth_client_id', 'clientId')
         ;
 
         $httpMessageFactory = $this->createMock(HttpMessageFactoryInterface::class);
