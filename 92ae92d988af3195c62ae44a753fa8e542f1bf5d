@@ -1,0 +1,7 @@
+---------------------------------------------------------------------------
+
+by ajgarlag at 2025-11-05T07:36:08Z
+
+@chalasr Could you review this PR??
+
+The bug was always there. The conversion of `ClientFilter` to Doctrine criteria was wrong, but it was spotted indirectly after https://github.com/doctrine/orm/pull/12190
