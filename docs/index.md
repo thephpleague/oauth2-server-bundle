@@ -128,13 +128,6 @@ For implementation into Symfony projects, please see [bundle documentation](basi
     bin/console doctrine:schema:update --force
     ```
 
-1. Enable the authenticator security system in `config/security.yaml` file:
-
-```yaml
-security:
-    enable_authenticator_manager: true
-```
-
 1. Import the routes inside your `config/routes.yaml` file:
 
     ```yaml
