@@ -25,7 +25,6 @@ final class InMemoryRefreshTokenManagerTest extends TestCase
         $this->assertSame(3, $inMemoryRefreshTokenManager->clearExpired());
 
         $reflectionProperty = new \ReflectionProperty(InMemoryRefreshTokenManager::class, 'refreshTokens');
-        $reflectionProperty->setAccessible(true);
 
         $this->assertSame($testData['output'], $reflectionProperty->getValue($inMemoryRefreshTokenManager));
     }

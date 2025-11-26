@@ -25,7 +25,6 @@ final class InMemoryAuthCodeManagerTest extends TestCase
         $this->assertSame(3, $inMemoryAuthCodeManager->clearExpired());
 
         $reflectionProperty = new \ReflectionProperty(InMemoryAuthCodeManager::class, 'authorizationCodes');
-        $reflectionProperty->setAccessible(true);
 
         $this->assertSame($testData['output'], $reflectionProperty->getValue($inMemoryAuthCodeManager));
     }
