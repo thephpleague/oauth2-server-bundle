@@ -8,6 +8,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class User extends \ArrayObject implements UserInterface
 {
+    public function __construct(private readonly ?string $userIdentifier = null)
+    {
+        parent::__construct();
+    }
+
     public function getRoles(): array
     {
         return $this['roles'] ?? [];
@@ -25,7 +30,7 @@ class User extends \ArrayObject implements UserInterface
 
     public function getUserIdentifier(): string
     {
-        return FixtureFactory::FIXTURE_USER;
+        return $this->userIdentifier ?? FixtureFactory::FIXTURE_USER;
     }
 
     public function eraseCredentials(): void

@@ -99,6 +99,13 @@ final class AuthorizationRequestResolveEvent extends Event
         return $this->user;
     }
 
+    public function setUser(UserInterface $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
     /**
      * @return Scope[]
      */

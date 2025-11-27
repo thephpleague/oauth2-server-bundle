@@ -139,6 +139,9 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                                 FixtureFactory::FIXTURE_USER => [
                                     'roles' => ['ROLE_USER'],
                                 ],
+                                FixtureFactory::FIXTURE_USER_TWO => [
+                                    'roles' => ['ROLE_USER'],
+                                ],
                             ],
                         ],
                     ],
@@ -146,6 +149,9 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                         'memory' => [
                             'users' => [
                                 FixtureFactory::FIXTURE_USER => [
+                                    'roles' => ['ROLE_USER'],
+                                ],
+                                FixtureFactory::FIXTURE_USER_TWO => [
                                     'roles' => ['ROLE_USER'],
                                 ],
                             ],
