@@ -58,18 +58,14 @@ final class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     public function persistDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity): void
     {
         $deviceCode = $this->deviceCodeManager->find($deviceCodeEntity->getIdentifier());
-        $newDeviceCode = false;
 
-        if ($deviceCode) {
-            if ($deviceCodeEntity->getLastPolledAt()) {
-                $deviceCode->setLastPolledAt($deviceCodeEntity->getLastPolledAt());
-            }
-        } else {
-            $newDeviceCode = true;
+        if (null === $deviceCode) {
             $deviceCode = $this->buildDeviceCodeModel($deviceCodeEntity);
+        } else {
+            $deviceCode = $this->updateDeviceCodeModel($deviceCode, $deviceCodeEntity);
         }
 
-        $this->deviceCodeManager->save($deviceCode, $newDeviceCode);
+        $this->deviceCodeManager->save($deviceCode);
     }
 
     public function approveDeviceCode(string $userCode, string $userId): void
@@ -91,7 +87,7 @@ final class DeviceCodeRepository implements DeviceCodeRepositoryInterface
         $deviceCode->setUserIdentifier($userId);
         $deviceCode->setUserApproved(true);
 
-        $this->deviceCodeManager->save($deviceCode, false);
+        $this->deviceCodeManager->save($deviceCode);
     }
 
     public function getDeviceCodeEntityByDeviceCode(string $deviceCodeEntity): ?DeviceCodeEntityInterface
@@ -115,7 +111,7 @@ final class DeviceCodeRepository implements DeviceCodeRepositoryInterface
 
         $deviceCode->revoke();
 
-        $this->deviceCodeManager->save($deviceCode, false);
+        $this->deviceCodeManager->save($deviceCode);
     }
 
     public function isDeviceCodeRevoked(string $codeId): bool
@@ -162,13 +158,11 @@ final class DeviceCodeRepository implements DeviceCodeRepositoryInterface
         /** @var AbstractClient $client */
         $client = $this->clientManager->find($deviceCodeEntity->getClient()->getIdentifier());
 
-        $userIdentifier = $deviceCodeEntity->getUserIdentifier();
-
         return new DeviceCodeModel(
             $deviceCodeEntity->getIdentifier(),
             $deviceCodeEntity->getExpiryDateTime(),
             $client,
-            $userIdentifier,
+            $deviceCodeEntity->getUserIdentifier(),
             $this->scopeConverter->toDomainArray(array_values($deviceCodeEntity->getScopes())),
             $deviceCodeEntity->getUserCode(),
             $deviceCodeEntity->getUserApproved(),
@@ -176,5 +170,21 @@ final class DeviceCodeRepository implements DeviceCodeRepositoryInterface
             $deviceCodeEntity->getLastPolledAt(),
             $deviceCodeEntity->getInterval()
         );
+    }
+
+    private function updateDeviceCodeModel(
+        DeviceCodeInterface $deviceCode,
+        DeviceCodeEntityInterface $deviceCodeEntity,
+    ): DeviceCodeInterface {
+        if ($deviceCodeEntity->getLastPolledAt()) {
+            $deviceCode->setLastPolledAt($deviceCodeEntity->getLastPolledAt());
+        }
+
+        if ($deviceCodeEntity->getUserIdentifier()) {
+            $deviceCode->setUserIdentifier($deviceCodeEntity->getUserIdentifier());
+            $deviceCode->setUserApproved($deviceCodeEntity->getUserApproved());
+        }
+
+        return $deviceCode;
     }
 }

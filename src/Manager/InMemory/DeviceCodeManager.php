@@ -30,7 +30,7 @@ final class DeviceCodeManager implements DeviceCodeManagerInterface
         return null;
     }
 
-    public function save(DeviceCodeInterface $deviceCode, bool $persist = true): void
+    public function save(DeviceCodeInterface $deviceCode): void
     {
         $this->deviceCodes[$deviceCode->getIdentifier()] = $deviceCode;
     }

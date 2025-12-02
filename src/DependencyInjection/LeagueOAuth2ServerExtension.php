@@ -248,6 +248,8 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             ->replaceArgument(2, new Definition(\DateInterval::class, [$config['device_code_ttl']]))
             ->replaceArgument(3, $config['device_code_verification_uri'])
             ->replaceArgument(4, $config['device_code_polling_interval'])
+            ->addMethodCall('setIncludeVerificationUriComplete', [$config['enable_device_code_verification_uri_complete_generation']])
+            ->addMethodCall('setIntervalVisibility', [$config['enable_device_code_polling_interval_visibility']])
             ->addMethodCall('setRefreshTokenTTL', [
                 new Definition(\DateInterval::class, [$config['refresh_token_ttl']]),
             ])

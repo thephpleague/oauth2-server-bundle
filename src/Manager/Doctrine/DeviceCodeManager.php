@@ -38,12 +38,9 @@ final class DeviceCodeManager implements DeviceCodeManagerInterface
            ->getOneOrNullResult();
     }
 
-    public function save(DeviceCodeInterface $deviceCode, bool $persist = true): void
+    public function save(DeviceCodeInterface $deviceCode): void
     {
-        if ($persist) {
-            $this->entityManager->persist($deviceCode);
-        }
-
+        $this->entityManager->persist($deviceCode);
         $this->entityManager->flush();
     }
 

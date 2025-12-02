@@ -12,10 +12,7 @@ interface DeviceCodeManagerInterface
 
     public function findByUserCode(string $code): ?DeviceCodeInterface;
 
-    /**
-     * @param bool $persist Set to true when creating a new device code
-     */
-    public function save(DeviceCodeInterface $deviceCode, bool $persist = true): void;
+    public function save(DeviceCodeInterface $deviceCode): void;
 
     public function clearExpired(): int;
 }
