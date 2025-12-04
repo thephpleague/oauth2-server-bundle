@@ -27,7 +27,6 @@ final class InMemoryAccessTokenManagerTest extends TestCase
         $this->assertSame(3, $inMemoryAccessTokenManager->clearExpired());
 
         $reflectionProperty = new \ReflectionProperty(InMemoryAccessTokenManager::class, 'accessTokens');
-        $reflectionProperty->setAccessible(true);
 
         $this->assertSame($testData['output'], $reflectionProperty->getValue($inMemoryAccessTokenManager));
     }
@@ -45,7 +44,6 @@ final class InMemoryAccessTokenManagerTest extends TestCase
         $this->assertSame(0, $inMemoryAccessTokenManager->clearExpired());
 
         $reflectionProperty = new \ReflectionProperty(InMemoryAccessTokenManager::class, 'accessTokens');
-        $reflectionProperty->setAccessible(true);
 
         $this->assertSame([], $reflectionProperty->getValue($inMemoryAccessTokenManager));
     }

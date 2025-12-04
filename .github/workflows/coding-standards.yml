@@ -18,8 +18,8 @@ jobs:
             - name: "setup php"
               uses: "shivammathur/setup-php@v2"
               with:
-                php-version: "latest"
-                tools: "composer, flex"
+                php-version: "8.4"
+                tools: "composer"
 
             - name: "install composer dependencies"
               uses: "ramsey/composer-install@v3"
