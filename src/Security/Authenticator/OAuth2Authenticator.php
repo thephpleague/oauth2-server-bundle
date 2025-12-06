@@ -76,7 +76,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
             /**
              * BC layer for Symfony < 8.0
              */
-            if (is_a(ChainUserProvider::class, AttributesBasedUserProviderInterface::class, true)) {
+            if (is_a(ChainUserProvider::class, AttributesBasedUserProviderInterface::class, true)) { // @phpstan-ignore function.alreadyNarrowedType
                 throw OAuth2AuthenticationFailedException::create('The access token has either an empty or missing "oauth_user_id" attribute.');
             }
         }
@@ -93,7 +93,10 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         $userLoader = function (string $userIdentifier) use ($oauthClientId): UserInterface {
             if (
                 $oauthClientId === $userIdentifier
-                || ('' === $userIdentifier && is_a(ChainUserProvider::class, AttributesBasedUserProviderInterface::class, true)) // BC layer for Symfony < 8.0
+                /**
+                 * BC layer for Symfony < 8.0
+                 */
+                || ('' === $userIdentifier && is_a(ChainUserProvider::class, AttributesBasedUserProviderInterface::class, true)) // @phpstan-ignore function.alreadyNarrowedType
             ) {
                 return new ClientCredentialsUser($oauthClientId);
             }

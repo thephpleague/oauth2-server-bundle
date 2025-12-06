@@ -6,7 +6,9 @@ namespace League\Bundle\OAuth2ServerBundle\DependencyInjection\Security;
 
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AuthenticatorFactoryInterface;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -45,6 +47,9 @@ class OAuth2Factory implements AuthenticatorFactoryInterface
         return 'oauth2';
     }
 
+    /**
+     * @param ArrayNodeDefinition<TreeBuilder<'array'>> $builder
+     */
     public function addConfiguration(NodeDefinition $builder): void
     {
     }

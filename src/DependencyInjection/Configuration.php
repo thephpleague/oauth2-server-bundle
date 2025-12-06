@@ -7,12 +7,16 @@ namespace League\Bundle\OAuth2ServerBundle\DependencyInjection;
 use Defuse\Crypto\Key;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 final class Configuration implements ConfigurationInterface
 {
+    /**
+     * @return TreeBuilder<'array'>
+     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('league_oauth2_server');
@@ -36,6 +40,9 @@ final class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
+    /**
+     * @return ArrayNodeDefinition<TreeBuilder<'array'>>
+     */
     private function createAuthorizationServerNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('authorization_server');
@@ -121,6 +128,9 @@ final class Configuration implements ConfigurationInterface
         return $node;
     }
 
+    /**
+     * @return ArrayNodeDefinition<TreeBuilder<'array'>>
+     */
     private function createResourceServerNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('resource_server');
@@ -146,6 +156,9 @@ final class Configuration implements ConfigurationInterface
         return $node;
     }
 
+    /**
+     * @return ArrayNodeDefinition<TreeBuilder<'array'>>
+     */
     private function createScopesNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('scopes');
@@ -176,6 +189,9 @@ final class Configuration implements ConfigurationInterface
         return $node;
     }
 
+    /**
+     * @return ArrayNodeDefinition<TreeBuilder<'array'>>
+     */
     private function createPersistenceNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('persistence');
@@ -240,6 +256,9 @@ final class Configuration implements ConfigurationInterface
         return $node;
     }
 
+    /**
+     * @return ArrayNodeDefinition<TreeBuilder<'array'>>
+     */
     private function createClientNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('client');
