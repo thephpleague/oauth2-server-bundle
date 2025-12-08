@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Model;
 
-class RefreshToken implements RefreshTokenInterface
+class RefreshToken implements \Stringable, RefreshTokenInterface
 {
     private string $identifier;
     private \DateTimeInterface $expiry;

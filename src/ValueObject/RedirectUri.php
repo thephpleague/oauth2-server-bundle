@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\ValueObject;
 
-class RedirectUri
+class RedirectUri implements \Stringable
 {
     /**
      * @var non-empty-string

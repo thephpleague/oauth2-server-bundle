@@ -6,7 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Model;
 
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 
-class AuthorizationCode implements AuthorizationCodeInterface
+class AuthorizationCode implements \Stringable, AuthorizationCodeInterface
 {
     /**
      * @var string
