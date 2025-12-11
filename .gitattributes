@@ -1,11 +1,8 @@
-/tests export-ignore
-/dev export-ignore
-/.github export-ignore
 /.editorconfig export-ignore
 /.gitattributes export-ignore
+/.github export-ignore
 /.gitignore export-ignore
-/.php-cs-fixer.dist export-ignore
-/docker-compose.yml export-ignore
+/.php-cs-fixer.dist.php export-ignore
 /phpunit.xml.dist export-ignore
-/.psalm.baseline.xml export-ignore
-/psalm.xml export-ignore
+/phpstan.dist.neon export-ignore
+/tests export-ignore
