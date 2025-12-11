@@ -277,15 +277,15 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
 
         $response = $this->client->getResponse();
 
-        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame(302, $response->getStatusCode());
+        $redirectUri = $response->headers->get('Location');
 
-        $this->assertSame('application/json', $response->headers->get('Content-Type'));
-
-        $jsonResponse = json_decode($response->getContent(), true);
-
-        $this->assertSame('invalid_request', $jsonResponse['error']);
-        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $jsonResponse['error_description']);
-        $this->assertSame('Plain code challenge method is not allowed for this client', $jsonResponse['hint']);
+        $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $redirectUri);
+        $query = [];
+        parse_str(parse_url($redirectUri, \PHP_URL_QUERY), $query);
+        $this->assertSame('invalid_request', $query['error']);
+        $this->assertSame('The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.', $query['error_description']);
+        $this->assertSame('Plain code challenge method is not allowed for this client', $query['hint']);
     }
 
     public function testAuthCodeRequestWithClientWhoIsAllowedToMakeARequestWithPlainCodeChallengeMethod(): void
