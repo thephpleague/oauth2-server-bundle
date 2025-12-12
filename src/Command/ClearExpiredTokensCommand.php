@@ -6,6 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Command;
 
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -32,16 +33,23 @@ final class ClearExpiredTokensCommand extends Command
      */
     private $authorizationCodeManager;
 
+    /**
+     * @var DeviceCodeManagerInterface
+     */
+    private $deviceCodeManager;
+
     public function __construct(
         AccessTokenManagerInterface $accessTokenManager,
         RefreshTokenManagerInterface $refreshTokenManager,
         AuthorizationCodeManagerInterface $authorizationCodeManager,
+        DeviceCodeManagerInterface $deviceCodeManager,
     ) {
         parent::__construct();
 
         $this->accessTokenManager = $accessTokenManager;
         $this->refreshTokenManager = $refreshTokenManager;
         $this->authorizationCodeManager = $authorizationCodeManager;
+        $this->deviceCodeManager = $deviceCodeManager;
     }
 
     protected function configure(): void
@@ -66,6 +74,12 @@ final class ClearExpiredTokensCommand extends Command
                 InputOption::VALUE_NONE,
                 'Clear expired auth codes.'
             )
+            ->addOption(
+                'device-codes',
+                'dc',
+                InputOption::VALUE_NONE,
+                'Clear expired device codes.'
+            )
         ;
     }
 
@@ -76,11 +90,13 @@ final class ClearExpiredTokensCommand extends Command
         $clearExpiredAccessTokens = $input->getOption('access-tokens');
         $clearExpiredRefreshTokens = $input->getOption('refresh-tokens');
         $clearExpiredAuthCodes = $input->getOption('auth-codes');
+        $clearExpiredDeviceCodes = $input->getOption('device-codes');
 
-        if (!$clearExpiredAccessTokens && !$clearExpiredRefreshTokens && !$clearExpiredAuthCodes) {
+        if (!$clearExpiredAccessTokens && !$clearExpiredRefreshTokens && !$clearExpiredAuthCodes && !$clearExpiredDeviceCodes) {
             $this->clearExpiredAccessTokens($io);
             $this->clearExpiredRefreshTokens($io);
             $this->clearExpiredAuthCodes($io);
+            $this->clearExpiredDeviceCodes($io);
 
             return 0;
         }
@@ -95,6 +111,10 @@ final class ClearExpiredTokensCommand extends Command
 
         if ($clearExpiredAuthCodes) {
             $this->clearExpiredAuthCodes($io);
+        }
+
+        if ($clearExpiredDeviceCodes) {
+            $this->clearExpiredDeviceCodes($io);
         }
 
         return 0;
@@ -127,6 +147,16 @@ final class ClearExpiredTokensCommand extends Command
             'Cleared %d expired auth code%s.',
             $numOfClearedAuthCodes,
             1 === $numOfClearedAuthCodes ? '' : 's'
+        ));
+    }
+
+    private function clearExpiredDeviceCodes(SymfonyStyle $io): void
+    {
+        $numberOfClearedDeviceCodes = $this->deviceCodeManager->clearExpired();
+        $io->success(\sprintf(
+            'Cleared %d expired device code%s.',
+            $numberOfClearedDeviceCodes,
+            1 === $numberOfClearedDeviceCodes ? '' : 's'
         ));
     }
 }
