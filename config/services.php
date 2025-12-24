@@ -15,6 +15,7 @@ use League\Bundle\OAuth2ServerBundle\Command\GenerateKeyPairCommand;
 use League\Bundle\OAuth2ServerBundle\Command\ListClientsCommand;
 use League\Bundle\OAuth2ServerBundle\Command\UpdateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Controller\AuthorizationController;
+use League\Bundle\OAuth2ServerBundle\Controller\DeviceCodeController;
 use League\Bundle\OAuth2ServerBundle\Controller\TokenController;
 use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverter;
 use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverterInterface;
@@ -25,12 +26,14 @@ use League\Bundle\OAuth2ServerBundle\EventListener\AddClientDefaultScopesListene
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ScopeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\Bundle\OAuth2ServerBundle\Repository\AuthCodeRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\ClientRepository;
+use League\Bundle\OAuth2ServerBundle\Repository\DeviceCodeRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\RefreshTokenRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\ScopeRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\UserRepository;
@@ -42,12 +45,14 @@ use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\EventEmitting\EventEmitter;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Grant\DeviceCodeGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
@@ -78,6 +83,16 @@ return static function (ContainerConfigurator $container): void {
             ])
         ->alias(RefreshTokenRepositoryInterface::class, 'league.oauth2_server.repository.refresh_token')
         ->alias(RefreshTokenRepository::class, 'league.oauth2_server.repository.refresh_token')
+
+        ->set('league.oauth2_server.repository.device_code', DeviceCodeRepository::class)
+            ->args([
+                service(DeviceCodeManagerInterface::class),
+                service(ClientManagerInterface::class),
+                service(ScopeConverterInterface::class),
+                service(ClientRepositoryInterface::class),
+            ])
+        ->alias(DeviceCodeRepositoryInterface::class, 'league.oauth2_server.repository.device_code')
+        ->alias(DeviceCodeRepository::class, 'league.oauth2_server.repository.device_code')
 
         ->set('league.oauth2_server.repository.scope', ScopeRepository::class)
             ->args([
@@ -195,6 +210,16 @@ return static function (ContainerConfigurator $container): void {
             ])
         ->alias(AuthCodeGrant::class, 'league.oauth2_server.grant.auth_code')
 
+        ->set('league.oauth2_server.grant.device_code', DeviceCodeGrant::class)
+            ->args([
+                service(DeviceCodeRepositoryInterface::class),
+                service(RefreshTokenRepositoryInterface::class),
+                null,
+                null,
+                null,
+            ])
+        ->alias(DeviceCodeGrant::class, 'league.oauth2_server.grant.device_code')
+
         ->set('league.oauth2_server.grant.implicit', ImplicitGrant::class)
             ->args([
                 null,
@@ -215,6 +240,16 @@ return static function (ContainerConfigurator $container): void {
             ])
             ->tag('controller.service_arguments')
         ->alias(AuthorizationController::class, 'league.oauth2_server.controller.authorization')
+
+        ->set('league.oauth2_server.controller.device_code', DeviceCodeController::class)
+            ->args([
+                service(AuthorizationServer::class),
+                service('league.oauth2_server.factory.psr_http'),
+                service('league.oauth2_server.factory.http_foundation'),
+                service('league.oauth2_server.factory.psr17'),
+            ])
+            ->tag('controller.service_arguments')
+        ->alias(DeviceCodeController::class, 'league.oauth2_server.controller.device_code')
 
         // Token controller
         ->set('league.oauth2_server.controller.token', TokenController::class)
@@ -263,6 +298,7 @@ return static function (ContainerConfigurator $container): void {
                 service(AccessTokenManagerInterface::class),
                 service(RefreshTokenManagerInterface::class),
                 service(AuthorizationCodeManagerInterface::class),
+                service(DeviceCodeManagerInterface::class),
             ])
             ->tag('console.command', ['command' => 'league:oauth2-server:clear-expired-tokens'])
         ->alias(ClearExpiredTokensCommand::class, 'league.oauth2_server.command.clear_expired_tokens')

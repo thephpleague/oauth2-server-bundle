@@ -7,9 +7,11 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager;
+use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\DeviceCodeManager;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Driver;
@@ -52,6 +54,13 @@ return static function (ContainerConfigurator $container): void {
             ])
         ->alias(RefreshTokenManagerInterface::class, 'league.oauth2_server.manager.doctrine.refresh_token')
         ->alias(RefreshTokenManager::class, 'league.oauth2_server.manager.doctrine.refresh_token')
+
+        ->set('league.oauth2_server.manager.doctrine.device_code', DeviceCodeManager::class)
+            ->args([
+                null,
+            ])
+        ->alias(DeviceCodeManagerInterface::class, 'league.oauth2_server.manager.doctrine.device_code')
+        ->alias(DeviceCodeManager::class, 'league.oauth2_server.manager.doctrine.device_code')
 
         ->set('league.oauth2_server.manager.doctrine.authorization_code', AuthorizationCodeManager::class)
             ->args([
