@@ -5,7 +5,7 @@ on:
     push: ~
     schedule:
         # Do not make it the first of the month and/or midnight since it is a very busy time
-        - cron: "* 10 5 * *"
+        - cron: "15 10 5 * *" # Runs at 10:15, on day 5 of the month
 
 jobs:
     tests:
