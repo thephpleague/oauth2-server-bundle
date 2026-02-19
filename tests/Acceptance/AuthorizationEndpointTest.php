@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Acceptance;
 
+use League\Bundle\OAuth2ServerBundle\Event\AccessTokenExtraClaimsResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Event\AuthorizationRequestResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
@@ -387,6 +388,44 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
         $this->assertArrayHasKey('expires_in', $fragment);
         $this->assertArrayHasKey('state', $fragment);
         $this->assertEquals('foobar', $fragment['state']);
+    }
+
+    public function testSuccessfulTokenWithExtraClaimsRequest(): void
+    {
+        $eventDispatcher = $this->client
+            ->getContainer()
+            ->get('event_dispatcher');
+        $eventDispatcher->addListener(OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE, static function (AuthorizationRequestResolveEvent $event): void {
+            $event->resolveAuthorization(AuthorizationRequestResolveEvent::AUTHORIZATION_APPROVED);
+        });
+        $eventDispatcher->addListener(OAuth2Events::ACCESS_TOKEN_EXTRA_CLAIMS_RESOLVE, static function (AccessTokenExtraClaimsResolveEvent $event): void {
+            $event->setExtraClaims(['foo' => 'bar', 'baz' => ['qux', 'quux']]);
+        });
+
+        $this->loginUser();
+
+        $this->client->request(
+            'GET',
+            '/authorize',
+            [
+                'client_id' => FixtureFactory::FIXTURE_CLIENT_FIRST,
+                'response_type' => 'token',
+                'state' => 'foobar',
+            ]
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertSame(302, $response->getStatusCode());
+        $redirectUri = $response->headers->get('Location');
+
+        $this->assertStringStartsWith(FixtureFactory::FIXTURE_CLIENT_FIRST_REDIRECT_URI, $redirectUri);
+        $fragment = [];
+        parse_str(parse_url($redirectUri, \PHP_URL_FRAGMENT), $fragment);
+        $this->assertArrayHasKey('access_token', $fragment);
+        $tokenParts = TestHelper::parseJwtToken($fragment['access_token']);
+        $this->assertSame($tokenParts['payload']['foo'], 'bar');
+        $this->assertSame($tokenParts['payload']['baz'], ['qux', 'quux']);
     }
 
     public function testCodeRequestRedirectToResolutionUri(): void

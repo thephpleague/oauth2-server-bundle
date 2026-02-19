@@ -106,4 +106,23 @@ final class TestHelper
 
         return 0 === $statusCode;
     }
+
+    /**
+     * @return array{header: array<non-empty-string, string>, payload: array<non-empty-string, mixed>, signature: non-empty-string}
+     */
+    public static function parseJwtToken(string $jwt): array
+    {
+        $parts = explode('.', $jwt);
+        if (3 !== \count($parts)) {
+            throw new \InvalidArgumentException('Invalid JWT token format.');
+        }
+
+        [$header, $payload, $signature] = $parts;
+
+        return [
+            'header' => json_decode(base64_decode($header), true),
+            'payload' => json_decode(base64_decode($payload), true),
+            'signature' => $signature,
+        ];
+    }
 }

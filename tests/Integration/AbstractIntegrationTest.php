@@ -123,7 +123,7 @@ abstract class AbstractIntegrationTest extends TestCase
         $scopeConverter = new ScopeConverter();
         $scopeRepository = new ScopeRepository($this->scopeManager, $this->clientManager, $scopeConverter, $this->eventDispatcher);
         $clientRepository = new ClientRepository($this->clientManager);
-        $accessTokenRepository = new AccessTokenRepository($this->accessTokenManager, $this->clientManager, $scopeConverter);
+        $accessTokenRepository = new AccessTokenRepository($this->accessTokenManager, $this->clientManager, $scopeConverter, $this->eventDispatcher);
         $refreshTokenRepository = new RefreshTokenRepository($this->refreshTokenManager, $this->accessTokenManager);
         $userConverter = new UserConverter();
         $userRepository = new UserRepository($this->clientManager, $this->eventDispatcher, $userConverter);
