@@ -332,19 +332,19 @@ final class FixtureFactory
     {
         $clients = [];
 
-        $clients[] = (new Client('name', self::FIXTURE_CLIENT_FIRST, 'secret'))
+        $clients[] = (new Client('name', self::FIXTURE_CLIENT_FIRST, '$2y$13$C5G/H.dXzMuOfnV4qC4C1.SBvEf2jcUYXE.xNneP4bSKY6ccDkPWe')) // 'secret'
             ->setRedirectUris(new RedirectUri(self::FIXTURE_CLIENT_FIRST_REDIRECT_URI));
 
-        $clients[] = (new Client('name', self::FIXTURE_CLIENT_SECOND, 'top_secret'))
+        $clients[] = (new Client('name', self::FIXTURE_CLIENT_SECOND, '$2y$13$Xz0dsTZZX9jdSmp2tEvnA.SMJaXJJ4S3ezcSInyj/IoZrcwjHUp0W')) // 'top_secret'
             ->setRedirectUris(new RedirectUri(self::FIXTURE_CLIENT_SECOND_REDIRECT_URI));
 
-        $clients[] = (new Client('name', self::FIXTURE_CLIENT_INACTIVE, 'woah'))
+        $clients[] = (new Client('name', self::FIXTURE_CLIENT_INACTIVE, '$2y$13$bb75Y48uFgQiREiXtiJNkee9Q7kVcSpgw.fW0tTyM5FicvEppalV.')) // 'woah'
             ->setActive(false);
 
-        $clients[] = (new Client('name', self::FIXTURE_CLIENT_RESTRICTED_GRANTS, 'wicked'))
+        $clients[] = (new Client('name', self::FIXTURE_CLIENT_RESTRICTED_GRANTS, '$2y$13$aBEPx05Ba9P3ierHACN1Gu4uG6UAxnCU2qPhg9875MmmKF1n3csYW')) // 'wicked'
             ->setGrants(new Grant('password'));
 
-        $clients[] = (new Client('name', self::FIXTURE_CLIENT_RESTRICTED_SCOPES, 'beer'))
+        $clients[] = (new Client('name', self::FIXTURE_CLIENT_RESTRICTED_SCOPES, '$2y$13$5NX9iiSlH3IRTl223/qVzu/CuyvxKq7rbLhFouVBrsCAZT5zYMBy6')) // 'beer'
             ->setRedirectUris(new RedirectUri(self::FIXTURE_CLIENT_FIRST_REDIRECT_URI))
             ->setScopes(new Scope(self::FIXTURE_SCOPE_SECOND));
 

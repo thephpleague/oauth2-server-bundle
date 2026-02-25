@@ -192,6 +192,9 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                     ],
                 ],
                 'persistence' => $this->persistenceConfig ?? ['doctrine' => ['entity_manager' => 'default']],
+                'client' => [
+                    'allow_plaintext_secrets' => false,
+                ],
             ]);
 
             $this->configureControllers($container);

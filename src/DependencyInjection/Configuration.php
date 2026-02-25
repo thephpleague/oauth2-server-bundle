@@ -321,6 +321,10 @@ final class Configuration implements ConfigurationInterface
                         ->thenInvalid(\sprintf('%%s must be a %s', AbstractClient::class))
                     ->end()
                 ->end()
+                ->booleanNode('allow_plaintext_secrets')
+                    ->info('Whether to allow plaintext client secrets.')
+                    ->defaultTrue()
+                ->end()
             ->end()
         ;
 

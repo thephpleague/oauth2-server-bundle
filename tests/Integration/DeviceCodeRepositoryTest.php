@@ -9,6 +9,7 @@ use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
 use League\Bundle\OAuth2ServerBundle\Repository\ClientRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\DeviceCodeRepository;
+use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
 
 final class DeviceCodeRepositoryTest extends AbstractIntegrationTest
 {
@@ -34,7 +35,7 @@ final class DeviceCodeRepositoryTest extends AbstractIntegrationTest
         $this->assertSame($deviceCode, $this->deviceCodeManager->find($identifier));
 
         $deviceCodeRepository = new DeviceCodeRepository(
-            $this->deviceCodeManager, $this->clientManager, new ScopeConverter(), new ClientRepository($this->clientManager)
+            $this->deviceCodeManager, $this->clientManager, new ScopeConverter(), new ClientRepository($this->clientManager, new NativePasswordHasher())
         );
 
         $deviceCodeRepository->revokeDeviceCode($identifier);

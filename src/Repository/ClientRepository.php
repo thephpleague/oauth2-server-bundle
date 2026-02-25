@@ -9,6 +9,10 @@ use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\ClientInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use Symfony\Component\PasswordHasher\Hasher\MigratingPasswordHasher;
+use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
+use Symfony\Component\PasswordHasher\Hasher\PlaintextPasswordHasher;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
 final class ClientRepository implements ClientRepositoryInterface
 {
@@ -17,9 +21,21 @@ final class ClientRepository implements ClientRepositoryInterface
      */
     private $clientManager;
 
-    public function __construct(ClientManagerInterface $clientManager)
+    private PasswordHasherInterface $passwordHasher;
+
+    public function __construct(ClientManagerInterface $clientManager, ?PasswordHasherInterface $passwordHasher = null)
     {
         $this->clientManager = $clientManager;
+
+        if (null === $passwordHasher) {
+            trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not passing a "%s" to "%s" is deprecated since version 1.2 and will be required in 2.0.', PasswordHasherInterface::class, __CLASS__);
+
+            // Default to a migrating hasher so legacy plaintext secrets keep validating
+            // (and get upgraded on first use) while never bypassing the hasher API.
+            $passwordHasher = new MigratingPasswordHasher(new NativePasswordHasher(), new PlaintextPasswordHasher());
+        }
+
+        $this->passwordHasher = $passwordHasher;
     }
 
     public function getClientEntity(string $clientIdentifier): ?ClientEntityInterface
@@ -33,7 +49,7 @@ final class ClientRepository implements ClientRepositoryInterface
         return $this->buildClientEntity($client);
     }
 
-    public function validateClient(string $clientIdentifier, ?string $clientSecret, ?string $grantType): bool
+    public function validateClient(string $clientIdentifier, #[\SensitiveParameter] ?string $clientSecret, ?string $grantType): bool
     {
         $client = $this->clientManager->find($clientIdentifier);
 
@@ -49,11 +65,31 @@ final class ClientRepository implements ClientRepositoryInterface
             return false;
         }
 
-        if (!$client->isConfidential() || hash_equals((string) $client->getSecret(), (string) $clientSecret)) {
+        if (!$client->isConfidential()) {
             return true;
         }
 
-        return false;
+        $storedSecret = (string) $client->getSecret();
+        $inputSecret = (string) $clientSecret;
+
+        $secretIsValid = $this->passwordHasher->verify($storedSecret, $inputSecret);
+
+        if ($secretIsValid && $this->passwordHasher->needsRehash($storedSecret)) {
+            if (!method_exists($client, 'setSecret')) {
+                trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not implementing method "setSecret()" in client "%s" is deprecated. This method will be required in 2.0.', $client::class);
+            } else {
+                // Opportunistic upgrade of the stored secret to the current hash format.
+                // The secret has already been verified, so a persistence failure here must
+                // not fail an otherwise valid authentication; it will be retried on the next one.
+                try {
+                    $client->setSecret($this->passwordHasher->hash($inputSecret));
+                    $this->clientManager->save($client);
+                } catch (\Throwable) {
+                }
+            }
+        }
+
+        return $secretIsValid;
     }
 
     private function buildClientEntity(ClientInterface $client): ClientEntity

@@ -13,6 +13,7 @@ use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Command\DeleteClientCommand;
 use League\Bundle\OAuth2ServerBundle\Command\GenerateKeyPairCommand;
 use League\Bundle\OAuth2ServerBundle\Command\ListClientsCommand;
+use League\Bundle\OAuth2ServerBundle\Command\RehashClientSecretsCommand;
 use League\Bundle\OAuth2ServerBundle\Command\UpdateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Controller\AuthorizationController;
 use League\Bundle\OAuth2ServerBundle\Controller\DeviceCodeController;
@@ -64,6 +65,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
@@ -72,6 +74,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('league.oauth2_server.repository.client', ClientRepository::class)
             ->args([
                 service(ClientManagerInterface::class),
+                service('league.oauth2_server.password_hasher'),
             ])
         ->alias(ClientRepositoryInterface::class, 'league.oauth2_server.repository.client')
         ->alias(ClientRepository::class, 'league.oauth2_server.repository.client')
@@ -268,6 +271,7 @@ return static function (ContainerConfigurator $container): void {
             ->args([
                 service(ClientManagerInterface::class),
                 null,
+                service('league.oauth2_server.password_hasher'),
             ])
             ->tag('console.command', ['command' => 'league:oauth2-server:create-client'])
         ->alias(CreateClientCommand::class, 'league.oauth2_server.command.create_client')
@@ -313,6 +317,14 @@ return static function (ContainerConfigurator $container): void {
             ->tag('console.command', ['command' => 'league:oauth2-server:generate-keypair'])
         ->alias(GenerateKeyPairCommand::class, 'league.oauth2_server.command.generate_keypair')
 
+        ->set('league.oauth2_server.command.rehash_client_secrets', RehashClientSecretsCommand::class)
+            ->args([
+                service(ClientManagerInterface::class),
+                service('league.oauth2_server.password_hasher'),
+            ])
+            ->tag('console.command', ['command' => 'league:oauth2-server:rehash-client-secrets'])
+        ->alias(RehashClientSecretsCommand::class, 'league.oauth2_server.command.rehash_client_secrets')
+
         // Utility services
         ->set('league.oauth2_server.converter.user', UserConverter::class)
         ->alias(UserConverterInterface::class, 'league.oauth2_server.converter.user')
@@ -357,5 +369,8 @@ return static function (ContainerConfigurator $container): void {
             ])
 
         ->set('league.oauth2_server.factory.http_foundation', HttpFoundationFactory::class)
+
+        // Password hasher for client secrets
+        ->set('league.oauth2_server.password_hasher', NativePasswordHasher::class)
     ;
 };
