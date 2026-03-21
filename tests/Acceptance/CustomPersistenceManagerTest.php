@@ -8,6 +8,7 @@ use League\Bundle\OAuth2ServerBundle\Event\UserResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
@@ -19,6 +20,7 @@ use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeAccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeAuthorizationCodeManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeClientManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeCredentialsRevoker;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeDeviceCodeManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeRefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
@@ -34,6 +36,7 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTest
     private ClientManagerInterface&MockObject $clientManager;
     private RefreshTokenManagerInterface&MockObject $refreshTokenManager;
     private AuthorizationCodeManagerInterface&MockObject $authCodeManager;
+    private DeviceCodeManagerInterface&MockObject $deviceCodeManager;
 
     protected function setUp(): void
     {
@@ -42,6 +45,7 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTest
         $this->clientManager = $this->createMock(ClientManagerInterface::class);
         $this->refreshTokenManager = $this->createMock(RefreshTokenManagerInterface::class);
         $this->authCodeManager = $this->createMock(AuthorizationCodeManagerInterface::class);
+        $this->deviceCodeManager = $this->createMock(DeviceCodeManagerInterface::class);
         $this->application = new Application($this->client->getKernel());
     }
 
@@ -52,6 +56,7 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTest
         static::assertInstanceOf(FakeClientManager::class, $this->client->getContainer()->get(ClientManagerInterface::class));
         static::assertInstanceOf(FakeRefreshTokenManager::class, $this->client->getContainer()->get(RefreshTokenManagerInterface::class));
         static::assertInstanceOf(FakeCredentialsRevoker::class, $this->client->getContainer()->get(CredentialsRevokerInterface::class));
+        static::assertInstanceOf(FakeDeviceCodeManager::class, $this->client->getContainer()->get(DeviceCodeManagerInterface::class));
     }
 
     public function testSuccessfulClientCredentialsRequest(): void
@@ -154,6 +159,25 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTest
         static::assertResponseIsSuccessful();
     }
 
+    public function testSuccessfullDeviceCodeRequest(): void
+    {
+        $client = new Client('name', 'foo', 'secret');
+
+        $this->deviceCodeManager->expects(self::atLeastOnce())->method('find')->willReturn(null);
+        $this->deviceCodeManager->expects(self::atLeastOnce())->method('save');
+        $this->client->getContainer()->set('test.device_code_manager', $this->deviceCodeManager);
+
+        $this->clientManager->expects(self::atLeastOnce())->method('find')->with('foo')->willReturn($client);
+        $this->client->getContainer()->set('test.client_manager', $this->clientManager);
+
+        $this->client->request('POST', '/device-code', [
+            'client_id' => $client->getIdentifier(),
+        ]);
+
+        $this->client->getResponse();
+        static::assertResponseIsSuccessful();
+    }
+
     protected static function createKernel(array $options = []): KernelInterface
     {
         return new TestKernel(
@@ -167,6 +191,7 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTest
                     'client_manager' => 'test.client_manager',
                     'refresh_token_manager' => 'test.refresh_token_manager',
                     'credentials_revoker' => 'test.credentials_revoker',
+                    'device_code_manager' => 'test.device_code_manager',
                 ],
             ]
         );

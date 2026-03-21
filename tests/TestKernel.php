@@ -8,12 +8,14 @@ use Doctrine\DBAL\Platforms\SQLitePlatform;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeAccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeAuthorizationCodeManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeClientManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeCredentialsRevoker;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeDeviceCodeManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeRefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
@@ -163,6 +165,10 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                         'path' => '^/authorize',
                         'roles' => 'IS_AUTHENTICATED',
                     ],
+                    [
+                        'path' => '^/device-code',
+                        'roles' => 'IS_AUTHENTICATED',
+                    ],
                 ],
             ];
 
@@ -219,6 +225,11 @@ final class TestKernel extends Kernel implements CompilerPassInterface
             ->getAlias(AuthorizationCodeManagerInterface::class)
             ->setPublic(true)
         ;
+
+        $container
+            ->getAlias(DeviceCodeManagerInterface::class)
+            ->setPublic(true)
+        ;
     }
 
     private function configureControllers(ContainerBuilder $container): void
@@ -246,6 +257,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
         $container->register('test.client_manager', FakeClientManager::class)->setPublic(true);
         $container->register('test.refresh_token_manager', FakeRefreshTokenManager::class)->setPublic(true);
         $container->register('test.credentials_revoker', FakeCredentialsRevoker::class)->setPublic(true);
+        $container->register('test.device_code_manager', FakeDeviceCodeManager::class)->setPublic(true);
     }
 
     private function registerFakeGrant(ContainerBuilder $container): void
