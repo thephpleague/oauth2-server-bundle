@@ -14,7 +14,7 @@ class GenerateKeyPairCommandTest extends TestCase
     /**
      * @dataProvider providePassphrase
      */
-    public function testItGeneratesKeyPair($passphrase)
+    public function testItGeneratesKeyPair($passphrase): void
     {
         $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
         $publicKeyFile = tempnam(sys_get_temp_dir(), 'public_');
@@ -72,7 +72,7 @@ class GenerateKeyPairCommandTest extends TestCase
         yield ['ES512', 'dummy'];
     }
 
-    public function testOverwriteAndSkipCannotBeCombined()
+    public function testOverwriteAndSkipCannotBeCombined(): void
     {
         $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
         $publicKeyFile = tempnam(sys_get_temp_dir(), 'public_');
@@ -102,7 +102,7 @@ class GenerateKeyPairCommandTest extends TestCase
         $this->assertStringContainsString('foobar', $publicKey);
     }
 
-    public function testNoOverwriteDoesNotOverwrite()
+    public function testNoOverwriteDoesNotOverwrite(): void
     {
         $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
         $publicKeyFile = tempnam(sys_get_temp_dir(), 'public_');
@@ -132,7 +132,7 @@ class GenerateKeyPairCommandTest extends TestCase
         $this->assertStringContainsString('foobar', $publicKey);
     }
 
-    public function testOverwriteActuallyOverwrites()
+    public function testOverwriteActuallyOverwrites(): void
     {
         $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
         $publicKeyFile = tempnam(sys_get_temp_dir(), 'public_');
@@ -158,7 +158,7 @@ class GenerateKeyPairCommandTest extends TestCase
         $this->assertStringContainsString('PUBLIC KEY', $publicKey);
     }
 
-    public function testSkipIfExistsWritesIfNotExists()
+    public function testSkipIfExistsWritesIfNotExists(): void
     {
         $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
         $publicKeyFile = tempnam(sys_get_temp_dir(), 'public_');
@@ -184,7 +184,7 @@ class GenerateKeyPairCommandTest extends TestCase
         $this->assertStringContainsString('PUBLIC KEY', $publicKey);
     }
 
-    public function testSkipIfExistsDoesNothingIfExists()
+    public function testSkipIfExistsDoesNothingIfExists(): void
     {
         $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
         $publicKeyFile = tempnam(sys_get_temp_dir(), 'public_');
