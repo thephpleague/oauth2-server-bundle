@@ -13,7 +13,7 @@ jobs:
         runs-on: "ubuntu-latest"
         steps:
             - name: "checkout"
-              uses: "actions/checkout@v4"
+              uses: "actions/checkout@v6"
 
             - name: "setup php"
               uses: "shivammathur/setup-php@v2"
@@ -22,7 +22,7 @@ jobs:
                 tools: "composer"
 
             - name: "install composer dependencies"
-              uses: "ramsey/composer-install@v3"
+              uses: "ramsey/composer-install@v4"
               env:
                 COMPOSER_PREFER_STABLE: 1
 

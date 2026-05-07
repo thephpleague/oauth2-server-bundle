@@ -50,7 +50,7 @@ jobs:
 
         steps:
             - name: "checkout"
-              uses: "actions/checkout@v4"
+              uses: "actions/checkout@v6"
 
             - name: "setup php"
               uses: "shivammathur/setup-php@v2"
@@ -68,7 +68,7 @@ jobs:
               run: "composer require --no-scripts --no-install --dev doctrine/orm:${{ matrix.doctrine-orm }} --ansi"
 
             - name: "install composer dependencies"
-              uses: "ramsey/composer-install@v3"
+              uses: "ramsey/composer-install@v4"
               env:
                 SYMFONY_REQUIRE: "${{ matrix.symfony }}"
                 COMPOSER_PREFER_STABLE: "${{ matrix.composer-stable }}"
