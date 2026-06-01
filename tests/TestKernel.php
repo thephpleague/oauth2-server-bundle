@@ -178,6 +178,8 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                 'authorization_server' => [
                     'private_key' => '%env(PRIVATE_KEY_PATH)%',
                     'encryption_key' => '%env(ENCRYPTION_KEY)%',
+                    'enable_password_grant' => true,
+                    'enable_implicit_grant' => true,
                 ],
                 'resource_server' => $this->resourceServiceConfig ?? ['public_key' => '%env(PUBLIC_KEY_PATH)%'],
                 'scopes' => [
