@@ -19,6 +19,9 @@ class Grant implements \Stringable
         $this->grant = $grant;
     }
 
+    /**
+     * @return non-empty-string
+     */
     public function __toString(): string
     {
         return $this->grant;

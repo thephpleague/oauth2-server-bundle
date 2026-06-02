@@ -57,6 +57,7 @@ final class FixtureFactory
     public const FIXTURE_CLIENT_RESTRICTED_GRANTS = 'qux_restricted_grants';
     public const FIXTURE_CLIENT_RESTRICTED_SCOPES = 'quux_restricted_scopes';
     public const FIXTURE_PUBLIC_CLIENT = 'foo_public';
+    public const FIXTURE_PUBLIC_CLIENT_RESTRICTED_GRANTS = 'foo_public_restricted_grants';
     public const FIXTURE_PUBLIC_CLIENT_ALLOWED_TO_USE_PLAIN_CHALLENGE_METHOD = 'bar_public';
 
     public const FIXTURE_CLIENT_FIRST_REDIRECT_URI = 'https://example.org/oauth2/redirect-uri';
@@ -348,6 +349,10 @@ final class FixtureFactory
             ->setScopes(new Scope(self::FIXTURE_SCOPE_SECOND));
 
         $clients[] = (new Client('name', self::FIXTURE_PUBLIC_CLIENT, null))
+            ->setRedirectUris(new RedirectUri(self::FIXTURE_PUBLIC_CLIENT_REDIRECT_URI));
+
+        $clients[] = (new Client('name', self::FIXTURE_PUBLIC_CLIENT_RESTRICTED_GRANTS, null))
+            ->setGrants(new Grant('authorization_code'), new Grant('refresh_token'))
             ->setRedirectUris(new RedirectUri(self::FIXTURE_PUBLIC_CLIENT_REDIRECT_URI));
 
         $clients[] = (new Client('name', self::FIXTURE_PUBLIC_CLIENT_ALLOWED_TO_USE_PLAIN_CHALLENGE_METHOD, null))

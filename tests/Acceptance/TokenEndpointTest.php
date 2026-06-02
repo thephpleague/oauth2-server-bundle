@@ -447,4 +447,30 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
         $this->assertSame('authorization_pending', $jsonResponse['error']);
         $this->assertSame('', $jsonResponse['hint']);
     }
+
+    public function testPasswordGrantDeniedForPublicClientWithRestrictedGrants(): void
+    {
+        $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
+
+        $eventDispatcher->addListener(OAuth2Events::USER_RESOLVE, static function (UserResolveEvent $event): void {
+            $event->setUser(FixtureFactory::createUser());
+        });
+
+        $this->client->request('POST', '/token', [
+            'client_id' => FixtureFactory::FIXTURE_PUBLIC_CLIENT_RESTRICTED_GRANTS,
+            'grant_type' => 'password',
+            'username' => FixtureFactory::FIXTURE_USER,
+            'password' => FixtureFactory::FIXTURE_PASSWORD,
+        ]);
+
+        $response = $this->client->getResponse();
+
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('application/json', $response->headers->get('Content-Type'));
+
+        $jsonResponse = json_decode($response->getContent(), true);
+
+        $this->assertSame('unauthorized_client', $jsonResponse['error']);
+        $this->assertSame('The authenticated client is not authorized to use this authorization grant type.', $jsonResponse['error_description']);
+    }
 }
