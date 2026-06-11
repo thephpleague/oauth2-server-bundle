@@ -18,6 +18,8 @@ interface ClientInterface
      */
     public function getIdentifier(): string;
 
+    // public function getName(): string;
+
     public function getSecret(): ?string;
 
     /**
