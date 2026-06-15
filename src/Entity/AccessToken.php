@@ -27,40 +27,34 @@ final class AccessToken implements AccessTokenEntityInterface
     ) {
     }
 
+    protected function withJwtBuilder(Builder $builder): Builder
+    {
+        foreach ($this->extraClaims as $name => $value) {
+            if ('scopes' === $name) {
+                throw new \InvalidArgumentException('The "scopes" claim is reserved and cannot be used as an extra claim.');
+            }
+            $builder = $builder->withClaim($name, $value);
+        }
+
+        return $builder;
+    }
+
     public function initJwtConfiguration(): void
     {
         $this->traitInitJwtConfiguration();
-        $builder = $this->jwtConfiguration->builder();
+
+        $builderWithExtraClaims = $this->withJwtBuilder($this->jwtConfiguration->builder());
+
+        $builderFactory = static function (ClaimsFormatter $claimFormatter) use ($builderWithExtraClaims): Builder {
+            return $builderWithExtraClaims;
+        };
 
         if (!method_exists($this->jwtConfiguration, 'withBuilderFactory')) { // @phpstan-ignore function.alreadyNarrowedType
-            $this->jwtConfiguration->setBuilderFactory(
-                $this->createBuilderFactory($builder, $this->extraClaims)
-            );
+            $this->jwtConfiguration->setBuilderFactory($builderFactory);
 
             return;
         }
 
-        $this->jwtConfiguration = $this->jwtConfiguration->withBuilderFactory(
-            $this->createBuilderFactory($builder, $this->extraClaims)
-        );
-    }
-
-    /**
-     * @param array<non-empty-string, mixed> $extraClaims
-     *
-     * @return \Closure(ClaimsFormatter): Builder
-     */
-    private function createBuilderFactory(Builder $builder, array $extraClaims): \Closure
-    {
-        return static function (ClaimsFormatter $claimFormatter) use ($builder, $extraClaims): Builder {
-            foreach ($extraClaims as $name => $value) {
-                if ('scopes' === $name) {
-                    throw new \InvalidArgumentException('The "scopes" claim is reserved and cannot be used as an extra claim.');
-                }
-                $builder = $builder->withClaim($name, $value);
-            }
-
-            return $builder;
-        };
+        $this->jwtConfiguration = $this->jwtConfiguration->withBuilderFactory($builderFactory);
     }
 }
