@@ -533,7 +533,10 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTest
         $this->loginUser();
         $this->client->request(
             'GET',
-            '/authorize'
+            '/authorize',
+            [
+                'response_type' => 'foo',
+            ]
         );
 
         $response = $this->client->getResponse();
