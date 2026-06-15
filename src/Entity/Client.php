@@ -18,6 +18,11 @@ final class Client implements ClientEntityInterface
      */
     private $allowPlainTextPkce = false;
 
+    /**
+     * @var list<non-empty-string>
+     */
+    private array $allowedGrantTypes = [];
+
     public function setName(string $name): void
     {
         $this->name = $name;
@@ -44,5 +49,26 @@ final class Client implements ClientEntityInterface
     public function setAllowPlainTextPkce(bool $allowPlainTextPkce): void
     {
         $this->allowPlainTextPkce = $allowPlainTextPkce;
+    }
+
+    /**
+     * @param list<non-empty-string> $grantTypes
+     */
+    public function setAllowedGrantTypes(array $grantTypes): void
+    {
+        $this->allowedGrantTypes = $grantTypes;
+    }
+
+    /**
+     * Returns true if the client supports the given grant type.
+     * If no grant types are configured, all grants are allowed (open by default).
+     */
+    public function supportsGrantType(string $grantType): bool
+    {
+        if (empty($this->allowedGrantTypes)) {
+            return true;
+        }
+
+        return \in_array($grantType, $this->allowedGrantTypes, true);
     }
 }

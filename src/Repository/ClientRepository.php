@@ -69,6 +69,8 @@ final class ClientRepository implements ClientRepositoryInterface
         $clientEntity->setRedirectUri(array_map('strval', $client->getRedirectUris()));
         $clientEntity->setConfidential($client->isConfidential());
         $clientEntity->setAllowPlainTextPkce($client->isPlainTextPkceAllowed());
+        $grantTypes = array_map('strval', $client->getGrants());
+        $clientEntity->setAllowedGrantTypes($grantTypes);
 
         return $clientEntity;
     }

@@ -118,8 +118,8 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $response = $this->handleTokenRequest($request);
 
         // Response assertions.
-        $this->assertSame('invalid_client', $response['error']);
-        $this->assertSame('Client authentication failed', $response['error_description']);
+        $this->assertSame('unauthorized_client', $response['error']);
+        $this->assertSame('The authenticated client is not authorized to use this authorization grant type.', $response['error_description']);
     }
 
     public function testRestrictedScopeClient(): void
