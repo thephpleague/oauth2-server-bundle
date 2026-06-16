@@ -9,6 +9,7 @@ FROM 1.x to 2.0
  * Change config option `authorization_server.enable_implicit_grant` default value to `false`
  * Add `EventDispatcherInterface` argument to `AccessTokenRepository::__construct()`
  * The `client.allow_plaintext_secrets` option value is now ignored and plaintext client secrets are no longer supported
+ * `League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface` is deprecated, use `League\OAuth2\Server\Grant\GrantTypeInterface` with `accessTokenTTL` tag attribute instead
 
 
 FROM 1.1 to 1.2
