@@ -1,0 +1,167 @@
+[
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\AuthorizationEndpointTest::testSuccessfulCodeRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\AuthorizationEndpointTest::testSuccessfulPKCEAuthCodeRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\AuthorizationEndpointTest::testSuccessfulAuthCodeRequestWhenTheLoggedUserIsOverriddenInTheAuthorizationRequestResolveEvent",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\AuthorizationEndpointTest::testAuthCodeRequestWithPublicClientWithoutCodeChallengeWhenTheChallengeIsRequiredForPublicClients",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\AuthorizationEndpointTest::testAuthCodeRequestWithClientWhoIsNotAllowedToMakeARequestWithPlainCodeChallengeMethod",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\AuthorizationEndpointTest::testAuthCodeRequestWithClientWhoIsAllowedToMakeARequestWithPlainCodeChallengeMethod",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\AuthorizationEndpointTest::testSuccessfulTokenRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\AuthorizationEndpointTest::testSuccessfulTokenWithExtraClaimsRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\AuthorizationEndpointTest::testCodeRequestRedirectToResolutionUri",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\AuthorizationEndpointTest::testAuthorizationRequestEventIsStoppedAfterSettingAResponse",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\AuthorizationEndpointTest::testAuthorizationRequestEventIsStoppedAfterResolution",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\AuthorizationEndpointTest::testFailedCodeRequestRedirectWithFakedRedirectUri",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\AuthorizationEndpointTest::testFailedAuthorizeRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\AuthorizationEndpointTest::testUnathorizedImplicitRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\CustomPersistenceManagerTest::testSuccessfulClientCredentialsRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\CustomPersistenceManagerTest::testSuccessfulPasswordRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\CustomPersistenceManagerTest::testSuccessfulRefreshTokenRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\CustomPersistenceManagerTest::testSuccessfulAuthorizationCodeRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\CustomPersistenceManagerTest::testSuccessfullDeviceCodeRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\DeviceCodeEndpointTest::testSuccessfulCodeRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\DeviceCodeEndpointTest::testFailedWithUnkownClientRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\TokenEndpointTest::testSuccessfulClientCredentialsRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\TokenEndpointTest::testSuccessfulPasswordRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\TokenEndpointTest::testSuccessfulRefreshTokenRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\TokenEndpointTest::testSuccessfulAuthorizationCodeRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\TokenEndpointTest::testSuccessfulAuthorizationCodeRequestWithPublicClient",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\TokenEndpointTest::testFailedTokenRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\TokenEndpointTest::testFailedClientCredentialsTokenRequest",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\TokenEndpointTest::testSuccessfulDeviceCodeRequestWithPublicClient",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\TokenEndpointTest::testFailedDeviceCodeRequestWithExpiredCode",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\TokenEndpointTest::testFailedDeviceCodeWithPendingCode",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Acceptance\\TokenEndpointTest::testPasswordGrantDeniedForPublicClientWithRestrictedGrants",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    },
+    {
+        "location": "League\\Bundle\\OAuth2ServerBundle\\Tests\\Integration\\AuthorizationServerCustomGrantTest::testAuthorizationServerHasOurCustomGrantEnabled",
+        "message": "Since league/oauth2-server-bundle 1.2: League\\Bundle\\OAuth2ServerBundle\\Tests\\Fixtures\\FakeLegacyGrant implements custom grant using League\\Bundle\\OAuth2ServerBundle\\AuthorizationServer\\GrantTypeInterface interface which is deprecated. Instead use League\\OAuth2\\Server\\Grant\\GrantTypeInterface interface and tag league.oauth2_server.authorization_server.grant configuration. See : https://github.com/thephpleague/oauth2-server-bundle/blob/v1.2.0/docs/implementing-custom-grant-type.md",
+        "count": 1
+    }
+]
