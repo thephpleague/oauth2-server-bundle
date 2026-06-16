@@ -46,4 +46,11 @@ final class OAuth2Events
      * You could alter the client here.
      */
     public const PRE_SAVE_CLIENT = 'league.oauth2_server.event.pre_save_client';
+
+    /**
+     * The ACCESS_TOKEN_EXTRA_CLAIMS_RESOLVE event occurs right before the access token is issued.
+     *
+     * You could add extra claims to the access token here.
+     */
+    public const ACCESS_TOKEN_EXTRA_CLAIMS_RESOLVE = 'league.oauth2_server.event.access_token_extra_claims_resolve';
 }

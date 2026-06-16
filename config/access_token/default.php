@@ -10,6 +10,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Repository\AccessTokenRepository;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
@@ -19,6 +20,7 @@ return static function (ContainerConfigurator $container): void {
                 service(AccessTokenManagerInterface::class),
                 service(ClientManagerInterface::class),
                 service(ScopeConverterInterface::class),
+                service(EventDispatcherInterface::class),
             ])
         ->alias(AccessTokenRepositoryInterface::class, 'league.oauth2_server.repository.access_token')
         ->alias(AccessTokenRepository::class, 'league.oauth2_server.repository.access_token');

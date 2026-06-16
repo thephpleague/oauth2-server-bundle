@@ -6,14 +6,17 @@ namespace League\Bundle\OAuth2ServerBundle\Repository;
 
 use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverterInterface;
 use League\Bundle\OAuth2ServerBundle\Entity\AccessToken as AccessTokenEntity;
+use League\Bundle\OAuth2ServerBundle\Event\AccessTokenExtraClaimsResolveEvent;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken as AccessTokenModel;
+use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
@@ -32,19 +35,31 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     private $scopeConverter;
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
     public function __construct(
         AccessTokenManagerInterface $accessTokenManager,
         ClientManagerInterface $clientManager,
         ScopeConverterInterface $scopeConverter,
+        EventDispatcherInterface $eventDispatcher,
     ) {
         $this->accessTokenManager = $accessTokenManager;
         $this->clientManager = $clientManager;
         $this->scopeConverter = $scopeConverter;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, ?string $userIdentifier = null): AccessTokenEntityInterface
     {
-        $accessToken = new AccessTokenEntity();
+        $event = $this->eventDispatcher->dispatch(
+            new AccessTokenExtraClaimsResolveEvent($clientEntity, $scopes, $userIdentifier),
+            OAuth2Events::ACCESS_TOKEN_EXTRA_CLAIMS_RESOLVE
+        );
+
+        $accessToken = new AccessTokenEntity($event->getExtraClaims());
         $accessToken->setClient($clientEntity);
         if (null !== $userIdentifier && '' !== $userIdentifier) {
             $accessToken->setUserIdentifier($userIdentifier);
