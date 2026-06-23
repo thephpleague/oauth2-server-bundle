@@ -7,7 +7,6 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Integration;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantNullAccessTokenTTL;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantUndefinedAccessTokenTTL;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeLegacyGrant;
 use League\OAuth2\Server\AuthorizationServer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -31,9 +30,6 @@ final class AuthorizationServerCustomGrantTest extends KernelTestCase
         $this->assertGrantConfig('fake_grant', new \DateInterval('PT3H'), $enabledGrantTypes, $grantTypeAccessTokenTTL, FakeGrant::class);
         $this->assertGrantConfig(FakeGrantNullAccessTokenTTL::class, new \DateInterval('PT1H'), $enabledGrantTypes, $grantTypeAccessTokenTTL);
         $this->assertGrantConfig(FakeGrantUndefinedAccessTokenTTL::class, new \DateInterval('PT2H'), $enabledGrantTypes, $grantTypeAccessTokenTTL);
-
-        // TODO remove code bloc when bundle interface and configurator will be deleted
-        $this->assertGrantConfig('fake_legacy_grant', new \DateInterval('PT5H'), $enabledGrantTypes, $grantTypeAccessTokenTTL, FakeLegacyGrant::class);
     }
 
     private function assertGrantConfig(string $grantId, ?\DateInterval $accessTokenTTL, array $enabledGrantTypes, array $grantTypeAccessTokenTTL, ?string $grantClass = null): void

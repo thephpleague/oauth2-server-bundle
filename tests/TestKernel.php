@@ -19,7 +19,6 @@ use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeDeviceCodeManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantNullAccessTokenTTL;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantUndefinedAccessTokenTTL;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeLegacyGrant;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeRefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController;
@@ -281,9 +280,6 @@ final class TestKernel extends Kernel implements CompilerPassInterface
 
         $container->register(FakeGrantUndefinedAccessTokenTTL::class)
             ->addTag('league.oauth2_server.authorization_server.grant');
-
-        // TODO remove line when bundle interface and configurator will be deleted
-        $container->register(FakeLegacyGrant::class)->setAutoconfigured(true);
     }
 
     private function initializeEnvironmentVariables(): void
