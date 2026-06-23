@@ -156,9 +156,9 @@ return static function (ContainerConfigurator $container): void {
             ->args([
                 tagged_iterator('league.oauth2_server.authorization_server.grant'),
             ])
-            ->deprecate('league/oauth2-server-bundle', '1.2', 'The "%service_id%" service is deprecated since version 1.2 and will be removed in 2.0')
+            ->deprecate('league/oauth2-server-bundle', '1.2', 'The "%service_id%" service is deprecated. It will be removed in 2.0')
         ->alias(GrantConfigurator::class, 'league.oauth2_server.authorization_server.grant_configurator')
-            ->deprecate('league/oauth2-server-bundle', '1.2', 'The "%alias_id%" service is deprecated since version 1.2 and will be removed in 2.0')
+            ->deprecate('league/oauth2-server-bundle', '1.2', 'The "%alias_id%" service is deprecated. It will be removed in 2.0')
 
         // League authorization server
         ->set('league.oauth2_server.authorization_server', AuthorizationServer::class)
