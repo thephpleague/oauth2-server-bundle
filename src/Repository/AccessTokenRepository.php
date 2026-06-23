@@ -36,7 +36,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
     private $scopeConverter;
 
     /**
-     * @var EventDispatcherInterface
+     * @var EventDispatcherInterface|null
      */
     private $eventDispatcher;
 
@@ -44,22 +44,35 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         AccessTokenManagerInterface $accessTokenManager,
         ClientManagerInterface $clientManager,
         ScopeConverterInterface $scopeConverter,
-        EventDispatcherInterface $eventDispatcher,
+        ?EventDispatcherInterface $eventDispatcher = null,
     ) {
         $this->accessTokenManager = $accessTokenManager;
         $this->clientManager = $clientManager;
         $this->scopeConverter = $scopeConverter;
+        if (null === $eventDispatcher) {
+            trigger_deprecation(
+                'league/oauth2-server-bundle',
+                '1.2',
+                'The "%s" class constructor will require a new "%s $eventDispatcher" argument in 2.0. Not passing it is deprecated',
+                self::class,
+                EventDispatcherInterface::class
+            );
+        }
         $this->eventDispatcher = $eventDispatcher;
     }
 
     public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, ?string $userIdentifier = null): AccessTokenEntityInterface
     {
-        $event = $this->eventDispatcher->dispatch(
-            new AccessTokenExtraClaimsResolveEvent($clientEntity, $scopes, $userIdentifier),
-            OAuth2Events::ACCESS_TOKEN_EXTRA_CLAIMS_RESOLVE
-        );
+        if (null !== $this->eventDispatcher) {
+            $event = $this->eventDispatcher->dispatch(
+                new AccessTokenExtraClaimsResolveEvent($clientEntity, $scopes, $userIdentifier),
+                OAuth2Events::ACCESS_TOKEN_EXTRA_CLAIMS_RESOLVE
+            );
+        } else {
+            $event = null;
+        }
 
-        $accessToken = new AccessTokenEntity($event->getExtraClaims());
+        $accessToken = new AccessTokenEntity($event?->getExtraClaims() ?? []);
         $accessToken->setClient($clientEntity);
         if (null !== $userIdentifier && '' !== $userIdentifier) {
             $accessToken->setUserIdentifier($userIdentifier);
