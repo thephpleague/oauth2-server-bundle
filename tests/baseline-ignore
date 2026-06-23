@@ -2,4 +2,4 @@
 # deprecated code
 
 
-%Since league/oauth2-server-bundle 1.2: The \"league.oauth2_server.authorization_server.grant_configurator\" service is deprecated since version 1.2 and will be removed in 2.0%
+%Since league/oauth2-server-bundle 1.2: The \"league.oauth2_server.authorization_server.grant_configurator\" service is deprecated. It will be removed in 2.0%
