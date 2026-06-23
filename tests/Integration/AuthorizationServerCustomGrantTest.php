@@ -24,7 +24,6 @@ final class AuthorizationServerCustomGrantTest extends KernelTestCase
         $reflectionProperty = $reflectionClass->getProperty('enabledGrantTypes');
 
         $reflectionTTLProperty = $reflectionClass->getProperty('grantTypeAccessTokenTTL');
-        $reflectionTTLProperty->setAccessible(true);
 
         $enabledGrantTypes = $reflectionProperty->getValue($authorizationServer);
         $grantTypeAccessTokenTTL = $reflectionTTLProperty->getValue($authorizationServer);
