@@ -11,4 +11,5 @@ phpunit.xml
 .phpunit.result.cache
 
 # Tests
-tests/.kernel/
+tests/config/reference.php
+tests/.var/

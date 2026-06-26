@@ -9,10 +9,8 @@
          failOnWarning="true"
 >
     <php>
-        <env name="KERNEL_CLASS" value="League\Bundle\OAuth2ServerBundle\Tests\TestKernel" />
-        <env name="SHELL_VERBOSITY" value="-1" />
+        <server name="KERNEL_CLASS" value="League\Bundle\OAuth2ServerBundle\Tests\TestKernel" />
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[self]=0&amp;ignoreFile=./tests/baseline-ignore" />
-        <env name="SYMFONY_PHPUNIT_REMOVE" value="" />
     </php>
 
     <testsuites>

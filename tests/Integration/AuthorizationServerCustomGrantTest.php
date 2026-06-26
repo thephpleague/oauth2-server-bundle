@@ -14,7 +14,7 @@ final class AuthorizationServerCustomGrantTest extends KernelTestCase
 {
     public function testAuthorizationServerHasOurCustomGrantEnabled(): void
     {
-        static::bootKernel();
+        static::bootKernel(['environment' => 'fake_grant']);
 
         /** @var AuthorizationServer $authorizationServer */
         $authorizationServer = self::getContainer()->get(AuthorizationServer::class);
