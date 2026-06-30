@@ -18,9 +18,9 @@ final class AccessToken implements AccessTokenEntityInterface, AudienceRestricte
     use AccessTokenTrait {
         initJwtConfiguration as private traitInitJwtConfiguration;
     }
+    use AudienceRestrictedTokenTrait;
     use EntityTrait;
     use TokenEntityTrait;
-    use AudienceRestrictedTokenTrait;
 
     /**
      * @param array<non-empty-string, mixed> $extraClaims
