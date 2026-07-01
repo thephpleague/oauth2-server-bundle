@@ -65,7 +65,8 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTest
         $this->accessTokenManager->expects(self::atLeastOnce())->method('save');
         $this->client->getContainer()->set('test.access_token_manager', $this->accessTokenManager);
 
-        $this->clientManager->expects(self::atLeastOnce())->method('find')->with('foo')->willReturn(new Client('name', 'foo', 'secret'));
+        $hashedSecret = $this->client->getContainer()->get('league.oauth2_server.password_hasher')->hash('secret');
+        $this->clientManager->expects(self::atLeastOnce())->method('find')->with('foo')->willReturn(new Client('name', 'foo', $hashedSecret));
         $this->client->getContainer()->set('test.client_manager', $this->clientManager);
 
         $this->client->request('POST', '/token', [
@@ -84,7 +85,8 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTest
         $this->accessTokenManager->expects(self::atLeastOnce())->method('save');
         $this->client->getContainer()->set('test.access_token_manager', $this->accessTokenManager);
 
-        $this->clientManager->expects(self::atLeastOnce())->method('find')->with('foo')->willReturn(new Client('name', 'foo', 'secret'));
+        $hashedSecret = $this->client->getContainer()->get('league.oauth2_server.password_hasher')->hash('secret');
+        $this->clientManager->expects(self::atLeastOnce())->method('find')->with('foo')->willReturn(new Client('name', 'foo', $hashedSecret));
         $this->client->getContainer()->set('test.client_manager', $this->clientManager);
 
         $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
@@ -106,7 +108,8 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTest
 
     public function testSuccessfulRefreshTokenRequest(): void
     {
-        $client = new Client('name', 'foo', 'secret');
+        $hashedSecret = $this->client->getContainer()->get('league.oauth2_server.password_hasher')->hash('secret');
+        $client = new Client('name', 'foo', $hashedSecret);
         $accessToken = new AccessToken('access_token', new \DateTimeImmutable('+1 hour'), $client, 'user', []);
         $refreshToken = new RefreshToken('refresh_token', new \DateTimeImmutable('+1 month'), $accessToken);
 
@@ -133,7 +136,8 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTest
 
     public function testSuccessfulAuthorizationCodeRequest(): void
     {
-        $client = new Client('name', 'foo', 'secret');
+        $hashedSecret = $this->client->getContainer()->get('league.oauth2_server.password_hasher')->hash('secret');
+        $client = new Client('name', 'foo', $hashedSecret);
         $client->setRedirectUris(new RedirectUri('https://example.org/oauth2/redirect-uri'));
         $authCode = new AuthorizationCode('authorization_code', new \DateTimeImmutable('+2 minute'), $client, 'user', []);
 

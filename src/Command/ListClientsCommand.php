@@ -66,6 +66,12 @@ final class ListClientsCommand extends Command
                 'Finds by allowed scope for client. Use this option multiple times to find by multiple scopes.',
                 []
             )
+            ->addOption(
+                'reveal-secret',
+                null,
+                InputOption::VALUE_NONE,
+                'Reveal the stored client secret in the output. For clients whose secret is hashed, this is the hash, not the original secret.'
+            )
         ;
     }
 
@@ -107,7 +113,7 @@ final class ListClientsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $columns = $this->getColumns($input);
-        $rows = $this->getRows($clients, $columns);
+        $rows = $this->getRows($clients, $columns, $input->getOption('reveal-secret'));
         $io->table($columns, $rows);
     }
 
@@ -117,9 +123,9 @@ final class ListClientsCommand extends Command
      *
      * @return array<array<string>>
      */
-    private function getRows(array $clients, array $columns): array
+    private function getRows(array $clients, array $columns, bool $revealSecret): array
     {
-        return array_map(static function (ClientInterface $client) use ($columns): array {
+        return array_map(static function (ClientInterface $client) use ($columns, $revealSecret): array {
             if (!method_exists($client, 'getName')) {
                 trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not implementing method "getName()" in client "%s" is deprecated. This method will be required in 2.0.', $client::class);
                 $name = $client->getIdentifier();
@@ -129,7 +135,7 @@ final class ListClientsCommand extends Command
             $values = [
                 'name' => $name,
                 'identifier' => $client->getIdentifier(),
-                'secret' => $client->getSecret(),
+                'secret' => $revealSecret ? $client->getSecret() : ($client->isConfidential() ? '****' : '(public)'),
                 'scope' => implode(', ', $client->getScopes()),
                 'redirect uri' => implode(', ', $client->getRedirectUris()),
                 'grant type' => implode(', ', $client->getGrants()),

@@ -74,8 +74,8 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
         $validAccessTokens = [
             $this->buildAccessToken('1111', '+1 day', $client),
             $this->buildAccessToken('2222', '+1 hour', $client),
-            $this->buildAccessToken('3333', '+1 second', $client),
-            $this->buildAccessToken('4444', 'now', $client),
+            $this->buildAccessToken('3333', '+1 minute', $client),
+            $this->buildAccessToken('4444', '+1 second', $client),
         ];
 
         $expiredAccessTokens = [
