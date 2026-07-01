@@ -17,6 +17,8 @@ use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeClientManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeCredentialsRevoker;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeDeviceCodeManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantNullAccessTokenTTL;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantUndefinedAccessTokenTTL;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeRefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController;
@@ -180,6 +182,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
                     'encryption_key' => '%env(ENCRYPTION_KEY)%',
                     'enable_password_grant' => true,
                     'enable_implicit_grant' => true,
+                    'access_token_ttl' => 'PT2H', // to have a different value as league/oauth2-server lib
                 ],
                 'resource_server' => $this->resourceServiceConfig ?? ['public_key' => '%env(PUBLIC_KEY_PATH)%'],
                 'scopes' => [
@@ -267,7 +270,16 @@ final class TestKernel extends Kernel implements CompilerPassInterface
 
     private function registerFakeGrant(ContainerBuilder $container): void
     {
-        $container->register(FakeGrant::class)->setAutoconfigured(true);
+        $container->register(FakeGrant::class)
+            // tagged twice to test this case, last one win
+            ->addTag('league.oauth2_server.authorization_server.grant', ['accessTokenTTL' => 'PT5H'])
+            ->addTag('league.oauth2_server.authorization_server.grant', ['accessTokenTTL' => 'PT3H']);
+
+        $container->register(FakeGrantNullAccessTokenTTL::class)
+            ->addTag('league.oauth2_server.authorization_server.grant', ['accessTokenTTL' => null]);
+
+        $container->register(FakeGrantUndefinedAccessTokenTTL::class)
+            ->addTag('league.oauth2_server.authorization_server.grant');
     }
 
     private function initializeEnvironmentVariables(): void

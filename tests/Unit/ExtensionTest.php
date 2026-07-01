@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
+use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\LeagueOAuth2ServerExtension;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ScopeManager;
 use League\OAuth2\Server\AuthorizationServer;
@@ -13,6 +14,7 @@ use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 final class ExtensionTest extends TestCase
 {
@@ -152,6 +154,13 @@ final class ExtensionTest extends TestCase
         }
 
         $this->assertSame($shouldRevokeRefreshTokens, $revokeRefreshTokens);
+
+        // TODO remove code bloc when grant configurator is deleted
+        $configurator = $authorizationServer->getConfigurator();
+        $this->assertIsArray($configurator);
+        $this->assertInstanceOf(Reference::class, $configurator[0]);
+        $this->assertSame(GrantConfigurator::class, (string) $configurator[0]);
+        $this->assertSame('__invoke', $configurator[1]);
     }
 
     public function scopeProvider(): iterable

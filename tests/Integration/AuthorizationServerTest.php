@@ -177,7 +177,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('Bearer', $response['token_type']);
-        $this->assertLessThanOrEqual(3600, $response['expires_in']);
+        $this->assertLessThanOrEqual(7200, $response['expires_in']);
         $this->assertGreaterThan(0, $response['expires_in']);
         $this->assertInstanceOf(AccessToken::class, $accessToken);
 
@@ -198,7 +198,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('Bearer', $response['token_type']);
-        $this->assertLessThanOrEqual(3600, $response['expires_in']);
+        $this->assertLessThanOrEqual(7200, $response['expires_in']);
         $this->assertGreaterThan(0, $response['expires_in']);
         $this->assertInstanceOf(AccessToken::class, $accessToken);
 
@@ -225,7 +225,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('Bearer', $response['token_type']);
-        $this->assertLessThanOrEqual(3600, $response['expires_in']);
+        $this->assertLessThanOrEqual(7200, $response['expires_in']);
         $this->assertGreaterThan(0, $response['expires_in']);
         $this->assertInstanceOf(AccessToken::class, $accessToken);
 
@@ -253,7 +253,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('Bearer', $response['token_type']);
-        $this->assertLessThanOrEqual(3600, $response['expires_in']);
+        $this->assertLessThanOrEqual(7200, $response['expires_in']);
         $this->assertGreaterThan(0, $response['expires_in']);
         $this->assertInstanceOf(AccessToken::class, $accessToken);
 
@@ -287,7 +287,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('Bearer', $response['token_type']);
-        $this->assertLessThanOrEqual(3600, $response['expires_in']);
+        $this->assertLessThanOrEqual(7200, $response['expires_in']);
         $this->assertGreaterThan(0, $response['expires_in']);
         $this->assertInstanceOf(AccessToken::class, $accessToken);
         $this->assertInstanceOf(RefreshToken::class, $refreshToken);
@@ -362,7 +362,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
 
         // Response assertions.
         $this->assertSame('Bearer', $response['token_type']);
-        $this->assertLessThanOrEqual(3600, $response['expires_in']);
+        $this->assertLessThanOrEqual(7200, $response['expires_in']);
         $this->assertGreaterThan(0, $response['expires_in']);
         $this->assertInstanceOf(AccessToken::class, $accessToken);
         $this->assertInstanceOf(RefreshToken::class, $refreshToken);
@@ -646,7 +646,7 @@ final class AuthorizationServerTest extends AbstractIntegrationTest
         $accessToken = $this->getAccessToken($response['access_token']);
 
         $this->assertSame('Bearer', $response['token_type']);
-        $this->assertLessThanOrEqual(3600, $response['expires_in']);
+        $this->assertLessThanOrEqual(7200, $response['expires_in']);
         $this->assertGreaterThan(0, $response['expires_in']);
         $this->assertInstanceOf(AccessToken::class, $accessToken);
         $this->assertSame('foo', $accessToken->getClient()->getIdentifier());
