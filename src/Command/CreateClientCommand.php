@@ -25,13 +25,9 @@ final class CreateClientCommand extends Command
     public function __construct(
         private readonly ClientManagerInterface $clientManager,
         private readonly string $clientFqcn,
-        private readonly ?PasswordHasherInterface $passwordHasher = null,
+        private readonly PasswordHasherInterface $passwordHasher,
     ) {
         parent::__construct();
-
-        if (null === $this->passwordHasher) {
-            trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not passing a "%s" to "%s" is deprecated since version 1.2 and will be required in 2.0.', PasswordHasherInterface::class, self::class);
-        }
     }
 
     protected function configure(): void
@@ -130,7 +126,7 @@ final class CreateClientCommand extends Command
         $identifier = (string) $input->getArgument('identifier') ?: hash('md5', random_bytes(16));
 
         $hashedSecret = $plainSecret;
-        if ($this->passwordHasher && \is_string($plainSecret)) {
+        if (\is_string($plainSecret)) {
             $hashedSecret = $this->passwordHasher->hash($plainSecret);
         }
 
