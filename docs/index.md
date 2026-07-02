@@ -73,7 +73,7 @@ For implementation into Symfony projects, please see [bundle documentation](basi
             require_code_challenge_for_public_clients: true
 
             # Whether to enable the implicit grant
-            enable_implicit_grant: true # Default value will change to false in version 2.0
+            enable_implicit_grant: false
 
             # Whether to enable access token saving to persistence layer (default to true)
             persist_access_token: true
