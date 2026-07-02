@@ -306,8 +306,13 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->booleanNode('allow_plaintext_secrets')
-                    ->info('Whether to allow plaintext client secrets.')
-                    ->defaultTrue()
+                    ->info('Plaintext client secrets are no longer supported.')
+                    ->defaultNull()
+                    ->setDeprecated(
+                        'league/oauth2-server-bundle',
+                        '2.0',
+                        'The "%node%" option is deprecated. Value is ignored. Remove it from your configuration.'
+                    )
                 ->end()
             ->end()
         ;
