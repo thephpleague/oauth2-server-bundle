@@ -9,6 +9,9 @@ FROM 1.x to 2.0
  * Change config option `authorization_server.enable_implicit_grant` default value to `false`
  * Add `EventDispatcherInterface` argument to `AccessTokenRepository::__construct()`
  * The `client.allow_plaintext_secrets` option value is now ignored and plaintext client secrets are no longer supported
+ * Add method `setSecret` to `ClientInterface`
+ * Add `PasswordHasherInterface` argument to `CreateClientCommand::__construct()`
+ * Add `PasswordHasherInterface` argument to `ClientRepository::__construct()`
  * Interface `AuthorizationServer\GrantTypeInterface` has been removed
  * Service `league.oauth2_server.authorization_server.grant_configurator` has been removed
  * Service alias `League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator` has been removed
@@ -23,5 +26,8 @@ FROM 1.1 to 1.2
  * Deprecate not passing an `EventDispatcherInterface` instance to `AccessTokenRepository::__construct()`
  * Client secrets are now stored hashed. The client `secret` column length was increased from 128 to 255 to fit the hashed value; with the Doctrine persistence, generate and run a migration to apply this schema change before rehashing your client secrets
  * Add option `client.allow_plaintext_secrets` (default `true`) controlling whether plaintext client secrets are allowed. Setting it to `true` is deprecated: existing plaintext secrets keep working and are rehashed transparently on first successful authentication, but you should run the `league:oauth2-server:rehash-client-secrets` command to rehash them all and then set this option to `false`. The option value will be ignored in 2.0
+ * Deprecate not implementing method `ClientInterface::setSecret()`. This method will be required in 2.0
+ * Deprecate not passing a `PasswordHasherInterface` instance to `CreateClientCommand::__construct()`
+ * Deprecate not passing a `PasswordHasherInterface` instance to `ClientRepository::__construct()`
  * Deprecate service `league.oauth2_server.authorization_server.grant_configurator`. It will be removed in 2.0
  * Deprecate service alias `League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator`. It will be removed in 2.0
