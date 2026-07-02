@@ -9,7 +9,6 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 
 /**
- * @method string getName()
  * @method void setSecret(string $secret)
  */
 interface ClientInterface
@@ -19,7 +18,7 @@ interface ClientInterface
      */
     public function getIdentifier(): string;
 
-    // public function getName(): string;
+    public function getName(): string;
 
     public function getSecret(): ?string;
 
