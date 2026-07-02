@@ -61,7 +61,7 @@ For implementation into Symfony projects, please see [bundle documentation](basi
             enable_client_credentials_grant: true
 
             # Whether to enable the password grant
-            enable_password_grant: true # Default value will change to false in version 2.0
+            enable_password_grant: false
 
             # Whether to enable the refresh token grant
             enable_refresh_token_grant: true
