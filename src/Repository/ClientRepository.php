@@ -90,12 +90,7 @@ final class ClientRepository implements ClientRepositoryInterface
     private function buildClientEntity(ClientInterface $client): ClientEntity
     {
         $clientEntity = new ClientEntity();
-        if (!method_exists($client, 'getName')) {
-            trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not implementing method "getName()" in client "%s" is deprecated. This method will be required in 2.0.', $client::class);
-            $clientEntity->setName($client->getIdentifier());
-        } else {
-            $clientEntity->setName($client->getName());
-        }
+        $clientEntity->setName($client->getName());
         $clientEntity->setIdentifier($client->getIdentifier());
         $clientEntity->setRedirectUri(array_map(strval(...), $client->getRedirectUris()));
         $clientEntity->setConfidential($client->isConfidential());
