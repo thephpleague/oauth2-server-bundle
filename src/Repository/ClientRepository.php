@@ -70,18 +70,8 @@ final class ClientRepository implements ClientRepositoryInterface
         $secretIsValid = $this->passwordHasher->verify($storedSecret, $inputSecret);
 
         if ($secretIsValid && $this->passwordHasher->needsRehash($storedSecret)) {
-            if (!method_exists($client, 'setSecret')) {
-                trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not implementing method "setSecret()" in client "%s" is deprecated. This method will be required in 2.0.', $client::class);
-            } else {
-                // Opportunistic upgrade of the stored secret to the current hash format.
-                // The secret has already been verified, so a persistence failure here must
-                // not fail an otherwise valid authentication; it will be retried on the next one.
-                try {
-                    $client->setSecret($this->passwordHasher->hash($inputSecret));
-                    $this->clientManager->save($client);
-                } catch (\Throwable) {
-                }
-            }
+            $client->setSecret($this->passwordHasher->hash($inputSecret));
+            $this->clientManager->save($client);
         }
 
         return $secretIsValid;
