@@ -23,7 +23,5 @@ FROM 1.1 to 1.2
  * Deprecate not passing an `EventDispatcherInterface` instance to `AccessTokenRepository::__construct()`
  * Client secrets are now stored hashed. The client `secret` column length was increased from 128 to 255 to fit the hashed value; with the Doctrine persistence, generate and run a migration to apply this schema change before rehashing your client secrets
  * Add option `client.allow_plaintext_secrets` (default `true`) controlling whether plaintext client secrets are allowed. Setting it to `true` is deprecated: existing plaintext secrets keep working and are rehashed transparently on first successful authentication, but you should run the `league:oauth2-server:rehash-client-secrets` command to rehash them all and then set this option to `false`. The option value will be ignored in 2.0
-=======
  * Deprecate service `league.oauth2_server.authorization_server.grant_configurator`. It will be removed in 2.0
  * Deprecate service alias `League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator`. It will be removed in 2.0
->>>>>>> 04d390b (Apply suggestions from code review)
