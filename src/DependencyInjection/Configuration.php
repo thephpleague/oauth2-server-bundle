@@ -51,10 +51,6 @@ final class Configuration implements ConfigurationInterface
         $node
             ->validate()
                 ->always(static function (array $v): array {
-                    if (!isset($v['enable_password_grant'])) {
-                        trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not setting the "authorization_server.enable_password_grant" config option is deprecated. It will default to "false" in 2.0.');
-                        $v['enable_password_grant'] = true;
-                    }
                     if (!isset($v['enable_implicit_grant'])) {
                         trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not setting the "authorization_server.enable_implicit_grant" config option is deprecated. It will default to "false" in 2.0.');
                         $v['enable_implicit_grant'] = true;
@@ -111,7 +107,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->booleanNode('enable_password_grant')
                     ->info('Whether to enable the password grant')
-                    ->treatNullLike(false)
+                    ->defaultFalse()
                 ->end()
                 ->booleanNode('enable_refresh_token_grant')
                     ->info('Whether to enable the refresh token grant')

@@ -190,7 +190,6 @@ final class ExtensionTest extends TestCase
         $extension = new LeagueOAuth2ServerExtension();
 
         $config = $this->getValidConfiguration();
-        unset($config[0]['authorization_server']['enable_password_grant']);
         unset($config[0]['authorization_server']['enable_implicit_grant']);
 
         $extension->load($config, $container);
@@ -204,7 +203,6 @@ final class ExtensionTest extends TestCase
                 $enabledGrants[(string) $methodCall[1][0]] = (string) $methodCall[1][0];
             }
         }
-        $this->assertArrayHasKey(PasswordGrant::class, $enabledGrants);
         $this->assertArrayHasKey(AuthCodeGrant::class, $enabledGrants);
     }
 
@@ -216,7 +214,7 @@ final class ExtensionTest extends TestCase
                     'private_key' => 'foo',
                     'encryption_key' => 'foo',
                     'enable_client_credentials_grant' => $options['enable_client_credentials_grant'] ?? true,
-                    'enable_password_grant' => $options['enable_password_grant'] ?? true,
+                    'enable_password_grant' => $options['enable_password_grant'] ?? false,
                     'enable_implicit_grant' => $options['enable_implicit_grant'] ?? true,
                     'enable_refresh_token_grant' => $options['enable_refresh_token_grant'] ?? true,
                     'revoke_refresh_tokens' => $options['revoke_refresh_tokens'] ?? true,
