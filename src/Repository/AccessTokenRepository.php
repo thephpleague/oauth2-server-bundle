@@ -20,38 +20,22 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final readonly class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
-    private ?EventDispatcherInterface $eventDispatcher;
-
     public function __construct(
         private AccessTokenManagerInterface $accessTokenManager,
         private ClientManagerInterface $clientManager,
         private ScopeConverterInterface $scopeConverter,
-        ?EventDispatcherInterface $eventDispatcher = null,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
-        if (null === $eventDispatcher) {
-            trigger_deprecation(
-                'league/oauth2-server-bundle',
-                '1.2',
-                'The "%s" class constructor will require a new "%s $eventDispatcher" argument in 2.0. Not passing it is deprecated',
-                self::class,
-                EventDispatcherInterface::class
-            );
-        }
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, ?string $userIdentifier = null): AccessTokenEntityInterface
     {
-        if (null !== $this->eventDispatcher) {
-            $event = $this->eventDispatcher->dispatch(
-                new AccessTokenExtraClaimsResolveEvent($clientEntity, $scopes, $userIdentifier),
-                OAuth2Events::ACCESS_TOKEN_EXTRA_CLAIMS_RESOLVE
-            );
-        } else {
-            $event = null;
-        }
+        $event = $this->eventDispatcher->dispatch(
+            new AccessTokenExtraClaimsResolveEvent($clientEntity, $scopes, $userIdentifier),
+            OAuth2Events::ACCESS_TOKEN_EXTRA_CLAIMS_RESOLVE
+        );
 
-        $accessToken = new AccessTokenEntity($event?->getExtraClaims() ?? []);
+        $accessToken = new AccessTokenEntity($event->getExtraClaims());
         $accessToken->setClient($clientEntity);
         if (null !== $userIdentifier && '' !== $userIdentifier) {
             $accessToken->setUserIdentifier($userIdentifier);
