@@ -8,9 +8,6 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 
-/**
- * @method void setSecret(string $secret)
- */
 interface ClientInterface
 {
     /**
@@ -22,7 +19,7 @@ interface ClientInterface
 
     public function getSecret(): ?string;
 
-    // public function setSecret(string $secret): void;
+    public function setSecret(string $secret): void;
 
     /**
      * @return list<RedirectUri>
