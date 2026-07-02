@@ -206,9 +206,6 @@ final class ExtensionTest extends TestCase
                 // Pick one for valid config:
                 // 'persistence' => ['doctrine' => []]
                 'persistence' => ['in_memory' => 1],
-                'client' => [
-                    'allow_plaintext_secrets' => $options['allow_plaintext_secrets'] ?? false,
-                ],
             ],
         ];
     }

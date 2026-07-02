@@ -48,8 +48,6 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\PasswordHasher\Hasher\MigratingPasswordHasher;
-use Symfony\Component\PasswordHasher\Hasher\PlaintextPasswordHasher;
 
 final class LeagueOAuth2ServerExtension extends Extension implements PrependExtensionInterface, CompilerPassInterface
 {
@@ -80,18 +78,6 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             ->findDefinition(CreateClientCommand::class)
             ->replaceArgument(1, $config['client']['classname'])
         ;
-
-        if ($config['client']['allow_plaintext_secrets']) {
-            trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Setting "client.allow_plaintext_secrets" config option to "true" is deprecated. Use the `league:oauth2-server:rehash-client-secrets` command to rehash existing client secrets and set this option to "false" afterwards.');
-            $container->register('league.oauth2_server.password_hasher.plaintext', PlaintextPasswordHasher::class);
-            $container->register('league.oauth2_server.password_hasher.migrating', MigratingPasswordHasher::class)
-                ->setDecoratedService('league.oauth2_server.password_hasher')
-                ->setArguments([
-                    new Reference('league.oauth2_server.password_hasher.migrating.inner'),
-                    new Reference('league.oauth2_server.password_hasher.plaintext'),
-                ])
-            ;
-        }
 
         $container
             ->findDefinition(GenerateKeyPairCommand::class)
