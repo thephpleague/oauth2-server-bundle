@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
-use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\LeagueOAuth2ServerExtension;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ScopeManager;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Grant\FakeLegacyGrant;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -16,7 +14,6 @@ use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
 
 final class ExtensionTest extends TestCase
 {
@@ -187,10 +184,6 @@ final class ExtensionTest extends TestCase
         }
 
         $this->assertSame($shouldRevokeRefreshTokens, $revokeRefreshTokens);
-
-        // TODO remove code bloc when grant configurator is deleted
-        $configurator = $authorizationServer->getConfigurator();
-        $this->assertNull($configurator);
     }
 
     public function scopeProvider(): iterable
@@ -206,25 +199,6 @@ final class ExtensionTest extends TestCase
             ['unknown_scope'],
             false,
         ];
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testGrantConfiguratorIsEnabledWhenLegacyGrantIsTagged(): void
-    {
-        $container = new ContainerBuilder();
-        $extension = new LeagueOAuth2ServerExtension();
-        $container->register(FakeLegacyGrant::class)->addTag('league.oauth2_server.authorization_server.grant');
-
-        $extension->load($this->getValidConfiguration(), $container);
-
-        $authorizationServer = $container->findDefinition(AuthorizationServer::class);
-        $configurator = $authorizationServer->getConfigurator();
-        $this->assertIsArray($configurator);
-        $this->assertInstanceOf(Reference::class, $configurator[0]);
-        $this->assertSame(GrantConfigurator::class, (string) $configurator[0]);
-        $this->assertSame('__invoke', $configurator[1]);
     }
 
     private function getValidConfiguration(array $options = []): array
