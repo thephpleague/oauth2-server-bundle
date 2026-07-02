@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\DependencyInjection;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Command\GenerateKeyPairCommand;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Grant as GrantType;
@@ -69,10 +68,6 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $container->findDefinition(OAuth2Authenticator::class)
             ->setArgument(3, $config['role_prefix']);
-
-        // TODO remove code bloc when bundle interface and configurator will be deleted
-        $container->registerForAutoconfiguration(GrantTypeInterface::class)
-            ->addTag('league.oauth2_server.authorization_server.grant');
 
         $container
             ->findDefinition(CreateClientCommand::class)

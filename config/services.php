@@ -5,9 +5,7 @@ declare(strict_types=1);
 use function Symfony\Component\DependencyInjection\Loader\Configurator\abstract_arg;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
 
-use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator;
 use League\Bundle\OAuth2ServerBundle\Command\ClearExpiredTokensCommand;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Command\DeleteClientCommand;
@@ -151,15 +149,6 @@ return static function (ContainerConfigurator $container): void {
         ->set('league.oauth2_server.emitter', EventEmitter::class)
         ->call('subscribeListenersFrom', [service('league.oauth2_server.symfony_league_listener_provider')])
 
-        // TODO remove code bloc when bundle interface and configurator will be deleted
-        ->set('league.oauth2_server.authorization_server.grant_configurator', GrantConfigurator::class)
-            ->args([
-                tagged_iterator('league.oauth2_server.authorization_server.grant'),
-            ])
-            ->deprecate('league/oauth2-server-bundle', '1.2', 'The "%service_id%" service is deprecated. It will be removed in 2.0')
-        ->alias(GrantConfigurator::class, 'league.oauth2_server.authorization_server.grant_configurator')
-            ->deprecate('league/oauth2-server-bundle', '1.2', 'The "%alias_id%" service is deprecated. It will be removed in 2.0')
-
         // League authorization server
         ->set('league.oauth2_server.authorization_server', AuthorizationServer::class)
             ->args([
@@ -171,8 +160,6 @@ return static function (ContainerConfigurator $container): void {
                 null,
             ])
             ->call('setEmitter', [service('league.oauth2_server.emitter')])
-            // TODO remove next line when bundle interface and configurator will be deleted
-            ->configurator(service(GrantConfigurator::class))
         ->alias(AuthorizationServer::class, 'league.oauth2_server.authorization_server')
 
         // League bearer token validator
