@@ -44,6 +44,12 @@ final class RehashClientSecretsCommand extends Command
                 continue;
             }
 
+            if (!method_exists($client, 'setSecret')) {
+                $io->error(\sprintf('Cannot rehash client "%s" secret. Class "%s" does not implement required "setSecret" method', $client->getIdentifier(), $client::class));
+
+                return Command::FAILURE;
+            }
+
             $client->setSecret($this->hasher->hash($secret));
             $this->clientManager->save($client);
             ++$migrated;
