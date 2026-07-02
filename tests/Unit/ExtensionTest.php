@@ -178,34 +178,6 @@ final class ExtensionTest extends TestCase
         ];
     }
 
-    /**
-     * @group legacy
-     */
-    public function testPasswordAndImplicitGrantsAreEnabledByDefault(): void
-    {
-        $container = new ContainerBuilder();
-
-        $this->setupContainer($container);
-
-        $extension = new LeagueOAuth2ServerExtension();
-
-        $config = $this->getValidConfiguration();
-        unset($config[0]['authorization_server']['enable_implicit_grant']);
-
-        $extension->load($config, $container);
-
-        $authorizationServer = $container->findDefinition(AuthorizationServer::class);
-        $methodCalls = $authorizationServer->getMethodCalls();
-        $enabledGrants = [];
-
-        foreach ($methodCalls as $methodCall) {
-            if ('enableGrantType' === $methodCall[0]) {
-                $enabledGrants[(string) $methodCall[1][0]] = (string) $methodCall[1][0];
-            }
-        }
-        $this->assertArrayHasKey(AuthCodeGrant::class, $enabledGrants);
-    }
-
     private function getValidConfiguration(array $options = []): array
     {
         return [
@@ -215,7 +187,7 @@ final class ExtensionTest extends TestCase
                     'encryption_key' => 'foo',
                     'enable_client_credentials_grant' => $options['enable_client_credentials_grant'] ?? true,
                     'enable_password_grant' => $options['enable_password_grant'] ?? false,
-                    'enable_implicit_grant' => $options['enable_implicit_grant'] ?? true,
+                    'enable_implicit_grant' => $options['enable_implicit_grant'] ?? false,
                     'enable_refresh_token_grant' => $options['enable_refresh_token_grant'] ?? true,
                     'revoke_refresh_tokens' => $options['revoke_refresh_tokens'] ?? true,
                 ],
