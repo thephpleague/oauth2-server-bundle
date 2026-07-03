@@ -43,7 +43,8 @@
     },
     "conflict": {
         "doctrine/doctrine-bundle": "<2.8.0",
-        "doctrine/orm": "<2.14"
+        "doctrine/orm": "<2.14",
+        "symfony/console": "<6.1"
     },
     "suggest": {
         "doctrine/doctrine-bundle": "Allow usage of doctrine as persistence layer",

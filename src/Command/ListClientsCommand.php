@@ -31,7 +31,6 @@ final class ListClientsCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Lists existing OAuth2 clients')
             ->addOption(
                 'columns',
                 null,

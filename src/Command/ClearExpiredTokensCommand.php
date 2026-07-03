@@ -30,7 +30,6 @@ final class ClearExpiredTokensCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Clears all expired access and/or refresh tokens and/or auth codes')
             ->addOption(
                 'access-tokens',
                 'a',

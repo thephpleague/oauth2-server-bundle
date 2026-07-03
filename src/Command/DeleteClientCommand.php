@@ -24,7 +24,6 @@ final class DeleteClientCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Deletes an OAuth2 client')
             ->addArgument(
                 'identifier',
                 InputArgument::REQUIRED,

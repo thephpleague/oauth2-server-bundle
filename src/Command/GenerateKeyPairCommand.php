@@ -42,7 +42,6 @@ final class GenerateKeyPairCommand extends Command
 
     protected function configure(): void
     {
-        $this->setDescription('Generate public/private keys for use in your application.');
         $this->addOption('dry-run', null, InputOption::VALUE_NONE, 'Do not update key files.');
         $this->addOption('skip-if-exists', null, InputOption::VALUE_NONE, 'Do not update key files if they already exist.');
         $this->addOption('overwrite', null, InputOption::VALUE_NONE, 'Overwrite key files if they already exist.');

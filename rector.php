@@ -14,4 +14,5 @@ return RectorConfig::configure()
     ->withPhpSets()
     // ->withCodeQualityLevel(0)
     ->withPreparedSets(typeDeclarations: true, deadCode: true)
+    ->withComposerBased(symfony: true, phpunit: true, doctrine: true)
 ;

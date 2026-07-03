@@ -28,7 +28,6 @@ final class UpdateClientCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Updates an OAuth2 client')
 
             ->addOption('add-redirect-uri', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Add allowed redirect uri to the client.', [])
             ->addOption('remove-redirect-uri', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Remove allowed redirect uri to the client.', [])
