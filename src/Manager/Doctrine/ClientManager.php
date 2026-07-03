@@ -104,9 +104,9 @@ final class ClientManager implements ClientManagerInterface
                 )
             )
                 ->setParameter($field . $key, (string) $value)
-                ->setParameter('space_' . $field . $key, '% ' . (string) $value)
-                ->setParameter($field . '_space' . $key, (string) $value . ' %')
-                ->setParameter('space_' . $field . '_space' . $key, '% ' . (string) $value . ' %')
+                ->setParameter('space_' . $field . $key, '% ' . $value)
+                ->setParameter($field . '_space' . $key, $value . ' %')
+                ->setParameter('space_' . $field . '_space' . $key, '% ' . $value . ' %')
             ;
         }
     }

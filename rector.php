@@ -12,7 +12,6 @@ return RectorConfig::configure()
     ])
     // uncomment to reach your current PHP version
     // ->withPhpSets()
-    // ->withDeadCodeLevel(0)
     // ->withCodeQualityLevel(0)
-    ->withPreparedSets(typeDeclarations: true)
+    ->withPreparedSets(typeDeclarations: true, deadCode: true)
 ;

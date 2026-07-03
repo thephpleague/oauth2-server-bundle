@@ -80,9 +80,6 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
         $client = $this->clientManager->find($authCodeEntity->getClient()->getIdentifier());
 
         $userIdentifier = $authCodeEntity->getUserIdentifier();
-        if (null !== $userIdentifier) {
-            $userIdentifier = $userIdentifier;
-        }
 
         return new AuthorizationCode(
             $authCodeEntity->getIdentifier(),
