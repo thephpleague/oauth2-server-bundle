@@ -12,25 +12,14 @@ use Symfony\Contracts\EventDispatcher\Event;
 final class ScopeResolveEvent extends Event
 {
     /**
-     * @var list<Scope>
-     */
-    private array $scopes;
-
-    private Grant $grant;
-
-    private AbstractClient $client;
-
-    private int|string|null $userIdentifier;
-
-    /**
      * @param list<Scope> $scopes
      */
-    public function __construct(array $scopes, Grant $grant, AbstractClient $client, string|int|null $userIdentifier)
-    {
-        $this->scopes = $scopes;
-        $this->grant = $grant;
-        $this->client = $client;
-        $this->userIdentifier = $userIdentifier;
+    public function __construct(
+        private array $scopes,
+        private readonly Grant $grant,
+        private readonly AbstractClient $client,
+        private readonly int|string|null $userIdentifier,
+    ) {
     }
 
     /**

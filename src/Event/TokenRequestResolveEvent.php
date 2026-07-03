@@ -9,11 +9,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class TokenRequestResolveEvent extends Event
 {
-    private Response $response;
-
-    public function __construct(Response $response)
-    {
-        $this->response = $response;
+    public function __construct(
+        private Response $response,
+    ) {
     }
 
     public function getResponse(): Response

@@ -16,16 +16,14 @@ use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
 final class ClientRepository implements ClientRepositoryInterface
 {
-    private ClientManagerInterface $clientManager;
+    private readonly PasswordHasherInterface $passwordHasher;
 
-    private PasswordHasherInterface $passwordHasher;
-
-    public function __construct(ClientManagerInterface $clientManager, ?PasswordHasherInterface $passwordHasher = null)
-    {
-        $this->clientManager = $clientManager;
-
+    public function __construct(
+        private readonly ClientManagerInterface $clientManager,
+        ?PasswordHasherInterface $passwordHasher = null,
+    ) {
         if (null === $passwordHasher) {
-            trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not passing a "%s" to "%s" is deprecated since version 1.2 and will be required in 2.0.', PasswordHasherInterface::class, __CLASS__);
+            trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not passing a "%s" to "%s" is deprecated since version 1.2 and will be required in 2.0.', PasswordHasherInterface::class, self::class);
 
             // Default to a migrating hasher so legacy plaintext secrets keep validating
             // (and get upgraded on first use) while never bypassing the hasher API.
@@ -99,10 +97,10 @@ final class ClientRepository implements ClientRepositoryInterface
             $clientEntity->setName($client->getName());
         }
         $clientEntity->setIdentifier($client->getIdentifier());
-        $clientEntity->setRedirectUri(array_map('strval', $client->getRedirectUris()));
+        $clientEntity->setRedirectUri(array_map(strval(...), $client->getRedirectUris()));
         $clientEntity->setConfidential($client->isConfidential());
         $clientEntity->setAllowPlainTextPkce($client->isPlainTextPkceAllowed());
-        $grantTypes = array_map('strval', $client->getGrants());
+        $grantTypes = array_map(strval(...), $client->getGrants());
         $clientEntity->setAllowedGrantTypes($grantTypes);
 
         return $clientEntity;

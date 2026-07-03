@@ -9,7 +9,7 @@ class RedirectUri implements \Stringable
     /**
      * @var non-empty-string
      */
-    private string $redirectUri;
+    private readonly string $redirectUri;
 
     /**
      * @param non-empty-string $redirectUri

@@ -13,11 +13,6 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
  */
 abstract class AbstractClient implements ClientInterface
 {
-    private string $name;
-    /** @var non-empty-string */
-    protected string $identifier;
-    private ?string $secret;
-
     /** @var list<RedirectUri> */
     private array $redirectUris = [];
 
@@ -33,11 +28,11 @@ abstract class AbstractClient implements ClientInterface
     /**
      * @param non-empty-string $identifier
      */
-    public function __construct(string $name, string $identifier, ?string $secret)
-    {
-        $this->name = $name;
-        $this->identifier = $identifier;
-        $this->secret = $secret;
+    public function __construct(
+        private string $name,
+        protected string $identifier,
+        private ?string $secret,
+    ) {
     }
 
     public function getName(): string

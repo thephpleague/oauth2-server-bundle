@@ -31,21 +31,13 @@ final class GenerateKeyPairCommand extends Command
         'ES512',
     ];
 
-    private Filesystem $filesystem;
-
-    private string $secretKey;
-
-    private string $publicKey;
-
-    private ?string $passphrase;
-
-    public function __construct(Filesystem $filesystem, string $secretKey, string $publicKey, ?string $passphrase)
-    {
+    public function __construct(
+        private readonly Filesystem $filesystem,
+        private readonly string $secretKey,
+        private readonly string $publicKey,
+        private readonly ?string $passphrase,
+    ) {
         parent::__construct();
-        $this->filesystem = $filesystem;
-        $this->secretKey = $secretKey;
-        $this->publicKey = $publicKey;
-        $this->passphrase = $passphrase;
     }
 
     protected function configure(): void

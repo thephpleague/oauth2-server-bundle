@@ -22,13 +22,10 @@ final class ListClientsCommand extends Command
 {
     private const ALLOWED_COLUMNS = ['name', 'identifier', 'secret', 'scope', 'redirect uri', 'grant type'];
 
-    private ClientManagerInterface $clientManager;
-
-    public function __construct(ClientManagerInterface $clientManager)
-    {
+    public function __construct(
+        private readonly ClientManagerInterface $clientManager,
+    ) {
         parent::__construct();
-
-        $this->clientManager = $clientManager;
     }
 
     protected function configure(): void
@@ -91,15 +88,9 @@ final class ListClientsCommand extends Command
         $scopeStrings = $input->getOption('scope');
 
         return ClientFilter::create()
-            ->addGrantCriteria(...array_map(static function (string $grant): Grant {
-                return new Grant($grant);
-            }, $grantStrings))
-            ->addRedirectUriCriteria(...array_map(static function (string $redirectUri): RedirectUri {
-                return new RedirectUri($redirectUri);
-            }, $redirectUriStrings))
-            ->addScopeCriteria(...array_map(static function (string $scope): Scope {
-                return new Scope($scope);
-            }, $scopeStrings))
+            ->addGrantCriteria(...array_map(static fn (string $grant): Grant => new Grant($grant), $grantStrings))
+            ->addRedirectUriCriteria(...array_map(static fn (string $redirectUri): RedirectUri => new RedirectUri($redirectUri), $redirectUriStrings))
+            ->addScopeCriteria(...array_map(static fn (string $scope): Scope => new Scope($scope), $scopeStrings))
         ;
     }
 
@@ -138,9 +129,7 @@ final class ListClientsCommand extends Command
                 'grant type' => implode(', ', $client->getGrants()),
             ];
 
-            return array_map(static function (string $column) use ($values): string {
-                return $values[$column] ?? '';
-            }, $columns);
+            return array_map(static fn (string $column): string => $values[$column] ?? '', $columns);
         }, $clients);
     }
 
@@ -150,9 +139,7 @@ final class ListClientsCommand extends Command
     private function getColumns(InputInterface $input): array
     {
         $requestedColumns = $input->getOption('columns');
-        $requestedColumns = array_map(static function (string $column): string {
-            return strtolower(trim($column));
-        }, $requestedColumns);
+        $requestedColumns = array_map(static fn (string $column): string => strtolower(trim($column)), $requestedColumns);
 
         return array_intersect($requestedColumns, self::ALLOWED_COLUMNS);
     }

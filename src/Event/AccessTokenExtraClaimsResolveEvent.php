@@ -19,9 +19,9 @@ final class AccessTokenExtraClaimsResolveEvent extends Event
      * @param ScopeEntityInterface[] $scopes
      */
     public function __construct(
-        private ClientEntityInterface $clientEntity,
-        private array $scopes,
-        private ?string $userIdentifier = null,
+        private readonly ClientEntityInterface $clientEntity,
+        private readonly array $scopes,
+        private readonly ?string $userIdentifier = null,
     ) {
     }
 

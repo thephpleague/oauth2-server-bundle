@@ -11,11 +11,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 final class SecurityTestController extends AbstractController
 {
-    private TokenStorageInterface $tokenStorage;
-
-    public function __construct(TokenStorageInterface $tokenStorage)
-    {
-        $this->tokenStorage = $tokenStorage;
+    public function __construct(
+        private readonly TokenStorageInterface $tokenStorage,
+    ) {
     }
 
     public function helloAction(): Response

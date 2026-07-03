@@ -12,14 +12,10 @@ use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 
 final class AccessTokenManager implements AccessTokenManagerInterface
 {
-    private EntityManagerInterface $entityManager;
-
-    private bool $persistAccessToken;
-
-    public function __construct(EntityManagerInterface $entityManager, bool $persistAccessToken)
-    {
-        $this->entityManager = $entityManager;
-        $this->persistAccessToken = $persistAccessToken;
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly bool $persistAccessToken,
+    ) {
     }
 
     public function find(string $identifier): ?AccessTokenInterface

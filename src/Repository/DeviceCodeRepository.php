@@ -17,24 +17,12 @@ use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 
 final class DeviceCodeRepository implements DeviceCodeRepositoryInterface
 {
-    private DeviceCodeManagerInterface $deviceCodeManager;
-
-    private ClientManagerInterface $clientManager;
-
-    private ScopeConverterInterface $scopeConverter;
-
-    private ClientRepositoryInterface $clientRepository;
-
     public function __construct(
-        DeviceCodeManagerInterface $deviceCodeManager,
-        ClientManagerInterface $clientManager,
-        ScopeConverterInterface $scopeConverter,
-        ClientRepositoryInterface $clientRepository,
+        private readonly DeviceCodeManagerInterface $deviceCodeManager,
+        private readonly ClientManagerInterface $clientManager,
+        private readonly ScopeConverterInterface $scopeConverter,
+        private readonly ClientRepositoryInterface $clientRepository,
     ) {
-        $this->deviceCodeManager = $deviceCodeManager;
-        $this->clientManager = $clientManager;
-        $this->scopeConverter = $scopeConverter;
-        $this->clientRepository = $clientRepository;
     }
 
     public function getNewDeviceCode(): DeviceCodeEntityInterface

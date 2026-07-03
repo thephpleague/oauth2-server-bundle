@@ -8,36 +8,18 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 
 class AuthorizationCode implements \Stringable, AuthorizationCodeInterface
 {
-    private string $identifier;
-
-    private \DateTimeInterface $expiry;
-
-    private ?string $userIdentifier;
-
-    private ClientInterface $client;
-
-    /**
-     * @var list<Scope>
-     */
-    private array $scopes;
-
     private bool $revoked = false;
 
     /**
      * @param list<Scope> $scopes
      */
     public function __construct(
-        string $identifier,
-        \DateTimeInterface $expiry,
-        ClientInterface $client,
-        ?string $userIdentifier,
-        array $scopes,
+        private readonly string $identifier,
+        private readonly \DateTimeInterface $expiry,
+        private readonly ClientInterface $client,
+        private readonly ?string $userIdentifier,
+        private readonly array $scopes,
     ) {
-        $this->identifier = $identifier;
-        $this->expiry = $expiry;
-        $this->client = $client;
-        $this->userIdentifier = $userIdentifier;
-        $this->scopes = $scopes;
     }
 
     public function __toString(): string

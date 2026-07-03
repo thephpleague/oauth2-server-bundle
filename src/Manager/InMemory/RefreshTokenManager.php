@@ -29,9 +29,7 @@ final class RefreshTokenManager implements RefreshTokenManagerInterface
         $count = \count($this->refreshTokens);
 
         $now = new \DateTimeImmutable();
-        $this->refreshTokens = array_filter($this->refreshTokens, static function (RefreshTokenInterface $refreshToken) use ($now): bool {
-            return $refreshToken->getExpiry() >= $now;
-        });
+        $this->refreshTokens = array_filter($this->refreshTokens, static fn (RefreshTokenInterface $refreshToken): bool => $refreshToken->getExpiry() >= $now);
 
         return $count - \count($this->refreshTokens);
     }

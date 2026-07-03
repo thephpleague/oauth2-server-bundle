@@ -6,16 +6,13 @@ namespace League\Bundle\OAuth2ServerBundle\Model;
 
 class RefreshToken implements \Stringable, RefreshTokenInterface
 {
-    private string $identifier;
-    private \DateTimeInterface $expiry;
-    private ?AccessTokenInterface $accessToken;
     private bool $revoked = false;
 
-    public function __construct(string $identifier, \DateTimeInterface $expiry, ?AccessTokenInterface $accessToken = null)
-    {
-        $this->identifier = $identifier;
-        $this->expiry = $expiry;
-        $this->accessToken = $accessToken;
+    public function __construct(
+        private readonly string $identifier,
+        private readonly \DateTimeInterface $expiry,
+        private readonly ?AccessTokenInterface $accessToken = null,
+    ) {
     }
 
     public function __toString(): string

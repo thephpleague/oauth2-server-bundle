@@ -18,26 +18,13 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand(name: 'league:oauth2-server:clear-expired-tokens', description: 'Clears all expired access and/or refresh tokens and/or auth codes')]
 final class ClearExpiredTokensCommand extends Command
 {
-    private AccessTokenManagerInterface $accessTokenManager;
-
-    private RefreshTokenManagerInterface $refreshTokenManager;
-
-    private AuthorizationCodeManagerInterface $authorizationCodeManager;
-
-    private DeviceCodeManagerInterface $deviceCodeManager;
-
     public function __construct(
-        AccessTokenManagerInterface $accessTokenManager,
-        RefreshTokenManagerInterface $refreshTokenManager,
-        AuthorizationCodeManagerInterface $authorizationCodeManager,
-        DeviceCodeManagerInterface $deviceCodeManager,
+        private readonly AccessTokenManagerInterface $accessTokenManager,
+        private readonly RefreshTokenManagerInterface $refreshTokenManager,
+        private readonly AuthorizationCodeManagerInterface $authorizationCodeManager,
+        private readonly DeviceCodeManagerInterface $deviceCodeManager,
     ) {
         parent::__construct();
-
-        $this->accessTokenManager = $accessTokenManager;
-        $this->refreshTokenManager = $refreshTokenManager;
-        $this->authorizationCodeManager = $authorizationCodeManager;
-        $this->deviceCodeManager = $deviceCodeManager;
     }
 
     protected function configure(): void

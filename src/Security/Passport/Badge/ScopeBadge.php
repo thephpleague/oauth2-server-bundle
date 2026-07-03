@@ -11,16 +11,11 @@ class ScopeBadge implements BadgeInterface
     private bool $resolved = false;
 
     /**
-     * @var list<string>
-     */
-    private array $scopes;
-
-    /**
      * @param list<string> $scopes
      */
-    public function __construct(array $scopes)
-    {
-        $this->scopes = $scopes;
+    public function __construct(
+        private readonly array $scopes,
+    ) {
     }
 
     /**

@@ -15,15 +15,11 @@ use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 #[AsCommand(name: 'league:oauth2-server:rehash-client-secrets', description: 'Rehashes existing client secrets using the configured password hasher.')]
 final class RehashClientSecretsCommand extends Command
 {
-    private ClientManagerInterface $clientManager;
-    private PasswordHasherInterface $hasher;
-
-    public function __construct(ClientManagerInterface $clientManager, PasswordHasherInterface $hasher)
-    {
+    public function __construct(
+        private readonly ClientManagerInterface $clientManager,
+        private readonly PasswordHasherInterface $hasher,
+    ) {
         parent::__construct();
-
-        $this->clientManager = $clientManager;
-        $this->hasher = $hasher;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

@@ -11,22 +11,14 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class UserResolveEvent extends Event
 {
-    private string $username;
-
-    private string $password;
-
-    private Grant $grant;
-
-    private AbstractClient $client;
-
     private ?UserInterface $user = null;
 
-    public function __construct(string $username, string $password, Grant $grant, AbstractClient $client)
-    {
-        $this->username = $username;
-        $this->password = $password;
-        $this->grant = $grant;
-        $this->client = $client;
+    public function __construct(
+        private readonly string $username,
+        private readonly string $password,
+        private readonly Grant $grant,
+        private readonly AbstractClient $client,
+    ) {
     }
 
     public function getUsername(): string

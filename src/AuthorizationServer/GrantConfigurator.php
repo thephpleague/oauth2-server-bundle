@@ -13,16 +13,11 @@ use League\OAuth2\Server\Grant\GrantTypeInterface as LeagueGrantTypeInterface;
 final class GrantConfigurator
 {
     /**
-     * @var iterable<GrantTypeInterface>
-     */
-    private iterable $grants;
-
-    /**
      * @param iterable<GrantTypeInterface> $grants
      */
-    public function __construct(iterable $grants)
-    {
-        $this->grants = $grants;
+    public function __construct(
+        private readonly iterable $grants,
+    ) {
     }
 
     public function __invoke(AuthorizationServer $authorizationServer): void

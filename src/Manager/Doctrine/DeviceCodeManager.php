@@ -11,11 +11,9 @@ use League\Bundle\OAuth2ServerBundle\Model\DeviceCodeInterface;
 
 final class DeviceCodeManager implements DeviceCodeManagerInterface
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+    ) {
     }
 
     public function find(string $identifier): ?DeviceCodeInterface

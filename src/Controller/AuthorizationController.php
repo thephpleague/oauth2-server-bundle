@@ -20,40 +20,16 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class AuthorizationController
 {
-    private AuthorizationServer $server;
-
-    private EventDispatcherInterface $eventDispatcher;
-
-    private AuthorizationRequestResolveEventFactory $eventFactory;
-
-    private UserConverterInterface $userConverter;
-
-    private ClientManagerInterface $clientManager;
-
-    private HttpMessageFactoryInterface $httpMessageFactory;
-
-    private HttpFoundationFactoryInterface $httpFoundationFactory;
-
-    private ResponseFactoryInterface $responseFactory;
-
     public function __construct(
-        AuthorizationServer $server,
-        EventDispatcherInterface $eventDispatcher,
-        AuthorizationRequestResolveEventFactory $eventFactory,
-        UserConverterInterface $userConverter,
-        ClientManagerInterface $clientManager,
-        HttpMessageFactoryInterface $httpMessageFactory,
-        HttpFoundationFactoryInterface $httpFoundationFactory,
-        ResponseFactoryInterface $responseFactory,
+        private readonly AuthorizationServer $server,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly AuthorizationRequestResolveEventFactory $eventFactory,
+        private readonly UserConverterInterface $userConverter,
+        private readonly ClientManagerInterface $clientManager,
+        private readonly HttpMessageFactoryInterface $httpMessageFactory,
+        private readonly HttpFoundationFactoryInterface $httpFoundationFactory,
+        private readonly ResponseFactoryInterface $responseFactory,
     ) {
-        $this->server = $server;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->eventFactory = $eventFactory;
-        $this->userConverter = $userConverter;
-        $this->clientManager = $clientManager;
-        $this->httpMessageFactory = $httpMessageFactory;
-        $this->httpFoundationFactory = $httpFoundationFactory;
-        $this->responseFactory = $responseFactory;
     }
 
     public function indexAction(Request $request): Response

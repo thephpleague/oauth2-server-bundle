@@ -30,14 +30,14 @@ final class TestHelper
             'client_id' => $refreshToken->getAccessToken()->getClient()->getIdentifier(),
             'refresh_token_id' => $refreshToken->getIdentifier(),
             'access_token_id' => $refreshToken->getAccessToken()->getIdentifier(),
-            'scopes' => array_map('strval', $refreshToken->getAccessToken()->getScopes()),
+            'scopes' => array_map(strval(...), $refreshToken->getAccessToken()->getScopes()),
             'user_id' => $refreshToken->getAccessToken()->getUserIdentifier(),
             'expire_time' => $refreshToken->getExpiry()->getTimestamp(),
         ]);
 
         try {
             return Crypto::encryptWithPassword($payload, self::ENCRYPTION_KEY);
-        } catch (CryptoException $e) {
+        } catch (CryptoException) {
             return null;
         }
     }
@@ -57,7 +57,7 @@ final class TestHelper
 
         try {
             return Crypto::encryptWithPassword($payload, self::ENCRYPTION_KEY);
-        } catch (CryptoException $e) {
+        } catch (CryptoException) {
             return null;
         }
     }
@@ -66,7 +66,7 @@ final class TestHelper
     {
         try {
             return Crypto::decryptWithPassword($payload, self::ENCRYPTION_KEY);
-        } catch (CryptoException $e) {
+        } catch (CryptoException) {
             return null;
         }
     }
@@ -75,7 +75,7 @@ final class TestHelper
     {
         $clientEntity = new ClientEntity();
         $clientEntity->setIdentifier($accessToken->getClient()->getIdentifier());
-        $clientEntity->setRedirectUri(array_map('strval', $accessToken->getClient()->getRedirectUris()));
+        $clientEntity->setRedirectUri(array_map(strval(...), $accessToken->getClient()->getRedirectUris()));
 
         $accessTokenEntity = new AccessTokenEntity();
         $accessTokenEntity->setPrivateKey(new CryptKey(self::PRIVATE_KEY_PATH, null, false));

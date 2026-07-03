@@ -28,6 +28,7 @@ return (new PhpCsFixer\Config())
             'import_functions' => false,
         ],
         'list_syntax' => ['syntax' => 'short'],
+        'multiline_promoted_properties' => true,
         'no_null_property_initialization' => true,
         'phpdoc_to_comment' => false,
         'ordered_imports' => [

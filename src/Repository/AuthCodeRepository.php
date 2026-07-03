@@ -16,20 +16,11 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 
 final class AuthCodeRepository implements AuthCodeRepositoryInterface
 {
-    private AuthorizationCodeManagerInterface $authorizationCodeManager;
-
-    private ClientManagerInterface $clientManager;
-
-    private ScopeConverterInterface $scopeConverter;
-
     public function __construct(
-        AuthorizationCodeManagerInterface $authorizationCodeManager,
-        ClientManagerInterface $clientManager,
-        ScopeConverterInterface $scopeConverter,
+        private readonly AuthorizationCodeManagerInterface $authorizationCodeManager,
+        private readonly ClientManagerInterface $clientManager,
+        private readonly ScopeConverterInterface $scopeConverter,
     ) {
-        $this->authorizationCodeManager = $authorizationCodeManager;
-        $this->clientManager = $clientManager;
-        $this->scopeConverter = $scopeConverter;
     }
 
     public function getNewAuthCode(): AuthCode

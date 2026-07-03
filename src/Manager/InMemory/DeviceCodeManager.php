@@ -40,9 +40,7 @@ final class DeviceCodeManager implements DeviceCodeManagerInterface
         $count = \count($this->deviceCodes);
 
         $now = new \DateTimeImmutable();
-        $this->deviceCodes = array_filter($this->deviceCodes, static function (DeviceCodeInterface $accessToken) use ($now): bool {
-            return $accessToken->getExpiry() >= $now;
-        });
+        $this->deviceCodes = array_filter($this->deviceCodes, static fn (DeviceCodeInterface $accessToken): bool => $accessToken->getExpiry() >= $now);
 
         return $count - \count($this->deviceCodes);
     }

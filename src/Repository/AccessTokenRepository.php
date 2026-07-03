@@ -20,23 +20,14 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
-    private AccessTokenManagerInterface $accessTokenManager;
-
-    private ClientManagerInterface $clientManager;
-
-    private ScopeConverterInterface $scopeConverter;
-
-    private ?EventDispatcherInterface $eventDispatcher;
+    private readonly ?EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
-        AccessTokenManagerInterface $accessTokenManager,
-        ClientManagerInterface $clientManager,
-        ScopeConverterInterface $scopeConverter,
+        private readonly AccessTokenManagerInterface $accessTokenManager,
+        private readonly ClientManagerInterface $clientManager,
+        private readonly ScopeConverterInterface $scopeConverter,
         ?EventDispatcherInterface $eventDispatcher = null,
     ) {
-        $this->accessTokenManager = $accessTokenManager;
-        $this->clientManager = $clientManager;
-        $this->scopeConverter = $scopeConverter;
         if (null === $eventDispatcher) {
             trigger_deprecation(
                 'league/oauth2-server-bundle',

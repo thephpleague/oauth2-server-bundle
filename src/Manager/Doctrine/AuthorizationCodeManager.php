@@ -11,11 +11,9 @@ use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCodeInterface;
 
 final class AuthorizationCodeManager implements AuthorizationCodeManagerInterface
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+    ) {
     }
 
     public function find(string $identifier): ?AuthorizationCodeInterface

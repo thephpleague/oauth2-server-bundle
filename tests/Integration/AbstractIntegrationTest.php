@@ -153,7 +153,7 @@ abstract class AbstractIntegrationTest extends TestCase
 
         try {
             $response = $this->resourceServer->validateAuthenticatedRequest($request);
-        } catch (OAuthServerException $e) {
+        } catch (OAuthServerException) {
             return null;
         }
 
@@ -166,7 +166,7 @@ abstract class AbstractIntegrationTest extends TestCase
     {
         try {
             $payload = Crypto::decryptWithPassword($encryptedPayload, TestHelper::ENCRYPTION_KEY);
-        } catch (CryptoException $e) {
+        } catch (CryptoException) {
             return null;
         }
 
@@ -229,7 +229,7 @@ abstract class AbstractIntegrationTest extends TestCase
     {
         try {
             $serverRequest = $this->resourceServer->validateAuthenticatedRequest($serverRequest);
-        } catch (OAuthServerException $e) {
+        } catch (OAuthServerException) {
             return null;
         }
 

@@ -14,11 +14,9 @@ final class AccessTokenManager implements AccessTokenManagerInterface
      */
     private array $accessTokens = [];
 
-    private bool $persistAccessToken;
-
-    public function __construct(bool $persistAccessToken)
-    {
-        $this->persistAccessToken = $persistAccessToken;
+    public function __construct(
+        private readonly bool $persistAccessToken,
+    ) {
     }
 
     public function find(string $identifier): ?AccessTokenInterface
@@ -48,9 +46,7 @@ final class AccessTokenManager implements AccessTokenManagerInterface
         $count = \count($this->accessTokens);
 
         $now = new \DateTimeImmutable();
-        $this->accessTokens = array_filter($this->accessTokens, static function (AccessTokenInterface $accessToken) use ($now): bool {
-            return $accessToken->getExpiry() >= $now;
-        });
+        $this->accessTokens = array_filter($this->accessTokens, static fn (AccessTokenInterface $accessToken): bool => $accessToken->getExpiry() >= $now);
 
         return $count - \count($this->accessTokens);
     }

@@ -19,26 +19,14 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class ClientManager implements ClientManagerInterface
 {
-    private EntityManagerInterface $entityManager;
-
-    /**
-     * @var class-string<AbstractClient>
-     */
-    private string $clientFqcn;
-
-    private EventDispatcherInterface $dispatcher;
-
     /**
      * @param class-string<AbstractClient> $clientFqcn
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        EventDispatcherInterface $dispatcher,
-        string $clientFqcn,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly string $clientFqcn,
     ) {
-        $this->entityManager = $entityManager;
-        $this->dispatcher = $dispatcher;
-        $this->clientFqcn = $clientFqcn;
     }
 
     public function find(string $identifier): ?ClientInterface

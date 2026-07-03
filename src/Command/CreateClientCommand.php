@@ -22,22 +22,15 @@ use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 #[AsCommand(name: 'league:oauth2-server:create-client', description: 'Creates a new OAuth2 client')]
 final class CreateClientCommand extends Command
 {
-    private ClientManagerInterface $clientManager;
-
-    private string $clientFqcn;
-
-    private ?PasswordHasherInterface $passwordHasher = null;
-
-    public function __construct(ClientManagerInterface $clientManager, string $clientFqcn, ?PasswordHasherInterface $passwordHasher = null)
-    {
+    public function __construct(
+        private readonly ClientManagerInterface $clientManager,
+        private readonly string $clientFqcn,
+        private readonly ?PasswordHasherInterface $passwordHasher = null,
+    ) {
         parent::__construct();
 
-        $this->clientManager = $clientManager;
-        $this->clientFqcn = $clientFqcn;
-        $this->passwordHasher = $passwordHasher;
-
         if (null === $this->passwordHasher) {
-            trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not passing a "%s" to "%s" is deprecated since version 1.2 and will be required in 2.0.', PasswordHasherInterface::class, __CLASS__);
+            trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not passing a "%s" to "%s" is deprecated since version 1.2 and will be required in 2.0.', PasswordHasherInterface::class, self::class);
         }
     }
 
@@ -155,15 +148,9 @@ final class CreateClientCommand extends Command
         $scopeStrings = $input->getOption('scope');
 
         return $client
-            ->setRedirectUris(...array_map(static function (string $redirectUri): RedirectUri {
-                return new RedirectUri($redirectUri);
-            }, $redirectUriStrings))
-            ->setGrants(...array_map(static function (string $grant): Grant {
-                return new Grant($grant);
-            }, $grantStrings))
-            ->setScopes(...array_map(static function (string $scope): Scope {
-                return new Scope($scope);
-            }, $scopeStrings))
+            ->setRedirectUris(...array_map(static fn (string $redirectUri): RedirectUri => new RedirectUri($redirectUri), $redirectUriStrings))
+            ->setGrants(...array_map(static fn (string $grant): Grant => new Grant($grant), $grantStrings))
+            ->setScopes(...array_map(static fn (string $scope): Scope => new Scope($scope), $scopeStrings))
         ;
     }
 }

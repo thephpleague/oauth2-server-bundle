@@ -9,8 +9,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class User extends \ArrayObject implements UserInterface
 {
-    public function __construct(private readonly ?string $userIdentifier = null)
-    {
+    public function __construct(
+        private readonly ?string $userIdentifier = null,
+    ) {
         parent::__construct();
     }
 

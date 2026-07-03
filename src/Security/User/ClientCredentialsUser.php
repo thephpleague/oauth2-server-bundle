@@ -12,16 +12,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class ClientCredentialsUser implements UserInterface
 {
     /**
-     * @var non-empty-string
-     */
-    private string $clientId;
-
-    /**
      * @param non-empty-string $clientId
      */
-    public function __construct(string $clientId)
-    {
-        $this->clientId = $clientId;
+    public function __construct(
+        private readonly string $clientId,
+    ) {
     }
 
     public function getUserIdentifier(): string
