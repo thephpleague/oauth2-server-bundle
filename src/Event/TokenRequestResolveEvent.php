@@ -9,10 +9,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class TokenRequestResolveEvent extends Event
 {
-    /**
-     * @var Response
-     */
-    private $response;
+    private Response $response;
 
     public function __construct(Response $response)
     {

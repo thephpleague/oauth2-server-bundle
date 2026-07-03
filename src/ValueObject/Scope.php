@@ -9,7 +9,7 @@ class Scope implements \Stringable
     /**
      * @var non-empty-string
      */
-    private $scope;
+    private string $scope;
 
     /**
      * @param non-empty-string $scope

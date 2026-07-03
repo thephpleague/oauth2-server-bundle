@@ -6,7 +6,7 @@ use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Controller\SecurityTestContr
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
-return static function (RoutingConfigurator $routes) {
+return static function (RoutingConfigurator $routes): void {
     $routes
         ->add('security_test', '/security-test')
             ->controller([SecurityTestController::class, 'helloAction'])

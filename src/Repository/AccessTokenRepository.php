@@ -20,25 +20,13 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
-    /**
-     * @var AccessTokenManagerInterface
-     */
-    private $accessTokenManager;
+    private AccessTokenManagerInterface $accessTokenManager;
 
-    /**
-     * @var ClientManagerInterface
-     */
-    private $clientManager;
+    private ClientManagerInterface $clientManager;
 
-    /**
-     * @var ScopeConverterInterface
-     */
-    private $scopeConverter;
+    private ScopeConverterInterface $scopeConverter;
 
-    /**
-     * @var EventDispatcherInterface|null
-     */
-    private $eventDispatcher;
+    private ?EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         AccessTokenManagerInterface $accessTokenManager,

@@ -14,25 +14,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class DeviceCodeController
 {
-    /**
-     * @var AuthorizationServer
-     */
-    private $server;
+    private AuthorizationServer $server;
 
-    /**
-     * @var HttpMessageFactoryInterface
-     */
-    private $httpMessageFactory;
+    private HttpMessageFactoryInterface $httpMessageFactory;
 
-    /**
-     * @var HttpFoundationFactoryInterface
-     */
-    private $httpFoundationFactory;
+    private HttpFoundationFactoryInterface $httpFoundationFactory;
 
-    /**
-     * @var ResponseFactoryInterface
-     */
-    private $responseFactory;
+    private ResponseFactoryInterface $responseFactory;
 
     public function __construct(
         AuthorizationServer $server,

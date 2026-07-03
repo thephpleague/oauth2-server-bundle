@@ -20,45 +20,21 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class AuthorizationController
 {
-    /**
-     * @var AuthorizationServer
-     */
-    private $server;
+    private AuthorizationServer $server;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var AuthorizationRequestResolveEventFactory
-     */
-    private $eventFactory;
+    private AuthorizationRequestResolveEventFactory $eventFactory;
 
-    /**
-     * @var UserConverterInterface
-     */
-    private $userConverter;
+    private UserConverterInterface $userConverter;
 
-    /**
-     * @var ClientManagerInterface
-     */
-    private $clientManager;
+    private ClientManagerInterface $clientManager;
 
-    /**
-     * @var HttpMessageFactoryInterface
-     */
-    private $httpMessageFactory;
+    private HttpMessageFactoryInterface $httpMessageFactory;
 
-    /**
-     * @var HttpFoundationFactoryInterface
-     */
-    private $httpFoundationFactory;
+    private HttpFoundationFactoryInterface $httpFoundationFactory;
 
-    /**
-     * @var ResponseFactoryInterface
-     */
-    private $responseFactory;
+    private ResponseFactoryInterface $responseFactory;
 
     public function __construct(
         AuthorizationServer $server,

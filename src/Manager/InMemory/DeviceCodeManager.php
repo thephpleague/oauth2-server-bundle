@@ -12,7 +12,7 @@ final class DeviceCodeManager implements DeviceCodeManagerInterface
     /**
      * @var array<string, DeviceCodeInterface>
      */
-    private $deviceCodes = [];
+    private array $deviceCodes = [];
 
     public function find(string $identifier): ?DeviceCodeInterface
     {

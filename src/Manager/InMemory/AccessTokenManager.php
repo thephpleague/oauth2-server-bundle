@@ -12,10 +12,9 @@ final class AccessTokenManager implements AccessTokenManagerInterface
     /**
      * @var array<string, AccessTokenInterface>
      */
-    private $accessTokens = [];
+    private array $accessTokens = [];
 
-    /** @var bool */
-    private $persistAccessToken;
+    private bool $persistAccessToken;
 
     public function __construct(bool $persistAccessToken)
     {

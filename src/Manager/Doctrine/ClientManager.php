@@ -19,20 +19,14 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class ClientManager implements ClientManagerInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     /**
      * @var class-string<AbstractClient>
      */
-    private $clientFqcn;
+    private string $clientFqcn;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
     /**
      * @param class-string<AbstractClient> $clientFqcn

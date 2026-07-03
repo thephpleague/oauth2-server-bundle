@@ -15,10 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand(name: 'league:oauth2-server:delete-client', description: 'Deletes an OAuth2 client')]
 final class DeleteClientCommand extends Command
 {
-    /**
-     * @var ClientManagerInterface
-     */
-    private $clientManager;
+    private ClientManagerInterface $clientManager;
 
     public function __construct(ClientManagerInterface $clientManager)
     {

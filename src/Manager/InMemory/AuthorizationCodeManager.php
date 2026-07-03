@@ -12,7 +12,7 @@ final class AuthorizationCodeManager implements AuthorizationCodeManagerInterfac
     /**
      * @var array<string, AuthorizationCodeInterface>
      */
-    private $authorizationCodes = [];
+    private array $authorizationCodes = [];
 
     public function find(string $identifier): ?AuthorizationCodeInterface
     {

@@ -20,25 +20,13 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class ScopeRepository implements ScopeRepositoryInterface
 {
-    /**
-     * @var ScopeManagerInterface
-     */
-    private $scopeManager;
+    private ScopeManagerInterface $scopeManager;
 
-    /**
-     * @var ClientManagerInterface
-     */
-    private $clientManager;
+    private ClientManagerInterface $clientManager;
 
-    /**
-     * @var ScopeConverterInterface
-     */
-    private $scopeConverter;
+    private ScopeConverterInterface $scopeConverter;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         ScopeManagerInterface $scopeManager,

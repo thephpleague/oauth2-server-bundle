@@ -16,15 +16,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
-    /**
-     * @var ClientManagerInterface
-     */
-    private $clientManager;
+    private ClientManagerInterface $clientManager;
 
     public function __construct(EntityManagerInterface $entityManager, ClientManagerInterface $clientManager)
     {

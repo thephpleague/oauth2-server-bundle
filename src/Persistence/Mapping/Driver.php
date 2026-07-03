@@ -22,16 +22,11 @@ use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
  */
 class Driver implements MappingDriver
 {
-    /**
-     * @var string
-     */
-    private $clientClass;
+    private string $clientClass;
 
-    /** @var bool */
-    private $persistAccessToken;
+    private bool $persistAccessToken;
 
-    /** @var string */
-    private $tablePrefix;
+    private string $tablePrefix;
 
     public function __construct(string $clientClass, bool $persistAccessToken, string $tablePrefix = 'oauth2_')
     {

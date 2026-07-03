@@ -11,62 +11,35 @@ class DeviceCode implements DeviceCodeInterface
     /**
      * @var non-empty-string
      */
-    private $identifier;
+    private string $identifier;
 
-    /**
-     * @var \DateTimeImmutable
-     */
-    private $expiry;
+    private \DateTimeImmutable $expiry;
 
     /**
      * @var non-empty-string|null
      */
-    private $userIdentifier;
+    private ?string $userIdentifier;
 
-    /**
-     * @var ClientInterface
-     */
-    private $client;
+    private ClientInterface $client;
 
     /**
      * @var list<Scope>
      */
-    private $scopes;
+    private array $scopes;
 
-    /**
-     * @var bool
-     */
-    private $revoked = false;
+    private bool $revoked = false;
 
-    /**
-     * @var string
-     */
-    private $userCode;
+    private string $userCode;
 
-    /**
-     * @var bool
-     */
-    private $userApproved;
+    private bool $userApproved;
 
-    /**
-     * @var bool
-     */
-    private $includeVerificationUriComplete = false;
+    private bool $includeVerificationUriComplete = false;
 
-    /**
-     * @var string
-     */
-    private $verificationUri;
+    private string $verificationUri;
 
-    /**
-     * @var \DateTimeImmutable|null
-     */
-    private $lastPolledAt;
+    private ?\DateTimeImmutable $lastPolledAt;
 
-    /**
-     * @var int
-     */
-    private $interval;
+    private int $interval;
 
     /**
      * @param non-empty-string $identifier

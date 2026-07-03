@@ -13,17 +13,17 @@ final class ClientFilter
     /**
      * @var list<Grant>
      */
-    private $grants = [];
+    private array $grants = [];
 
     /**
      * @var list<RedirectUri>
      */
-    private $redirectUris = [];
+    private array $redirectUris = [];
 
     /**
      * @var list<Scope>
      */
-    private $scopes = [];
+    private array $scopes = [];
 
     public static function create(): self
     {

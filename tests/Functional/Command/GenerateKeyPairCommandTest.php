@@ -14,7 +14,7 @@ class GenerateKeyPairCommandTest extends TestCase
     /**
      * @dataProvider providePassphrase
      */
-    public function testItGeneratesKeyPair($passphrase): void
+    public function testItGeneratesKeyPair(string $passphrase): void
     {
         $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
         $publicKeyFile = tempnam(sys_get_temp_dir(), 'public_');
@@ -50,7 +50,7 @@ class GenerateKeyPairCommandTest extends TestCase
         $this->assertSame($payload, $decryptedData);*/
     }
 
-    public function providePassphrase()
+    public function providePassphrase(): \Iterator
     {
         yield ['RS256', null];
         yield ['RS384', null];

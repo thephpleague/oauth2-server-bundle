@@ -22,15 +22,9 @@ use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 #[AsCommand(name: 'league:oauth2-server:create-client', description: 'Creates a new OAuth2 client')]
 final class CreateClientCommand extends Command
 {
-    /**
-     * @var ClientManagerInterface
-     */
-    private $clientManager;
+    private ClientManagerInterface $clientManager;
 
-    /**
-     * @var string
-     */
-    private $clientFqcn;
+    private string $clientFqcn;
 
     private ?PasswordHasherInterface $passwordHasher = null;
 

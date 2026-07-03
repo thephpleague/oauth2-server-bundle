@@ -43,7 +43,7 @@ final class DoctrineDeviceCodeManagerTest extends AbstractAcceptanceTest
         );
     }
 
-    private function buildClearExpiredTestData($client): array
+    private function buildClearExpiredTestData(Client $client): array
     {
         $validDeviceCodes = [
             '1111' => $this->buildDeviceCode('1111', '+1 day', $client),
@@ -63,7 +63,7 @@ final class DoctrineDeviceCodeManagerTest extends AbstractAcceptanceTest
         ];
     }
 
-    private function buildDeviceCode(string $identifier, string $modify, $client): DeviceCode
+    private function buildDeviceCode(string $identifier, string $modify, Client $client): DeviceCode
     {
         return new DeviceCode(
             $identifier,

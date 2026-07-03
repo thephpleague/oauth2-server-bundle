@@ -102,20 +102,14 @@ abstract class AbstractIntegrationTest extends TestCase
      */
     protected $resourceServer;
 
-    /**
-     * @var Psr17Factory
-     */
-    private $psrFactory;
+    private Psr17Factory $psrFactory;
 
     /**
      * @var PasswordHasherInterface
      */
     protected $passwordHasher;
 
-    /**
-     * @var bool
-     */
-    private $requireCodeChallengeForPublicClients = true;
+    private bool $requireCodeChallengeForPublicClients = true;
 
     protected function setUp(): void
     {
@@ -242,7 +236,7 @@ abstract class AbstractIntegrationTest extends TestCase
         return $serverRequest;
     }
 
-    protected function handleAuthorizationRequest(ServerRequestInterface $serverRequest, $approved = true, $isImplicitGrantFlow = false): ResponseInterface
+    protected function handleAuthorizationRequest(ServerRequestInterface $serverRequest, bool $approved = true, bool $isImplicitGrantFlow = false): ResponseInterface
     {
         $response = $this->psrFactory->createResponse();
 

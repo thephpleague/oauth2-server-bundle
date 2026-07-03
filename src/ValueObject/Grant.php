@@ -9,7 +9,7 @@ class Grant implements \Stringable
     /**
      * @var non-empty-string
      */
-    private $grant;
+    private string $grant;
 
     /**
      * @param non-empty-string $grant

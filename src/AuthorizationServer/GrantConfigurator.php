@@ -15,7 +15,7 @@ final class GrantConfigurator
     /**
      * @var iterable<GrantTypeInterface>
      */
-    private $grants;
+    private iterable $grants;
 
     /**
      * @param iterable<GrantTypeInterface> $grants

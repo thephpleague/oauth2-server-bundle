@@ -62,7 +62,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         return new Response($authException?->getMessage() ?? 'Authentication required', 401, ['WWW-Authenticate' => 'Bearer']);
     }
 
-    public function authenticate(Request $request): Passport
+    public function authenticate(Request $request): SelfValidatingPassport
     {
         try {
             $psr7Request = $this->resourceServer->validateAuthenticatedRequest($this->httpMessageFactory->createRequest($request));

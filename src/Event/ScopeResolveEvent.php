@@ -14,22 +14,13 @@ final class ScopeResolveEvent extends Event
     /**
      * @var list<Scope>
      */
-    private $scopes;
+    private array $scopes;
 
-    /**
-     * @var Grant
-     */
-    private $grant;
+    private Grant $grant;
 
-    /**
-     * @var AbstractClient
-     */
-    private $client;
+    private AbstractClient $client;
 
-    /**
-     * @var string|int|null
-     */
-    private $userIdentifier;
+    private int|string|null $userIdentifier;
 
     /**
      * @param list<Scope> $scopes

@@ -11,10 +11,7 @@ use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCodeInterface;
 
 final class AuthorizationCodeManager implements AuthorizationCodeManagerInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {

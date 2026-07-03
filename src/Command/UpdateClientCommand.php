@@ -19,10 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand(name: 'league:oauth2-server:update-client', description: 'Updates an OAuth2 client')]
 final class UpdateClientCommand extends Command
 {
-    /**
-     * @var ClientManagerInterface
-     */
-    private $clientManager;
+    private ClientManagerInterface $clientManager;
 
     public function __construct(ClientManagerInterface $clientManager)
     {
@@ -113,12 +110,12 @@ final class UpdateClientCommand extends Command
             throw new \RuntimeException(\sprintf('Cannot specify "%s" in either "--%s" and "--%s".', implode('", "', $colliding), $addArgument, $removeArgument));
         }
 
-        $filtered = array_filter($actual, static function ($model) use ($toRemove): bool {
+        $filtered = array_filter($actual, static function (\Stringable $model) use ($toRemove): bool {
             return !\in_array((string) $model, $toRemove);
         });
 
         /** @var list<T> */
-        return array_merge($filtered, array_map(static function (string $value) use ($modelFqcn) {
+        return array_merge($filtered, array_map(static function (string $value) use ($modelFqcn): object {
             return new $modelFqcn($value);
         }, $toAdd));
     }

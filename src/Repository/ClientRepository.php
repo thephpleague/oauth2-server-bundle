@@ -16,10 +16,7 @@ use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
 final class ClientRepository implements ClientRepositoryInterface
 {
-    /**
-     * @var ClientManagerInterface
-     */
-    private $clientManager;
+    private ClientManagerInterface $clientManager;
 
     private PasswordHasherInterface $passwordHasher;
 

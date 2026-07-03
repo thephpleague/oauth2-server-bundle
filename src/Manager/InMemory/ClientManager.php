@@ -21,10 +21,7 @@ final class ClientManager implements ClientManagerInterface
      */
     private $clients = [];
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
     public function __construct(EventDispatcherInterface $dispatcher)
     {

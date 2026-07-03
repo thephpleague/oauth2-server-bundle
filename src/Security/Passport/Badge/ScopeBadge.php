@@ -8,15 +8,12 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\BadgeInterface;
 
 class ScopeBadge implements BadgeInterface
 {
-    /**
-     * @var bool
-     */
-    private $resolved = false;
+    private bool $resolved = false;
 
     /**
      * @var list<string>
      */
-    private $scopes;
+    private array $scopes;
 
     /**
      * @param list<string> $scopes

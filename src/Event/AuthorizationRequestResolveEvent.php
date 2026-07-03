@@ -16,35 +16,20 @@ final class AuthorizationRequestResolveEvent extends Event
     public const AUTHORIZATION_APPROVED = true;
     public const AUTHORIZATION_DENIED = false;
 
-    /**
-     * @var AuthorizationRequestInterface
-     */
-    private $authorizationRequest;
+    private AuthorizationRequestInterface $authorizationRequest;
 
     /**
      * @var Scope[]
      */
-    private $scopes;
+    private array $scopes;
 
-    /**
-     * @var ClientInterface
-     */
-    private $client;
+    private ClientInterface $client;
 
-    /**
-     * @var bool
-     */
-    private $authorizationResolution = self::AUTHORIZATION_DENIED;
+    private bool $authorizationResolution = self::AUTHORIZATION_DENIED;
 
-    /**
-     * @var Response|null
-     */
-    private $response;
+    private ?Response $response = null;
 
-    /**
-     * @var UserInterface
-     */
-    private $user;
+    private UserInterface $user;
 
     /**
      * @param Scope[] $scopes

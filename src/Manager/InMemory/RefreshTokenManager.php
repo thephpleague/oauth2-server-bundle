@@ -12,7 +12,7 @@ final class RefreshTokenManager implements RefreshTokenManagerInterface
     /**
      * @var array<string, RefreshTokenInterface>
      */
-    private $refreshTokens = [];
+    private array $refreshTokens = [];
 
     public function find(string $identifier): ?RefreshTokenInterface
     {

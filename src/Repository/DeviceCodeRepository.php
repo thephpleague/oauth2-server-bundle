@@ -17,25 +17,13 @@ use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 
 final class DeviceCodeRepository implements DeviceCodeRepositoryInterface
 {
-    /**
-     * @var DeviceCodeManagerInterface
-     */
-    private $deviceCodeManager;
+    private DeviceCodeManagerInterface $deviceCodeManager;
 
-    /**
-     * @var ClientManagerInterface
-     */
-    private $clientManager;
+    private ClientManagerInterface $clientManager;
 
-    /**
-     * @var ScopeConverterInterface
-     */
-    private $scopeConverter;
+    private ScopeConverterInterface $scopeConverter;
 
-    /**
-     * @var ClientRepositoryInterface
-     */
-    private $clientRepository;
+    private ClientRepositoryInterface $clientRepository;
 
     public function __construct(
         DeviceCodeManagerInterface $deviceCodeManager,

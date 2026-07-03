@@ -23,7 +23,7 @@ final class RedirectUriTest extends TestCase
     /**
      * @dataProvider exceptionRedirectUriProvider
      */
-    public function testInvalidRedirectUris($data): void
+    public function testInvalidRedirectUris(string $data): void
     {
         $this->expectException(\RuntimeException::class);
 

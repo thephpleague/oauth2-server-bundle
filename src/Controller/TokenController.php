@@ -17,30 +17,15 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class TokenController
 {
-    /**
-     * @var AuthorizationServer
-     */
-    private $server;
+    private AuthorizationServer $server;
 
-    /**
-     * @var HttpMessageFactoryInterface
-     */
-    private $httpMessageFactory;
+    private HttpMessageFactoryInterface $httpMessageFactory;
 
-    /**
-     * @var HttpFoundationFactoryInterface
-     */
-    private $httpFoundationFactory;
+    private HttpFoundationFactoryInterface $httpFoundationFactory;
 
-    /**
-     * @var ResponseFactoryInterface
-     */
-    private $responseFactory;
+    private ResponseFactoryInterface $responseFactory;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         AuthorizationServer $server,

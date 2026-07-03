@@ -12,10 +12,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class PreSaveClientEvent extends Event
 {
-    /**
-     * @var ClientInterface
-     */
-    private $client;
+    private ClientInterface $client;
 
     public function __construct(ClientInterface $client)
     {

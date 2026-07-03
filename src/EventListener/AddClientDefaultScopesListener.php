@@ -17,7 +17,7 @@ class AddClientDefaultScopesListener
     /**
      * @var list<non-empty-string>
      */
-    private $defaultScopes;
+    private array $defaultScopes;
 
     /**
      * @param list<non-empty-string> $defaultScopes

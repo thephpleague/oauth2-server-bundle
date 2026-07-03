@@ -22,10 +22,7 @@ final class ListClientsCommand extends Command
 {
     private const ALLOWED_COLUMNS = ['name', 'identifier', 'secret', 'scope', 'redirect uri', 'grant type'];
 
-    /**
-     * @var ClientManagerInterface
-     */
-    private $clientManager;
+    private ClientManagerInterface $clientManager;
 
     public function __construct(ClientManagerInterface $clientManager)
     {
