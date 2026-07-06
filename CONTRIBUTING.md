@@ -50,4 +50,18 @@ You can run the whole test suite using the following command:
 vendor/bin/simple-phpunit
 ```
 
+### Automated refactoring
+
+To run the automated refactoring, first install the lowest dependencies using the minimum required version of PHP:
+
+```sh
+composer update --prefer-stable --prefer-lowest
+```
+
+You can run the automated refactoring tool with this command:
+
+```sh
+vendor/bin/rector
+```
+
 **Happy coding**!
