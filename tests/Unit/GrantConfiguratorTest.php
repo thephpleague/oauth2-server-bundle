@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
 use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeLegacyGrant;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Grant\FakeGrant;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Grant\FakeLegacyGrant;
 use League\OAuth2\Server\AuthorizationServer;
 use PHPUnit\Framework\TestCase;
 

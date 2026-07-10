@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Controller\SecurityTestController;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 return static function (RoutingConfigurator $routes) {

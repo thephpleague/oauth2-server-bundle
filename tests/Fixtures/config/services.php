@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\SecurityTestController;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Controller\SecurityTestController;
 use Psr\Log\NullLogger;
 
 return static function (ContainerConfigurator $container): void {
