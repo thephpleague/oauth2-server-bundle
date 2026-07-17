@@ -16,19 +16,17 @@ use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeAccessTokenManager;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeAuthorizationCodeManager;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeClientManager;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeCredentialsRevoker;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeDeviceCodeManager;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeRefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Manager\FakeAccessTokenManager;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Manager\FakeAuthorizationCodeManager;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Manager\FakeClientManager;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Manager\FakeDeviceCodeManager;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Manager\FakeRefreshTokenManager;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Service\FakeCredentialsRevoker;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
-use League\Bundle\OAuth2ServerBundle\Tests\TestKernel;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 class CustomPersistenceManagerTest extends AbstractAcceptanceTest
 {
@@ -40,7 +38,7 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTest
 
     protected function setUp(): void
     {
-        $this->client = self::createClient();
+        $this->client = self::createClient(['environment' => 'custom_persistence']);
         $this->accessTokenManager = $this->createMock(AccessTokenManagerInterface::class);
         $this->clientManager = $this->createMock(ClientManagerInterface::class);
         $this->refreshTokenManager = $this->createMock(RefreshTokenManagerInterface::class);
@@ -180,24 +178,5 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTest
 
         $this->client->getResponse();
         static::assertResponseIsSuccessful();
-    }
-
-    protected static function createKernel(array $options = []): KernelInterface
-    {
-        return new TestKernel(
-            'test',
-            false,
-            null,
-            [
-                'custom' => [
-                    'access_token_manager' => 'test.access_token_manager',
-                    'authorization_code_manager' => 'test.authorization_code_manager',
-                    'client_manager' => 'test.client_manager',
-                    'refresh_token_manager' => 'test.refresh_token_manager',
-                    'credentials_revoker' => 'test.credentials_revoker',
-                    'device_code_manager' => 'test.device_code_manager',
-                ],
-            ]
-        );
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace League\Bundle\OAuth2ServerBundle\Tests\Fixtures;
+namespace League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

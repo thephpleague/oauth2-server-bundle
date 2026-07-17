@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace League\Bundle\OAuth2ServerBundle\Tests\Fixtures;
+namespace League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Security;
 
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class User extends \ArrayObject implements UserInterface

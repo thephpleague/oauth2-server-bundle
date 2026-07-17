@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace League\Bundle\OAuth2ServerBundle\Tests\Fixtures;
+namespace League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Service;
 
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface;

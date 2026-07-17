@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Integration;
 
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrant;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantNullAccessTokenTTL;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FakeGrantUndefinedAccessTokenTTL;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Grant\FakeGrant;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Grant\FakeGrantNullAccessTokenTTL;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Grant\FakeGrantUndefinedAccessTokenTTL;
 use League\OAuth2\Server\AuthorizationServer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -14,7 +14,7 @@ final class AuthorizationServerCustomGrantTest extends KernelTestCase
 {
     public function testAuthorizationServerHasOurCustomGrantEnabled(): void
     {
-        static::bootKernel();
+        static::bootKernel(['environment' => 'fake_grant']);
 
         /** @var AuthorizationServer $authorizationServer */
         $authorizationServer = self::getContainer()->get(AuthorizationServer::class);
