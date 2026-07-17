@@ -11,11 +11,11 @@ Replacement of trikoder/oauth2-bundle made in coordination with [trikoder](https
 
 ## Versions
 
-Active development happens on the `2.x` branch, which represents the 2.x major release. Please submit new features there.
+Active development happens on the `2.x` branch, which represents the v2.0 major version and subsequent minor versions. Please submit new features there.
 
-The 1.x branch is in maintenance mode i.e. it accepts only bugfixes. Please target it if you're submitting a bugfix that applies to 1.x.
+The `1.x` branch is in maintenance mode i.e. it accepts only bugfixes. Please target it if you're submitting a bugfix that applies to `1.x`.
 
-When upgrading from 1.x to 2.x, follow the [UPGRADE guide](https://github.com/thephpleague/oauth2-server-bundle/blob/2.x/UPGRADE-2.x.md), which lists the BC breaking changes to be aware of when upgrading to 2.0 or higher.
+When upgrading from `1.x` to `2.x`, follow the [UPGRADE guide](https://github.com/thephpleague/oauth2-server-bundle/blob/2.x/UPGRADE-2.x.md), which lists the BC breaking changes to be aware of when upgrading to `v2.0` or higher.
 
 ## Quick Start
 
