@@ -46,10 +46,11 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
 
         $revoker->revokeCredentialsForUser(FixtureFactory::createUser());
 
-        $em->refresh($authCode);
-        $em->refresh($accessToken);
-        $em->refresh($refreshToken);
-        $em->refresh($deviceCode);
+        $em->clear();
+        $authCode = $em->find(AuthorizationCode::class, $authCode->getIdentifier());
+        $accessToken = $em->find(AccessToken::class, $accessToken->getIdentifier());
+        $refreshToken = $em->find(RefreshToken::class, $refreshToken->getIdentifier());
+        $deviceCode = $em->find(DeviceCode::class, $deviceCode->getIdentifier());
 
         $this->assertTrue($authCode->isRevoked());
         $this->assertTrue($accessToken->isRevoked());
@@ -79,10 +80,11 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
 
         $revoker->revokeCredentialsForClient($client);
 
-        $em->refresh($authCode);
-        $em->refresh($accessToken);
-        $em->refresh($refreshToken);
-        $em->refresh($deviceCode);
+        $em->clear();
+        $authCode = $em->find(AuthorizationCode::class, $authCode->getIdentifier());
+        $accessToken = $em->find(AccessToken::class, $accessToken->getIdentifier());
+        $refreshToken = $em->find(RefreshToken::class, $refreshToken->getIdentifier());
+        $deviceCode = $em->find(DeviceCode::class, $deviceCode->getIdentifier());
 
         $this->assertTrue($authCode->isRevoked());
         $this->assertTrue($accessToken->isRevoked());

@@ -8,65 +8,9 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 
 class DeviceCode implements DeviceCodeInterface
 {
-    /**
-     * @var non-empty-string
-     */
-    private $identifier;
+    private bool $revoked = false;
 
-    /**
-     * @var \DateTimeImmutable
-     */
-    private $expiry;
-
-    /**
-     * @var non-empty-string|null
-     */
-    private $userIdentifier;
-
-    /**
-     * @var ClientInterface
-     */
-    private $client;
-
-    /**
-     * @var list<Scope>
-     */
-    private $scopes;
-
-    /**
-     * @var bool
-     */
-    private $revoked = false;
-
-    /**
-     * @var string
-     */
-    private $userCode;
-
-    /**
-     * @var bool
-     */
-    private $userApproved;
-
-    /**
-     * @var bool
-     */
-    private $includeVerificationUriComplete = false;
-
-    /**
-     * @var string
-     */
-    private $verificationUri;
-
-    /**
-     * @var \DateTimeImmutable|null
-     */
-    private $lastPolledAt;
-
-    /**
-     * @var int
-     */
-    private $interval;
+    private bool $includeVerificationUriComplete = false;
 
     /**
      * @param non-empty-string $identifier
@@ -74,27 +18,17 @@ class DeviceCode implements DeviceCodeInterface
      * @param list<Scope> $scopes
      */
     public function __construct(
-        string $identifier,
-        \DateTimeImmutable $expiry,
-        ClientInterface $client,
-        ?string $userIdentifier,
-        array $scopes,
-        string $userCode,
-        bool $userApproved,
-        string $verificationUri,
-        ?\DateTimeImmutable $lastPolledAt,
-        int $interval,
+        private readonly string $identifier,
+        private readonly \DateTimeImmutable $expiry,
+        private readonly ClientInterface $client,
+        private ?string $userIdentifier,
+        private readonly array $scopes,
+        private readonly string $userCode,
+        private bool $userApproved,
+        private readonly string $verificationUri,
+        private ?\DateTimeImmutable $lastPolledAt,
+        private readonly int $interval,
     ) {
-        $this->identifier = $identifier;
-        $this->expiry = $expiry;
-        $this->client = $client;
-        $this->userIdentifier = $userIdentifier;
-        $this->scopes = $scopes;
-        $this->userCode = $userCode;
-        $this->userApproved = $userApproved;
-        $this->verificationUri = $verificationUri;
-        $this->lastPolledAt = $lastPolledAt;
-        $this->interval = $interval;
     }
 
     public function __toString(): string

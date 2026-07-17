@@ -17,43 +17,13 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class TokenController
 {
-    /**
-     * @var AuthorizationServer
-     */
-    private $server;
-
-    /**
-     * @var HttpMessageFactoryInterface
-     */
-    private $httpMessageFactory;
-
-    /**
-     * @var HttpFoundationFactoryInterface
-     */
-    private $httpFoundationFactory;
-
-    /**
-     * @var ResponseFactoryInterface
-     */
-    private $responseFactory;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
     public function __construct(
-        AuthorizationServer $server,
-        HttpMessageFactoryInterface $httpMessageFactory,
-        HttpFoundationFactoryInterface $httpFoundationFactory,
-        ResponseFactoryInterface $responseFactory,
-        EventDispatcherInterface $eventDispatcher,
+        private readonly AuthorizationServer $server,
+        private readonly HttpMessageFactoryInterface $httpMessageFactory,
+        private readonly HttpFoundationFactoryInterface $httpFoundationFactory,
+        private readonly ResponseFactoryInterface $responseFactory,
+        private readonly EventDispatcherInterface $eventDispatcher,
     ) {
-        $this->server = $server;
-        $this->httpMessageFactory = $httpMessageFactory;
-        $this->httpFoundationFactory = $httpFoundationFactory;
-        $this->responseFactory = $responseFactory;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function indexAction(Request $request): Response

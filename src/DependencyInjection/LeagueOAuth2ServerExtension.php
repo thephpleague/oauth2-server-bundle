@@ -63,7 +63,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
 
         $config = $this->processConfiguration(new Configuration(), $configs);
 
-        $this->configureAccessTokenSaving($loader, $container, $config['authorization_server']);
+        $this->configureAccessTokenSaving($loader, $config['authorization_server']);
         $this->configurePersistence($loader, $container, $config);
         $this->configureAuthorizationServer($container, $config['authorization_server']);
         $this->configureResourceServer($container, $config['resource_server']);
@@ -286,7 +286,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     /**
      * @param mixed[] $config
      */
-    private function configureAccessTokenSaving(LoaderInterface $loader, ContainerBuilder $container, array $config): void
+    private function configureAccessTokenSaving(LoaderInterface $loader, array $config): void
     {
         if ($config['persist_access_token']) {
             $loader->load('access_token/default.php');

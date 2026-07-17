@@ -102,20 +102,14 @@ abstract class AbstractIntegrationTest extends TestCase
      */
     protected $resourceServer;
 
-    /**
-     * @var Psr17Factory
-     */
-    private $psrFactory;
+    private Psr17Factory $psrFactory;
 
     /**
      * @var PasswordHasherInterface
      */
     protected $passwordHasher;
 
-    /**
-     * @var bool
-     */
-    private $requireCodeChallengeForPublicClients = true;
+    private bool $requireCodeChallengeForPublicClients = true;
 
     protected function setUp(): void
     {
@@ -159,7 +153,7 @@ abstract class AbstractIntegrationTest extends TestCase
 
         try {
             $response = $this->resourceServer->validateAuthenticatedRequest($request);
-        } catch (OAuthServerException $e) {
+        } catch (OAuthServerException) {
             return null;
         }
 
@@ -172,7 +166,7 @@ abstract class AbstractIntegrationTest extends TestCase
     {
         try {
             $payload = Crypto::decryptWithPassword($encryptedPayload, TestHelper::ENCRYPTION_KEY);
-        } catch (CryptoException $e) {
+        } catch (CryptoException) {
             return null;
         }
 
@@ -235,14 +229,14 @@ abstract class AbstractIntegrationTest extends TestCase
     {
         try {
             $serverRequest = $this->resourceServer->validateAuthenticatedRequest($serverRequest);
-        } catch (OAuthServerException $e) {
+        } catch (OAuthServerException) {
             return null;
         }
 
         return $serverRequest;
     }
 
-    protected function handleAuthorizationRequest(ServerRequestInterface $serverRequest, $approved = true, $isImplicitGrantFlow = false): ResponseInterface
+    protected function handleAuthorizationRequest(ServerRequestInterface $serverRequest, bool $approved = true, bool $isImplicitGrantFlow = false): ResponseInterface
     {
         $response = $this->psrFactory->createResponse();
 

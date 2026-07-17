@@ -12,7 +12,7 @@ final class AuthorizationCodeManager implements AuthorizationCodeManagerInterfac
     /**
      * @var array<string, AuthorizationCodeInterface>
      */
-    private $authorizationCodes = [];
+    private array $authorizationCodes = [];
 
     public function find(string $identifier): ?AuthorizationCodeInterface
     {
@@ -29,9 +29,7 @@ final class AuthorizationCodeManager implements AuthorizationCodeManagerInterfac
         $count = \count($this->authorizationCodes);
 
         $now = new \DateTimeImmutable();
-        $this->authorizationCodes = array_filter($this->authorizationCodes, static function (AuthorizationCodeInterface $authorizationCode) use ($now): bool {
-            return $authorizationCode->getExpiryDateTime() >= $now;
-        });
+        $this->authorizationCodes = array_filter($this->authorizationCodes, static fn (AuthorizationCodeInterface $authorizationCode): bool => $authorizationCode->getExpiryDateTime() >= $now);
 
         return $count - \count($this->authorizationCodes);
     }

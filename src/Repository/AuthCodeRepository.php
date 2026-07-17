@@ -16,29 +16,11 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 
 final class AuthCodeRepository implements AuthCodeRepositoryInterface
 {
-    /**
-     * @var AuthorizationCodeManagerInterface
-     */
-    private $authorizationCodeManager;
-
-    /**
-     * @var ClientManagerInterface
-     */
-    private $clientManager;
-
-    /**
-     * @var ScopeConverterInterface
-     */
-    private $scopeConverter;
-
     public function __construct(
-        AuthorizationCodeManagerInterface $authorizationCodeManager,
-        ClientManagerInterface $clientManager,
-        ScopeConverterInterface $scopeConverter,
+        private readonly AuthorizationCodeManagerInterface $authorizationCodeManager,
+        private readonly ClientManagerInterface $clientManager,
+        private readonly ScopeConverterInterface $scopeConverter,
     ) {
-        $this->authorizationCodeManager = $authorizationCodeManager;
-        $this->clientManager = $clientManager;
-        $this->scopeConverter = $scopeConverter;
     }
 
     public function getNewAuthCode(): AuthCode
@@ -89,9 +71,6 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
         $client = $this->clientManager->find($authCodeEntity->getClient()->getIdentifier());
 
         $userIdentifier = $authCodeEntity->getUserIdentifier();
-        if (null !== $userIdentifier) {
-            $userIdentifier = $userIdentifier;
-        }
 
         return new AuthorizationCode(
             $authCodeEntity->getIdentifier(),

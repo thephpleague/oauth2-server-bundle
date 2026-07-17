@@ -31,26 +31,17 @@ final class GenerateKeyPairCommand extends Command
         'ES512',
     ];
 
-    private Filesystem $filesystem;
-
-    private string $secretKey;
-
-    private string $publicKey;
-
-    private ?string $passphrase;
-
-    public function __construct(Filesystem $filesystem, string $secretKey, string $publicKey, ?string $passphrase)
-    {
+    public function __construct(
+        private readonly Filesystem $filesystem,
+        private readonly string $secretKey,
+        private readonly string $publicKey,
+        private readonly ?string $passphrase,
+    ) {
         parent::__construct();
-        $this->filesystem = $filesystem;
-        $this->secretKey = $secretKey;
-        $this->publicKey = $publicKey;
-        $this->passphrase = $passphrase;
     }
 
     protected function configure(): void
     {
-        $this->setDescription('Generate public/private keys for use in your application.');
         $this->addOption('dry-run', null, InputOption::VALUE_NONE, 'Do not update key files.');
         $this->addOption('skip-if-exists', null, InputOption::VALUE_NONE, 'Do not update key files if they already exist.');
         $this->addOption('overwrite', null, InputOption::VALUE_NONE, 'Overwrite key files if they already exist.');

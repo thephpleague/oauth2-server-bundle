@@ -15,16 +15,11 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 class AddClientDefaultScopesListener
 {
     /**
-     * @var list<non-empty-string>
-     */
-    private $defaultScopes;
-
-    /**
      * @param list<non-empty-string> $defaultScopes
      */
-    public function __construct(array $defaultScopes)
-    {
-        $this->defaultScopes = $defaultScopes;
+    public function __construct(
+        private readonly array $defaultScopes,
+    ) {
     }
 
     public function __invoke(PreSaveClientEvent $event): void
@@ -34,8 +29,6 @@ class AddClientDefaultScopesListener
             return;
         }
 
-        $client->setScopes(...array_map(static function (string $scope): Scope {
-            return new Scope($scope);
-        }, $this->defaultScopes));
+        $client->setScopes(...array_map(static fn (string $scope): Scope => new Scope($scope), $this->defaultScopes));
     }
 }

@@ -17,29 +17,11 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class UserRepository implements UserRepositoryInterface
 {
-    /**
-     * @var ClientManagerInterface
-     */
-    private $clientManager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var UserConverterInterface
-     */
-    private $userConverter;
-
     public function __construct(
-        ClientManagerInterface $clientManager,
-        EventDispatcherInterface $eventDispatcher,
-        UserConverterInterface $userConverter,
+        private readonly ClientManagerInterface $clientManager,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly UserConverterInterface $userConverter,
     ) {
-        $this->clientManager = $clientManager;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->userConverter = $userConverter;
     }
 
     /**

@@ -119,7 +119,7 @@ final class UpdateClientCommandTest extends AbstractAcceptanceTest
         ]);
     }
 
-    private function fakeAClient($identifier): Client
+    private function fakeAClient(string $identifier): Client
     {
         return new Client('name', $identifier, 'quzbaz');
     }

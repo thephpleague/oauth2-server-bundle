@@ -13,10 +13,7 @@ final class Client implements ClientEntityInterface
     use ClientTrait;
     use EntityTrait;
 
-    /**
-     * @var bool
-     */
-    private $allowPlainTextPkce = false;
+    private bool $allowPlainTextPkce = false;
 
     /**
      * @var list<non-empty-string>

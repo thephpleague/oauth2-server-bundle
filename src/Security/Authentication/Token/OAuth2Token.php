@@ -27,9 +27,7 @@ class OAuth2Token extends AbstractToken
         $this->setAttribute('scopes', $scopes);
 
         // Build roles from scope
-        $roles = array_map(static function (string $scope) use ($rolePrefix): string {
-            return strtoupper(trim(\sprintf('%s%s', $rolePrefix, $scope)));
-        }, $scopes);
+        $roles = array_map(static fn (string $scope): string => strtoupper(trim(\sprintf('%s%s', $rolePrefix, $scope))), $scopes);
 
         if (null !== $user) {
             // Merge the user's roles with the OAuth 2.0 scopes.

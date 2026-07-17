@@ -22,22 +22,11 @@ use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
  */
 class Driver implements MappingDriver
 {
-    /**
-     * @var string
-     */
-    private $clientClass;
-
-    /** @var bool */
-    private $persistAccessToken;
-
-    /** @var string */
-    private $tablePrefix;
-
-    public function __construct(string $clientClass, bool $persistAccessToken, string $tablePrefix = 'oauth2_')
-    {
-        $this->clientClass = $clientClass;
-        $this->persistAccessToken = $persistAccessToken;
-        $this->tablePrefix = $tablePrefix;
+    public function __construct(
+        private readonly string $clientClass,
+        private readonly bool $persistAccessToken,
+        private readonly string $tablePrefix = 'oauth2_',
+    ) {
     }
 
     public function loadMetadataForClass($className, ClassMetadata $metadata): void
@@ -72,7 +61,7 @@ class Driver implements MappingDriver
 
                 break;
             default:
-                throw new \RuntimeException(\sprintf('%s cannot load metadata for class %s', __CLASS__, $className));
+                throw new \RuntimeException(\sprintf('%s cannot load metadata for class %s', self::class, $className));
         }
     }
 

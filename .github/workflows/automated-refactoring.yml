@@ -1,0 +1,36 @@
+name: "automated refactoring"
+
+on:
+    pull_request: ~
+    push: ~
+    schedule:
+        # Do not make it the first of the month and/or midnight since it is a very busy time
+        - cron: "15 10 5 * *" # Runs at 10:15, on day 5 of the month
+
+jobs:
+    automated-refactoring:
+        name: "automated refactoring"
+        runs-on: "ubuntu-latest"
+        steps:
+            - name: "checkout"
+              uses: "actions/checkout@v6"
+
+            - name: "setup php"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                php-version: "8.1"
+                tools: "composer, flex"
+
+            - name: "enable Symfony Flex plugin"
+              run: "composer global config --no-interaction allow-plugins.symfony/flex true"
+
+            - name: "install composer dependencies"
+              uses: "ramsey/composer-install@v4"
+              env:
+                SYMFONY_REQUIRE: "6.4.*"
+                COMPOSER_PREFER_STABLE: "1"
+              with:
+                dependency-versions: "lowest"
+
+            - name: "check automated refactoring"
+              run: "vendor/bin/rector --dry-run"

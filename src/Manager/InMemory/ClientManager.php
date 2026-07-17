@@ -21,14 +21,9 @@ final class ClientManager implements ClientManagerInterface
      */
     private $clients = [];
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
-    public function __construct(EventDispatcherInterface $dispatcher)
-    {
-        $this->dispatcher = $dispatcher;
+    public function __construct(
+        private readonly EventDispatcherInterface $dispatcher,
+    ) {
     }
 
     public function find(string $identifier): ?ClientInterface
@@ -86,8 +81,8 @@ final class ClientManager implements ClientManagerInterface
         }
 
         $valuesPassed = array_intersect(
-            array_map('strval', $filterValues),
-            array_map('strval', $clientValues)
+            array_map(strval(...), $filterValues),
+            array_map(strval(...), $clientValues)
         );
 
         return \count($valuesPassed) > 0;

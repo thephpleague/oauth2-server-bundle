@@ -11,19 +11,14 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class SymfonyLeagueEventListenerProvider implements ListenerSubscriber
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
+    public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher,
+    ) {
     }
 
     public function subscribeListeners(ListenerRegistry $acceptor): void
     {
-        $listener = \Closure::fromCallable([$this, 'dispatchLeagueEventWithSymfonyEventDispatcher']);
+        $listener = $this->dispatchLeagueEventWithSymfonyEventDispatcher(...);
 
         $acceptor->subscribeTo(RequestEvent::class, $listener);
     }

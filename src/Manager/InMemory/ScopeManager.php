@@ -12,7 +12,7 @@ final class ScopeManager implements ScopeManagerInterface
     /**
      * @var array<string, Scope>
      */
-    private $scopes = [];
+    private array $scopes = [];
 
     public function find(string $identifier): ?Scope
     {

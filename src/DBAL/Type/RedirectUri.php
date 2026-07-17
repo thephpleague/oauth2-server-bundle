@@ -28,8 +28,6 @@ final class RedirectUri extends ImplodedArray
      */
     protected function convertDatabaseValues(array $values): array
     {
-        return array_map(static function (string $value): RedirectUriModel {
-            return new RedirectUriModel($value);
-        }, $values);
+        return array_map(static fn (string $value): RedirectUriModel => new RedirectUriModel($value), $values);
     }
 }

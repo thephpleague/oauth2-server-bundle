@@ -20,31 +20,13 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 final class ClientManager implements ClientManagerInterface
 {
     /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var class-string<AbstractClient>
-     */
-    private $clientFqcn;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
-    /**
      * @param class-string<AbstractClient> $clientFqcn
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        EventDispatcherInterface $dispatcher,
-        string $clientFqcn,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly string $clientFqcn,
     ) {
-        $this->entityManager = $entityManager;
-        $this->dispatcher = $dispatcher;
-        $this->clientFqcn = $clientFqcn;
     }
 
     public function find(string $identifier): ?ClientInterface
@@ -110,9 +92,9 @@ final class ClientManager implements ClientManagerInterface
                 )
             )
                 ->setParameter($field . $key, (string) $value)
-                ->setParameter('space_' . $field . $key, '% ' . (string) $value)
-                ->setParameter($field . '_space' . $key, (string) $value . ' %')
-                ->setParameter('space_' . $field . '_space' . $key, '% ' . (string) $value . ' %')
+                ->setParameter('space_' . $field . $key, '% ' . $value)
+                ->setParameter($field . '_space' . $key, $value . ' %')
+                ->setParameter('space_' . $field . '_space' . $key, '% ' . $value . ' %')
             ;
         }
     }

@@ -22,9 +22,7 @@ final class ScopeConverter implements ScopeConverterInterface
      */
     public function toDomainArray(array $scopes): array
     {
-        return array_map(function (ScopeEntityInterface $scope): ScopeModel {
-            return $this->toDomain($scope);
-        }, $scopes);
+        return array_map($this->toDomain(...), $scopes);
     }
 
     public function toLeague(ScopeModel $scope): ScopeEntity
@@ -42,8 +40,6 @@ final class ScopeConverter implements ScopeConverterInterface
      */
     public function toLeagueArray(array $scopes): array
     {
-        return array_map(function (ScopeModel $scope): ScopeEntity {
-            return $this->toLeague($scope);
-        }, $scopes);
+        return array_map($this->toLeague(...), $scopes);
     }
 }

@@ -14,36 +14,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class DeviceCodeController
 {
-    /**
-     * @var AuthorizationServer
-     */
-    private $server;
-
-    /**
-     * @var HttpMessageFactoryInterface
-     */
-    private $httpMessageFactory;
-
-    /**
-     * @var HttpFoundationFactoryInterface
-     */
-    private $httpFoundationFactory;
-
-    /**
-     * @var ResponseFactoryInterface
-     */
-    private $responseFactory;
-
     public function __construct(
-        AuthorizationServer $server,
-        HttpMessageFactoryInterface $httpMessageFactory,
-        HttpFoundationFactoryInterface $httpFoundationFactory,
-        ResponseFactoryInterface $responseFactory,
+        private readonly AuthorizationServer $server,
+        private readonly HttpMessageFactoryInterface $httpMessageFactory,
+        private readonly HttpFoundationFactoryInterface $httpFoundationFactory,
+        private readonly ResponseFactoryInterface $responseFactory,
     ) {
-        $this->server = $server;
-        $this->httpMessageFactory = $httpMessageFactory;
-        $this->httpFoundationFactory = $httpFoundationFactory;
-        $this->responseFactory = $responseFactory;
     }
 
     public function indexAction(Request $request): Response

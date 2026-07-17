@@ -50,7 +50,7 @@ final class Configuration implements ConfigurationInterface
 
         $node
             ->validate()
-                ->always(static function ($v) {
+                ->always(static function (array $v): array {
                     if (!isset($v['enable_password_grant'])) {
                         trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not setting the "authorization_server.enable_password_grant" config option is deprecated. It will default to "false" in 2.0.');
                         $v['enable_password_grant'] = true;
@@ -315,9 +315,7 @@ final class Configuration implements ConfigurationInterface
                     ->info(\sprintf('Set a custom client class. Must be a %s', AbstractClient::class))
                     ->defaultValue(Client::class)
                     ->validate()
-                        ->ifTrue(static function ($v) {
-                            return !is_a($v, AbstractClient::class, true);
-                        })
+                        ->ifTrue(static fn ($v): bool => !is_a($v, AbstractClient::class, true))
                         ->thenInvalid(\sprintf('%%s must be a %s', AbstractClient::class))
                     ->end()
                 ->end()

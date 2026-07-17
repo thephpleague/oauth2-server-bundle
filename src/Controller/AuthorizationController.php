@@ -20,64 +20,16 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class AuthorizationController
 {
-    /**
-     * @var AuthorizationServer
-     */
-    private $server;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var AuthorizationRequestResolveEventFactory
-     */
-    private $eventFactory;
-
-    /**
-     * @var UserConverterInterface
-     */
-    private $userConverter;
-
-    /**
-     * @var ClientManagerInterface
-     */
-    private $clientManager;
-
-    /**
-     * @var HttpMessageFactoryInterface
-     */
-    private $httpMessageFactory;
-
-    /**
-     * @var HttpFoundationFactoryInterface
-     */
-    private $httpFoundationFactory;
-
-    /**
-     * @var ResponseFactoryInterface
-     */
-    private $responseFactory;
-
     public function __construct(
-        AuthorizationServer $server,
-        EventDispatcherInterface $eventDispatcher,
-        AuthorizationRequestResolveEventFactory $eventFactory,
-        UserConverterInterface $userConverter,
-        ClientManagerInterface $clientManager,
-        HttpMessageFactoryInterface $httpMessageFactory,
-        HttpFoundationFactoryInterface $httpFoundationFactory,
-        ResponseFactoryInterface $responseFactory,
+        private readonly AuthorizationServer $server,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly AuthorizationRequestResolveEventFactory $eventFactory,
+        private readonly UserConverterInterface $userConverter,
+        private readonly ClientManagerInterface $clientManager,
+        private readonly HttpMessageFactoryInterface $httpMessageFactory,
+        private readonly HttpFoundationFactoryInterface $httpFoundationFactory,
+        private readonly ResponseFactoryInterface $responseFactory,
     ) {
-        $this->server = $server;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->eventFactory = $eventFactory;
-        $this->userConverter = $userConverter;
-        $this->clientManager = $clientManager;
-        $this->httpMessageFactory = $httpMessageFactory;
-        $this->httpFoundationFactory = $httpFoundationFactory;
-        $this->responseFactory = $responseFactory;
     }
 
     public function indexAction(Request $request): Response

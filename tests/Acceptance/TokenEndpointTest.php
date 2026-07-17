@@ -319,7 +319,7 @@ final class TokenEndpointTest extends AbstractAcceptanceTest
 
         $wasClientAuthenticationEventDispatched = false;
 
-        $eventDispatcher->addListener(RequestEvent::CLIENT_AUTHENTICATION_FAILED, static function (RequestEvent $event) use (&$wasClientAuthenticationEventDispatched, &$accessToken): void {
+        $eventDispatcher->addListener(RequestEvent::CLIENT_AUTHENTICATION_FAILED, static function (RequestEvent $event) use (&$wasClientAuthenticationEventDispatched): void {
             $wasClientAuthenticationEventDispatched = true;
         });
 

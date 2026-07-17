@@ -7,16 +7,11 @@ namespace League\Bundle\OAuth2ServerBundle\ValueObject;
 class Scope implements \Stringable
 {
     /**
-     * @var non-empty-string
-     */
-    private $scope;
-
-    /**
      * @param non-empty-string $scope
      */
-    public function __construct(string $scope)
-    {
-        $this->scope = $scope;
+    public function __construct(
+        private readonly string $scope,
+    ) {
     }
 
     /**

@@ -133,9 +133,7 @@ final class OAuth2AuthenticatorTest extends TestCase
 
     public function testCreateToken(): void
     {
-        $userBadge = new UserBadge('userIdentifier', static function (): UserInterface {
-            return new ClientCredentialsUser('client_one');
-        });
+        $userBadge = new UserBadge('userIdentifier', static fn (): UserInterface => new ClientCredentialsUser('client_one'));
 
         $passport = new SelfValidatingPassport($userBadge, [
             new ScopeBadge(['scope_one', 'scope_two']),

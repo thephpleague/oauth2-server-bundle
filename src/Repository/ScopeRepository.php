@@ -20,36 +20,12 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class ScopeRepository implements ScopeRepositoryInterface
 {
-    /**
-     * @var ScopeManagerInterface
-     */
-    private $scopeManager;
-
-    /**
-     * @var ClientManagerInterface
-     */
-    private $clientManager;
-
-    /**
-     * @var ScopeConverterInterface
-     */
-    private $scopeConverter;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
     public function __construct(
-        ScopeManagerInterface $scopeManager,
-        ClientManagerInterface $clientManager,
-        ScopeConverterInterface $scopeConverter,
-        EventDispatcherInterface $eventDispatcher,
+        private readonly ScopeManagerInterface $scopeManager,
+        private readonly ClientManagerInterface $clientManager,
+        private readonly ScopeConverterInterface $scopeConverter,
+        private readonly EventDispatcherInterface $eventDispatcher,
     ) {
-        $this->scopeManager = $scopeManager;
-        $this->clientManager = $clientManager;
-        $this->scopeConverter = $scopeConverter;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function getScopeEntityByIdentifier($identifier): ?ScopeEntityInterface
@@ -112,7 +88,7 @@ final class ScopeRepository implements ScopeRepositoryInterface
         }
 
         $finalizedScopes = [];
-        $clientScopesAsStrings = array_map('strval', $clientScopes);
+        $clientScopesAsStrings = array_map(strval(...), $clientScopes);
 
         foreach ($requestedScopes as $requestedScope) {
             $requestedScopeAsString = (string) $requestedScope;

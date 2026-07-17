@@ -26,7 +26,7 @@ final class FakeLegacyGrant extends AbstractGrant implements GrantTypeInterface
         return new Response();
     }
 
-    public function getAccessTokenTTL(): ?\DateInterval
+    public function getAccessTokenTTL(): \DateInterval
     {
         return new \DateInterval('PT5H');
     }

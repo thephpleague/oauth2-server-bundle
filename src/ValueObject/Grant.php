@@ -7,16 +7,11 @@ namespace League\Bundle\OAuth2ServerBundle\ValueObject;
 class Grant implements \Stringable
 {
     /**
-     * @var non-empty-string
-     */
-    private $grant;
-
-    /**
      * @param non-empty-string $grant
      */
-    public function __construct(string $grant)
-    {
-        $this->grant = $grant;
+    public function __construct(
+        private readonly string $grant,
+    ) {
     }
 
     /**

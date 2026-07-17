@@ -28,8 +28,6 @@ final class Scope extends ImplodedArray
      */
     protected function convertDatabaseValues(array $values): array
     {
-        return array_map(static function (string $value): ScopeModel {
-            return new ScopeModel($value);
-        }, $values);
+        return array_map(static fn (string $value): ScopeModel => new ScopeModel($value), $values);
     }
 }

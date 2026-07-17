@@ -14,22 +14,10 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 
 final class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
-    /**
-     * @var RefreshTokenManagerInterface
-     */
-    private $refreshTokenManager;
-
-    /**
-     * @var AccessTokenManagerInterface
-     */
-    private $accessTokenManager;
-
     public function __construct(
-        RefreshTokenManagerInterface $refreshTokenManager,
-        AccessTokenManagerInterface $accessTokenManager,
+        private readonly RefreshTokenManagerInterface $refreshTokenManager,
+        private readonly AccessTokenManagerInterface $accessTokenManager,
     ) {
-        $this->refreshTokenManager = $refreshTokenManager;
-        $this->accessTokenManager = $accessTokenManager;
     }
 
     public function getNewRefreshToken(): RefreshTokenEntityInterface

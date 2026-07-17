@@ -31,30 +31,20 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
  */
 final class OAuth2Authenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
 {
-    private HttpMessageFactoryInterface $httpMessageFactory;
-    private ResourceServer $resourceServer;
-    /** @var UserProviderInterface<UserInterface> */
-    private UserProviderInterface $userProvider;
-    private string $rolePrefix;
-
     /**
      * @param UserProviderInterface<UserInterface> $userProvider
      */
     public function __construct(
-        HttpMessageFactoryInterface $httpMessageFactory,
-        ResourceServer $resourceServer,
-        UserProviderInterface $userProvider,
-        string $rolePrefix,
+        private readonly HttpMessageFactoryInterface $httpMessageFactory,
+        private readonly ResourceServer $resourceServer,
+        private readonly UserProviderInterface $userProvider,
+        private readonly string $rolePrefix,
     ) {
-        $this->httpMessageFactory = $httpMessageFactory;
-        $this->resourceServer = $resourceServer;
-        $this->userProvider = $userProvider;
-        $this->rolePrefix = $rolePrefix;
     }
 
     public function supports(Request $request): bool
     {
-        return str_starts_with($request->headers->get('Authorization', ''), 'Bearer ');
+        return str_starts_with((string) $request->headers->get('Authorization', ''), 'Bearer ');
     }
 
     public function start(Request $request, ?AuthenticationException $authException = null): Response
@@ -62,7 +52,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         return new Response($authException?->getMessage() ?? 'Authentication required', 401, ['WWW-Authenticate' => 'Bearer']);
     }
 
-    public function authenticate(Request $request): Passport
+    public function authenticate(Request $request): SelfValidatingPassport
     {
         try {
             $psr7Request = $this->resourceServer->validateAuthenticatedRequest($this->httpMessageFactory->createRequest($request));
