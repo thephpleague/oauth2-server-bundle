@@ -9,28 +9,14 @@ use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\ClientInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use Symfony\Component\PasswordHasher\Hasher\MigratingPasswordHasher;
-use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
-use Symfony\Component\PasswordHasher\Hasher\PlaintextPasswordHasher;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
 final class ClientRepository implements ClientRepositoryInterface
 {
-    private readonly PasswordHasherInterface $passwordHasher;
-
     public function __construct(
         private readonly ClientManagerInterface $clientManager,
-        ?PasswordHasherInterface $passwordHasher = null,
+        private readonly PasswordHasherInterface $passwordHasher,
     ) {
-        if (null === $passwordHasher) {
-            trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not passing a "%s" to "%s" is deprecated since version 1.2 and will be required in 2.0.', PasswordHasherInterface::class, self::class);
-
-            // Default to a migrating hasher so legacy plaintext secrets keep validating
-            // (and get upgraded on first use) while never bypassing the hasher API.
-            $passwordHasher = new MigratingPasswordHasher(new NativePasswordHasher(), new PlaintextPasswordHasher());
-        }
-
-        $this->passwordHasher = $passwordHasher;
     }
 
     public function getClientEntity(string $clientIdentifier): ?ClientEntityInterface
