@@ -31,8 +31,5 @@ return static function (ContainerConfigurator $container): void {
                 'entity_manager' => 'default',
             ],
         ],
-        'client' => [
-            'allow_plaintext_secrets' => false,
-        ],
     ]);
 };
