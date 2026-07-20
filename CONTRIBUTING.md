@@ -16,7 +16,7 @@ We accept contributions via Pull Requests on [Github](https://github.com/thephpl
 
 ## Development
 
-[PHP](https://www.php.net/) 8.1+ and [Composer](https://getcomposer.org/) 2+ are required for the development environment.
+[PHP](https://www.php.net/) 8.4+ and [Composer](https://getcomposer.org/) 2+ are required for the development environment.
 
 ### Building the environment
 

@@ -18,7 +18,7 @@ jobs:
             - name: "setup php"
               uses: "shivammathur/setup-php@v2"
               with:
-                php-version: "8.1"
+                php-version: "8.4"
                 tools: "composer, flex"
 
             - name: "enable Symfony Flex plugin"
@@ -27,7 +27,7 @@ jobs:
             - name: "install composer dependencies"
               uses: "ramsey/composer-install@v4"
               env:
-                SYMFONY_REQUIRE: "6.4.*"
+                SYMFONY_REQUIRE: "7.4.*"
                 COMPOSER_PREFER_STABLE: "1"
               with:
                 dependency-versions: "lowest"

@@ -12,8 +12,8 @@ For implementation into Symfony projects, please see [bundle documentation](basi
 
 ## Requirements
 
-* [PHP 8.1](http://php.net/releases/8_1_0.php) or greater
-* [Symfony 6.4](https://symfony.com/roadmap/6.4) or greater
+* [PHP 8.4](http://php.net/releases/8_4_0.php) or greater
+* [Symfony 7.4](https://symfony.com/roadmap/7.4) or greater
 
 ## Installation
 
