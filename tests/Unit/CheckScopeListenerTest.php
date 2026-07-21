@@ -25,8 +25,7 @@ final class CheckScopeListenerTest extends TestCase
             $this->createMock(Passport::class)
         );
 
-        $requestStack = new RequestStack();
-        $requestStack->push(new Request());
+        $requestStack = new RequestStack([new Request()]);
 
         (new CheckScopeListener($requestStack))->checkPassport($event);
 
@@ -44,8 +43,7 @@ final class CheckScopeListenerTest extends TestCase
             $passport
         );
 
-        $requestStack = new RequestStack();
-        $requestStack->push(new Request([], [], ['oauth2_scopes' => ['scope_one']]));
+        $requestStack = new RequestStack([new Request([], [], ['oauth2_scopes' => ['scope_one']])]);
 
         (new CheckScopeListener($requestStack))->checkPassport($event);
 
@@ -63,8 +61,7 @@ final class CheckScopeListenerTest extends TestCase
             $passport
         );
 
-        $requestStack = new RequestStack();
-        $requestStack->push(new Request([], [], ['oauth2_scopes' => ['scope_two']]));
+        $requestStack = new RequestStack([new Request([], [], ['oauth2_scopes' => ['scope_two']])]);
 
         $this->expectException(InsufficientScopesException::class);
 
