@@ -26,6 +26,7 @@ class Driver implements MappingDriver
         private readonly string $clientClass,
         private readonly bool $persistAccessToken,
         private readonly string $tablePrefix = 'oauth2_',
+        private readonly bool $enableDeviceCode = false,
     ) {
     }
 
@@ -70,10 +71,10 @@ class Driver implements MappingDriver
         return array_merge(
             [
                 AbstractClient::class,
-                DeviceCode::class,
                 AuthorizationCode::class,
                 RefreshToken::class,
             ],
+            $this->enableDeviceCode ? [DeviceCode::class] : [],
             Client::class === $this->clientClass ? [Client::class] : [],
             $this->persistAccessToken ? [AccessToken::class] : []
         );
