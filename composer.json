@@ -18,6 +18,7 @@
     "require": {
         "php": "^8.4",
         "ext-openssl": "*",
+        "lcobucci/jwt": "^5.6",
         "league/oauth2-server": "^9.2",
         "nyholm/psr7": "^1.4",
         "psr/http-factory": "^1.0",
@@ -45,8 +46,7 @@
     "conflict": {
         "doctrine/dbal": "<4.0",
         "doctrine/doctrine-bundle": "<2.15",
-        "doctrine/orm": "<3.0",
-        "lcobucci/jwt": "<5.0"
+        "doctrine/orm": "<3.0"
     },
     "suggest": {
         "doctrine/doctrine-bundle": "Allow usage of doctrine as persistence layer",
