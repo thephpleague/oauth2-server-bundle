@@ -93,7 +93,7 @@ class Driver implements MappingDriver
         (new ClassMetadataBuilder($metadata))
             ->setMappedSuperClass()
             ->createField('name', 'string')->length(128)->build()
-            ->createField('secret', 'string')->length(255)->nullable(true)->build()
+            ->createField('secret', 'string')->length(128)->nullable(true)->build()
             ->createField('redirectUris', 'oauth2_redirect_uri')->nullable(true)->build()
             ->createField('grants', 'oauth2_grant')->nullable(true)->build()
             ->createField('scopes', 'oauth2_scope')->nullable(true)->build()
