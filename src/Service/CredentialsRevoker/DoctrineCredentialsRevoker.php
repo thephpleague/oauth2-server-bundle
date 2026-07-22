@@ -20,6 +20,7 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly ClientManagerInterface $clientManager,
         private readonly bool $persistAccessToken = true,
+        private readonly bool $enableDeviceCodeGrant = true,
     ) {
     }
 
@@ -64,14 +65,16 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
             ->getQuery()
             ->execute();
 
-        $this->entityManager->createQueryBuilder()
-            ->update(DeviceCode::class, 'dc')
-            ->set('dc.revoked', ':revoked')
-            ->where('dc.userIdentifier = :userIdentifier')
-            ->setParameter('revoked', true)
-            ->setParameter('userIdentifier', $userIdentifier)
-            ->getQuery()
-            ->execute();
+        if ($this->enableDeviceCodeGrant) {
+            $this->entityManager->createQueryBuilder()
+                ->update(DeviceCode::class, 'dc')
+                ->set('dc.revoked', ':revoked')
+                ->where('dc.userIdentifier = :userIdentifier')
+                ->setParameter('revoked', true)
+                ->setParameter('userIdentifier', $userIdentifier)
+                ->getQuery()
+                ->execute();
+        }
     }
 
     public function revokeCredentialsForClient(AbstractClient $client): void
@@ -115,13 +118,15 @@ final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
             ->getQuery()
             ->execute();
 
-        $this->entityManager->createQueryBuilder()
-            ->update(DeviceCode::class, 'dc')
-            ->set('dc.revoked', ':revoked')
-            ->where('dc.client = :client')
-            ->setParameter('client', $doctrineClient->getIdentifier(), 'string')
-            ->setParameter('revoked', true)
-            ->getQuery()
-            ->execute();
+        if ($this->enableDeviceCodeGrant) {
+            $this->entityManager->createQueryBuilder()
+                ->update(DeviceCode::class, 'dc')
+                ->set('dc.revoked', ':revoked')
+                ->where('dc.client = :client')
+                ->setParameter('client', $doctrineClient->getIdentifier(), 'string')
+                ->setParameter('revoked', true)
+                ->getQuery()
+                ->execute();
+        }
     }
 }
