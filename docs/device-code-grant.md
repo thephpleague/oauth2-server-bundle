@@ -74,8 +74,13 @@ public function verifyDevice(
 
 ### Configuration
 
+The device code grant is disabled by default. Enable it explicitly with
+`enable_device_code_grant`; the `oauth2_device_code` table is only mapped (and
+therefore only required in your schema) when the grant is enabled.
+
 ```yaml
 league_oauth2_server:
     authorization_server:
+        enable_device_code_grant: true
         device_code_verification_uri: 'https://your-domain.com/verify-device'
 ```

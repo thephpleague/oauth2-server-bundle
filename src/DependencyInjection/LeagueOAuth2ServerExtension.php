@@ -6,6 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\DependencyInjection;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface;
+use League\Bundle\OAuth2ServerBundle\Command\ClearExpiredTokensCommand;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Command\GenerateKeyPairCommand;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Grant as GrantType;
@@ -98,6 +99,11 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             ->replaceArgument(1, $config['authorization_server']['private_key'])
             ->replaceArgument(2, $config['resource_server']['public_key'])
             ->replaceArgument(3, $config['authorization_server']['private_key_passphrase'])
+        ;
+
+        $container
+            ->findDefinition(ClearExpiredTokensCommand::class)
+            ->replaceArgument(4, $config['authorization_server']['enable_device_code_grant'])
         ;
     }
 
@@ -383,6 +389,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             ->replaceArgument(0, $config['client']['classname'])
             ->replaceArgument(1, $config['authorization_server']['persist_access_token'])
             ->replaceArgument(2, $persistenceConfig['table_prefix'])
+            ->replaceArgument(3, $config['authorization_server']['enable_device_code_grant'])
         ;
 
         $container->setParameter('league.oauth2_server.persistence.doctrine.enabled', true);

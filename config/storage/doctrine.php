@@ -28,6 +28,7 @@ return static function (ContainerConfigurator $container): void {
                 null,
                 null,
                 null,
+                null,
             ])
         ->alias(Driver::class, 'league.oauth2_server.persistence.driver')
 
