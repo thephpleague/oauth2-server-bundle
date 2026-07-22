@@ -171,8 +171,6 @@ return static function (ContainerConfigurator $container): void {
                 null,
             ])
             ->call('setEmitter', [service('league.oauth2_server.emitter')])
-            // TODO remove next line when bundle interface and configurator will be deleted
-            ->configurator(service(GrantConfigurator::class))
         ->alias(AuthorizationServer::class, 'league.oauth2_server.authorization_server')
 
         // League bearer token validator
