@@ -382,6 +382,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container
             ->findDefinition(DoctrineCredentialsRevoker::class)
             ->replaceArgument(0, $entityManager)
+            ->replaceArgument(2, $config['authorization_server']['persist_access_token'])
         ;
 
         $container
