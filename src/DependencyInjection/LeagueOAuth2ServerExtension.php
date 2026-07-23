@@ -237,7 +237,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             ]);
         }
 
-        // TODO remove code block when grant configurator is deleted
+        // @deprecated remove code block when grant configurator is deleted
         if ([] !== $tags = $container->findTaggedServiceIds('league.oauth2_server.authorization_server.grant')) {
             $registerConfigurator = false;
             foreach (array_keys($tags) as $serviceId) {
