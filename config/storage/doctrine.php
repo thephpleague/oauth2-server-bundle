@@ -74,6 +74,8 @@ return static function (ContainerConfigurator $container): void {
             ->args([
                 null,
                 service(ClientManagerInterface::class),
+                null,
+                null,
             ])
         ->alias(CredentialsRevokerInterface::class, 'league.oauth2_server.credentials_revoker.doctrine')
         ->alias(DoctrineCredentialsRevoker::class, 'league.oauth2_server.credentials_revoker.doctrine')

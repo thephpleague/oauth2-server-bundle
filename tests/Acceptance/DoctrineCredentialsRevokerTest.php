@@ -22,7 +22,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
 {
-    public function testRevokesAllCredentialsForUser(): void
+    /**
+     * @dataProvider provideRevokeCredentialsOptions
+     */
+    public function testRevokesAllCredentialsForUser(bool $persistAccessToken, bool $enableDeviceCodeGrant): void
     {
         $userIdentifier = FixtureFactory::FIXTURE_USER;
 
@@ -42,7 +45,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         $em->persist($deviceCode);
         $em->flush();
 
-        $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class));
+        $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class), $persistAccessToken, $enableDeviceCodeGrant);
 
         $revoker->revokeCredentialsForUser(FixtureFactory::createUser());
 
@@ -53,12 +56,23 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         $deviceCode = $em->find(DeviceCode::class, $deviceCode->getIdentifier());
 
         $this->assertTrue($authCode->isRevoked());
-        $this->assertTrue($accessToken->isRevoked());
-        $this->assertTrue($refreshToken->isRevoked());
-        $this->assertTrue($deviceCode->isRevoked());
+        $this->assertSame($persistAccessToken, $accessToken->isRevoked());
+        $this->assertSame($persistAccessToken, $refreshToken->isRevoked());
+        $this->assertSame($enableDeviceCodeGrant, $deviceCode->isRevoked());
     }
 
-    public function testRevokesAllCredentialsForClient(): void
+    public static function provideRevokeCredentialsOptions(): iterable
+    {
+        yield [true, true];
+        yield [true, false];
+        yield [false, true];
+        yield [false, false];
+    }
+
+    /**
+     * @dataProvider provideRevokeCredentialsOptions
+     */
+    public function testRevokesAllCredentialsForClient(bool $persistAccessToken, bool $enableDeviceCodeGrant): void
     {
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
@@ -76,7 +90,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         $em->persist($deviceCode);
         $em->flush();
 
-        $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class));
+        $revoker = new DoctrineCredentialsRevoker($em, new ClientManager($em, self::getContainer()->get(EventDispatcherInterface::class), Client::class), $persistAccessToken, $enableDeviceCodeGrant);
 
         $revoker->revokeCredentialsForClient($client);
 
@@ -87,9 +101,9 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         $deviceCode = $em->find(DeviceCode::class, $deviceCode->getIdentifier());
 
         $this->assertTrue($authCode->isRevoked());
-        $this->assertTrue($accessToken->isRevoked());
-        $this->assertTrue($refreshToken->isRevoked());
-        $this->assertTrue($deviceCode->isRevoked());
+        $this->assertSame($persistAccessToken, $accessToken->isRevoked());
+        $this->assertSame($persistAccessToken, $refreshToken->isRevoked());
+        $this->assertSame($enableDeviceCodeGrant, $deviceCode->isRevoked());
     }
 
     private function buildRefreshToken(string $identifier, string $modify, AccessToken $accessToken): RefreshToken
