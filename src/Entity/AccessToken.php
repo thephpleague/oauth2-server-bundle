@@ -7,16 +7,19 @@ namespace League\Bundle\OAuth2ServerBundle\Entity;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\ClaimsFormatter;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\ResourceRestrictedTokenInterface;
 use League\OAuth2\Server\Entities\Traits\AccessTokenTrait;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
+use League\OAuth2\Server\Entities\Traits\ResourceRestrictedTokenTrait;
 use League\OAuth2\Server\Entities\Traits\TokenEntityTrait;
 
-final class AccessToken implements AccessTokenEntityInterface
+final class AccessToken implements AccessTokenEntityInterface, ResourceRestrictedTokenInterface
 {
     use AccessTokenTrait {
         initJwtConfiguration as private traitInitJwtConfiguration;
     }
     use EntityTrait;
+    use ResourceRestrictedTokenTrait;
     use TokenEntityTrait;
 
     /**
