@@ -180,3 +180,28 @@ will be cleared.
 ## CORS requests
 
 For CORS handling, use [NelmioCorsBundle](https://github.com/nelmio/NelmioCorsBundle)
+
+## Speeding up your test suite
+
+Since version 1.2, client secrets are stored hashed. By default, hashing is resource
+intensive and takes time. This is important to generate secure hashes, but in tests
+secure hashes are not important, waste resources and increase test times: every request
+authenticating a client (e.g. a token request) verifies the secret against its hash.
+
+You can reduce the work factor to the lowest possible value in the `test` environment
+by overriding the `league.oauth2_server.password_hasher` service:
+
+```yaml
+# config/packages/league_oauth2_server.yaml
+when@test:
+    services:
+        league.oauth2_server.password_hasher:
+            class: Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher
+            arguments:
+                $cost: 4 # Lowest possible value for bcrypt
+```
+
+If you installed the bundle using [Symfony Flex](https://github.com/symfony/flex), this
+configuration is provided out of the box for new installations. On existing projects, run
+`composer recipes:update league/oauth2-server-bundle` to update your recipe, or add the
+configuration above manually.
