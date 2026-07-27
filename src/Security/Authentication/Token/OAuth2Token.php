@@ -21,10 +21,12 @@ class OAuth2Token extends AbstractToken
         string $oauthClientId,
         array $scopes,
         string $rolePrefix,
+        array $resources = [],
     ) {
         $this->setAttribute('access_token_id', $accessTokenId);
         $this->setAttribute('oauth_client_id', $oauthClientId);
         $this->setAttribute('scopes', $scopes);
+        $this->setAttribute('resources', $resources);
 
         // Build roles from scope
         $roles = array_map(static fn (string $scope): string => strtoupper(trim(\sprintf('%s%s', $rolePrefix, $scope))), $scopes);
