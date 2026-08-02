@@ -82,7 +82,7 @@ For implementation into Symfony projects, please see [bundle documentation](basi
             revoke_refresh_tokens: true
 
             # Whether to enable the device code grant
-            enable_device_code_grant: true
+            enable_device_code_grant: false
 
             # The full URI the user will need to visit to enter the user code
             device_code_verification_uri: ''

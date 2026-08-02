@@ -1,5 +1,0 @@
-# This file contains patterns to be ignored while testing for use of
-# deprecated code
-
-
-%Since league/oauth2-server-bundle 1.2: The \"league.oauth2_server.authorization_server.grant_configurator\" service is deprecated. It will be removed in 2.0%

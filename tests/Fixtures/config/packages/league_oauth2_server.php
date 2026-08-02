@@ -14,6 +14,7 @@ return static function (ContainerConfigurator $container): void {
             'encryption_key' => TestHelper::ENCRYPTION_KEY,
             'enable_password_grant' => true,
             'enable_implicit_grant' => true,
+            'enable_device_code_grant' => true,
             'access_token_ttl' => 'PT2H',
         ],
         'resource_server' => ['public_key' => TestHelper::PUBLIC_KEY_PATH],

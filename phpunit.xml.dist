@@ -10,7 +10,7 @@
 >
     <php>
         <server name="KERNEL_CLASS" value="League\Bundle\OAuth2ServerBundle\Tests\Fixtures\TestKernel" />
-        <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[self]=0&amp;ignoreFile=./tests/baseline-ignore" />
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[self]=0" />
     </php>
 
     <testsuites>

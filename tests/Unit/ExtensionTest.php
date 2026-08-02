@@ -7,9 +7,11 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\LeagueOAuth2ServerExtension;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ScopeManager;
+use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Grant\FakeLegacyGrant;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Grant\DeviceCodeGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use PHPUnit\Framework\TestCase;
@@ -65,6 +67,37 @@ final class ExtensionTest extends TestCase
         yield 'Refresh token grant can be disabled' => [
             RefreshTokenGrant::class, 'enable_refresh_token_grant', false,
         ];
+        yield 'Device code grant can be enabled' => [
+            DeviceCodeGrant::class, 'enable_device_code_grant', true,
+        ];
+        yield 'Device code grant can be disabled' => [
+            DeviceCodeGrant::class, 'enable_device_code_grant', false,
+        ];
+    }
+
+    public function testDeviceCodeGrantIsDisabledByDefault(): void
+    {
+        $container = new ContainerBuilder();
+
+        $this->setupContainer($container);
+
+        $extension = new LeagueOAuth2ServerExtension();
+
+        $config = $this->getValidConfiguration();
+        unset($config[0]['authorization_server']['enable_device_code_grant']);
+
+        $extension->load($config, $container);
+
+        $authorizationServer = $container->findDefinition(AuthorizationServer::class);
+        $enabledGrants = [];
+
+        foreach ($authorizationServer->getMethodCalls() as $methodCall) {
+            if ('enableGrantType' === $methodCall[0]) {
+                $enabledGrants[(string) $methodCall[1][0]] = (string) $methodCall[1][0];
+            }
+        }
+
+        $this->assertArrayNotHasKey(DeviceCodeGrant::class, $enabledGrants);
     }
 
     /**
@@ -157,10 +190,7 @@ final class ExtensionTest extends TestCase
 
         // TODO remove code bloc when grant configurator is deleted
         $configurator = $authorizationServer->getConfigurator();
-        $this->assertIsArray($configurator);
-        $this->assertInstanceOf(Reference::class, $configurator[0]);
-        $this->assertSame(GrantConfigurator::class, (string) $configurator[0]);
-        $this->assertSame('__invoke', $configurator[1]);
+        $this->assertNull($configurator);
     }
 
     public function scopeProvider(): iterable
@@ -176,6 +206,25 @@ final class ExtensionTest extends TestCase
             ['unknown_scope'],
             false,
         ];
+    }
+
+    /**
+     * @group legacy
+     */
+    public function testGrantConfiguratorIsEnabledWhenLegacyGrantIsTagged(): void
+    {
+        $container = new ContainerBuilder();
+        $extension = new LeagueOAuth2ServerExtension();
+        $container->register(FakeLegacyGrant::class)->addTag('league.oauth2_server.authorization_server.grant');
+
+        $extension->load($this->getValidConfiguration(), $container);
+
+        $authorizationServer = $container->findDefinition(AuthorizationServer::class);
+        $configurator = $authorizationServer->getConfigurator();
+        $this->assertIsArray($configurator);
+        $this->assertInstanceOf(Reference::class, $configurator[0]);
+        $this->assertSame(GrantConfigurator::class, (string) $configurator[0]);
+        $this->assertSame('__invoke', $configurator[1]);
     }
 
     /**
@@ -219,6 +268,7 @@ final class ExtensionTest extends TestCase
                     'enable_password_grant' => $options['enable_password_grant'] ?? true,
                     'enable_implicit_grant' => $options['enable_implicit_grant'] ?? true,
                     'enable_refresh_token_grant' => $options['enable_refresh_token_grant'] ?? true,
+                    'enable_device_code_grant' => $options['enable_device_code_grant'] ?? false,
                     'revoke_refresh_tokens' => $options['revoke_refresh_tokens'] ?? true,
                 ],
                 'resource_server' => [

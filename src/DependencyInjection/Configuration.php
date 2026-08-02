@@ -143,7 +143,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->booleanNode('enable_device_code_grant')
                     ->info('Whether to enable the device code grant')
-                    ->defaultTrue()
+                    ->defaultFalse()
                 ->end()
                 ->scalarNode('device_code_verification_uri')
                     ->info('The full URI the user will need to visit to enter the user code')

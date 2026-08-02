@@ -23,6 +23,7 @@ final class ClearExpiredTokensCommand extends Command
         private readonly RefreshTokenManagerInterface $refreshTokenManager,
         private readonly AuthorizationCodeManagerInterface $authorizationCodeManager,
         private readonly DeviceCodeManagerInterface $deviceCodeManager,
+        private readonly bool $enableDeviceCodeGrant = true,
     ) {
         parent::__construct();
     }
@@ -70,7 +71,9 @@ final class ClearExpiredTokensCommand extends Command
             $this->clearExpiredAccessTokens($io);
             $this->clearExpiredRefreshTokens($io);
             $this->clearExpiredAuthCodes($io);
-            $this->clearExpiredDeviceCodes($io);
+            if ($this->enableDeviceCodeGrant) {
+                $this->clearExpiredDeviceCodes($io);
+            }
 
             return 0;
         }

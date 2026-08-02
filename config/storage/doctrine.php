@@ -28,6 +28,7 @@ return static function (ContainerConfigurator $container): void {
                 null,
                 null,
                 null,
+                null,
             ])
         ->alias(Driver::class, 'league.oauth2_server.persistence.driver')
 
@@ -73,6 +74,8 @@ return static function (ContainerConfigurator $container): void {
             ->args([
                 null,
                 service(ClientManagerInterface::class),
+                null,
+                null,
             ])
         ->alias(CredentialsRevokerInterface::class, 'league.oauth2_server.credentials_revoker.doctrine')
         ->alias(DoctrineCredentialsRevoker::class, 'league.oauth2_server.credentials_revoker.doctrine')
