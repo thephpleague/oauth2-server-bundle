@@ -28,22 +28,6 @@ final class ClientRepositoryTest extends TestCase
     }
 
     /**
-     * @group legacy
-     */
-    public function testValidateClientSucceedsWithoutPasswordHasher(): void
-    {
-        $plainSecret = 'my-plain-secret';
-        $client = new Client('My App', 'my-client', $plainSecret);
-        $this->clientManager->save($client);
-
-        $repositoryWithoutHasher = new ClientRepository($this->clientManager);
-
-        $this->assertTrue(
-            $repositoryWithoutHasher->validateClient('my-client', $plainSecret, null)
-        );
-    }
-
-    /**
      * Regression test: a client created via CreateClientCommand stores its secret
      * pre-hashed with NativePasswordHasher::hash() (which uses SHA-512+bcrypt for
      * long passwords). validateClient() must verify the plain secret correctly.

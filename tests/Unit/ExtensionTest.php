@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
-use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\LeagueOAuth2ServerExtension;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ScopeManager;
-use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Grant\FakeLegacyGrant;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -16,7 +14,6 @@ use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
 
 final class ExtensionTest extends TestCase
 {
@@ -187,10 +184,6 @@ final class ExtensionTest extends TestCase
         }
 
         $this->assertSame($shouldRevokeRefreshTokens, $revokeRefreshTokens);
-
-        // TODO remove code bloc when grant configurator is deleted
-        $configurator = $authorizationServer->getConfigurator();
-        $this->assertNull($configurator);
     }
 
     public function scopeProvider(): iterable
@@ -208,55 +201,6 @@ final class ExtensionTest extends TestCase
         ];
     }
 
-    /**
-     * @group legacy
-     */
-    public function testGrantConfiguratorIsEnabledWhenLegacyGrantIsTagged(): void
-    {
-        $container = new ContainerBuilder();
-        $extension = new LeagueOAuth2ServerExtension();
-        $container->register(FakeLegacyGrant::class)->addTag('league.oauth2_server.authorization_server.grant');
-
-        $extension->load($this->getValidConfiguration(), $container);
-
-        $authorizationServer = $container->findDefinition(AuthorizationServer::class);
-        $configurator = $authorizationServer->getConfigurator();
-        $this->assertIsArray($configurator);
-        $this->assertInstanceOf(Reference::class, $configurator[0]);
-        $this->assertSame(GrantConfigurator::class, (string) $configurator[0]);
-        $this->assertSame('__invoke', $configurator[1]);
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testPasswordAndImplicitGrantsAreEnabledByDefault(): void
-    {
-        $container = new ContainerBuilder();
-
-        $this->setupContainer($container);
-
-        $extension = new LeagueOAuth2ServerExtension();
-
-        $config = $this->getValidConfiguration();
-        unset($config[0]['authorization_server']['enable_password_grant']);
-        unset($config[0]['authorization_server']['enable_implicit_grant']);
-
-        $extension->load($config, $container);
-
-        $authorizationServer = $container->findDefinition(AuthorizationServer::class);
-        $methodCalls = $authorizationServer->getMethodCalls();
-        $enabledGrants = [];
-
-        foreach ($methodCalls as $methodCall) {
-            if ('enableGrantType' === $methodCall[0]) {
-                $enabledGrants[(string) $methodCall[1][0]] = (string) $methodCall[1][0];
-            }
-        }
-        $this->assertArrayHasKey(PasswordGrant::class, $enabledGrants);
-        $this->assertArrayHasKey(AuthCodeGrant::class, $enabledGrants);
-    }
-
     private function getValidConfiguration(array $options = []): array
     {
         return [
@@ -265,8 +209,8 @@ final class ExtensionTest extends TestCase
                     'private_key' => 'foo',
                     'encryption_key' => 'foo',
                     'enable_client_credentials_grant' => $options['enable_client_credentials_grant'] ?? true,
-                    'enable_password_grant' => $options['enable_password_grant'] ?? true,
-                    'enable_implicit_grant' => $options['enable_implicit_grant'] ?? true,
+                    'enable_password_grant' => $options['enable_password_grant'] ?? false,
+                    'enable_implicit_grant' => $options['enable_implicit_grant'] ?? false,
                     'enable_refresh_token_grant' => $options['enable_refresh_token_grant'] ?? true,
                     'enable_device_code_grant' => $options['enable_device_code_grant'] ?? false,
                     'revoke_refresh_tokens' => $options['revoke_refresh_tokens'] ?? true,
@@ -286,9 +230,6 @@ final class ExtensionTest extends TestCase
                 // Pick one for valid config:
                 // 'persistence' => ['doctrine' => []]
                 'persistence' => ['in_memory' => 1],
-                'client' => [
-                    'allow_plaintext_secrets' => $options['allow_plaintext_secrets'] ?? false,
-                ],
             ],
         ];
     }
