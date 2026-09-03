@@ -254,6 +254,10 @@ final class Configuration implements ConfigurationInterface
                             ->cannotBeEmpty()
                             ->defaultValue('oauth2_')
                         ->end()
+                        ->scalarNode('expired_token_cleanup_delay')
+                            ->info('The delay in seconds in which expired access/refresh/authorization-code/device-code will be removed. Default PT0S.')
+                            ->defaultValue('PT0S')
+                        ->end()
                     ->end()
                 ->end()
                 // In-memory persistence

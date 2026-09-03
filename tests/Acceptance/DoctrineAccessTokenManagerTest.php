@@ -22,7 +22,7 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
-        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, true);
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, true, 'PT0S');
 
         $client = new Client('client', 'client', 'secret');
         $em->persist($client);
@@ -43,12 +43,37 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
         );
     }
 
+    public function testClearExpiredWithCleanupDelay(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, true, 'PT1H');
+
+        $client = new Client('client', 'client', 'secret');
+        $em->persist($client);
+        $em->flush();
+
+        $recentlyExpiredAccessToken = $this->buildAccessToken('1111', '-30 minutes', $client);
+        $expiredAccessToken = $this->buildAccessToken('2222', '-2 hours', $client);
+
+        $doctrineAccessTokenManager->save($recentlyExpiredAccessToken);
+        $doctrineAccessTokenManager->save($expiredAccessToken);
+
+        $this->assertSame(1, $doctrineAccessTokenManager->clearExpired());
+
+        $this->assertSame(
+            [$recentlyExpiredAccessToken],
+            $em->getRepository(AccessToken::class)->findBy([], ['identifier' => 'ASC'])
+        );
+    }
+
     public function testClearExpiredWithoutSavingAccessToken(): void
     {
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
-        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, false);
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, false, 'PT0S');
 
         $client = new Client('name', 'client', 'secret');
         $em->persist($client);
@@ -105,7 +130,7 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
     {
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, true);
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, true, 'PT0S');
 
         $client = new Client('client', 'client', 'secret');
         $em->persist($client);
@@ -132,7 +157,7 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
     {
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, false);
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, false, 'PT0S');
 
         $client = new Client('name', 'client', 'secret');
         $em->persist($client);

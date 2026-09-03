@@ -124,6 +124,10 @@ For implementation into Symfony projects, please see [bundle documentation](basi
 
                 # Table name prefix.
                 table_prefix:         oauth2_
+
+                # The delay in seconds in which expired access/refresh/authorization-code/device-code will be removed (default 0)
+                expired_token_cleanup_delay: PT0S
+
             in_memory:            ~
 
         # Set a custom prefix that replaces the default 'ROLE_OAUTH2_' role prefix

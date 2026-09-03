@@ -22,7 +22,7 @@ final class DoctrineRefreshTokenManagerTest extends AbstractAcceptanceTest
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
-        $doctrineRefreshTokenManager = new DoctrineRefreshTokenManager($em);
+        $doctrineRefreshTokenManager = new DoctrineRefreshTokenManager($em, 'PT0S');
 
         $client = new Client('client', 'client', 'secret');
         $em->persist($client);
@@ -42,6 +42,35 @@ final class DoctrineRefreshTokenManagerTest extends AbstractAcceptanceTest
 
         $this->assertSame(
             $testData['output'],
+            $em->getRepository(RefreshToken::class)->findBy([], ['identifier' => 'ASC'])
+        );
+    }
+
+    public function testClearExpiredWithCleanupDelay(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $doctrineRefreshTokenManager = new DoctrineRefreshTokenManager($em, 'PT1H');
+
+        $client = new Client('client', 'client', 'secret');
+        $em->persist($client);
+        $em->flush();
+
+        $recentlyExpiredRefreshToken = $this->buildRefreshToken('1111', '-30 minutes', $client);
+        $expiredRefreshToken = $this->buildRefreshToken('2222', '-2 hours', $client);
+
+        $em->persist($recentlyExpiredRefreshToken->getAccessToken());
+        $doctrineRefreshTokenManager->save($recentlyExpiredRefreshToken);
+        $em->persist($expiredRefreshToken->getAccessToken());
+        $doctrineRefreshTokenManager->save($expiredRefreshToken);
+
+        $em->flush();
+
+        $this->assertSame(1, $doctrineRefreshTokenManager->clearExpired());
+
+        $this->assertSame(
+            [$recentlyExpiredRefreshToken],
             $em->getRepository(RefreshToken::class)->findBy([], ['identifier' => 'ASC'])
         );
     }
