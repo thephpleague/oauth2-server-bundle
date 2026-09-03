@@ -13,6 +13,7 @@ final class RefreshTokenManager implements RefreshTokenManagerInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly string $expireCleanupDelay,
     ) {
     }
 
@@ -29,11 +30,13 @@ final class RefreshTokenManager implements RefreshTokenManagerInterface
 
     public function clearExpired(): int
     {
+        $expiry = (new \DateTimeImmutable())->sub(new \DateInterval($this->expireCleanupDelay));
+
         /** @var int */
         return $this->entityManager->createQueryBuilder()
             ->delete(RefreshToken::class, 'rt')
             ->where('rt.expiry < :expiry')
-            ->setParameter('expiry', new \DateTimeImmutable(), 'datetime_immutable')
+            ->setParameter('expiry', $expiry, 'datetime_immutable')
             ->getQuery()
             ->execute();
     }

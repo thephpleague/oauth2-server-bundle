@@ -13,6 +13,7 @@ final class DeviceCodeManager implements DeviceCodeManagerInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly string $expireCleanupDelay,
     ) {
     }
 
@@ -41,11 +42,13 @@ final class DeviceCodeManager implements DeviceCodeManagerInterface
 
     public function clearExpired(): int
     {
+        $expiry = (new \DateTimeImmutable())->sub(new \DateInterval($this->expireCleanupDelay));
+
         /** @var int */
         return $this->entityManager->createQueryBuilder()
             ->delete(DeviceCode::class, 'at')
             ->where('at.expiry < :expiry')
-            ->setParameter('expiry', new \DateTimeImmutable(), 'datetime_immutable')
+            ->setParameter('expiry', $expiry, 'datetime_immutable')
             ->getQuery()
             ->execute();
     }
