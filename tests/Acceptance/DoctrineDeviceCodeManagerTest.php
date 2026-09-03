@@ -21,7 +21,7 @@ final class DoctrineDeviceCodeManagerTest extends AbstractAcceptanceTest
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
-        $doctrineDeviceCodeManager = new DoctrineDeviceCodeManager($em);
+        $doctrineDeviceCodeManager = new DoctrineDeviceCodeManager($em, 'PT0S');
 
         $client = new Client('client', 'client', 'secret');
         $em->persist($client);
@@ -39,6 +39,32 @@ final class DoctrineDeviceCodeManagerTest extends AbstractAcceptanceTest
 
         $this->assertSame(
             array_values($testData['output']),
+            $em->getRepository(DeviceCode::class)->findBy([], ['identifier' => 'ASC'])
+        );
+    }
+
+    public function testClearExpiredWithCleanupDelay(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $doctrineDeviceCodeManager = new DoctrineDeviceCodeManager($em, 'PT1H');
+
+        $client = new Client('client', 'client', 'secret');
+        $em->persist($client);
+
+        $recentlyExpiredDeviceCode = $this->buildDeviceCode('1111', '-30 minutes', $client);
+        $expiredDeviceCode = $this->buildDeviceCode('2222', '-2 hours', $client);
+
+        $doctrineDeviceCodeManager->save($recentlyExpiredDeviceCode);
+        $doctrineDeviceCodeManager->save($expiredDeviceCode);
+
+        $em->flush();
+
+        $this->assertSame(1, $doctrineDeviceCodeManager->clearExpired());
+
+        $this->assertSame(
+            [$recentlyExpiredDeviceCode],
             $em->getRepository(DeviceCode::class)->findBy([], ['identifier' => 'ASC'])
         );
     }
