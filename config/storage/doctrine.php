@@ -45,12 +45,14 @@ return static function (ContainerConfigurator $container): void {
             ->args([
                 null,
                 null,
+                null,
             ])
         ->alias(AccessTokenManagerInterface::class, 'league.oauth2_server.manager.doctrine.access_token')
         ->alias(AccessTokenManager::class, 'league.oauth2_server.manager.doctrine.access_token')
 
         ->set('league.oauth2_server.manager.doctrine.refresh_token', RefreshTokenManager::class)
             ->args([
+                null,
                 null,
             ])
         ->alias(RefreshTokenManagerInterface::class, 'league.oauth2_server.manager.doctrine.refresh_token')
@@ -59,12 +61,14 @@ return static function (ContainerConfigurator $container): void {
         ->set('league.oauth2_server.manager.doctrine.device_code', DeviceCodeManager::class)
             ->args([
                 null,
+                null,
             ])
         ->alias(DeviceCodeManagerInterface::class, 'league.oauth2_server.manager.doctrine.device_code')
         ->alias(DeviceCodeManager::class, 'league.oauth2_server.manager.doctrine.device_code')
 
         ->set('league.oauth2_server.manager.doctrine.authorization_code', AuthorizationCodeManager::class)
             ->args([
+                null,
                 null,
             ])
         ->alias(AuthorizationCodeManagerInterface::class, 'league.oauth2_server.manager.doctrine.authorization_code')
