@@ -35,24 +35,30 @@ final class ClientRepository implements ClientRepositoryInterface
 
     public function getClientEntity(string $clientIdentifier): ?ClientEntityInterface
     {
-        $client = $this->clientManager->find($clientIdentifier);
-
-        if (null === $client) {
+        if (null === $client = $this->findActiveClient($clientIdentifier)) {
             return null;
         }
 
         return $this->buildClientEntity($client);
     }
 
-    public function validateClient(string $clientIdentifier, #[\SensitiveParameter] ?string $clientSecret, ?string $grantType): bool
+    /**
+     * Avoid exposing inactive clients to the OAuth2 server.
+     */
+    private function findActiveClient(string $clientIdentifier): ?ClientInterface
     {
         $client = $this->clientManager->find($clientIdentifier);
 
-        if (null === $client) {
-            return false;
+        if (null === $client || !$client->isActive()) {
+            return null;
         }
 
-        if (!$client->isActive()) {
+        return $client;
+    }
+
+    public function validateClient(string $clientIdentifier, #[\SensitiveParameter] ?string $clientSecret, ?string $grantType): bool
+    {
+        if (null === $client = $this->findActiveClient($clientIdentifier)) {
             return false;
         }
 
