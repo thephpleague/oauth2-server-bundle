@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\DependencyInjection;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator;
-use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface;
 use League\Bundle\OAuth2ServerBundle\Command\ClearExpiredTokensCommand;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Command\GenerateKeyPairCommand;
@@ -50,8 +48,6 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\PasswordHasher\Hasher\MigratingPasswordHasher;
-use Symfony\Component\PasswordHasher\Hasher\PlaintextPasswordHasher;
 
 final class LeagueOAuth2ServerExtension extends Extension implements PrependExtensionInterface, CompilerPassInterface
 {
@@ -74,26 +70,10 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $container->findDefinition(OAuth2Authenticator::class)
             ->setArgument(3, $config['role_prefix']);
 
-        // TODO remove code bloc when bundle interface and configurator will be deleted
-        $container->registerForAutoconfiguration(GrantTypeInterface::class)
-            ->addTag('league.oauth2_server.authorization_server.grant');
-
         $container
             ->findDefinition(CreateClientCommand::class)
             ->replaceArgument(1, $config['client']['classname'])
         ;
-
-        if ($config['client']['allow_plaintext_secrets']) {
-            trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Setting "client.allow_plaintext_secrets" config option to "true" is deprecated. Use the `league:oauth2-server:rehash-client-secrets` command to rehash existing client secrets and set this option to "false" afterwards.');
-            $container->register('league.oauth2_server.password_hasher.plaintext', PlaintextPasswordHasher::class);
-            $container->register('league.oauth2_server.password_hasher.migrating', MigratingPasswordHasher::class)
-                ->setDecoratedService('league.oauth2_server.password_hasher')
-                ->setArguments([
-                    new Reference('league.oauth2_server.password_hasher.migrating.inner'),
-                    new Reference('league.oauth2_server.password_hasher.plaintext'),
-                ])
-            ;
-        }
 
         $container
             ->findDefinition(GenerateKeyPairCommand::class)
@@ -235,23 +215,6 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
                 new Reference(ImplicitGrant::class),
                 new Definition(\DateInterval::class, [$config['access_token_ttl']]),
             ]);
-        }
-
-        // @deprecated remove code block when grant configurator is deleted
-        if ([] !== $tags = $container->findTaggedServiceIds('league.oauth2_server.authorization_server.grant')) {
-            $registerConfigurator = false;
-            foreach (array_keys($tags) as $serviceId) {
-                $grantDefinition = $container->findDefinition($serviceId);
-                $grantClass = $grantDefinition->getClass() ?? (string) $serviceId;
-                $refGrantClass = $container->getReflectionClass($grantClass, false);
-                if ($refGrantClass instanceof \ReflectionClass && $refGrantClass->implementsInterface(GrantTypeInterface::class)) {
-                    $registerConfigurator = true;
-                    break;
-                }
-            }
-            if ($registerConfigurator) {
-                $authorizationServer->setConfigurator(new Reference(GrantConfigurator::class));
-            }
         }
 
         $this->configureGrants($container, $config);

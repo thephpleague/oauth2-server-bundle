@@ -16,7 +16,7 @@ We accept contributions via Pull Requests on [Github](https://github.com/thephpl
 
 ## Development
 
-[PHP](https://www.php.net/) 8.1+ and [Composer](https://getcomposer.org/) 2+ are required for the development environment.
+[PHP](https://www.php.net/) 8.2+ and [Composer](https://getcomposer.org/) 2+ are required for the development environment.
 
 ### Building the environment
 
@@ -36,7 +36,7 @@ vendor/bin/php-cs-fixer fix
 
 ### Running static analysis
 
-You can run static anaysis of code using the following command:
+You can run static analysis of code using the following command:
 
 ```sh
 vendor/bin/phpstan

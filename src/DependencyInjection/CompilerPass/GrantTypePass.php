@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\DependencyInjection\CompilerPass;
 
-use League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -27,23 +26,6 @@ class GrantTypePass implements CompilerPassInterface
 
         // enable grant type for each
         foreach ($taggedServices as $id => $tags) {
-            // skip of custom grant using \League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantTypeInterface
-            // since there are handled by \League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator
-            // TODO remove code bloc when bundle interface and configurator will be deleted
-            try {
-                $grantDefinition = $container->findDefinition($id);
-                /** @var class-string|null $grantClass */
-                $grantClass = $grantDefinition->getClass();
-                if (null !== $grantClass) {
-                    $refGrantClass = new \ReflectionClass($grantClass);
-                    if ($refGrantClass->implementsInterface(GrantTypeInterface::class)) {
-                        continue;
-                    }
-                }
-            } catch (\ReflectionException) {
-                // handling of this service as native one
-            }
-
             foreach ($tags as $attributes) {
                 // use accessTokenTTL tag attribute if exists, otherwise use global bundle config
                 $accessTokenTTLValue = \array_key_exists('accessTokenTTL', $attributes)

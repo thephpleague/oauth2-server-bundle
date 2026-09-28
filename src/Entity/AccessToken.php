@@ -45,14 +45,8 @@ final class AccessToken implements AccessTokenEntityInterface
 
         $builderWithExtraClaims = $this->withJwtBuilder($this->jwtConfiguration->builder());
 
-        $builderFactory = (static fn (ClaimsFormatter $claimFormatter): Builder => $builderWithExtraClaims);
-
-        if (!method_exists($this->jwtConfiguration, 'withBuilderFactory')) { // @phpstan-ignore function.alreadyNarrowedType
-            $this->jwtConfiguration->setBuilderFactory($builderFactory);
-
-            return;
-        }
-
-        $this->jwtConfiguration = $this->jwtConfiguration->withBuilderFactory($builderFactory);
+        $this->jwtConfiguration = $this->jwtConfiguration->withBuilderFactory(
+            static fn (ClaimsFormatter $claimFormatter): Builder => $builderWithExtraClaims
+        );
     }
 }

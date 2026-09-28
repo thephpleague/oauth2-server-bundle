@@ -113,14 +113,8 @@ final class ListClientsCommand extends Command
     private function getRows(array $clients, array $columns, bool $revealSecret): array
     {
         return array_map(static function (ClientInterface $client) use ($columns, $revealSecret): array {
-            if (!method_exists($client, 'getName')) {
-                trigger_deprecation('league/oauth2-server-bundle', '1.2', 'Not implementing method "getName()" in client "%s" is deprecated. This method will be required in 2.0.', $client::class);
-                $name = $client->getIdentifier();
-            } else {
-                $name = $client->getName();
-            }
             $values = [
-                'name' => $name,
+                'name' => $client->getName(),
                 'identifier' => $client->getIdentifier(),
                 'secret' => $revealSecret ? $client->getSecret() : ($client->isConfidential() ? '****' : '(public)'),
                 'scope' => implode(', ', $client->getScopes()),
