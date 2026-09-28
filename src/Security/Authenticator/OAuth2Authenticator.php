@@ -29,7 +29,7 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 /**
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  */
-final class OAuth2Authenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
+class OAuth2Authenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
 {
     /**
      * @param UserProviderInterface<UserInterface> $userProvider

@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  */
-final class ClientCredentialsUser implements UserInterface
+class ClientCredentialsUser implements UserInterface
 {
     /**
      * @param non-empty-string $clientId
