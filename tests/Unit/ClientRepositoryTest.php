@@ -145,4 +145,14 @@ final class ClientRepositoryTest extends TestCase
             $this->repository->validateClient('inactive-client', 'secret', null)
         );
     }
+
+    public function testGetClientEntityReturnsNullForInactiveClient(): void
+    {
+        $client = (new Client('My App', 'inactive-public-client', null))->setActive(false);
+        $this->clientManager->save($client);
+
+        $this->assertNull(
+            $this->repository->getClientEntity('inactive-public-client')
+        );
+    }
 }
