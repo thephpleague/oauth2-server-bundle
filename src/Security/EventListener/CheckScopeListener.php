@@ -16,10 +16,10 @@ use Symfony\Component\Security\Http\Event\CheckPassportEvent;
  *
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  */
-final class CheckScopeListener implements EventSubscriberInterface
+final readonly class CheckScopeListener implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly RequestStack $requestStack,
+        private RequestStack $requestStack,
     ) {
     }
 

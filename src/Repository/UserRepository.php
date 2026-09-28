@@ -15,12 +15,12 @@ use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-final class UserRepository implements UserRepositoryInterface
+final readonly class UserRepository implements UserRepositoryInterface
 {
     public function __construct(
-        private readonly ClientManagerInterface $clientManager,
-        private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly UserConverterInterface $userConverter,
+        private ClientManagerInterface $clientManager,
+        private EventDispatcherInterface $eventDispatcher,
+        private UserConverterInterface $userConverter,
     ) {
     }
 

@@ -18,17 +18,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-final class AuthorizationController
+final readonly class AuthorizationController
 {
     public function __construct(
-        private readonly AuthorizationServer $server,
-        private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly AuthorizationRequestResolveEventFactory $eventFactory,
-        private readonly UserConverterInterface $userConverter,
-        private readonly ClientManagerInterface $clientManager,
-        private readonly HttpMessageFactoryInterface $httpMessageFactory,
-        private readonly HttpFoundationFactoryInterface $httpFoundationFactory,
-        private readonly ResponseFactoryInterface $responseFactory,
+        private AuthorizationServer $server,
+        private EventDispatcherInterface $eventDispatcher,
+        private AuthorizationRequestResolveEventFactory $eventFactory,
+        private UserConverterInterface $userConverter,
+        private ClientManagerInterface $clientManager,
+        private HttpMessageFactoryInterface $httpMessageFactory,
+        private HttpFoundationFactoryInterface $httpFoundationFactory,
+        private ResponseFactoryInterface $responseFactory,
     ) {
     }
 

@@ -17,15 +17,15 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-final class ClientManager implements ClientManagerInterface
+final readonly class ClientManager implements ClientManagerInterface
 {
     /**
      * @param class-string<AbstractClient> $clientFqcn
      */
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly EventDispatcherInterface $dispatcher,
-        private readonly string $clientFqcn,
+        private EntityManagerInterface $entityManager,
+        private EventDispatcherInterface $dispatcher,
+        private string $clientFqcn,
     ) {
     }
 

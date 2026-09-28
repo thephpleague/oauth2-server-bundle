@@ -15,14 +15,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-final class TokenController
+final readonly class TokenController
 {
     public function __construct(
-        private readonly AuthorizationServer $server,
-        private readonly HttpMessageFactoryInterface $httpMessageFactory,
-        private readonly HttpFoundationFactoryInterface $httpFoundationFactory,
-        private readonly ResponseFactoryInterface $responseFactory,
-        private readonly EventDispatcherInterface $eventDispatcher,
+        private AuthorizationServer $server,
+        private HttpMessageFactoryInterface $httpMessageFactory,
+        private HttpFoundationFactoryInterface $httpFoundationFactory,
+        private ResponseFactoryInterface $responseFactory,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 

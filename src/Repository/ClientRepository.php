@@ -14,12 +14,12 @@ use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
 use Symfony\Component\PasswordHasher\Hasher\PlaintextPasswordHasher;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
-final class ClientRepository implements ClientRepositoryInterface
+final readonly class ClientRepository implements ClientRepositoryInterface
 {
-    private readonly PasswordHasherInterface $passwordHasher;
+    private PasswordHasherInterface $passwordHasher;
 
     public function __construct(
-        private readonly ClientManagerInterface $clientManager,
+        private ClientManagerInterface $clientManager,
         ?PasswordHasherInterface $passwordHasher = null,
     ) {
         if (null === $passwordHasher) {

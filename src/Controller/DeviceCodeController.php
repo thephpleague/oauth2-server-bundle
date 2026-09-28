@@ -12,13 +12,13 @@ use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-final class DeviceCodeController
+final readonly class DeviceCodeController
 {
     public function __construct(
-        private readonly AuthorizationServer $server,
-        private readonly HttpMessageFactoryInterface $httpMessageFactory,
-        private readonly HttpFoundationFactoryInterface $httpFoundationFactory,
-        private readonly ResponseFactoryInterface $responseFactory,
+        private AuthorizationServer $server,
+        private HttpMessageFactoryInterface $httpMessageFactory,
+        private HttpFoundationFactoryInterface $httpFoundationFactory,
+        private ResponseFactoryInterface $responseFactory,
     ) {
     }
 

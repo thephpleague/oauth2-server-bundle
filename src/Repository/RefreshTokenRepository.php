@@ -12,11 +12,11 @@ use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 
-final class RefreshTokenRepository implements RefreshTokenRepositoryInterface
+final readonly class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
     public function __construct(
-        private readonly RefreshTokenManagerInterface $refreshTokenManager,
-        private readonly AccessTokenManagerInterface $accessTokenManager,
+        private RefreshTokenManagerInterface $refreshTokenManager,
+        private AccessTokenManagerInterface $accessTokenManager,
     ) {
     }
 

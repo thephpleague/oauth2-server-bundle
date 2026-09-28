@@ -10,11 +10,11 @@ use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\AccessTokenInterface;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 
-final class AccessTokenManager implements AccessTokenManagerInterface
+final readonly class AccessTokenManager implements AccessTokenManagerInterface
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly bool $persistAccessToken,
+        private EntityManagerInterface $entityManager,
+        private bool $persistAccessToken,
     ) {
     }
 

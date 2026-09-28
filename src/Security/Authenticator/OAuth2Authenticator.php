@@ -29,16 +29,16 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 /**
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  */
-final class OAuth2Authenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
+final readonly class OAuth2Authenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
 {
     /**
      * @param UserProviderInterface<UserInterface> $userProvider
      */
     public function __construct(
-        private readonly HttpMessageFactoryInterface $httpMessageFactory,
-        private readonly ResourceServer $resourceServer,
-        private readonly UserProviderInterface $userProvider,
-        private readonly string $rolePrefix,
+        private HttpMessageFactoryInterface $httpMessageFactory,
+        private ResourceServer $resourceServer,
+        private UserProviderInterface $userProvider,
+        private string $rolePrefix,
     ) {
     }
 
