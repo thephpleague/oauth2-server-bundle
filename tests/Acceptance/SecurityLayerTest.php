@@ -10,8 +10,11 @@ use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
+use League\Bundle\OAuth2ServerBundle\Security\User\ClientCredentialsUserFactoryInterface;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 final class SecurityLayerTest extends AbstractAcceptanceTestCase
 {
@@ -44,6 +47,28 @@ final class SecurityLayerTest extends AbstractAcceptanceTestCase
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('Hello, foo', $response->getContent());
+    }
+
+    public function testCustomClientCredentialsUserFactoryIsUsedByFirewall(): void
+    {
+        $this->client->getContainer()->set('league.oauth2_server.client_credentials_user_factory', new class implements ClientCredentialsUserFactoryInterface {
+            public function createUser(string $clientId): UserInterface
+            {
+                return FixtureFactory::createUser([], 'custom_' . $clientId);
+            }
+        });
+
+        $accessTokenManager = $this->client->getContainer()->get(AccessTokenManagerInterface::class);
+        $this->assertInstanceOf(AccessTokenManagerInterface::class, $accessTokenManager);
+        $accessToken = $accessTokenManager->find(FixtureFactory::FIXTURE_ACCESS_TOKEN_PUBLIC);
+        $this->assertInstanceOf(AccessToken::class, $accessToken);
+
+        $this->client->request('GET', '/security-test', [], [], [
+            'HTTP_AUTHORIZATION' => \sprintf('Bearer %s', TestHelper::generateJwtToken($accessToken)),
+        ]);
+
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Hello, custom_foo', $this->client->getResponse()->getContent());
     }
 
     public function testAuthenticatedGuestScopedRequest(): void

@@ -8,7 +8,8 @@ use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\OAuth2AuthenticationException;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\OAuth2AuthenticationFailedException;
 use League\Bundle\OAuth2ServerBundle\Security\Passport\Badge\ScopeBadge;
-use League\Bundle\OAuth2ServerBundle\Security\User\ClientCredentialsUser;
+use League\Bundle\OAuth2ServerBundle\Security\User\ClientCredentialsUserFactory;
+use League\Bundle\OAuth2ServerBundle\Security\User\ClientCredentialsUserFactoryInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
@@ -39,7 +40,11 @@ final readonly class OAuth2Authenticator implements AuthenticatorInterface, Auth
         private ResourceServer $resourceServer,
         private UserProviderInterface $userProvider,
         private string $rolePrefix,
+        private ?ClientCredentialsUserFactoryInterface $clientCredentialsUserFactory = null,
     ) {
+        if (null === $this->clientCredentialsUserFactory) {
+            trigger_deprecation('league/oauth2-server-bundle', '2.1', 'Not passing a "%s" to "%s" is deprecated since version 2.1 and will be required in 3.0.', ClientCredentialsUserFactoryInterface::class, self::class);
+        }
     }
 
     public function supports(Request $request): bool
@@ -88,7 +93,12 @@ final readonly class OAuth2Authenticator implements AuthenticatorInterface, Auth
                  */
                 || ('' === $userIdentifier && is_a(ChainUserProvider::class, AttributesBasedUserProviderInterface::class, true)) // @phpstan-ignore function.alreadyNarrowedType
             ) {
-                return new ClientCredentialsUser($oauthClientId);
+                // @deprecated since 2.1, to be removed in 3.0
+                if (null === $this->clientCredentialsUserFactory) {
+                    return (new ClientCredentialsUserFactory())->createUser($oauthClientId);
+                }
+
+                return $this->clientCredentialsUserFactory->createUser($oauthClientId);
             }
 
             return $this->userProvider->loadUserByIdentifier($userIdentifier);
