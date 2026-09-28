@@ -38,6 +38,8 @@ use League\Bundle\OAuth2ServerBundle\Repository\ScopeRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\UserRepository;
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Security\EventListener\CheckScopeListener;
+use League\Bundle\OAuth2ServerBundle\Security\User\ClientCredentialsUserFactory;
+use League\Bundle\OAuth2ServerBundle\Security\User\ClientCredentialsUserFactoryInterface;
 use League\Bundle\OAuth2ServerBundle\Service\SymfonyLeagueEventListenerProvider;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
@@ -124,12 +126,16 @@ return static function (ContainerConfigurator $container): void {
         ->alias(AuthCodeRepository::class, 'league.oauth2_server.repository.auth_code')
 
         // Security layer
+        ->set('league.oauth2_server.client_credentials_user_factory', ClientCredentialsUserFactory::class)
+        ->alias(ClientCredentialsUserFactoryInterface::class, 'league.oauth2_server.client_credentials_user_factory')
+
         ->set('league.oauth2_server.authenticator.oauth2', OAuth2Authenticator::class)
             ->args([
                 service('league.oauth2_server.factory.psr_http'),
                 service(ResourceServer::class),
                 abstract_arg('User Provider'),
                 abstract_arg('Role prefix'),
+                service(ClientCredentialsUserFactoryInterface::class),
             ])
         ->alias(OAuth2Authenticator::class, 'league.oauth2_server.authenticator.oauth2')
 

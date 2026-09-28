@@ -16,3 +16,8 @@ FROM 1.2 to 2.0
  * Interface `AuthorizationServer\GrantTypeInterface` has been removed
  * Service `league.oauth2_server.authorization_server.grant_configurator` has been removed
  * Service alias `League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator` has been removed
+
+FROM 2.0 to 2.1
+---------------
+
+ * Deprecate not passing an `ClientCredentialsUserFactoryInterface` instance to `OAuth2Authenticator::__construct()`
