@@ -21,7 +21,7 @@ final class DoctrineAuthCodeManagerTest extends AbstractAcceptanceTest
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
-        $doctrineAuthCodeManager = new DoctrineAuthCodeManager($em);
+        $doctrineAuthCodeManager = new DoctrineAuthCodeManager($em, 'PT0S');
 
         $client = new Client('client', 'client', 'secret');
         $em->persist($client);
@@ -39,6 +39,32 @@ final class DoctrineAuthCodeManagerTest extends AbstractAcceptanceTest
 
         $this->assertSame(
             $testData['output'],
+            $em->getRepository(AuthorizationCode::class)->findBy([], ['identifier' => 'ASC'])
+        );
+    }
+
+    public function testClearExpiredWithCleanupDelay(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $doctrineAuthCodeManager = new DoctrineAuthCodeManager($em, 'PT1H');
+
+        $client = new Client('client', 'client', 'secret');
+        $em->persist($client);
+
+        $recentlyExpiredAuthCode = $this->buildAuthCode('1111', '-30 minutes', $client);
+        $expiredAuthCode = $this->buildAuthCode('2222', '-2 hours', $client);
+
+        $doctrineAuthCodeManager->save($recentlyExpiredAuthCode);
+        $doctrineAuthCodeManager->save($expiredAuthCode);
+
+        $em->flush();
+
+        $this->assertSame(1, $doctrineAuthCodeManager->clearExpired());
+
+        $this->assertSame(
+            [$recentlyExpiredAuthCode],
             $em->getRepository(AuthorizationCode::class)->findBy([], ['identifier' => 'ASC'])
         );
     }
