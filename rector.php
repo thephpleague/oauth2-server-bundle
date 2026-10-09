@@ -10,9 +10,7 @@ return RectorConfig::configure()
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ])
-    // uncomment to reach your current PHP version
     ->withPhpSets()
-    // ->withCodeQualityLevel(0)
     ->withPreparedSets(typeDeclarations: true, deadCode: true)
     ->withComposerBased(symfony: true, phpunit: true, doctrine: true)
 ;

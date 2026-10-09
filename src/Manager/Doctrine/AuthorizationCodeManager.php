@@ -9,10 +9,10 @@ use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCodeInterface;
 
-final class AuthorizationCodeManager implements AuthorizationCodeManagerInterface
+final readonly class AuthorizationCodeManager implements AuthorizationCodeManagerInterface
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 

@@ -15,13 +15,13 @@ use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 
-final class DeviceCodeRepository implements DeviceCodeRepositoryInterface
+final readonly class DeviceCodeRepository implements DeviceCodeRepositoryInterface
 {
     public function __construct(
-        private readonly DeviceCodeManagerInterface $deviceCodeManager,
-        private readonly ClientManagerInterface $clientManager,
-        private readonly ScopeConverterInterface $scopeConverter,
-        private readonly ClientRepositoryInterface $clientRepository,
+        private DeviceCodeManagerInterface $deviceCodeManager,
+        private ClientManagerInterface $clientManager,
+        private ScopeConverterInterface $scopeConverter,
+        private ClientRepositoryInterface $clientRepository,
     ) {
     }
 

@@ -9,10 +9,10 @@ use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
 use League\Bundle\OAuth2ServerBundle\Model\DeviceCodeInterface;
 
-final class DeviceCodeManager implements DeviceCodeManagerInterface
+final readonly class DeviceCodeManager implements DeviceCodeManagerInterface
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 

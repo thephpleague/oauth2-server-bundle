@@ -10,13 +10,13 @@ use League\OAuth2\Server\Grant\GrantTypeInterface as LeagueGrantTypeInterface;
 /**
  * @deprecated
  */
-final class GrantConfigurator
+final readonly class GrantConfigurator
 {
     /**
      * @param iterable<GrantTypeInterface> $grants
      */
     public function __construct(
-        private readonly iterable $grants,
+        private iterable $grants,
     ) {
     }
 

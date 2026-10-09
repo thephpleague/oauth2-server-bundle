@@ -18,13 +18,13 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-final class ScopeRepository implements ScopeRepositoryInterface
+final readonly class ScopeRepository implements ScopeRepositoryInterface
 {
     public function __construct(
-        private readonly ScopeManagerInterface $scopeManager,
-        private readonly ClientManagerInterface $clientManager,
-        private readonly ScopeConverterInterface $scopeConverter,
-        private readonly EventDispatcherInterface $eventDispatcher,
+        private ScopeManagerInterface $scopeManager,
+        private ClientManagerInterface $clientManager,
+        private ScopeConverterInterface $scopeConverter,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 

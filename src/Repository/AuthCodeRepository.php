@@ -14,12 +14,12 @@ use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 
-final class AuthCodeRepository implements AuthCodeRepositoryInterface
+final readonly class AuthCodeRepository implements AuthCodeRepositoryInterface
 {
     public function __construct(
-        private readonly AuthorizationCodeManagerInterface $authorizationCodeManager,
-        private readonly ClientManagerInterface $clientManager,
-        private readonly ScopeConverterInterface $scopeConverter,
+        private AuthorizationCodeManagerInterface $authorizationCodeManager,
+        private ClientManagerInterface $clientManager,
+        private ScopeConverterInterface $scopeConverter,
     ) {
     }
 

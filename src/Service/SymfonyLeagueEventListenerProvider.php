@@ -9,10 +9,10 @@ use League\Event\ListenerSubscriber;
 use League\OAuth2\Server\RequestEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-final class SymfonyLeagueEventListenerProvider implements ListenerSubscriber
+final readonly class SymfonyLeagueEventListenerProvider implements ListenerSubscriber
 {
     public function __construct(
-        private readonly EventDispatcherInterface $eventDispatcher,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 

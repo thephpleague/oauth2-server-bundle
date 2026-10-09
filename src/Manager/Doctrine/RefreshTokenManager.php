@@ -9,10 +9,10 @@ use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshTokenInterface;
 
-final class RefreshTokenManager implements RefreshTokenManagerInterface
+final readonly class RefreshTokenManager implements RefreshTokenManagerInterface
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 

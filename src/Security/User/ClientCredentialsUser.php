@@ -9,13 +9,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @author Mathias Arlaud <mathias.arlaud@gmail.com>
  */
-final class ClientCredentialsUser implements UserInterface
+final readonly class ClientCredentialsUser implements UserInterface
 {
     /**
      * @param non-empty-string $clientId
      */
     public function __construct(
-        private readonly string $clientId,
+        private string $clientId,
     ) {
     }
 

@@ -18,14 +18,14 @@ use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationExcep
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-final class AccessTokenRepository implements AccessTokenRepositoryInterface
+final readonly class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
-    private readonly ?EventDispatcherInterface $eventDispatcher;
+    private ?EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
-        private readonly AccessTokenManagerInterface $accessTokenManager,
-        private readonly ClientManagerInterface $clientManager,
-        private readonly ScopeConverterInterface $scopeConverter,
+        private AccessTokenManagerInterface $accessTokenManager,
+        private ClientManagerInterface $clientManager,
+        private ScopeConverterInterface $scopeConverter,
         ?EventDispatcherInterface $eventDispatcher = null,
     ) {
         if (null === $eventDispatcher) {

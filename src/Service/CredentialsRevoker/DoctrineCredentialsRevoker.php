@@ -14,13 +14,13 @@ use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevokerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-final class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
+final readonly class DoctrineCredentialsRevoker implements CredentialsRevokerInterface
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly ClientManagerInterface $clientManager,
-        private readonly bool $persistAccessToken = true,
-        private readonly bool $enableDeviceCodeGrant = true,
+        private EntityManagerInterface $entityManager,
+        private ClientManagerInterface $clientManager,
+        private bool $persistAccessToken = true,
+        private bool $enableDeviceCodeGrant = true,
     ) {
     }
 
