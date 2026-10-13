@@ -18,7 +18,7 @@ use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
 use Symfony\Component\HttpFoundation\Response;
 
-final class AuthorizationEndpointTest extends AbstractAcceptanceTest
+final class AuthorizationEndpointTest extends AbstractAcceptanceTestCase
 {
     protected function setUp(): void
     {

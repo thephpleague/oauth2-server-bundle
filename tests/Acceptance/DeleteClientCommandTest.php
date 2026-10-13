@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Acceptance;
 
+use League\Bundle\OAuth2ServerBundle\Command\DeleteClientCommand;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \League\Bundle\OAuth2ServerBundle\Command\DeleteClientCommand
- */
-final class DeleteClientCommandTest extends AbstractAcceptanceTest
+#[CoversClass(DeleteClientCommand::class)]
+final class DeleteClientCommandTest extends AbstractAcceptanceTestCase
 {
     public function testDeleteClient(): void
     {

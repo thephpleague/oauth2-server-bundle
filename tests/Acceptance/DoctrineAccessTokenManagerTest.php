@@ -9,13 +9,13 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager as Doct
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * @TODO This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
- *
- * @covers \League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager
  */
-final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
+#[CoversClass(DoctrineAccessTokenManager::class)]
+final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTestCase
 {
     public function testClearExpired(): void
     {

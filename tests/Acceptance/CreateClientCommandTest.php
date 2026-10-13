@@ -10,7 +10,7 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
-final class CreateClientCommandTest extends AbstractAcceptanceTest
+final class CreateClientCommandTest extends AbstractAcceptanceTestCase
 {
     public function testCreateClient(): void
     {

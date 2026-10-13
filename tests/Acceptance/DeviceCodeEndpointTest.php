@@ -12,7 +12,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 
-final class DeviceCodeEndpointTest extends AbstractAcceptanceTest
+final class DeviceCodeEndpointTest extends AbstractAcceptanceTestCase
 {
     protected function setUp(): void
     {

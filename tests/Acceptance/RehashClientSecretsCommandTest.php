@@ -8,7 +8,7 @@ use Doctrine\DBAL\Connection;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
-final class RehashClientSecretsCommandTest extends AbstractAcceptanceTest
+final class RehashClientSecretsCommandTest extends AbstractAcceptanceTestCase
 {
     public function testHashPlainTextSecrets(): void
     {

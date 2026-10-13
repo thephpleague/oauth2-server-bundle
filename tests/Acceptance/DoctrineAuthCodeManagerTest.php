@@ -8,13 +8,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager as DoctrineAuthCodeManager;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * @TODO This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
- *
- * @covers \League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager
  */
-final class DoctrineAuthCodeManagerTest extends AbstractAcceptanceTest
+#[CoversClass(DoctrineAuthCodeManager::class)]
+final class DoctrineAuthCodeManagerTest extends AbstractAcceptanceTestCase
 {
     public function testClearExpired(): void
     {

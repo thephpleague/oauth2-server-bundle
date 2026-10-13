@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-abstract class AbstractAcceptanceTest extends WebTestCase
+abstract class AbstractAcceptanceTestCase extends WebTestCase
 {
     /**
      * @var Application

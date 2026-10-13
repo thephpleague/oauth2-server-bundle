@@ -13,18 +13,17 @@ use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @TODO This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
- *
- * @covers \League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker
  */
-final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
+#[CoversClass(DoctrineCredentialsRevoker::class)]
+final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTestCase
 {
-    /**
-     * @dataProvider provideRevokeCredentialsOptions
-     */
+    #[DataProvider('provideRevokeCredentialsOptions')]
     public function testRevokesAllCredentialsForUser(bool $persistAccessToken, bool $enableDeviceCodeGrant): void
     {
         $userIdentifier = FixtureFactory::FIXTURE_USER;
@@ -69,9 +68,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTest
         yield [false, false];
     }
 
-    /**
-     * @dataProvider provideRevokeCredentialsOptions
-     */
+    #[DataProvider('provideRevokeCredentialsOptions')]
     public function testRevokesAllCredentialsForClient(bool $persistAccessToken, bool $enableDeviceCodeGrant): void
     {
         /** @var EntityManagerInterface $em */

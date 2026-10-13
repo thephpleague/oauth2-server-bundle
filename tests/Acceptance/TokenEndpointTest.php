@@ -19,7 +19,7 @@ use League\OAuth2\Server\RequestAccessTokenEvent;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestRefreshTokenEvent;
 
-final class TokenEndpointTest extends AbstractAcceptanceTest
+final class TokenEndpointTest extends AbstractAcceptanceTestCase
 {
     protected function setUp(): void
     {

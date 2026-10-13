@@ -28,7 +28,7 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 
-class CustomPersistenceManagerTest extends AbstractAcceptanceTest
+class CustomPersistenceManagerTest extends AbstractAcceptanceTestCase
 {
     private AccessTokenManagerInterface&MockObject $accessTokenManager;
     private ClientManagerInterface&MockObject $clientManager;
@@ -111,10 +111,10 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTest
         $accessToken = new AccessToken('access_token', new \DateTimeImmutable('+1 hour'), $client, 'user', []);
         $refreshToken = new RefreshToken('refresh_token', new \DateTimeImmutable('+1 month'), $accessToken);
 
-        $this->refreshTokenManager->expects(self::atLeastOnce())->method('find')->willReturn($refreshToken, null);
+        $this->refreshTokenManager->expects(self::atLeastOnce())->method('find')->willReturn($refreshToken, null, null);
         $this->client->getContainer()->set('test.refresh_token_manager', $this->refreshTokenManager);
 
-        $this->accessTokenManager->expects(self::atLeastOnce())->method('find')->willReturn($accessToken, null);
+        $this->accessTokenManager->expects(self::atLeastOnce())->method('find')->willReturn($accessToken, null, null);
         $this->accessTokenManager->expects(self::atLeastOnce())->method('save');
         $this->client->getContainer()->set('test.access_token_manager', $this->accessTokenManager);
 

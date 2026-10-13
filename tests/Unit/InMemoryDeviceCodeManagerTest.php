@@ -7,11 +7,10 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\DeviceCodeManager as InMemoryDeviceCodeManager;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group time-sensitive
- */
+#[Group('time-sensitive')]
 final class InMemoryDeviceCodeManagerTest extends TestCase
 {
     public function testClearExpired(): void

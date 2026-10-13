@@ -11,7 +11,7 @@ use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
-final class ListClientsCommandTest extends AbstractAcceptanceTest
+final class ListClientsCommandTest extends AbstractAcceptanceTestCase
 {
     public function testListClients(): void
     {

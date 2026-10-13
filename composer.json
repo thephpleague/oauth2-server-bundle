@@ -46,7 +46,8 @@
     "conflict": {
         "doctrine/dbal": "<4.0",
         "doctrine/doctrine-bundle": "<2.15",
-        "doctrine/orm": "<3.0"
+        "doctrine/orm": "<3.0",
+        "symfony/error-handler": "<7.4.17"
     },
     "suggest": {
         "doctrine/doctrine-bundle": "Allow usage of doctrine as persistence layer",

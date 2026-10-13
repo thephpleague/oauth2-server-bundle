@@ -8,6 +8,7 @@ use League\Bundle\OAuth2ServerBundle\Entity\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class AccessTokenEntityTest extends TestCase
@@ -26,9 +27,7 @@ final class AccessTokenEntityTest extends TestCase
         $this->assertSame($token['payload']['baz'], ['qux', 'quux']);
     }
 
-    /**
-     * @dataProvider provideReservedClaims
-     */
+    #[DataProvider('provideReservedClaims')]
     public function testReservedClaimsCannotBeUsedAsExtraClaims(string $claim): void
     {
         $this->expectException(\InvalidArgumentException::class);
