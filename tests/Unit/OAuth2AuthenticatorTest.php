@@ -8,6 +8,8 @@ use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Security\Exception\OAuth2AuthenticationFailedException;
 use League\Bundle\OAuth2ServerBundle\Security\Passport\Badge\ScopeBadge;
 use League\Bundle\OAuth2ServerBundle\Security\User\ClientCredentialsUser;
+use League\Bundle\OAuth2ServerBundle\Security\User\ClientCredentialsUserFactory;
+use League\Bundle\OAuth2ServerBundle\Security\User\ClientCredentialsUserFactoryInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Nyholm\Psr7\ServerRequest;
@@ -41,7 +43,8 @@ final class OAuth2AuthenticatorTest extends TestCase
             $httpMessageFactory,
             $resourceServer,
             $this->createMock(TestUserProvider::class),
-            'PREFIX_'
+            'PREFIX_',
+            $this->createMock(ClientCredentialsUserFactoryInterface::class),
         );
 
         $this->expectException(OAuth2AuthenticationFailedException::class);
@@ -80,7 +83,8 @@ final class OAuth2AuthenticatorTest extends TestCase
             $httpMessageFactory,
             $resourceServer,
             $userProvider,
-            'PREFIX_'
+            'PREFIX_',
+            $this->createMock(ClientCredentialsUserFactoryInterface::class),
         );
 
         /** @var Passport $passport */
@@ -122,13 +126,82 @@ final class OAuth2AuthenticatorTest extends TestCase
             $httpMessageFactory,
             $resourceServer,
             $userProvider,
-            'PREFIX_'
+            'PREFIX_',
+            new ClientCredentialsUserFactory(),
         );
 
         /** @var Passport $passport */
         $passport = $authenticator->authenticate(new Request());
 
         $this->assertInstanceOf(ClientCredentialsUser::class, $passport->getUser());
+    }
+
+    /**
+     * @group legacy
+     */
+    public function testAuthenticateCreatePassportWithoutClientCredentialsUserFactory(): void
+    {
+        $serverRequest = (new ServerRequest('GET', '/foo'))
+            ->withAttribute('oauth_access_token_id', 'accessTokenId')
+            ->withAttribute('oauth_user_id', 'clientId')
+            ->withAttribute('oauth_client_id', 'clientId')
+        ;
+
+        $httpMessageFactory = $this->createMock(HttpMessageFactoryInterface::class);
+        $httpMessageFactory
+            ->method('createRequest')
+            ->willReturn($serverRequest)
+        ;
+
+        $resourceServer = $this->createMock(ResourceServer::class);
+        $resourceServer
+            ->method('validateAuthenticatedRequest')
+            ->willReturn($serverRequest)
+        ;
+
+        $userProvider = $this->createMock(TestUserProvider::class);
+        $userProvider
+            ->expects($this->never())
+            ->method('loadUserByIdentifier')
+        ;
+
+        $authenticator = new OAuth2Authenticator(
+            $httpMessageFactory,
+            $resourceServer,
+            $userProvider,
+            'PREFIX_',
+        );
+
+        /** @var Passport $passport */
+        $passport = $authenticator->authenticate(new Request());
+
+        $this->assertInstanceOf(ClientCredentialsUser::class, $passport->getUser());
+    }
+
+    public function testAuthenticateUsesCustomClientCredentialsUserFactory(): void
+    {
+        $serverRequest = (new ServerRequest('GET', '/foo'))
+            ->withAttribute('oauth_access_token_id', 'accessTokenId')
+            ->withAttribute('oauth_user_id', 'clientId')
+            ->withAttribute('oauth_client_id', 'clientId')
+        ;
+
+        $httpMessageFactory = $this->createMock(HttpMessageFactoryInterface::class);
+        $httpMessageFactory->method('createRequest')->willReturn($serverRequest);
+
+        $resourceServer = $this->createMock(ResourceServer::class);
+        $resourceServer->method('validateAuthenticatedRequest')->willReturn($serverRequest);
+
+        $userProvider = $this->createMock(TestUserProvider::class);
+        $userProvider->expects($this->never())->method('loadUserByIdentifier');
+
+        $customUser = $this->createMock(UserInterface::class);
+        $factory = $this->createMock(ClientCredentialsUserFactoryInterface::class);
+        $factory->expects($this->once())->method('createUser')->with('clientId')->willReturn($customUser);
+
+        $authenticator = new OAuth2Authenticator($httpMessageFactory, $resourceServer, $userProvider, 'PREFIX_', $factory);
+
+        $this->assertSame($customUser, $authenticator->authenticate(new Request())->getUser());
     }
 
     public function testCreateToken(): void
@@ -144,7 +217,8 @@ final class OAuth2AuthenticatorTest extends TestCase
             $this->createMock(HttpMessageFactoryInterface::class),
             $this->createMock(ResourceServer::class),
             $this->createMock(TestUserProvider::class),
-            'PREFIX_'
+            'PREFIX_',
+            $this->createMock(ClientCredentialsUserFactoryInterface::class),
         );
 
         $token = $authenticator->createToken($passport, 'firewallName');

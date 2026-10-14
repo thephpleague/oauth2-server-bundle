@@ -178,6 +178,7 @@ security:
 * [Token scopes](token-scopes.md)
 * [Implementing custom grant type](implementing-custom-grant-type.md)
 * [Using custom client](using-custom-client.md)
+* [Using custom client credentials user](using-custom-client-credentials-user.md)
 * [Listening to League OAuth Server events](listening-to-league-events.md)
 * [Password Grant Handling](password-grant-handling.md)
 * [Using custom persistence managers](using-custom-persistence-managers.md)
