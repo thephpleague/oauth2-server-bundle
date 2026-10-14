@@ -75,7 +75,7 @@ final class ClearExpiredTokensCommand extends Command
                 $this->clearExpiredDeviceCodes($io);
             }
 
-            return 0;
+            return Command::SUCCESS;
         }
 
         if ($clearExpiredAccessTokens) {
@@ -94,7 +94,7 @@ final class ClearExpiredTokensCommand extends Command
             $this->clearExpiredDeviceCodes($io);
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function clearExpiredAccessTokens(SymfonyStyle $io): void

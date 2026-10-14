@@ -34,11 +34,6 @@ final class ClearExpiredTokensCommandTest extends AbstractAcceptanceTestCase
         );
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     public function testClearExpiredAccessAndRefreshTokensAndAuthCodes(): void
     {
         $command = $this->command();

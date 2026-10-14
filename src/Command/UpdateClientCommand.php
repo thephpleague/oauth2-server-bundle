@@ -52,7 +52,7 @@ final class UpdateClientCommand extends Command
         if (null === $client = $this->clientManager->find($input->getArgument('identifier'))) {
             $io->error(\sprintf('OAuth2 client identified as "%s" does not exist.', $input->getArgument('identifier')));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $client->setActive($this->getClientActiveFromInput($input, $client->isActive()));
@@ -64,7 +64,7 @@ final class UpdateClientCommand extends Command
 
         $io->success('OAuth2 client updated successfully.');
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function getClientActiveFromInput(InputInterface $input, bool $actual): bool

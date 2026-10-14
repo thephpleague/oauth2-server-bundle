@@ -74,7 +74,7 @@ final class ListClientsCommand extends Command
         $clients = $this->clientManager->list($criteria);
         $this->drawTable($input, $output, $clients);
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function getFindByCriteria(InputInterface $input): ClientFilter
