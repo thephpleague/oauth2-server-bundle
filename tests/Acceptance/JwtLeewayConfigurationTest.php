@@ -8,7 +8,7 @@ use League\Bundle\OAuth2ServerBundle\Repository\AccessTokenRepository;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 
-class JwtLeewayConfigurationTest extends AbstractAcceptanceTest
+class JwtLeewayConfigurationTest extends AbstractAcceptanceTestCase
 {
     protected function setUp(): void
     {

@@ -9,7 +9,7 @@ use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Repository\AuthCodeRepository;
 
-final class AuthCodeRepositoryTest extends AbstractIntegrationTest
+final class AuthCodeRepositoryTest extends AbstractIntegrationTestCase
 {
     public function testAuthCodeRevoking(): void
     {

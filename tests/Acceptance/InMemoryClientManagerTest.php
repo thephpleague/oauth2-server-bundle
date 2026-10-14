@@ -6,7 +6,7 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ClientManager as InMemoryClientManager;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
-use League\Bundle\OAuth2ServerBundle\Tests\Acceptance\AbstractAcceptanceTest;
+use League\Bundle\OAuth2ServerBundle\Tests\Acceptance\AbstractAcceptanceTestCase;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -14,7 +14,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @TODO   This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
  */
-final class InMemoryClientManagerTest extends AbstractAcceptanceTest
+final class InMemoryClientManagerTest extends AbstractAcceptanceTestCase
 {
     public function testSaveClientWithoutScopeAddDefaultScopes(): void
     {

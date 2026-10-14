@@ -18,7 +18,7 @@ use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
-final class ClearExpiredTokensCommandTest extends AbstractAcceptanceTest
+final class ClearExpiredTokensCommandTest extends AbstractAcceptanceTestCase
 {
     protected function setUp(): void
     {
@@ -32,11 +32,6 @@ final class ClearExpiredTokensCommandTest extends AbstractAcceptanceTest
             $this->client->getContainer()->get(AuthorizationCodeManagerInterface::class),
             $this->client->getContainer()->get(DeviceCodeManagerInterface::class)
         );
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
     }
 
     public function testClearExpiredAccessAndRefreshTokensAndAuthCodes(): void

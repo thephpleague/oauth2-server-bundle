@@ -11,7 +11,7 @@ use League\Bundle\OAuth2ServerBundle\Repository\ClientRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\DeviceCodeRepository;
 use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
 
-final class DeviceCodeRepositoryTest extends AbstractIntegrationTest
+final class DeviceCodeRepositoryTest extends AbstractIntegrationTestCase
 {
     public function testDeviceCodeRevoking(): void
     {

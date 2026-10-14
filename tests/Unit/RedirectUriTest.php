@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class RedirectUriTest extends TestCase
 {
-    public function exceptionRedirectUriProvider(): array
+    public static function exceptionRedirectUriProvider(): array
     {
         return [
             ['invalid'],
@@ -20,9 +21,7 @@ final class RedirectUriTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider exceptionRedirectUriProvider
-     */
+    #[DataProvider('exceptionRedirectUriProvider')]
     public function testInvalidRedirectUris(string $data): void
     {
         $this->expectException(\RuntimeException::class);

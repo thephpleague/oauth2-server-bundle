@@ -9,13 +9,12 @@ use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Console\Tester\CommandTester;
 
-final class UpdateClientCommandTest extends AbstractAcceptanceTest
+final class UpdateClientCommandTest extends AbstractAcceptanceTestCase
 {
-    /**
-     * @dataProvider updateRelatedModelsDataProvider
-     */
+    #[DataProvider('updateRelatedModelsDataProvider')]
     public function testUpdateRelatedModels(string $argument, array $initial, array $toAdd, array $toRemove, array $expected, string $getter, string $setter): void
     {
         $client = $this->fakeAClient('foobar');
@@ -47,7 +46,7 @@ final class UpdateClientCommandTest extends AbstractAcceptanceTest
         ]);
     }
 
-    public function updateRelatedModelsDataProvider(): iterable
+    public static function updateRelatedModelsDataProvider(): iterable
     {
         yield 'redirect uris' => [
             'redirect-uri',

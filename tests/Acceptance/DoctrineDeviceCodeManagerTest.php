@@ -8,13 +8,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\DeviceCodeManager as DoctrineDeviceCodeManager;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * @TODO This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
- *
- * @covers \League\Bundle\OAuth2ServerBundle\Manager\Doctrine\DeviceCodeManager
  */
-final class DoctrineDeviceCodeManagerTest extends AbstractAcceptanceTest
+#[CoversClass(DoctrineDeviceCodeManager::class)]
+final class DoctrineDeviceCodeManagerTest extends AbstractAcceptanceTestCase
 {
     public function testClearExpired(): void
     {

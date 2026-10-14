@@ -13,7 +13,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
 
-final class SecurityLayerTest extends AbstractAcceptanceTest
+final class SecurityLayerTest extends AbstractAcceptanceTestCase
 {
     protected function setUp(): void
     {

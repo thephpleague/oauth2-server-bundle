@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class ClientEntityTest extends TestCase
 {
-    /**
-     * @dataProvider confidentialDataProvider
-     */
+    #[DataProvider('confidentialDataProvider')]
     public function testClientConfidentiality(?string $secret, bool $isConfidential): void
     {
         $client = new Client('name', 'identifier', $secret);
@@ -19,7 +18,7 @@ final class ClientEntityTest extends TestCase
         $this->assertSame($isConfidential, $client->isConfidential());
     }
 
-    public function confidentialDataProvider(): iterable
+    public static function confidentialDataProvider(): iterable
     {
         return [
             'Client with null secret is not confidential' => [null, false],

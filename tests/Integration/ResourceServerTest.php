@@ -7,7 +7,7 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Integration;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
 
-final class ResourceServerTest extends AbstractIntegrationTest
+final class ResourceServerTest extends AbstractIntegrationTestCase
 {
     protected function setUp(): void
     {

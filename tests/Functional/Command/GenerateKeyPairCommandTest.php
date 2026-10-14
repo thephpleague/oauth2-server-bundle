@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace League\Bundle\OAuth2ServerBundle\Tests\Functional\Command;
 
 use League\Bundle\OAuth2ServerBundle\Command\GenerateKeyPairCommand;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
 class GenerateKeyPairCommandTest extends TestCase
 {
-    /**
-     * @dataProvider providePassphrase
-     */
+    #[DataProvider('providePassphrase')]
     public function testItGeneratesKeyPair(string $passphrase): void
     {
         $privateKeyFile = tempnam(sys_get_temp_dir(), 'private_');
@@ -50,7 +49,7 @@ class GenerateKeyPairCommandTest extends TestCase
         $this->assertSame($payload, $decryptedData);*/
     }
 
-    public function providePassphrase(): \Iterator
+    public static function providePassphrase(): \Iterator
     {
         yield ['RS256', null];
         yield ['RS384', null];

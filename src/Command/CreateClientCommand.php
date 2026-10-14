@@ -94,7 +94,7 @@ final class CreateClientCommand extends Command
         } catch (\InvalidArgumentException $exception) {
             $io->error($exception->getMessage());
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $this->clientManager->save($client);
@@ -106,7 +106,7 @@ final class CreateClientCommand extends Command
         ];
         $io->table($headers, $rows);
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function resolvePlainSecret(InputInterface $input): ?string

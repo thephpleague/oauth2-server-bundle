@@ -11,14 +11,14 @@ use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @TODO This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
- *
- * @covers \League\Bundle\OAuth2ServerBundle\Manager\Doctrine\ClientManager
  */
-final class DoctrineClientManagerTest extends AbstractAcceptanceTest
+#[CoversClass(DoctrineClientManager::class)]
+final class DoctrineClientManagerTest extends AbstractAcceptanceTestCase
 {
     public function testSimpleDelete(): void
     {

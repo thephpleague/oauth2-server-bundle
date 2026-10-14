@@ -12,14 +12,13 @@ use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Grant\DeviceCodeGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class ExtensionTest extends TestCase
 {
-    /**
-     * @dataProvider grantsProvider
-     */
+    #[DataProvider('grantsProvider')]
     public function testEnablingAndDisablingGrants(string $referenceId, string $grantKey, bool $shouldTheGrantBeEnabled): void
     {
         $container = new ContainerBuilder();
@@ -44,7 +43,7 @@ final class ExtensionTest extends TestCase
         $this->assertSame($shouldTheGrantBeEnabled, $isGrantEnabled);
     }
 
-    public function grantsProvider(): iterable
+    public static function grantsProvider(): iterable
     {
         yield 'Client credentials grant can be enabled' => [
             ClientCredentialsGrant::class, 'enable_client_credentials_grant', true,
@@ -97,9 +96,7 @@ final class ExtensionTest extends TestCase
         $this->assertArrayNotHasKey(DeviceCodeGrant::class, $enabledGrants);
     }
 
-    /**
-     * @dataProvider requireCodeChallengeForPublicClientsProvider
-     */
+    #[DataProvider('requireCodeChallengeForPublicClientsProvider')]
     public function testAuthCodeGrantDisableRequireCodeChallengeForPublicClientsConfig(
         ?bool $requireCodeChallengeForPublicClients,
         bool $shouldTheRequirementBeDisabled,
@@ -130,7 +127,7 @@ final class ExtensionTest extends TestCase
         $this->assertSame($shouldTheRequirementBeDisabled, $isRequireCodeChallengeForPublicClientsDisabled);
     }
 
-    public function requireCodeChallengeForPublicClientsProvider(): iterable
+    public static function requireCodeChallengeForPublicClientsProvider(): iterable
     {
         yield 'when not requiring code challenge for public clients the requirement should be disabled' => [
             false, true,
@@ -143,9 +140,7 @@ final class ExtensionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider scopeProvider
-     */
+    #[DataProvider('scopeProvider')]
     public function testDefaultScopeValidation(array $available, array $default, bool $valid): void
     {
         $container = new ContainerBuilder();
@@ -162,9 +157,7 @@ final class ExtensionTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
-    /**
-     * @dataProvider revokeRefreshTokensProvider
-     */
+    #[DataProvider('revokeRefreshTokensProvider')]
     public function testEnablingAndDisablingRevocationOfRefreshTokens(bool $shouldRevokeRefreshTokens): void
     {
         $container = new ContainerBuilder();
@@ -186,7 +179,7 @@ final class ExtensionTest extends TestCase
         $this->assertSame($shouldRevokeRefreshTokens, $revokeRefreshTokens);
     }
 
-    public function scopeProvider(): iterable
+    public static function scopeProvider(): iterable
     {
         yield 'when a default scope is part of available scopes' => [
             ['scope_one', 'scope_two'],
@@ -234,7 +227,7 @@ final class ExtensionTest extends TestCase
         ];
     }
 
-    public function revokeRefreshTokensProvider(): iterable
+    public static function revokeRefreshTokensProvider(): iterable
     {
         yield 'do revoke refresh tokens' => [true];
         yield 'do not revoke refresh tokens' => [false];
