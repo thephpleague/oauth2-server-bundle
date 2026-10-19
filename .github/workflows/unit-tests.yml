@@ -27,7 +27,7 @@ jobs:
                       can-fail: false
                     - php: "latest"
                       symfony: "8.1.*"
-                      composer-flags: ''
+                      composer-stable: ""
                       can-fail: true
                 exclude:
                     - php: "8.2"

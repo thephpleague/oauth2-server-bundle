@@ -28,7 +28,7 @@ final class OAuth2AuthenticatorTest extends TestCase
         $httpMessageFactory = $this->createMock(HttpMessageFactoryInterface::class);
         $httpMessageFactory
             ->method('createRequest')
-            ->willReturn($this->createMock(ServerRequestInterface::class))
+            ->willReturn($this->createStub(ServerRequestInterface::class))
         ;
 
         $resourceServer = $this->createMock(ResourceServer::class);
@@ -40,7 +40,7 @@ final class OAuth2AuthenticatorTest extends TestCase
         $authenticator = new OAuth2Authenticator(
             $httpMessageFactory,
             $resourceServer,
-            $this->createMock(TestUserProvider::class),
+            $this->createStub(TestUserProvider::class),
             'PREFIX_'
         );
 
@@ -73,7 +73,7 @@ final class OAuth2AuthenticatorTest extends TestCase
             ->expects($this->once())
             ->method('loadUserByIdentifier')
             ->with('userIdentifier')
-            ->willReturn($this->createMock(UserInterface::class))
+            ->willReturn($this->createStub(UserInterface::class))
         ;
 
         $authenticator = new OAuth2Authenticator(
@@ -141,9 +141,9 @@ final class OAuth2AuthenticatorTest extends TestCase
         $passport->setAttribute('accessTokenId', 'accessTokenId');
 
         $authenticator = new OAuth2Authenticator(
-            $this->createMock(HttpMessageFactoryInterface::class),
-            $this->createMock(ResourceServer::class),
-            $this->createMock(TestUserProvider::class),
+            $this->createStub(HttpMessageFactoryInterface::class),
+            $this->createStub(ResourceServer::class),
+            $this->createStub(TestUserProvider::class),
             'PREFIX_'
         );
 
