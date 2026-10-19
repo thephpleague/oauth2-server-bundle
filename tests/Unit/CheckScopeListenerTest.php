@@ -21,8 +21,8 @@ final class CheckScopeListenerTest extends TestCase
     public function testNoScopeRequested(): void
     {
         $event = new CheckPassportEvent(
-            $this->createMock(AuthenticatorInterface::class),
-            $this->createMock(Passport::class)
+            $this->createStub(AuthenticatorInterface::class),
+            $this->createStub(Passport::class)
         );
 
         $requestStack = new RequestStack([new Request()]);
@@ -39,7 +39,7 @@ final class CheckScopeListenerTest extends TestCase
         ]);
 
         $event = new CheckPassportEvent(
-            $this->createMock(AuthenticatorInterface::class),
+            $this->createStub(AuthenticatorInterface::class),
             $passport
         );
 
@@ -57,7 +57,7 @@ final class CheckScopeListenerTest extends TestCase
         ]);
 
         $event = new CheckPassportEvent(
-            $this->createMock(AuthenticatorInterface::class),
+            $this->createStub(AuthenticatorInterface::class),
             $passport
         );
 

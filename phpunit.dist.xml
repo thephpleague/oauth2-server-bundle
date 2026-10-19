@@ -2,10 +2,10 @@
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd"
-    backupGlobals="false"
     colors="true"
     bootstrap="vendor/autoload.php"
     failOnDeprecation="true"
+    failOnNotice="true"
     failOnRisky="true"
     failOnWarning="true"
 >
@@ -41,4 +41,7 @@
             <directory>./vendor</directory>
         </exclude>
     </source>
+    <extensions>
+        <bootstrap class="Symfony\Bridge\PhpUnit\SymfonyExtension" />
+    </extensions>
 </phpunit>
