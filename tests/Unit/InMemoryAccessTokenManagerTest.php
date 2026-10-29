@@ -8,12 +8,13 @@ use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AccessTokenManager as InMe
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\TestCase;
 
 #[Group('time-sensitive')]
 final class InMemoryAccessTokenManagerTest extends TestCase
 {
-    public function testClearExpired(): void
+    public function testClearExpiredTokens(): void
     {
         $inMemoryAccessTokenManager = new InMemoryAccessTokenManager(true);
 
@@ -23,14 +24,14 @@ final class InMemoryAccessTokenManagerTest extends TestCase
             $inMemoryAccessTokenManager->save($token);
         }
 
-        $this->assertSame(3, $inMemoryAccessTokenManager->clearExpired());
+        $this->assertSame(3, $inMemoryAccessTokenManager->clearExpiredTokens());
 
         $reflectionProperty = new \ReflectionProperty(InMemoryAccessTokenManager::class, 'accessTokens');
 
         $this->assertSame($testData['output'], $reflectionProperty->getValue($inMemoryAccessTokenManager));
     }
 
-    public function testClearExpiredWithoutSavingAccessToken(): void
+    public function testClearExpiredTokensWithoutSavingAccessToken(): void
     {
         $inMemoryAccessTokenManager = new InMemoryAccessTokenManager(false);
 
@@ -40,6 +41,57 @@ final class InMemoryAccessTokenManagerTest extends TestCase
             $inMemoryAccessTokenManager->save($token);
         }
 
+        $this->assertSame(0, $inMemoryAccessTokenManager->clearExpiredTokens());
+
+        $reflectionProperty = new \ReflectionProperty(InMemoryAccessTokenManager::class, 'accessTokens');
+
+        $this->assertSame([], $reflectionProperty->getValue($inMemoryAccessTokenManager));
+    }
+
+    public function testClearExpiredTokensWithCleanupDelay(): void
+    {
+        $inMemoryAccessTokenManager = new InMemoryAccessTokenManager(true);
+
+        $testData = $this->buildClearExpiredTestData();
+
+        foreach ($testData['input'] as $token) {
+            $inMemoryAccessTokenManager->save($token);
+        }
+
+        $this->assertSame(2, $inMemoryAccessTokenManager->clearExpiredTokens(new \DateInterval('PT30M')));
+    }
+
+    #[IgnoreDeprecations]
+    public function testLegacyClearExpired(): void
+    {
+        $inMemoryAccessTokenManager = new InMemoryAccessTokenManager(true);
+
+        $testData = $this->buildClearExpiredTestData();
+
+        foreach ($testData['input'] as $token) {
+            $inMemoryAccessTokenManager->save($token);
+        }
+
+        $this->expectUserDeprecationMessage('Since league/oauth2-server-bundle 2.1: Method "League\Bundle\OAuth2ServerBundle\Manager\InMemory\AccessTokenManager::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.');
+        $this->assertSame(3, $inMemoryAccessTokenManager->clearExpired());
+
+        $reflectionProperty = new \ReflectionProperty(InMemoryAccessTokenManager::class, 'accessTokens');
+
+        $this->assertSame($testData['output'], $reflectionProperty->getValue($inMemoryAccessTokenManager));
+    }
+
+    #[IgnoreDeprecations]
+    public function testLegacyClearExpiredWithoutSavingAccessToken(): void
+    {
+        $inMemoryAccessTokenManager = new InMemoryAccessTokenManager(false);
+
+        $testData = $this->buildClearExpiredTestData();
+
+        foreach ($testData['input'] as $token) {
+            $inMemoryAccessTokenManager->save($token);
+        }
+
+        $this->expectUserDeprecationMessage('Since league/oauth2-server-bundle 2.1: Method "League\Bundle\OAuth2ServerBundle\Manager\InMemory\AccessTokenManager::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.');
         $this->assertSame(0, $inMemoryAccessTokenManager->clearExpired());
 
         $reflectionProperty = new \ReflectionProperty(InMemoryAccessTokenManager::class, 'accessTokens');

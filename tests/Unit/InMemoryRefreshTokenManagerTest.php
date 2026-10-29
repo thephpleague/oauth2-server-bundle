@@ -8,11 +8,12 @@ use League\Bundle\OAuth2ServerBundle\Manager\InMemory\RefreshTokenManager as InM
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\TestCase;
 
 final class InMemoryRefreshTokenManagerTest extends TestCase
 {
-    public function testClearExpired(): void
+    public function testClearExpiredTokens(): void
     {
         $inMemoryRefreshTokenManager = new InMemoryRefreshTokenManager();
 
@@ -22,6 +23,38 @@ final class InMemoryRefreshTokenManagerTest extends TestCase
             $inMemoryRefreshTokenManager->save($token);
         }
 
+        $this->assertSame(3, $inMemoryRefreshTokenManager->clearExpiredTokens());
+
+        $reflectionProperty = new \ReflectionProperty(InMemoryRefreshTokenManager::class, 'refreshTokens');
+
+        $this->assertSame($testData['output'], $reflectionProperty->getValue($inMemoryRefreshTokenManager));
+    }
+
+    public function testClearExpiredTokensWithCleanupDelay(): void
+    {
+        $inMemoryRefreshTokenManager = new InMemoryRefreshTokenManager();
+
+        $testData = $this->buildClearExpiredTestData();
+
+        foreach ($testData['input'] as $token) {
+            $inMemoryRefreshTokenManager->save($token);
+        }
+
+        $this->assertSame(2, $inMemoryRefreshTokenManager->clearExpiredTokens(new \DateInterval('PT30M')));
+    }
+
+    #[IgnoreDeprecations]
+    public function testLegacyClearExpired(): void
+    {
+        $inMemoryRefreshTokenManager = new InMemoryRefreshTokenManager();
+
+        $testData = $this->buildClearExpiredTestData();
+
+        foreach ($testData['input'] as $token) {
+            $inMemoryRefreshTokenManager->save($token);
+        }
+
+        $this->expectUserDeprecationMessage('Since league/oauth2-server-bundle 2.1: Method "League\Bundle\OAuth2ServerBundle\Manager\InMemory\RefreshTokenManager::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.');
         $this->assertSame(3, $inMemoryRefreshTokenManager->clearExpired());
 
         $reflectionProperty = new \ReflectionProperty(InMemoryRefreshTokenManager::class, 'refreshTokens');

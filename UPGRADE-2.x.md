@@ -20,4 +20,6 @@ FROM 1.2 to 2.0
 FROM 2.0 to 2.1
 ---------------
 
- * Deprecate not passing an `ClientCredentialsUserFactoryInterface` instance to `OAuth2Authenticator::__construct()`
+ * Deprecate not passing a `ClientCredentialsUserFactoryInterface` instance to `OAuth2Authenticator::__construct()`
+ * Add method `clearExpiredTokens()` to `AccessTokenManagerInterface`, `AuthorizationCodeManagerInterface`, `DeviceCodeManagerInterface` and `RefreshTokenManagerInterface`. This method will be required in 3.0
+ * Deprecate method `clearExpired()` in `AccessTokenManagerInterface`, `AuthorizationCodeManagerInterface`, `DeviceCodeManagerInterface` and `RefreshTokenManagerInterface`. This method will be removed in 3.0
