@@ -19,8 +19,13 @@ final class AccessTokenManager implements AccessTokenManagerInterface
     {
     }
 
-    public function clearExpired(): int
+    public function clearExpiredTokens(?\DateInterval $expireCleanupDelay = null): int
     {
         return 0;
+    }
+
+    public function clearExpired(): int
+    {
+        return $this->clearExpiredTokens();
     }
 }

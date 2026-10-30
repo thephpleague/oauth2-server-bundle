@@ -37,18 +37,20 @@ final readonly class AccessTokenManager implements AccessTokenManagerInterface
         $this->entityManager->flush();
     }
 
-    public function clearExpired(): int
+    public function clearExpiredTokens(?\DateInterval $expireCleanupDelay = null): int
     {
         if (!$this->persistAccessToken) {
             return 0;
         }
+
+        $expiry = (new \DateTimeImmutable())->sub($expireCleanupDelay ?? new \DateInterval('PT0S'));
 
         /** @var array{identifier: string}[] */
         $results = $this->entityManager->createQueryBuilder()
             ->select('at.identifier')
             ->from(AccessToken::class, 'at')
             ->where('at.expiry < :expiry')
-            ->setParameter('expiry', new \DateTimeImmutable(), 'datetime_immutable')
+            ->setParameter('expiry', $expiry, 'datetime_immutable')
             ->getQuery()
             ->getScalarResult();
         if (0 === \count($results)) {
@@ -77,5 +79,10 @@ final readonly class AccessTokenManager implements AccessTokenManagerInterface
             ->execute();
 
         return \count($ids);
+    }
+
+    public function clearExpired(): int
+    {
+        return $this->clearExpiredTokens();
     }
 }

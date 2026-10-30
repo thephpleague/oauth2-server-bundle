@@ -16,3 +16,11 @@ FROM 1.2 to 2.0
  * Interface `AuthorizationServer\GrantTypeInterface` has been removed
  * Service `league.oauth2_server.authorization_server.grant_configurator` has been removed
  * Service alias `League\Bundle\OAuth2ServerBundle\AuthorizationServer\GrantConfigurator` has been removed
+
+
+FROM 2.0 to 2.1
+---------------
+
+ * Add new `ExpiredTokenClearerInterface` and extend it in `AccessTokenManagerInterface`, `AuthorizationCodeManagerInterface`, `DeviceCodeManagerInterface`, and `RefreshTokenManagerInterface` implementations.
+ * Deprecate method `ExpiredTokenClearerInterface::clearExpired()`.
+ * Deprecate not implementing method `ExpiredTokenClearerInterface::clearExpiredTokens()`. This method will be required in 3.0
