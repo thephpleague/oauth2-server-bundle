@@ -43,39 +43,33 @@ final class AccessTokenManager implements AccessTokenManagerInterface
             return 0;
         }
 
-        /** @var array{identifier: string}[] */
-        $results = $this->entityManager->createQueryBuilder()
-            ->select('at.identifier')
-            ->from(AccessToken::class, 'at')
-            ->where('at.expiry < :expiry')
-            ->setParameter('expiry', new \DateTimeImmutable(), 'datetime_immutable')
-            ->getQuery()
-            ->getScalarResult();
-        if (0 === \count($results)) {
-            return 0;
-        }
-
-        /** @var string[] */
-        $ids = array_column($results, 'identifier');
+        $expiry = new \DateTimeImmutable();
 
         // unlink access tokens from refresh tokens
-        $this->entityManager->createQueryBuilder()
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $queryBuilder
             ->update(RefreshToken::class, 'rt')
             ->set('rt.accessToken', ':null')
-            ->where('rt.accessToken IN (:ids)')
+            ->where($queryBuilder->expr()->in(
+                'rt.accessToken',
+                $this->entityManager->createQueryBuilder()
+                    ->select('at.identifier')
+                    ->from(AccessToken::class, 'at')
+                    ->where('at.expiry < :expiry')
+                    ->getDQL()
+            ))
             ->setParameter('null', null)
-            ->setParameter('ids', $ids)
+            ->setParameter('expiry', $expiry, 'datetime_immutable')
             ->getQuery()
             ->execute();
 
         // delete expired access tokens
-        $this->entityManager->createQueryBuilder()
+        /** @var int */
+        return $this->entityManager->createQueryBuilder()
             ->delete(AccessToken::class, 'at')
-            ->where('at.identifier IN (:ids)')
-            ->setParameter('ids', $ids)
+            ->where('at.expiry < :expiry')
+            ->setParameter('expiry', $expiry, 'datetime_immutable')
             ->getQuery()
             ->execute();
-
-        return \count($ids);
     }
 }
