@@ -14,6 +14,7 @@ use League\Bundle\OAuth2ServerBundle\Command\ListClientsCommand;
 use League\Bundle\OAuth2ServerBundle\Command\RehashClientSecretsCommand;
 use League\Bundle\OAuth2ServerBundle\Command\UpdateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Controller\AuthorizationController;
+use League\Bundle\OAuth2ServerBundle\Controller\AuthorizationServerMetadataController;
 use League\Bundle\OAuth2ServerBundle\Controller\DeviceCodeController;
 use League\Bundle\OAuth2ServerBundle\Controller\TokenController;
 use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverter;
@@ -244,6 +245,19 @@ return static function (ContainerConfigurator $container): void {
             ])
             ->tag('controller.service_arguments')
         ->alias(DeviceCodeController::class, 'league.oauth2_server.controller.device_code')
+
+        // Issuer, metadata and endpoints are set by the extension
+        ->set('league.oauth2_server.controller.authorization_server_metadata', AuthorizationServerMetadataController::class)
+            ->args([
+                service('router'),
+                service('event_dispatcher'),
+                null,
+                '',
+                [],
+                [],
+            ])
+            ->tag('controller.service_arguments')
+        ->alias(AuthorizationServerMetadataController::class, 'league.oauth2_server.controller.authorization_server_metadata')
 
         // Token controller
         ->set('league.oauth2_server.controller.token', TokenController::class)

@@ -53,4 +53,12 @@ final class OAuth2Events
      * You could add extra claims to the access token here.
      */
     public const ACCESS_TOKEN_EXTRA_CLAIMS_RESOLVE = 'league.oauth2_server.event.access_token_extra_claims_resolve';
+
+    /**
+     * The AUTHORIZATION_SERVER_METADATA event occurs right before the
+     * authorization server metadata document is served.
+     *
+     * You could add or alter fields of the document here.
+     */
+    public const AUTHORIZATION_SERVER_METADATA = 'league.oauth2_server.event.authorization_server_metadata';
 }

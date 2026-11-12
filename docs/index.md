@@ -96,6 +96,14 @@ For implementation into Symfony projects, please see [bundle documentation](basi
             # Whether to enable the visibility of polling interval
             enable_device_code_polling_interval_visibility: true
 
+            # Serves the authorization server metadata document (RFC 8414).
+            # The route is opt-in as well: import "@LeagueOAuth2ServerBundle/config/routes_metadata.php".
+            metadata:
+                enabled:              false
+
+                # The issuer identifier: an https URL without query or fragment. Required when the metadata are enabled.
+                issuer:               null # Example: https://auth.example.com
+
         resource_server:      # Required
 
             # Full path to the public key file
@@ -181,6 +189,7 @@ security:
 * [Listening to League OAuth Server events](listening-to-league-events.md)
 * [Password Grant Handling](password-grant-handling.md)
 * [Using custom persistence managers](using-custom-persistence-managers.md)
+* [Authorization server metadata](authorization-server-metadata.md)
 
 ## Contributing
 

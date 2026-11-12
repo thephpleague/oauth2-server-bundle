@@ -16,6 +16,7 @@ return static function (ContainerConfigurator $container): void {
             'enable_implicit_grant' => true,
             'enable_device_code_grant' => true,
             'access_token_ttl' => 'PT2H',
+            'metadata' => ['enabled' => true, 'issuer' => 'https://example.com/auth'],
         ],
         'resource_server' => ['public_key' => TestHelper::PUBLIC_KEY_PATH],
         'scopes' => [

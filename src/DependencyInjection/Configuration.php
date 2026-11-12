@@ -11,6 +11,7 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 final class Configuration implements ConfigurationInterface
 {
@@ -147,10 +148,62 @@ final class Configuration implements ConfigurationInterface
                     ->info('Whether to enable the visibility of polling interval')
                     ->defaultTrue()
                 ->end()
+                ->arrayNode('metadata')
+                    ->info("Serves the authorization server metadata document (RFC 8414).\nThe route is opt-in as well: import \"@LeagueOAuth2ServerBundle/config/routes_metadata.php\".")
+                    ->canBeEnabled()
+                    ->children()
+                        ->scalarNode('issuer')
+                            ->info("The issuer identifier: an https URL without query or fragment. Required when the metadata are enabled.\nIt must be a literal: the route path is built from it when the container is compiled, so a parameter or an environment variable cannot be used.")
+                            ->example('https://auth.example.com')
+                            ->defaultNull()
+                        ->end()
+                    ->end()
+                    ->validate()
+                        ->ifTrue(static fn (array $v): bool => $v['enabled'] && null !== self::issuerError($v['issuer']))
+                        ->then(static function (array $v): never {
+                            throw new InvalidConfigurationException((string) self::issuerError($v['issuer']));
+                        })
+                    ->end()
+                ->end()
             ->end()
         ;
 
         return $node;
+    }
+
+    private static function issuerError(mixed $issuer): ?string
+    {
+        $invalid = 'The "issuer" of the metadata must be an https URL with a valid host, without query, fragment, credentials, whitespace, "{" or "}" (http is only accepted for localhost, 127.0.0.1 and [::1]).';
+
+        if (!\is_string($issuer) || '' === $issuer) {
+            return 'The "issuer" of the metadata is required when they are enabled.';
+        }
+
+        if (str_contains($issuer, '%')) {
+            return 'The "issuer" of the metadata must be a literal URL: the route path is built from it when the container is compiled, so a parameter or an environment variable cannot be used.';
+        }
+
+        if (1 === preg_match('/[\s{}?#]/', $issuer) || false === $parts = parse_url($issuer)) {
+            return $invalid;
+        }
+
+        if (!isset($parts['scheme'], $parts['host']) || isset($parts['user']) || (isset($parts['port']) && $parts['port'] < 1)) {
+            return $invalid;
+        }
+
+        $scheme = strtolower($parts['scheme']);
+        $host = strtolower($parts['host']);
+
+        $isIpv6 = str_starts_with($host, '[') && str_ends_with($host, ']') && false !== filter_var(substr($host, 1, -1), \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV6);
+        if (!$isIpv6 && false === filter_var($host, \FILTER_VALIDATE_DOMAIN, \FILTER_FLAG_HOSTNAME)) {
+            return $invalid;
+        }
+
+        if ('https' === $scheme || ('http' === $scheme && \in_array($host, ['localhost', '127.0.0.1', '[::1]'], true))) {
+            return null;
+        }
+
+        return $invalid;
     }
 
     /**
