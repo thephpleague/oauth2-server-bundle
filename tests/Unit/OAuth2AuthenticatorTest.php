@@ -13,7 +13,7 @@ use League\Bundle\OAuth2ServerBundle\Security\User\ClientCredentialsUserFactoryI
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Nyholm\Psr7\ServerRequest;
-use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
@@ -137,7 +137,7 @@ final class OAuth2AuthenticatorTest extends TestCase
         $this->assertInstanceOf(ClientCredentialsUser::class, $passport->getUser());
     }
 
-    #[Group('legacy')]
+    #[IgnoreDeprecations]
     public function testAuthenticateCreatePassportWithoutClientCredentialsUserFactory(): void
     {
         $serverRequest = (new ServerRequest('GET', '/foo'))
