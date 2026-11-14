@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 
+use League\Bundle\OAuth2ServerBundle\Controller\AuthorizationServerMetadataController;
 use League\Bundle\OAuth2ServerBundle\DependencyInjection\LeagueOAuth2ServerExtension;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\ScopeManager;
 use League\OAuth2\Server\AuthorizationServer;
@@ -14,7 +15,9 @@ use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 
 final class ExtensionTest extends TestCase
 {
@@ -179,6 +182,187 @@ final class ExtensionTest extends TestCase
         $this->assertSame($shouldRevokeRefreshTokens, $revokeRefreshTokens);
     }
 
+    public function testTheMetadataAreOffByDefault(): void
+    {
+        $container = new ContainerBuilder();
+        $this->setupContainer($container);
+
+        (new LeagueOAuth2ServerExtension())->load($this->getValidConfiguration(), $container);
+
+        $this->assertSame('', $container->getParameter('league.oauth2_server.metadata.path'));
+        $this->assertNull($container->findDefinition(AuthorizationServerMetadataController::class)->getArgument(2));
+    }
+
+    #[DataProvider('issuerPathProvider')]
+    public function testTheRouteOfTheMetadataFollowsThePathOfTheIssuer(string $issuer, string $expectedPath, string $expectedOrigin): void
+    {
+        $container = new ContainerBuilder();
+        $this->setupContainer($container);
+
+        (new LeagueOAuth2ServerExtension())->load($this->getValidConfiguration(['metadata' => ['enabled' => true, 'issuer' => $issuer]]), $container);
+
+        $this->assertSame($expectedPath, $container->getParameter('league.oauth2_server.metadata.path'));
+        $this->assertSame($issuer, $container->findDefinition(AuthorizationServerMetadataController::class)->getArgument(2));
+        $this->assertSame($expectedOrigin, $container->findDefinition(AuthorizationServerMetadataController::class)->getArgument(3));
+    }
+
+    public static function issuerPathProvider(): iterable
+    {
+        yield 'without a path' => ['https://example.com', '', 'https://example.com'];
+        yield 'with a trailing slash only' => ['https://example.com/', '', 'https://example.com'];
+        yield 'with a path' => ['https://example.com/auth', '/auth', 'https://example.com'];
+        yield 'with a nested path' => ['https://example.com/admin/mcp/', '/admin/mcp', 'https://example.com'];
+        yield 'with a port' => ['https://example.com:8443/auth', '/auth', 'https://example.com:8443'];
+        yield 'on localhost over http' => ['http://localhost:8000', '', 'http://localhost:8000'];
+        yield 'on 127.0.0.1 over http' => ['http://127.0.0.1:8000', '', 'http://127.0.0.1:8000'];
+        yield 'on an IPv6 loopback over http' => ['http://[::1]:8000', '', 'http://[::1]:8000'];
+        yield 'on an IPv6 host' => ['https://[2001:db8::1]:8443/auth', '/auth', 'https://[2001:db8::1]:8443'];
+        yield 'with upper case scheme and host' => ['HTTPS://Example.COM/auth', '/auth', 'https://example.com'];
+    }
+
+    #[DataProvider('invalidIssuerProvider')]
+    public function testInvalidIssuersAreRejected(?string $issuer): void
+    {
+        $container = new ContainerBuilder();
+        $this->setupContainer($container);
+
+        $this->expectException(InvalidConfigurationException::class);
+
+        (new LeagueOAuth2ServerExtension())->load($this->getValidConfiguration(['metadata' => ['enabled' => true, 'issuer' => $issuer]]), $container);
+    }
+
+    public static function invalidIssuerProvider(): iterable
+    {
+        yield 'missing' => [null];
+        yield 'empty' => [''];
+        yield 'not a url' => ['example.com'];
+        yield 'plain http' => ['http://example.com'];
+        yield 'with a query' => ['https://example.com/auth?tenant=1'];
+        yield 'with a fragment' => ['https://example.com/auth#top'];
+        yield 'with credentials' => ['https://user@example.com'];
+        yield 'with a space in the host' => ['https://exa mple.com'];
+        yield 'with a trailing line break' => ["https://example.com\n"];
+        yield 'with a wildcard host' => ['https://*.example.com'];
+        yield 'with port zero' => ['https://example.com:0'];
+        yield 'with a space in the path' => ['https://example.com/a b'];
+        yield 'with a placeholder in the path' => ['https://example.com/{tenant}'];
+        yield 'with an encoded slash in the path' => ['https://example.com/a%2Fb'];
+        yield 'with plain http on an upper case host' => ['http://EXAMPLE.com'];
+    }
+
+    #[DataProvider('placeholderIssuerProvider')]
+    public function testAParameterOrEnvironmentVariableAsIssuerSaysWhyItIsRejected(string $issuer): void
+    {
+        $container = new ContainerBuilder();
+        $this->setupContainer($container);
+
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('must be a literal URL');
+
+        (new LeagueOAuth2ServerExtension())->load($this->getValidConfiguration(['metadata' => ['enabled' => true, 'issuer' => $issuer]]), $container);
+    }
+
+    public static function placeholderIssuerProvider(): iterable
+    {
+        yield 'an environment variable' => ['%env(OAUTH_ISSUER)%'];
+        yield 'a parameter' => ['https://%app.host%'];
+    }
+
+    public function testTheMetadataNeedNoIssuerWhileTheyAreOff(): void
+    {
+        $container = new ContainerBuilder();
+        $this->setupContainer($container);
+
+        (new LeagueOAuth2ServerExtension())->load($this->getValidConfiguration(['metadata' => ['enabled' => false, 'issuer' => '%env(OAUTH_ISSUER)%']]), $container);
+
+        $this->assertNull($container->findDefinition(AuthorizationServerMetadataController::class)->getArgument(2));
+    }
+
+    public function testTheMetadataControllerIsDroppedWhenTheApplicationHasNoRouter(): void
+    {
+        $container = $this->containerForProcessing();
+
+        (new LeagueOAuth2ServerExtension())->process($container);
+
+        $this->assertFalse($container->has(AuthorizationServerMetadataController::class));
+        $this->assertFalse($container->hasDefinition('league.oauth2_server.controller.authorization_server_metadata'));
+    }
+
+    public function testTheMetadataControllerIsKeptWhenTheApplicationHasARouter(): void
+    {
+        $container = $this->containerForProcessing();
+        $container->register('router');
+
+        (new LeagueOAuth2ServerExtension())->process($container);
+
+        $this->assertTrue($container->hasDefinition('league.oauth2_server.controller.authorization_server_metadata'));
+        $this->assertTrue($container->hasAlias(AuthorizationServerMetadataController::class));
+    }
+
+    private function containerForProcessing(): ContainerBuilder
+    {
+        $container = new ContainerBuilder();
+        $this->setupContainer($container);
+        $container->registerExtension(new class extends Extension {
+            public function load(array $configs, ContainerBuilder $container): void
+            {
+            }
+
+            public function getAlias(): string
+            {
+                return 'security';
+            }
+        });
+
+        (new LeagueOAuth2ServerExtension())->load($this->getValidConfiguration(), $container);
+
+        return $container;
+    }
+
+    /**
+     * @param list<string> $expected
+     */
+    #[DataProvider('authMethodsProvider')]
+    public function testTheClientAuthenticationMethodsFollowTheEnabledGrants(array $options, ?array $expected): void
+    {
+        $container = new ContainerBuilder();
+        $this->setupContainer($container);
+
+        $configuration = $this->getValidConfiguration($options + ['metadata' => ['enabled' => true, 'issuer' => 'https://example.com']]);
+        $configuration[0]['authorization_server']['enable_auth_code_grant'] = $options['enable_auth_code_grant'] ?? true;
+
+        (new LeagueOAuth2ServerExtension())->load($configuration, $container);
+
+        $metadata = $container->findDefinition(AuthorizationServerMetadataController::class)->getArgument(4);
+
+        $this->assertSame($expected, $metadata['token_endpoint_auth_methods_supported'] ?? null);
+    }
+
+    public static function authMethodsProvider(): iterable
+    {
+        yield 'with the authorization code grant' => [[], ['client_secret_basic', 'client_secret_post', 'none']];
+        yield 'with client credentials only' => [['enable_auth_code_grant' => false, 'enable_refresh_token_grant' => false], ['client_secret_basic', 'client_secret_post']];
+        yield 'with the implicit grant only' => [['enable_auth_code_grant' => false, 'enable_refresh_token_grant' => false, 'enable_client_credentials_grant' => false, 'enable_implicit_grant' => true], null];
+    }
+
+    public function testTheMetadataOnlyOfferTheEndpointsOfTheEnabledGrants(): void
+    {
+        $container = new ContainerBuilder();
+        $this->setupContainer($container);
+
+        $configuration = $this->getValidConfiguration(['enable_refresh_token_grant' => false, 'metadata' => ['enabled' => true, 'issuer' => 'https://example.com']]);
+        $configuration[0]['authorization_server']['enable_auth_code_grant'] = false;
+
+        (new LeagueOAuth2ServerExtension())->load($configuration, $container);
+
+        $definition = $container->findDefinition(AuthorizationServerMetadataController::class);
+
+        $this->assertSame(['token_endpoint' => 'oauth2_token'], $definition->getArgument(5));
+        $this->assertSame(['client_credentials'], $definition->getArgument(4)['grant_types_supported']);
+        $this->assertSame([], $definition->getArgument(4)['response_types_supported']);
+        $this->assertArrayNotHasKey('code_challenge_methods_supported', $definition->getArgument(4));
+    }
+
     public static function scopeProvider(): iterable
     {
         yield 'when a default scope is part of available scopes' => [
@@ -207,7 +391,7 @@ final class ExtensionTest extends TestCase
                     'enable_refresh_token_grant' => $options['enable_refresh_token_grant'] ?? true,
                     'enable_device_code_grant' => $options['enable_device_code_grant'] ?? false,
                     'revoke_refresh_tokens' => $options['revoke_refresh_tokens'] ?? true,
-                ],
+                ] + (isset($options['metadata']) ? ['metadata' => $options['metadata']] : []),
                 'resource_server' => [
                     'public_key' => 'foo',
                 ],

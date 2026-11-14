@@ -8,6 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use League\Bundle\OAuth2ServerBundle\Command\ClearExpiredTokensCommand;
 use League\Bundle\OAuth2ServerBundle\Command\CreateClientCommand;
 use League\Bundle\OAuth2ServerBundle\Command\GenerateKeyPairCommand;
+use League\Bundle\OAuth2ServerBundle\Controller\AuthorizationServerMetadataController;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Grant as GrantType;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\RedirectUri as RedirectUriType;
 use League\Bundle\OAuth2ServerBundle\DBAL\Type\Scope as ScopeType;
@@ -23,6 +24,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AccessTokenManager as InMemoryAccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
+use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 use League\Bundle\OAuth2ServerBundle\Persistence\Mapping\Driver;
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker;
@@ -51,6 +53,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class LeagueOAuth2ServerExtension extends Extension implements PrependExtensionInterface, CompilerPassInterface
 {
+    private const DEVICE_CODE_GRANT = 'urn:ietf:params:oauth:grant-type:device_code';
+
     /**
      * @throws \Exception
      */
@@ -64,6 +68,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $this->configureAccessTokenSaving($loader, $config['authorization_server']);
         $this->configurePersistence($loader, $container, $config);
         $this->configureAuthorizationServer($container, $config['authorization_server']);
+        $this->configureMetadata($container, $config['authorization_server'], $config['scopes']['available']);
         $this->configureResourceServer($container, $config['resource_server']);
         $this->configureScopes($container, $config['scopes']);
 
@@ -117,6 +122,12 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     public function process(ContainerBuilder $container): void
     {
         $this->assertRequiredBundlesAreEnabled($container);
+
+        // The metadata endpoint is opt-in: an application without a router must still compile
+        if (!$container->has('router')) {
+            $container->removeAlias(AuthorizationServerMetadataController::class);
+            $container->removeDefinition('league.oauth2_server.controller.authorization_server_metadata');
+        }
     }
 
     /**
@@ -148,6 +159,68 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
                 throw new \LogicException(\sprintf('Bundle \'%s\' needs to be enabled in your application kernel.', $requiredBundle));
             }
         }
+    }
+
+    /**
+     * @param mixed[] $config
+     * @param string[] $availableScopes
+     */
+    private function configureMetadata(ContainerBuilder $container, array $config, array $availableScopes): void
+    {
+        $issuer = $config['metadata']['enabled'] ? $config['metadata']['issuer'] : null;
+
+        // The configuration validated the issuer
+        $parts = null === $issuer ? [] : (array) parse_url($issuer);
+
+        // RFC 8414 section 3.1: the well-known segment goes between the host and the path of the issuer
+        $container->setParameter('league.oauth2_server.metadata.path', rtrim($parts['path'] ?? '', '/'));
+
+        $grants = array_keys(array_filter([
+            OAuth2Grants::AUTHORIZATION_CODE => $config['enable_auth_code_grant'],
+            OAuth2Grants::CLIENT_CREDENTIALS => $config['enable_client_credentials_grant'],
+            OAuth2Grants::IMPLICIT => $config['enable_implicit_grant'],
+            OAuth2Grants::PASSWORD => $config['enable_password_grant'],
+            OAuth2Grants::REFRESH_TOKEN => $config['enable_refresh_token_grant'],
+            self::DEVICE_CODE_GRANT => $config['enable_device_code_grant'],
+        ]));
+
+        $authorizationEndpoint = $config['enable_auth_code_grant'] || $config['enable_implicit_grant'];
+        $tokenEndpoint = [] !== array_diff($grants, [OAuth2Grants::IMPLICIT]);
+
+        $metadata = [
+            'response_types_supported' => array_values(array_filter([
+                $config['enable_auth_code_grant'] ? 'code' : null,
+                $config['enable_implicit_grant'] ? 'token' : null,
+            ])),
+            'grant_types_supported' => $grants,
+            'scopes_supported' => $availableScopes,
+        ];
+
+        if ($tokenEndpoint) {
+            $metadata['token_endpoint_auth_methods_supported'] = ['client_secret_basic', 'client_secret_post'];
+
+            // The client credentials grant refuses public clients, every other grant at the token endpoint accepts them
+            if ([] !== array_diff($grants, [OAuth2Grants::IMPLICIT, OAuth2Grants::CLIENT_CREDENTIALS])) {
+                $metadata['token_endpoint_auth_methods_supported'][] = 'none';
+            }
+        }
+
+        if ($config['enable_auth_code_grant']) {
+            $metadata['code_challenge_methods_supported'] = ['S256'];
+        }
+
+        $endpoints = array_filter([
+            'authorization_endpoint' => $authorizationEndpoint ? 'oauth2_authorize' : null,
+            'token_endpoint' => $tokenEndpoint ? 'oauth2_token' : null,
+            'device_authorization_endpoint' => $config['enable_device_code_grant'] ? 'oauth2_device_code' : null,
+        ]);
+
+        $container->findDefinition(AuthorizationServerMetadataController::class)
+            ->replaceArgument(2, $issuer)
+            ->replaceArgument(3, null === $issuer ? '' : \sprintf('%s://%s%s', strtolower($parts['scheme'] ?? ''), strtolower($parts['host'] ?? ''), isset($parts['port']) ? ':' . $parts['port'] : ''))
+            ->replaceArgument(4, $metadata)
+            ->replaceArgument(5, $endpoints)
+        ;
     }
 
     /**

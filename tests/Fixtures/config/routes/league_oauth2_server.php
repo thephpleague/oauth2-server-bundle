@@ -6,4 +6,5 @@ use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 return static function (RoutingConfigurator $routes): void {
     $routes->import('@LeagueOAuth2ServerBundle/config/routes.php');
+    $routes->import('@LeagueOAuth2ServerBundle/config/routes_metadata.php');
 };
