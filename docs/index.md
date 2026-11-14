@@ -132,6 +132,9 @@ For implementation into Symfony projects, please see [bundle documentation](basi
         client:
             # Set a custom client class. Must be a League\Bundle\OAuth2ServerBundle\Model\Client
             classname:        League\Bundle\OAuth2ServerBundle\Model\Client
+
+            # Make the client identifier column 255 instead of 32 characters long. See client-identifier-length.md.
+            allow_long_identifier: false
     ```
 
 1. Enable the bundle in `config/bundles.php` by adding it to the array:
@@ -179,6 +182,7 @@ security:
 * [Implementing custom grant type](implementing-custom-grant-type.md)
 * [Using custom client](using-custom-client.md)
 * [Using custom client credentials user](using-custom-client-credentials-user.md)
+* [Longer client identifiers](client-identifier-length.md)
 * [Listening to League OAuth Server events](listening-to-league-events.md)
 * [Password Grant Handling](password-grant-handling.md)
 * [Using custom persistence managers](using-custom-persistence-managers.md)

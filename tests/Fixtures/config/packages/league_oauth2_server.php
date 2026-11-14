@@ -27,6 +27,7 @@ return static function (ContainerConfigurator $container): void {
                 FixtureFactory::FIXTURE_SCOPE_SECOND,
             ],
         ],
+        'client' => ['allow_long_identifier' => true],
         'persistence' => [
             'doctrine' => [
                 'entity_manager' => 'default',
