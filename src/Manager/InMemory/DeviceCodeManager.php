@@ -6,9 +6,12 @@ namespace League\Bundle\OAuth2ServerBundle\Manager\InMemory;
 
 use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\DeviceCodeInterface;
+use Symfony\Component\Clock\ClockAwareTrait;
 
 final class DeviceCodeManager implements DeviceCodeManagerInterface
 {
+    use ClockAwareTrait;
+
     /**
      * @var array<string, DeviceCodeInterface>
      */
@@ -39,7 +42,7 @@ final class DeviceCodeManager implements DeviceCodeManagerInterface
     {
         $count = \count($this->deviceCodes);
 
-        $expiry = (new \DateTimeImmutable());
+        $expiry = $this->now();
         if ($expireCleanupDelay) {
             $expiry = $expiry->sub($expireCleanupDelay);
         }

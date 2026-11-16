@@ -10,15 +10,18 @@ use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
 final class AccessTokenEntityTest extends TestCase
 {
+    use ClockSensitiveTrait;
+
     public function testExtraClaimsToJwtClaims(): void
     {
         $accessToken = new AccessToken(['foo' => 'bar', 'baz' => ['qux', 'quux']]);
         $accessToken->setClient($this->createStub(ClientEntityInterface::class));
         $accessToken->setIdentifier('test-access-token');
-        $accessToken->setExpiryDateTime(new \DateTimeImmutable('+1 hour'));
+        $accessToken->setExpiryDateTime(static::mockTime(true)->now()->modify('+1 hour'));
         $accessToken->setPrivateKey(new CryptKey(file_get_contents(__DIR__ . '/../Fixtures/private.key')));
 
         $token = TestHelper::parseJwtToken($accessToken->toString());
@@ -35,7 +38,7 @@ final class AccessTokenEntityTest extends TestCase
         $accessToken = new AccessToken([$claim => 'foobar']);
         $accessToken->setClient($this->createStub(ClientEntityInterface::class));
         $accessToken->setIdentifier('test-access-token');
-        $accessToken->setExpiryDateTime(new \DateTimeImmutable('+1 hour'));
+        $accessToken->setExpiryDateTime(static::mockTime(true)->now()->modify('+1 hour'));
         $accessToken->setPrivateKey(new CryptKey(file_get_contents(__DIR__ . '/../Fixtures/private.key')));
 
         $accessToken->toString();

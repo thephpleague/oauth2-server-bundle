@@ -9,8 +9,11 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\RefreshTokenManager as Doc
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
+use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use Symfony\Component\Clock\ClockInterface;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
 /**
  * @TODO This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
@@ -18,6 +21,16 @@ use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 #[CoversClass(DoctrineRefreshTokenManager::class)]
 final class DoctrineRefreshTokenManagerTest extends AbstractAcceptanceTestCase
 {
+    use ClockSensitiveTrait;
+
+    private ClockInterface $clock;
+
+    #[Before]
+    protected function setMockClock(): void
+    {
+        $this->clock = static::mockTime(true);
+    }
+
     public function testClearExpiredTokens(): void
     {
         /** @var EntityManagerInterface $em */
@@ -126,10 +139,10 @@ final class DoctrineRefreshTokenManagerTest extends AbstractAcceptanceTestCase
     {
         return new RefreshToken(
             $identifier,
-            new \DateTimeImmutable($modify),
+            $this->clock->now()->modify($modify),
             new AccessToken(
                 $identifier,
-                new \DateTimeImmutable('+1 day'),
+                $this->clock->now()->modify('+1 day'),
                 $client,
                 null,
                 []

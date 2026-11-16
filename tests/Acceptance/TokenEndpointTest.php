@@ -18,9 +18,12 @@ use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
 use League\OAuth2\Server\RequestAccessTokenEvent;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestRefreshTokenEvent;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
 final class TokenEndpointTest extends AbstractAcceptanceTestCase
 {
+    use ClockSensitiveTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -31,7 +34,8 @@ final class TokenEndpointTest extends AbstractAcceptanceTestCase
             $this->client->getContainer()->get(AccessTokenManagerInterface::class),
             $this->client->getContainer()->get(RefreshTokenManagerInterface::class),
             $this->client->getContainer()->get(AuthorizationCodeManagerInterface::class),
-            $this->client->getContainer()->get(DeviceCodeManagerInterface::class)
+            $this->client->getContainer()->get(DeviceCodeManagerInterface::class),
+            static::mockTime(true),
         );
     }
 

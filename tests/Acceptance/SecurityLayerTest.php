@@ -14,10 +14,13 @@ use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Security\User\ClientCredentialsUserFactoryInterface;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 final class SecurityLayerTest extends AbstractAcceptanceTestCase
 {
+    use ClockSensitiveTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,7 +31,8 @@ final class SecurityLayerTest extends AbstractAcceptanceTestCase
             $this->client->getContainer()->get(AccessTokenManagerInterface::class),
             $this->client->getContainer()->get(RefreshTokenManagerInterface::class),
             $this->client->getContainer()->get(AuthorizationCodeManagerInterface::class),
-            $this->client->getContainer()->get(DeviceCodeManagerInterface::class)
+            $this->client->getContainer()->get(DeviceCodeManagerInterface::class),
+            static::mockTime(true),
         );
     }
 

@@ -9,9 +9,12 @@ use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\AccessTokenInterface;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
+use Symfony\Component\Clock\ClockAwareTrait;
 
 final readonly class AccessTokenManager implements AccessTokenManagerInterface
 {
+    use ClockAwareTrait;
+
     public function __construct(
         private EntityManagerInterface $entityManager,
         private bool $persistAccessToken,
@@ -43,7 +46,7 @@ final readonly class AccessTokenManager implements AccessTokenManagerInterface
             return 0;
         }
 
-        $expiry = (new \DateTimeImmutable());
+        $expiry = $this->now();
         if ($expireCleanupDelay) {
             $expiry = $expiry->sub($expireCleanupDelay);
         }

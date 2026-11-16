@@ -8,16 +8,19 @@ use League\Bundle\OAuth2ServerBundle\Converter\ScopeConverter;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Repository\AuthCodeRepository;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
 final class AuthCodeRepositoryTest extends AbstractIntegrationTestCase
 {
+    use ClockSensitiveTrait;
+
     public function testAuthCodeRevoking(): void
     {
         $identifier = 'foo';
 
         $authCode = new AuthorizationCode(
             $identifier,
-            new \DateTimeImmutable(),
+            static::mockTime(true)->now(),
             new Client('bar', 'baz', 'qux'),
             null,
             []

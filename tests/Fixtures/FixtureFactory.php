@@ -19,6 +19,7 @@ use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\Security\User;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
+use Psr\Clock\ClockInterface;
 
 /**
  * Development hints:
@@ -88,6 +89,7 @@ final class FixtureFactory
         RefreshTokenManagerInterface $refreshTokenManager,
         AuthorizationCodeManagerInterface $authCodeManager,
         DeviceCodeManagerInterface $deviceCodeManager,
+        ClockInterface $clock,
     ): void {
         foreach (self::createScopes() as $scope) {
             $scopeManager->save($scope);
@@ -97,19 +99,19 @@ final class FixtureFactory
             $clientManager->save($client);
         }
 
-        foreach (self::createAccessTokens($scopeManager, $clientManager) as $accessToken) {
+        foreach (self::createAccessTokens($scopeManager, $clientManager, $clock) as $accessToken) {
             $accessTokenManager->save($accessToken);
         }
 
-        foreach (self::createRefreshTokens($accessTokenManager) as $refreshToken) {
+        foreach (self::createRefreshTokens($accessTokenManager, $clock) as $refreshToken) {
             $refreshTokenManager->save($refreshToken);
         }
 
-        foreach (self::createAuthorizationCodes($clientManager) as $authorizationCode) {
+        foreach (self::createAuthorizationCodes($clientManager, $clock) as $authorizationCode) {
             $authCodeManager->save($authorizationCode);
         }
 
-        foreach (self::createDeviceCodes($clientManager) as $deviceCode) {
+        foreach (self::createDeviceCodes($clientManager, $clock) as $deviceCode) {
             $deviceCodeManager->save($deviceCode);
         }
     }
@@ -117,13 +119,13 @@ final class FixtureFactory
     /**
      * @return AccessToken[]
      */
-    private static function createAccessTokens(ScopeManagerInterface $scopeManager, ClientManagerInterface $clientManager): array
+    private static function createAccessTokens(ScopeManagerInterface $scopeManager, ClientManagerInterface $clientManager, ClockInterface $clock): array
     {
         $accessTokens = [];
 
         $accessTokens[] = (new AccessToken(
             self::FIXTURE_ACCESS_TOKEN_USER_BOUND,
-            new \DateTimeImmutable('+1 hour'),
+            $clock->now()->modify('+1 hour'),
             $clientManager->find(self::FIXTURE_CLIENT_FIRST),
             self::FIXTURE_USER,
             []
@@ -131,7 +133,7 @@ final class FixtureFactory
 
         $accessTokens[] = (new AccessToken(
             self::FIXTURE_ACCESS_TOKEN_DIFFERENT_CLIENT,
-            new \DateTimeImmutable('+1 hour'),
+            $clock->now()->modify('+1 hour'),
             $clientManager->find(self::FIXTURE_CLIENT_SECOND),
             self::FIXTURE_USER,
             []
@@ -139,7 +141,7 @@ final class FixtureFactory
 
         $accessTokens[] = (new AccessToken(
             self::FIXTURE_ACCESS_TOKEN_EXPIRED,
-            new \DateTimeImmutable('-1 hour'),
+            $clock->now()->modify('-1 hour'),
             $clientManager->find(self::FIXTURE_CLIENT_FIRST),
             self::FIXTURE_USER,
             []
@@ -147,7 +149,7 @@ final class FixtureFactory
 
         $accessTokens[] = (new AccessToken(
             self::FIXTURE_ACCESS_TOKEN_REVOKED,
-            new \DateTimeImmutable('+1 hour'),
+            $clock->now()->modify('+1 hour'),
             $clientManager->find(self::FIXTURE_CLIENT_FIRST),
             self::FIXTURE_USER,
             []
@@ -156,7 +158,7 @@ final class FixtureFactory
 
         $accessTokens[] = new AccessToken(
             self::FIXTURE_ACCESS_TOKEN_PUBLIC,
-            new \DateTimeImmutable('+1 hour'),
+            $clock->now()->modify('+1 hour'),
             $clientManager->find(self::FIXTURE_CLIENT_FIRST),
             self::FIXTURE_CLIENT_FIRST,
             []
@@ -164,7 +166,7 @@ final class FixtureFactory
 
         $accessTokens[] = (new AccessToken(
             self::FIXTURE_ACCESS_TOKEN_WITH_SCOPES,
-            new \DateTimeImmutable('+1 hour'),
+            $clock->now()->modify('+1 hour'),
             $clientManager->find(self::FIXTURE_CLIENT_FIRST),
             self::FIXTURE_CLIENT_FIRST,
             [$scopeManager->find(self::FIXTURE_SCOPE_FIRST)]
@@ -172,7 +174,7 @@ final class FixtureFactory
 
         $accessTokens[] = (new AccessToken(
             self::FIXTURE_ACCESS_TOKEN_USER_BOUND_WITH_SCOPES,
-            new \DateTimeImmutable('+1 hour'),
+            $clock->now()->modify('+1 hour'),
             $clientManager->find(self::FIXTURE_CLIENT_FIRST),
             self::FIXTURE_USER,
             [$scopeManager->find(self::FIXTURE_SCOPE_FIRST)]
@@ -184,38 +186,38 @@ final class FixtureFactory
     /**
      * @return RefreshToken[]
      */
-    private static function createRefreshTokens(AccessTokenManagerInterface $accessTokenManager): array
+    private static function createRefreshTokens(AccessTokenManagerInterface $accessTokenManager, ClockInterface $clock): array
     {
         $refreshTokens = [];
 
         $refreshTokens[] = new RefreshToken(
             self::FIXTURE_REFRESH_TOKEN,
-            new \DateTimeImmutable('+1 month'),
+            $clock->now()->modify('+1 month'),
             $accessTokenManager->find(self::FIXTURE_ACCESS_TOKEN_USER_BOUND)
         );
 
         $refreshTokens[] = new RefreshToken(
             self::FIXTURE_REFRESH_TOKEN_DIFFERENT_CLIENT,
-            new \DateTimeImmutable('+1 month'),
+            $clock->now()->modify('+1 month'),
             $accessTokenManager->find(self::FIXTURE_ACCESS_TOKEN_DIFFERENT_CLIENT)
         );
 
         $refreshTokens[] = new RefreshToken(
             self::FIXTURE_REFRESH_TOKEN_EXPIRED,
-            new \DateTimeImmutable('-1 month'),
+            $clock->now()->modify('-1 month'),
             $accessTokenManager->find(self::FIXTURE_ACCESS_TOKEN_EXPIRED)
         );
 
         $refreshTokens[] = (new RefreshToken(
             self::FIXTURE_REFRESH_TOKEN_REVOKED,
-            new \DateTimeImmutable('+1 month'),
+            $clock->now()->modify('+1 month'),
             $accessTokenManager->find(self::FIXTURE_ACCESS_TOKEN_REVOKED)
         ))
             ->revoke();
 
         $refreshTokens[] = new RefreshToken(
             self::FIXTURE_REFRESH_TOKEN_WITH_SCOPES,
-            new \DateTimeImmutable('+1 month'),
+            $clock->now()->modify('+1 month'),
             $accessTokenManager->find(self::FIXTURE_ACCESS_TOKEN_USER_BOUND_WITH_SCOPES)
         );
 
@@ -225,13 +227,13 @@ final class FixtureFactory
     /**
      * @return AuthorizationCode[]
      */
-    public static function createAuthorizationCodes(ClientManagerInterface $clientManager): array
+    public static function createAuthorizationCodes(ClientManagerInterface $clientManager, ClockInterface $clock): array
     {
         $authorizationCodes = [];
 
         $authorizationCodes[] = new AuthorizationCode(
             self::FIXTURE_AUTH_CODE,
-            new \DateTimeImmutable('+2 minute'),
+            $clock->now()->modify('+2 minute'),
             $clientManager->find(self::FIXTURE_CLIENT_FIRST),
             self::FIXTURE_USER,
             []
@@ -239,7 +241,7 @@ final class FixtureFactory
 
         $authorizationCodes[] = new AuthorizationCode(
             self::FIXTURE_AUTH_CODE_PUBLIC_CLIENT,
-            new \DateTimeImmutable('+2 minute'),
+            $clock->now()->modify('+2 minute'),
             $clientManager->find(self::FIXTURE_PUBLIC_CLIENT),
             self::FIXTURE_USER,
             []
@@ -247,7 +249,7 @@ final class FixtureFactory
 
         $authorizationCodes[] = new AuthorizationCode(
             self::FIXTURE_AUTH_CODE_DIFFERENT_CLIENT,
-            new \DateTimeImmutable('+2 minute'),
+            $clock->now()->modify('+2 minute'),
             $clientManager->find(self::FIXTURE_CLIENT_SECOND),
             self::FIXTURE_USER,
             []
@@ -255,7 +257,7 @@ final class FixtureFactory
 
         $authorizationCodes[] = new AuthorizationCode(
             self::FIXTURE_AUTH_CODE_EXPIRED,
-            new \DateTimeImmutable('-30 minute'),
+            $clock->now()->modify('-30 minute'),
             $clientManager->find(self::FIXTURE_CLIENT_FIRST),
             self::FIXTURE_USER,
             []
@@ -267,13 +269,13 @@ final class FixtureFactory
     /**
      * @return DeviceCode[]
      */
-    public static function createDeviceCodes(ClientManagerInterface $clientManager): array
+    public static function createDeviceCodes(ClientManagerInterface $clientManager, ClockInterface $clock): array
     {
         $deviceCodes = [];
 
         $deviceCodes[] = new DeviceCode(
             self::FIXTURE_DEVICE_CODE,
-            new \DateTimeImmutable('+10 minute'),
+            $clock->now()->modify('+10 minute'),
             $clientManager->find(self::FIXTURE_CLIENT_FIRST),
             null,
             [],
@@ -286,7 +288,7 @@ final class FixtureFactory
 
         $deviceCodes[] = new DeviceCode(
             self::FIXTURE_DEVICE_CODE_PUBLIC_CLIENT,
-            new \DateTimeImmutable('+10 minute'),
+            $clock->now()->modify('+10 minute'),
             $clientManager->find(self::FIXTURE_PUBLIC_CLIENT),
             null,
             [],
@@ -299,7 +301,7 @@ final class FixtureFactory
 
         $deviceCodes[] = new DeviceCode(
             self::FIXTURE_DEVICE_CODE_APPROVED,
-            new \DateTimeImmutable('+10 minute'),
+            $clock->now()->modify('+10 minute'),
             $clientManager->find(self::FIXTURE_CLIENT_SECOND),
             self::FIXTURE_USER,
             [],
@@ -312,7 +314,7 @@ final class FixtureFactory
 
         $deviceCodes[] = new DeviceCode(
             self::FIXTURE_DEVICE_CODE_EXPIRED,
-            new \DateTimeImmutable('-30 minute'),
+            $clock->now()->modify('-30 minute'),
             $clientManager->find(self::FIXTURE_CLIENT_FIRST),
             null,
             [],

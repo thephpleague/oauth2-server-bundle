@@ -10,11 +10,12 @@ use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
-use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
-#[Group('time-sensitive')]
 final class AuthorizationServerTest extends AbstractIntegrationTestCase
 {
+    use ClockSensitiveTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -25,7 +26,8 @@ final class AuthorizationServerTest extends AbstractIntegrationTestCase
             $this->accessTokenManager,
             $this->refreshTokenManager,
             $this->authCodeManager,
-            $this->deviceCodeManager
+            $this->deviceCodeManager,
+            static::mockTime(true),
         );
     }
 

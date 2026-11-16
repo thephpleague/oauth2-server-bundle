@@ -11,9 +11,12 @@ use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\ScopeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
 final class DeviceCodeEndpointTest extends AbstractAcceptanceTestCase
 {
+    use ClockSensitiveTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -24,7 +27,8 @@ final class DeviceCodeEndpointTest extends AbstractAcceptanceTestCase
             $this->client->getContainer()->get(AccessTokenManagerInterface::class),
             $this->client->getContainer()->get(RefreshTokenManagerInterface::class),
             $this->client->getContainer()->get(AuthorizationCodeManagerInterface::class),
-            $this->client->getContainer()->get(DeviceCodeManagerInterface::class)
+            $this->client->getContainer()->get(DeviceCodeManagerInterface::class),
+            static::mockTime(true),
         );
     }
 

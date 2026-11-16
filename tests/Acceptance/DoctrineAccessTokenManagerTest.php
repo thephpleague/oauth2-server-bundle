@@ -9,8 +9,11 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager as Doct
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
+use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use Symfony\Component\Clock\ClockInterface;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
 /**
  * @TODO This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
@@ -18,6 +21,16 @@ use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 #[CoversClass(DoctrineAccessTokenManager::class)]
 final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTestCase
 {
+    use ClockSensitiveTrait;
+
+    private ClockInterface $clock;
+
+    #[Before]
+    protected function setMockClock(): void
+    {
+        $this->clock = static::mockTime(true);
+    }
+
     public function testClearExpiredTokens(): void
     {
         /** @var EntityManagerInterface $em */
@@ -197,7 +210,7 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTestCase
     {
         return new AccessToken(
             $identifier,
-            new \DateTimeImmutable($modify),
+            $this->clock->now()->modify($modify),
             $client,
             null,
             []
@@ -369,7 +382,7 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTestCase
         if ($withAccessToken) {
             $accessToken = new AccessToken(
                 $identifier,
-                new \DateTimeImmutable($modify),
+                $this->clock->now()->modify($modify),
                 $client,
                 null,
                 []
@@ -378,7 +391,7 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTestCase
 
         return new RefreshToken(
             $identifier,
-            new \DateTimeImmutable('+1 day'),
+            $this->clock->now()->modify('+1 day'),
             $accessToken
         );
     }

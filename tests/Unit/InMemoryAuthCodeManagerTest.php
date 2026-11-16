@@ -7,11 +7,24 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AuthorizationCodeManager as InMemoryAuthCodeManager;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Clock\ClockInterface;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
 final class InMemoryAuthCodeManagerTest extends TestCase
 {
+    use ClockSensitiveTrait;
+
+    private ClockInterface $clock;
+
+    #[Before]
+    protected function setMockClock(): void
+    {
+        $this->clock = static::mockTime(true);
+    }
+
     public function testClearExpiredTokens(): void
     {
         $inMemoryAuthCodeManager = new InMemoryAuthCodeManager();
@@ -88,7 +101,7 @@ final class InMemoryAuthCodeManagerTest extends TestCase
     {
         return new AuthorizationCode(
             $identifier,
-            new \DateTimeImmutable($modify),
+            $this->clock->now()->modify($modify),
             new Client('name', 'identifier', 'secret'),
             null,
             []

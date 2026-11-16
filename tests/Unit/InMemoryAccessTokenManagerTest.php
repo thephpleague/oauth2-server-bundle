@@ -7,13 +7,24 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Unit;
 use League\Bundle\OAuth2ServerBundle\Manager\InMemory\AccessTokenManager as InMemoryAccessTokenManager;
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
-use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Clock\ClockInterface;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
-#[Group('time-sensitive')]
 final class InMemoryAccessTokenManagerTest extends TestCase
 {
+    use ClockSensitiveTrait;
+
+    private ClockInterface $clock;
+
+    #[Before]
+    protected function setMockClock(): void
+    {
+        $this->clock = static::mockTime(true);
+    }
+
     public function testClearExpiredTokens(): void
     {
         $inMemoryAccessTokenManager = new InMemoryAccessTokenManager(true);
@@ -123,7 +134,7 @@ final class InMemoryAccessTokenManagerTest extends TestCase
     {
         return new AccessToken(
             $identifier,
-            new \DateTimeImmutable($modify),
+            $this->clock->now()->modify($modify),
             new Client('name', 'identifier', 'secret'),
             null,
             []
