@@ -59,7 +59,7 @@ jobs:
                 dependency-versions: "${{ matrix.dependency-versions }}"
 
             - name: "run unit tests"
-              run: "vendor/bin/simple-phpunit"
+              run: "vendor/bin/phpunit"
 
 
     # This is a "trick", a meta task which does not change, and we can use in

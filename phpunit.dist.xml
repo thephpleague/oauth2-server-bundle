@@ -11,7 +11,6 @@
 >
     <php>
         <server name="KERNEL_CLASS" value="League\Bundle\OAuth2ServerBundle\Tests\Fixtures\TestKernel"/>
-        <env name="SYMFONY_PHPUNIT_VERSION" value="11.5"/>
     </php>
     <testsuites>
         <testsuite name="unit">
@@ -41,7 +40,4 @@
             <directory>./vendor</directory>
         </exclude>
     </source>
-    <extensions>
-        <bootstrap class="Symfony\Bridge\PhpUnit\SymfonyExtension" />
-    </extensions>
 </phpunit>
