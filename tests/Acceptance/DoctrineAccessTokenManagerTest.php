@@ -43,6 +43,31 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTest
         );
     }
 
+    public function testClearExpiredWithMoreTokensThanAStatementCanBind(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, true);
+
+        $client = new Client('client', 'client', 'secret');
+        $em->persist($client);
+        $em->flush();
+
+        $metadata = $em->getClassMetadata(AccessToken::class);
+        $em->getConnection()->executeStatement(\sprintf(
+            "WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 250001) INSERT INTO %s (%s, %s, %s, %s) SELECT 'expired' || i, 'client', '2000-01-01 00:00:00', 0 FROM n",
+            $metadata->getTableName(),
+            $metadata->getColumnName('identifier'),
+            $metadata->getSingleAssociationJoinColumnName('client'),
+            $metadata->getColumnName('expiry'),
+            $metadata->getColumnName('revoked'),
+        ));
+
+        $this->assertSame(250001, $doctrineAccessTokenManager->clearExpired());
+        $this->assertSame([], $em->getRepository(AccessToken::class)->findAll());
+    }
+
     public function testClearExpiredWithoutSavingAccessToken(): void
     {
         /** @var EntityManagerInterface $em */
