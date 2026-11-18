@@ -80,6 +80,9 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         /** @var non-empty-string $oauthClientId */
         $oauthClientId = $psr7Request->getAttribute('oauth_client_id', '');
 
+        /** @var array<non-empty-string> $oauthClientId */
+        $resources = $psr7Request->getAttribute('oauth_resource_indicators', '');
+
         $userLoader = function (string $userIdentifier) use ($oauthClientId): UserInterface {
             if (
                 $oauthClientId === $userIdentifier
@@ -100,6 +103,7 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
 
         $passport->setAttribute('accessTokenId', $accessTokenId);
         $passport->setAttribute('oauthClientId', $oauthClientId);
+        $passport->setAttribute('resources', $resources);
 
         return $passport;
     }
@@ -118,7 +122,9 @@ final class OAuth2Authenticator implements AuthenticatorInterface, Authenticatio
         /** @var string $oauthClientId */
         $oauthClientId = $passport->getAttribute('oauthClientId', '');
 
-        return new OAuth2Token($passport->getUser(), $accessTokenId, $oauthClientId, $scopeBadge->getScopes(), $this->rolePrefix);
+        $resources = $passport->getAttribute('resources', []);
+
+        return new OAuth2Token($passport->getUser(), $accessTokenId, $oauthClientId, $scopeBadge->getScopes(), $this->rolePrefix, $resources);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
