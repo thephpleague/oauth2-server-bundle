@@ -21,3 +21,4 @@ FROM 2.0 to 2.1
 ---------------
 
  * Deprecate not passing an `ClientCredentialsUserFactoryInterface` instance to `OAuth2Authenticator::__construct()`
+ * Add option `client.allow_long_identifier` (default `false`) to make the client identifier column 255 instead of 32 characters long. Changing this option to `true` requires a database migration when a custom client class is not used. The option value will be ignored in 3.0

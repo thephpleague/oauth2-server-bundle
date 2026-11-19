@@ -27,6 +27,7 @@ class Driver implements MappingDriver
         private readonly bool $persistAccessToken,
         private readonly string $tablePrefix = 'oauth2_',
         private readonly bool $enableDeviceCodeGrant = true,
+        private readonly bool $allowLongClientIdentifier = false,
     ) {
     }
 
@@ -163,7 +164,7 @@ class Driver implements MappingDriver
     {
         (new ClassMetadataBuilder($metadata))
             ->setTable($this->tablePrefix . 'client')
-            ->createField('identifier', 'string')->makePrimaryKey()->length(32)->build()
+            ->createField('identifier', 'string')->makePrimaryKey()->length($this->allowLongClientIdentifier ? 255 : 32)->build()
         ;
     }
 
