@@ -16,7 +16,7 @@ The endpoint is off by default. Enabling it takes two steps.
 
     The issuer is an `https` URL without query or fragment. It may carry a path. For local development, `http` is accepted for `localhost`, `127.0.0.1` and `[::1]`.
 
-    The issuer must be a literal. The path of the route is built from it when the container is compiled, so a parameter or an environment variable cannot be used. To use another issuer per environment, set it in `config/packages/<env>/league_oauth2_server.yaml` or with `when@<env>`.
+    The issuer may be an environment variable, for example `'%env(OAUTH_ISSUER)%'`. It is checked when the endpoint is requested. An invalid issuer is a misconfiguration and answers with an error.
 
 1. Import the route:
 
@@ -26,14 +26,14 @@ The endpoint is off by default. Enabling it takes two steps.
         resource: '@LeagueOAuth2ServerBundle/config/routes_metadata.php'
     ```
 
-    RFC 8414 section 3.1 puts the well-known segment between the host and the path of the issuer. The route follows the issuer you configured:
+    RFC 8414 section 3.1 puts the well-known segment between the host and the path of the issuer. The route has an optional path placeholder, and the endpoint answers `404` for any path other than the one of your issuer:
 
     | Issuer                           | Metadata URL                                                         |
     |----------------------------------|----------------------------------------------------------------------|
     | `https://auth.example.com`       | `https://auth.example.com/.well-known/oauth-authorization-server`    |
     | `https://example.com/auth`       | `https://example.com/.well-known/oauth-authorization-server/auth`    |
 
-    Import it without a prefix. A prefix or a locale group would move the well-known path away from where clients look for it. While the metadata are not enabled, the route answers `404`.
+    Import it without a prefix. A prefix or a locale group would move the well-known path away from where clients look for it. The route needs the metadata to be enabled. The service behind it only exists then, so import the route only together with the option.
 
 ## Content
 

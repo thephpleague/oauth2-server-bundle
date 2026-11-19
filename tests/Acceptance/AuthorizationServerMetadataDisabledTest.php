@@ -14,10 +14,8 @@ final class AuthorizationServerMetadataDisabledTest extends AbstractAcceptanceTe
         $this->application = new Application($this->client->getKernel());
     }
 
-    public function testAnImportedRouteAnswersNotFoundWhileTheMetadataAreOff(): void
+    public function testNothingIsRegisteredWhileTheMetadataAreOff(): void
     {
-        $this->client->request('GET', '/.well-known/oauth-authorization-server');
-
-        $this->assertSame(404, $this->client->getResponse()->getStatusCode());
+        $this->assertFalse($this->client->getContainer()->has('league.oauth2_server.controller.authorization_server_metadata'));
     }
 }

@@ -53,8 +53,6 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class LeagueOAuth2ServerExtension extends Extension implements PrependExtensionInterface, CompilerPassInterface
 {
-    private const DEVICE_CODE_GRANT = 'urn:ietf:params:oauth:grant-type:device_code';
-
     /**
      * @throws \Exception
      */
@@ -68,7 +66,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         $this->configureAccessTokenSaving($loader, $config['authorization_server']);
         $this->configurePersistence($loader, $container, $config);
         $this->configureAuthorizationServer($container, $config['authorization_server']);
-        $this->configureMetadata($container, $config['authorization_server'], $config['scopes']['available']);
+        $this->configureMetadata($loader, $container, $config['authorization_server'], $config['scopes']['available']);
         $this->configureResourceServer($container, $config['resource_server']);
         $this->configureScopes($container, $config['scopes']);
 
@@ -123,10 +121,8 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
     {
         $this->assertRequiredBundlesAreEnabled($container);
 
-        // The metadata endpoint is opt-in: an application without a router must still compile
-        if (!$container->has('router')) {
-            $container->removeAlias(AuthorizationServerMetadataController::class);
-            $container->removeDefinition('league.oauth2_server.controller.authorization_server_metadata');
+        if ($container->hasDefinition('league.oauth2_server.controller.authorization_server_metadata') && !$container->has('router')) {
+            throw new \LogicException('The authorization server metadata need the router. Enable the routing, or disable "league_oauth2_server.authorization_server.metadata".');
         }
     }
 
@@ -165,15 +161,13 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
      * @param mixed[] $config
      * @param string[] $availableScopes
      */
-    private function configureMetadata(ContainerBuilder $container, array $config, array $availableScopes): void
+    private function configureMetadata(LoaderInterface $loader, ContainerBuilder $container, array $config, array $availableScopes): void
     {
-        $issuer = $config['metadata']['enabled'] ? $config['metadata']['issuer'] : null;
+        if (!$config['metadata']['enabled']) {
+            return;
+        }
 
-        // The configuration validated the issuer
-        $parts = null === $issuer ? [] : (array) parse_url($issuer);
-
-        // RFC 8414 section 3.1: the well-known segment goes between the host and the path of the issuer
-        $container->setParameter('league.oauth2_server.metadata.path', rtrim($parts['path'] ?? '', '/'));
+        $loader->load('metadata.php');
 
         $grants = array_keys(array_filter([
             OAuth2Grants::AUTHORIZATION_CODE => $config['enable_auth_code_grant'],
@@ -181,7 +175,7 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             OAuth2Grants::IMPLICIT => $config['enable_implicit_grant'],
             OAuth2Grants::PASSWORD => $config['enable_password_grant'],
             OAuth2Grants::REFRESH_TOKEN => $config['enable_refresh_token_grant'],
-            self::DEVICE_CODE_GRANT => $config['enable_device_code_grant'],
+            OAuth2Grants::DEVICE_CODE => $config['enable_device_code_grant'],
         ]));
 
         $authorizationEndpoint = $config['enable_auth_code_grant'] || $config['enable_implicit_grant'];
@@ -216,10 +210,9 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
         ]);
 
         $container->findDefinition(AuthorizationServerMetadataController::class)
-            ->replaceArgument(2, $issuer)
-            ->replaceArgument(3, null === $issuer ? '' : \sprintf('%s://%s%s', strtolower($parts['scheme'] ?? ''), strtolower($parts['host'] ?? ''), isset($parts['port']) ? ':' . $parts['port'] : ''))
-            ->replaceArgument(4, $metadata)
-            ->replaceArgument(5, $endpoints)
+            ->replaceArgument(2, $config['metadata']['issuer'])
+            ->replaceArgument(3, $metadata)
+            ->replaceArgument(4, $endpoints)
         ;
     }
 

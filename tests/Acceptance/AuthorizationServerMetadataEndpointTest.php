@@ -66,4 +66,18 @@ final class AuthorizationServerMetadataEndpointTest extends AbstractAcceptanceTe
 
         $this->assertSame(404, $this->client->getResponse()->getStatusCode());
     }
+
+    public function testAnotherPathThanTheOneOfTheIssuerIsNotFound(): void
+    {
+        $this->client->request('GET', '/.well-known/oauth-authorization-server/other');
+
+        $this->assertSame(404, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testTheDocumentKeepsItsSlashes(): void
+    {
+        $this->client->request('GET', '/.well-known/oauth-authorization-server/auth');
+
+        $this->assertStringContainsString('"issuer":"https://example.com/auth"', $this->client->getResponse()->getContent());
+    }
 }
