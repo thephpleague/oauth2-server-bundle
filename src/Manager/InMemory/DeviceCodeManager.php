@@ -35,13 +35,23 @@ final class DeviceCodeManager implements DeviceCodeManagerInterface
         $this->deviceCodes[$deviceCode->getIdentifier()] = $deviceCode;
     }
 
-    public function clearExpired(): int
+    public function clearExpiredTokens(?\DateInterval $expireCleanupDelay = null): int
     {
         $count = \count($this->deviceCodes);
 
-        $now = new \DateTimeImmutable();
-        $this->deviceCodes = array_filter($this->deviceCodes, static fn (DeviceCodeInterface $accessToken): bool => $accessToken->getExpiry() >= $now);
+        $expiry = (new \DateTimeImmutable());
+        if ($expireCleanupDelay) {
+            $expiry = $expiry->sub($expireCleanupDelay);
+        }
+        $this->deviceCodes = array_filter($this->deviceCodes, static fn (DeviceCodeInterface $accessToken): bool => $accessToken->getExpiry() >= $expiry);
 
         return $count - \count($this->deviceCodes);
+    }
+
+    public function clearExpired(): int
+    {
+        trigger_deprecation('league/oauth2-server-bundle', '2.1', 'Method "%s::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.', self::class);
+
+        return $this->clearExpiredTokens();
     }
 }

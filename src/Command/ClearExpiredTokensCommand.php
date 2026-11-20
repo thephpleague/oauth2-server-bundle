@@ -55,6 +55,12 @@ final class ClearExpiredTokensCommand extends Command
                 InputOption::VALUE_NONE,
                 'Clear expired device codes.'
             )
+            ->addOption(
+                'expire-cleanup-delay',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'The expiration grace period determines how long expired values are retained before being removed. It accepts either a "DateInterval"-compatible string (e.g., "PT5S" for 5 seconds) or a human-readable duration (e.g., "5 seconds").'
+            )
         ;
     }
 
@@ -68,38 +74,85 @@ final class ClearExpiredTokensCommand extends Command
         $clearExpiredDeviceCodes = $input->getOption('device-codes');
 
         if (!$clearExpiredAccessTokens && !$clearExpiredRefreshTokens && !$clearExpiredAuthCodes && !$clearExpiredDeviceCodes) {
-            $this->clearExpiredAccessTokens($io);
-            $this->clearExpiredRefreshTokens($io);
-            $this->clearExpiredAuthCodes($io);
-            if ($this->enableDeviceCodeGrant) {
-                $this->clearExpiredDeviceCodes($io);
+            // If no specific token type is specified, clear all types by default.
+            $clearExpiredAccessTokens = true;
+            $clearExpiredRefreshTokens = true;
+            $clearExpiredAuthCodes = true;
+            $clearExpiredDeviceCodes = $this->enableDeviceCodeGrant;
+        }
+
+        if (null !== ($expireCleanupDelay = $input->getOption('expire-cleanup-delay'))) {
+            try {
+                $expireCleanupDelay = str_starts_with($expireCleanupDelay, 'P') ? new \DateInterval($expireCleanupDelay) : \DateInterval::createFromDateString($expireCleanupDelay);
+                // BC layer for PHP 8.2
+                if (false === $expireCleanupDelay) { // @phpstan-ignore identical.alwaysFalse
+                    throw new \InvalidArgumentException('Invalid expire cleanup delay string.');
+                }
+            } catch (\Throwable $e) {
+                $io->error(\sprintf('Invalid delay format: %s', $e->getMessage()));
+
+                return Command::FAILURE;
             }
 
-            return Command::SUCCESS;
+            $now = new \DateTimeImmutable();
+            if ($now->sub($expireCleanupDelay) > $now) {
+                $io->error('The expire cleanup delay must be a positive interval.');
+
+                return Command::FAILURE;
+            }
+
+            if ($clearExpiredAccessTokens && !method_exists($this->accessTokenManager, 'clearExpiredTokens')) {
+                $io->error(\sprintf('Class "%s" does not implement "clearExpiredTokens" method, so expired access tokens cannot be cleared with a delay.', $this->accessTokenManager::class));
+
+                return Command::FAILURE;
+            }
+
+            if ($clearExpiredRefreshTokens && !method_exists($this->refreshTokenManager, 'clearExpiredTokens')) {
+                $io->error(\sprintf('Class "%s" does not implement "clearExpiredTokens" method, so expired refresh tokens cannot be cleared with a delay.', $this->refreshTokenManager::class));
+
+                return Command::FAILURE;
+            }
+
+            if ($clearExpiredAuthCodes && !method_exists($this->authorizationCodeManager, 'clearExpiredTokens')) {
+                $io->error(\sprintf('Class "%s" does not implement "clearExpiredTokens" method, so expired auth codes cannot be cleared with a delay.', $this->authorizationCodeManager::class));
+
+                return Command::FAILURE;
+            }
+
+            if ($clearExpiredDeviceCodes && !method_exists($this->deviceCodeManager, 'clearExpiredTokens')) {
+                $io->error(\sprintf('Class "%s" does not implement "clearExpiredTokens" method, so expired device codes cannot be cleared with a delay.', $this->deviceCodeManager::class));
+
+                return Command::FAILURE;
+            }
         }
 
         if ($clearExpiredAccessTokens) {
-            $this->clearExpiredAccessTokens($io);
+            $this->clearExpiredAccessTokens($io, $expireCleanupDelay);
         }
 
         if ($clearExpiredRefreshTokens) {
-            $this->clearExpiredRefreshTokens($io);
+            $this->clearExpiredRefreshTokens($io, $expireCleanupDelay);
         }
 
         if ($clearExpiredAuthCodes) {
-            $this->clearExpiredAuthCodes($io);
+            $this->clearExpiredAuthCodes($io, $expireCleanupDelay);
         }
 
         if ($clearExpiredDeviceCodes) {
-            $this->clearExpiredDeviceCodes($io);
+            $this->clearExpiredDeviceCodes($io, $expireCleanupDelay);
         }
 
         return Command::SUCCESS;
     }
 
-    private function clearExpiredAccessTokens(SymfonyStyle $io): void
+    private function clearExpiredAccessTokens(SymfonyStyle $io, ?\DateInterval $expireCleanupDelay = null): void
     {
-        $numOfClearedAccessTokens = $this->accessTokenManager->clearExpired();
+        if (!method_exists($this->accessTokenManager, 'clearExpiredTokens')) {
+            trigger_deprecation('league/oauth2-server-bundle', '2.1', 'Not implementing method "clearExpiredTokens()" in "%s" is deprecated. This method will be required in 3.0.', $this->accessTokenManager::class);
+            $numOfClearedAccessTokens = $this->accessTokenManager->clearExpired();
+        } else {
+            $numOfClearedAccessTokens = $this->accessTokenManager->clearExpiredTokens($expireCleanupDelay);
+        }
         $io->success(\sprintf(
             'Cleared %d expired access token%s.',
             $numOfClearedAccessTokens,
@@ -107,9 +160,14 @@ final class ClearExpiredTokensCommand extends Command
         ));
     }
 
-    private function clearExpiredRefreshTokens(SymfonyStyle $io): void
+    private function clearExpiredRefreshTokens(SymfonyStyle $io, ?\DateInterval $expireCleanupDelay = null): void
     {
-        $numOfClearedRefreshTokens = $this->refreshTokenManager->clearExpired();
+        if (!method_exists($this->refreshTokenManager, 'clearExpiredTokens')) {
+            trigger_deprecation('league/oauth2-server-bundle', '2.1', 'Not implementing method "clearExpiredTokens()" in "%s" is deprecated. This method will be required in 3.0.', $this->refreshTokenManager::class);
+            $numOfClearedRefreshTokens = $this->refreshTokenManager->clearExpired();
+        } else {
+            $numOfClearedRefreshTokens = $this->refreshTokenManager->clearExpiredTokens($expireCleanupDelay);
+        }
         $io->success(\sprintf(
             'Cleared %d expired refresh token%s.',
             $numOfClearedRefreshTokens,
@@ -117,9 +175,14 @@ final class ClearExpiredTokensCommand extends Command
         ));
     }
 
-    private function clearExpiredAuthCodes(SymfonyStyle $io): void
+    private function clearExpiredAuthCodes(SymfonyStyle $io, ?\DateInterval $expireCleanupDelay = null): void
     {
-        $numOfClearedAuthCodes = $this->authorizationCodeManager->clearExpired();
+        if (!method_exists($this->authorizationCodeManager, 'clearExpiredTokens')) {
+            trigger_deprecation('league/oauth2-server-bundle', '2.1', 'Not implementing method "clearExpiredTokens()" in "%s" is deprecated. This method will be required in 3.0.', $this->authorizationCodeManager::class);
+            $numOfClearedAuthCodes = $this->authorizationCodeManager->clearExpired();
+        } else {
+            $numOfClearedAuthCodes = $this->authorizationCodeManager->clearExpiredTokens($expireCleanupDelay);
+        }
         $io->success(\sprintf(
             'Cleared %d expired auth code%s.',
             $numOfClearedAuthCodes,
@@ -127,9 +190,14 @@ final class ClearExpiredTokensCommand extends Command
         ));
     }
 
-    private function clearExpiredDeviceCodes(SymfonyStyle $io): void
+    private function clearExpiredDeviceCodes(SymfonyStyle $io, ?\DateInterval $expireCleanupDelay = null): void
     {
-        $numberOfClearedDeviceCodes = $this->deviceCodeManager->clearExpired();
+        if (!method_exists($this->deviceCodeManager, 'clearExpiredTokens')) {
+            trigger_deprecation('league/oauth2-server-bundle', '2.1', 'Not implementing method "clearExpiredTokens()" in "%s" is deprecated. This method will be required in 3.0.', $this->deviceCodeManager::class);
+            $numberOfClearedDeviceCodes = $this->deviceCodeManager->clearExpired();
+        } else {
+            $numberOfClearedDeviceCodes = $this->deviceCodeManager->clearExpiredTokens($expireCleanupDelay);
+        }
         $io->success(\sprintf(
             'Cleared %d expired device code%s.',
             $numberOfClearedDeviceCodes,

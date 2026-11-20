@@ -19,8 +19,15 @@ final class AccessTokenManager implements AccessTokenManagerInterface
     {
     }
 
-    public function clearExpired(): int
+    public function clearExpiredTokens(?\DateInterval $expireCleanupDelay = null): int
     {
         return 0;
+    }
+
+    public function clearExpired(): int
+    {
+        trigger_deprecation('league/oauth2-server-bundle', '2.1', 'Method "%s::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.', self::class);
+
+        return $this->clearExpiredTokens();
     }
 }

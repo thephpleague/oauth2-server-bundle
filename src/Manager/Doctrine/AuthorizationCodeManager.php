@@ -27,14 +27,26 @@ final readonly class AuthorizationCodeManager implements AuthorizationCodeManage
         $this->entityManager->flush();
     }
 
-    public function clearExpired(): int
+    public function clearExpiredTokens(?\DateInterval $expireCleanupDelay = null): int
     {
+        $expiry = (new \DateTimeImmutable());
+        if ($expireCleanupDelay) {
+            $expiry = $expiry->sub($expireCleanupDelay);
+        }
+
         /** @var int */
         return $this->entityManager->createQueryBuilder()
             ->delete(AuthorizationCode::class, 'ac')
             ->where('ac.expiry < :expiry')
-            ->setParameter('expiry', new \DateTimeImmutable(), 'datetime_immutable')
+            ->setParameter('expiry', $expiry, 'datetime_immutable')
             ->getQuery()
             ->execute();
+    }
+
+    public function clearExpired(): int
+    {
+        trigger_deprecation('league/oauth2-server-bundle', '2.1', 'Method "%s::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.', self::class);
+
+        return $this->clearExpiredTokens();
     }
 }

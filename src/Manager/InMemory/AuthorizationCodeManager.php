@@ -24,13 +24,23 @@ final class AuthorizationCodeManager implements AuthorizationCodeManagerInterfac
         $this->authorizationCodes[$authCode->getIdentifier()] = $authCode;
     }
 
-    public function clearExpired(): int
+    public function clearExpiredTokens(?\DateInterval $expireCleanupDelay = null): int
     {
         $count = \count($this->authorizationCodes);
 
-        $now = new \DateTimeImmutable();
-        $this->authorizationCodes = array_filter($this->authorizationCodes, static fn (AuthorizationCodeInterface $authorizationCode): bool => $authorizationCode->getExpiryDateTime() >= $now);
+        $expiry = (new \DateTimeImmutable());
+        if ($expireCleanupDelay) {
+            $expiry = $expiry->sub($expireCleanupDelay);
+        }
+        $this->authorizationCodes = array_filter($this->authorizationCodes, static fn (AuthorizationCodeInterface $authorizationCode): bool => $authorizationCode->getExpiryDateTime() >= $expiry);
 
         return $count - \count($this->authorizationCodes);
+    }
+
+    public function clearExpired(): int
+    {
+        trigger_deprecation('league/oauth2-server-bundle', '2.1', 'Method "%s::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.', self::class);
+
+        return $this->clearExpiredTokens();
     }
 }

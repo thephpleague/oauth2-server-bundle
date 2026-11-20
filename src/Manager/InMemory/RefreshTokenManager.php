@@ -24,13 +24,23 @@ final class RefreshTokenManager implements RefreshTokenManagerInterface
         $this->refreshTokens[$refreshToken->getIdentifier()] = $refreshToken;
     }
 
-    public function clearExpired(): int
+    public function clearExpiredTokens(?\DateInterval $expireCleanupDelay = null): int
     {
         $count = \count($this->refreshTokens);
 
-        $now = new \DateTimeImmutable();
-        $this->refreshTokens = array_filter($this->refreshTokens, static fn (RefreshTokenInterface $refreshToken): bool => $refreshToken->getExpiry() >= $now);
+        $expiry = (new \DateTimeImmutable());
+        if ($expireCleanupDelay) {
+            $expiry = $expiry->sub($expireCleanupDelay);
+        }
+        $this->refreshTokens = array_filter($this->refreshTokens, static fn (RefreshTokenInterface $refreshToken): bool => $refreshToken->getExpiry() >= $expiry);
 
         return $count - \count($this->refreshTokens);
+    }
+
+    public function clearExpired(): int
+    {
+        trigger_deprecation('league/oauth2-server-bundle', '2.1', 'Method "%s::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.', self::class);
+
+        return $this->clearExpiredTokens();
     }
 }
