@@ -47,7 +47,7 @@ vendor/bin/phpstan
 You can run the whole test suite using the following command:
 
 ```sh
-vendor/bin/simple-phpunit
+vendor/bin/phpunit
 ```
 
 ### Automated refactoring

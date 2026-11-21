@@ -219,7 +219,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTestCase
         $this->client
             ->getContainer()
             ->get('event_dispatcher')
-            ->addListener(OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE, function (AuthorizationRequestResolveEvent $event): void {
+            ->addListener(OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE, function (AuthorizationRequestResolveEvent $event): never {
                 $this->fail('This event should not have been dispatched.');
             });
 
@@ -259,7 +259,7 @@ final class AuthorizationEndpointTest extends AbstractAcceptanceTestCase
         $this->client
             ->getContainer()
             ->get('event_dispatcher')
-            ->addListener(OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE, function (AuthorizationRequestResolveEvent $event): void {
+            ->addListener(OAuth2Events::AUTHORIZATION_REQUEST_RESOLVE, function (AuthorizationRequestResolveEvent $event): never {
                 $this->fail('This event should not have been dispatched.');
             });
 

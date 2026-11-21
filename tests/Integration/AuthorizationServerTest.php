@@ -10,9 +10,7 @@ use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\OAuth2Events;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
-use PHPUnit\Framework\Attributes\Group;
 
-#[Group('time-sensitive')]
 final class AuthorizationServerTest extends AbstractIntegrationTestCase
 {
     protected function setUp(): void
