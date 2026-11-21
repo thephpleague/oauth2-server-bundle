@@ -367,12 +367,17 @@ final class LeagueOAuth2ServerExtension extends Extension implements PrependExte
             ->replaceArgument(3, $config['authorization_server']['enable_device_code_grant'])
         ;
 
+        if (!$config['client']['allow_long_identifier']) {
+            trigger_deprecation('league/oauth2-server-bundle', '2.1', 'Not setting "league_oauth2_server.client.allow_long_identifier" to "true" is deprecated. Changing this option to "true" requires a database migration when a custom client class is not used.');
+        }
+
         $container
             ->findDefinition(Driver::class)
             ->replaceArgument(0, $config['client']['classname'])
             ->replaceArgument(1, $config['authorization_server']['persist_access_token'])
             ->replaceArgument(2, $persistenceConfig['table_prefix'])
             ->replaceArgument(3, $config['authorization_server']['enable_device_code_grant'])
+            ->replaceArgument(4, $config['client']['allow_long_identifier'])
         ;
 
         $container->setParameter('league.oauth2_server.persistence.doctrine.enabled', true);
