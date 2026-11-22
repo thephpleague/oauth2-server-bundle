@@ -41,6 +41,13 @@ final class OAuth2Grants
      */
     public const REFRESH_TOKEN = 'refresh_token';
 
+    /**
+     * @see https://datatracker.ietf.org/doc/html/rfc8628#section-3.4
+     *
+     * @var string
+     */
+    public const DEVICE_CODE = 'urn:ietf:params:oauth:grant-type:device_code';
+
     public static function has(string $grant): bool
     {
         return \in_array($grant, [
