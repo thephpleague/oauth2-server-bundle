@@ -9,6 +9,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\DeviceCodeManager as Doctr
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 
 /**
  * @TODO This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
@@ -16,7 +17,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(DoctrineDeviceCodeManager::class)]
 final class DoctrineDeviceCodeManagerTest extends AbstractAcceptanceTestCase
 {
-    public function testClearExpired(): void
+    public function testClearExpiredTokens(): void
     {
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
@@ -35,6 +36,57 @@ final class DoctrineDeviceCodeManagerTest extends AbstractAcceptanceTestCase
 
         $em->flush();
 
+        $this->assertSame(3, $doctrineDeviceCodeManager->clearExpiredTokens());
+
+        $this->assertSame(
+            array_values($testData['output']),
+            $em->getRepository(DeviceCode::class)->findBy([], ['identifier' => 'ASC'])
+        );
+    }
+
+    public function testClearExpiredTokensWithCleanupDelay(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $doctrineDeviceCodeManager = new DoctrineDeviceCodeManager($em);
+
+        $client = new Client('client', 'client', 'secret');
+        $em->persist($client);
+
+        $testData = $this->buildClearExpiredTestData($client);
+
+        /** @var DeviceCode $authCode */
+        foreach ($testData['input'] as $authCode) {
+            $doctrineDeviceCodeManager->save($authCode);
+        }
+
+        $em->flush();
+
+        $this->assertSame(2, $doctrineDeviceCodeManager->clearExpiredTokens(new \DateInterval('PT30M')));
+    }
+
+    #[IgnoreDeprecations]
+    public function testLegacyClearExpired(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $doctrineDeviceCodeManager = new DoctrineDeviceCodeManager($em);
+
+        $client = new Client('client', 'client', 'secret');
+        $em->persist($client);
+
+        $testData = $this->buildClearExpiredTestData($client);
+
+        /** @var DeviceCode $authCode */
+        foreach ($testData['input'] as $authCode) {
+            $doctrineDeviceCodeManager->save($authCode);
+        }
+
+        $em->flush();
+
+        $this->expectUserDeprecationMessage('Since league/oauth2-server-bundle 2.1: Method "League\Bundle\OAuth2ServerBundle\Manager\Doctrine\DeviceCodeManager::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.');
         $this->assertSame(3, $doctrineDeviceCodeManager->clearExpired());
 
         $this->assertSame(

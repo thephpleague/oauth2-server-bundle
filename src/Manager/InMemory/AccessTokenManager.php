@@ -37,7 +37,7 @@ final class AccessTokenManager implements AccessTokenManagerInterface
         $this->accessTokens[$accessToken->getIdentifier()] = $accessToken;
     }
 
-    public function clearExpired(): int
+    public function clearExpiredTokens(?\DateInterval $expireCleanupDelay = null): int
     {
         if (!$this->persistAccessToken) {
             return 0;
@@ -45,9 +45,19 @@ final class AccessTokenManager implements AccessTokenManagerInterface
 
         $count = \count($this->accessTokens);
 
-        $now = new \DateTimeImmutable();
-        $this->accessTokens = array_filter($this->accessTokens, static fn (AccessTokenInterface $accessToken): bool => $accessToken->getExpiry() >= $now);
+        $expiry = (new \DateTimeImmutable());
+        if ($expireCleanupDelay) {
+            $expiry = $expiry->sub($expireCleanupDelay);
+        }
+        $this->accessTokens = array_filter($this->accessTokens, static fn (AccessTokenInterface $accessToken): bool => $accessToken->getExpiry() >= $expiry);
 
         return $count - \count($this->accessTokens);
+    }
+
+    public function clearExpired(): int
+    {
+        trigger_deprecation('league/oauth2-server-bundle', '2.1', 'Method "%s::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.', self::class);
+
+        return $this->clearExpiredTokens();
     }
 }

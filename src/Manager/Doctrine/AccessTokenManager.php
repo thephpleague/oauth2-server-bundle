@@ -37,13 +37,16 @@ final readonly class AccessTokenManager implements AccessTokenManagerInterface
         $this->entityManager->flush();
     }
 
-    public function clearExpired(): int
+    public function clearExpiredTokens(?\DateInterval $expireCleanupDelay = null): int
     {
         if (!$this->persistAccessToken) {
             return 0;
         }
 
-        $expiry = new \DateTimeImmutable();
+        $expiry = (new \DateTimeImmutable());
+        if ($expireCleanupDelay) {
+            $expiry = $expiry->sub($expireCleanupDelay);
+        }
 
         // unlink access tokens from refresh tokens
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -71,5 +74,12 @@ final readonly class AccessTokenManager implements AccessTokenManagerInterface
             ->setParameter('expiry', $expiry, 'datetime_immutable')
             ->getQuery()
             ->execute();
+    }
+
+    public function clearExpired(): int
+    {
+        trigger_deprecation('league/oauth2-server-bundle', '2.1', 'Method "%s::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.', self::class);
+
+        return $this->clearExpiredTokens();
     }
 }

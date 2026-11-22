@@ -8,11 +8,43 @@ use League\Bundle\OAuth2ServerBundle\Manager\InMemory\DeviceCodeManager as InMem
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\TestCase;
 
 #[Group('time-sensitive')]
 final class InMemoryDeviceCodeManagerTest extends TestCase
 {
+    public function testClearExpiredTokens(): void
+    {
+        $inMemoryDeviceCodeManager = new InMemoryDeviceCodeManager();
+
+        $testData = $this->buildClearExpiredTestData();
+
+        foreach ($testData['input'] as $token) {
+            $inMemoryDeviceCodeManager->save($token);
+        }
+
+        $this->assertSame(3, $inMemoryDeviceCodeManager->clearExpiredTokens());
+
+        $reflectionProperty = new \ReflectionProperty(InMemoryDeviceCodeManager::class, 'deviceCodes');
+
+        $this->assertSame($testData['output'], $reflectionProperty->getValue($inMemoryDeviceCodeManager));
+    }
+
+    public function testClearExpiredTokensWithCleanupDelay(): void
+    {
+        $inMemoryDeviceCodeManager = new InMemoryDeviceCodeManager();
+
+        $testData = $this->buildClearExpiredTestData();
+
+        foreach ($testData['input'] as $token) {
+            $inMemoryDeviceCodeManager->save($token);
+        }
+
+        $this->assertSame(2, $inMemoryDeviceCodeManager->clearExpiredTokens(new \DateInterval('PT30M')));
+    }
+
+    #[IgnoreDeprecations]
     public function testClearExpired(): void
     {
         $inMemoryDeviceCodeManager = new InMemoryDeviceCodeManager();
@@ -23,6 +55,7 @@ final class InMemoryDeviceCodeManagerTest extends TestCase
             $inMemoryDeviceCodeManager->save($token);
         }
 
+        $this->expectUserDeprecationMessage('Since league/oauth2-server-bundle 2.1: Method "League\Bundle\OAuth2ServerBundle\Manager\InMemory\DeviceCodeManager::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.');
         $this->assertSame(3, $inMemoryDeviceCodeManager->clearExpired());
 
         $reflectionProperty = new \ReflectionProperty(InMemoryDeviceCodeManager::class, 'deviceCodes');

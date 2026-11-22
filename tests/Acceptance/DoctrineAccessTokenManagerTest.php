@@ -10,6 +10,7 @@ use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 
 /**
  * @TODO This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
@@ -17,7 +18,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(DoctrineAccessTokenManager::class)]
 final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTestCase
 {
-    public function testClearExpired(): void
+    public function testClearExpiredTokens(): void
     {
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
@@ -35,6 +36,81 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTestCase
             $doctrineAccessTokenManager->save($token);
         }
 
+        $this->assertSame(3, $doctrineAccessTokenManager->clearExpiredTokens());
+
+        $this->assertSame(
+            $testData['output'],
+            $em->getRepository(AccessToken::class)->findBy([], ['identifier' => 'ASC'])
+        );
+    }
+
+    public function testClearExpiredTokensWithoutSavingAccessToken(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, false);
+
+        $client = new Client('name', 'client', 'secret');
+        $em->persist($client);
+        $em->flush();
+
+        $testData = $this->buildClearExpiredTestData($client);
+
+        /** @var AccessToken $token */
+        foreach ($testData['input'] as $token) {
+            $doctrineAccessTokenManager->save($token);
+        }
+
+        $this->assertSame(0, $doctrineAccessTokenManager->clearExpiredTokens());
+
+        $this->assertSame(
+            [],
+            $em->getRepository(AccessToken::class)->findBy([], ['identifier' => 'ASC'])
+        );
+    }
+
+    public function testClearExpiredTokensWithCleanupDelay(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, true);
+
+        $client = new Client('client', 'client', 'secret');
+        $em->persist($client);
+        $em->flush();
+
+        $testData = $this->buildClearExpiredTestData($client);
+
+        /** @var AccessToken $token */
+        foreach ($testData['input'] as $token) {
+            $doctrineAccessTokenManager->save($token);
+        }
+
+        $this->assertSame(2, $doctrineAccessTokenManager->clearExpiredTokens(new \DateInterval('PT30M')));
+    }
+
+    #[IgnoreDeprecations]
+    public function testLegacyClearExpired(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, true);
+
+        $client = new Client('client', 'client', 'secret');
+        $em->persist($client);
+        $em->flush();
+
+        $testData = $this->buildClearExpiredTestData($client);
+
+        /** @var AccessToken $token */
+        foreach ($testData['input'] as $token) {
+            $doctrineAccessTokenManager->save($token);
+        }
+
+        $this->expectUserDeprecationMessage('Since league/oauth2-server-bundle 2.1: Method "League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.');
         $this->assertSame(3, $doctrineAccessTokenManager->clearExpired());
 
         $this->assertSame(
@@ -64,11 +140,12 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTestCase
             $metadata->getColumnName('revoked'),
         ));
 
-        $this->assertSame(250001, $doctrineAccessTokenManager->clearExpired());
+        $this->assertSame(250001, $doctrineAccessTokenManager->clearExpiredTokens());
         $this->assertSame([], $em->getRepository(AccessToken::class)->findAll());
     }
 
-    public function testClearExpiredWithoutSavingAccessToken(): void
+    #[IgnoreDeprecations]
+    public function testLegacyClearExpiredWithoutSavingAccessToken(): void
     {
         /** @var EntityManagerInterface $em */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
@@ -86,6 +163,7 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTestCase
             $doctrineAccessTokenManager->save($token);
         }
 
+        $this->expectUserDeprecationMessage('Since league/oauth2-server-bundle 2.1: Method "League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.');
         $this->assertSame(0, $doctrineAccessTokenManager->clearExpired());
 
         $this->assertSame(
@@ -146,7 +224,7 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTestCase
 
         $em->flush();
 
-        $this->assertSame(3, $doctrineAccessTokenManager->clearExpired());
+        $this->assertSame(3, $doctrineAccessTokenManager->clearExpiredTokens());
 
         $em->clear();
 
@@ -172,6 +250,91 @@ final class DoctrineAccessTokenManagerTest extends AbstractAcceptanceTestCase
 
         $em->flush();
 
+        $this->assertSame(0, $doctrineAccessTokenManager->clearExpiredTokens());
+
+        $this->assertSame(
+            $testData['input'],
+            $em->getRepository(RefreshToken::class)->findBy(['accessToken' => null], ['identifier' => 'ASC'])
+        );
+    }
+
+    public function testClearExpiredWithRefreshTokenAndCleanupDelay(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, true);
+
+        $client = new Client('client', 'client', 'secret');
+        $em->persist($client);
+        $em->flush();
+
+        $testData = $this->buildClearExpiredTestDataWithRefreshToken($client);
+
+        /** @var RefreshToken $token */
+        foreach ($testData['input'] as $token) {
+            $doctrineAccessTokenManager->save($token->getAccessToken());
+            $em->persist($token);
+        }
+
+        $em->flush();
+
+        $this->assertSame(2, $doctrineAccessTokenManager->clearExpiredTokens(new \DateInterval('PT30M')));
+
+        $em->clear();
+
+        self::assertCount(2, $em->getRepository(RefreshToken::class)->findBy(['accessToken' => null], ['identifier' => 'ASC']));
+    }
+
+    #[IgnoreDeprecations]
+    public function testLegacyClearExpiredWithRefreshToken(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, true);
+
+        $client = new Client('client', 'client', 'secret');
+        $em->persist($client);
+        $em->flush();
+
+        $testData = $this->buildClearExpiredTestDataWithRefreshToken($client);
+
+        /** @var RefreshToken $token */
+        foreach ($testData['input'] as $token) {
+            $doctrineAccessTokenManager->save($token->getAccessToken());
+            $em->persist($token);
+        }
+
+        $em->flush();
+
+        $this->expectUserDeprecationMessage('Since league/oauth2-server-bundle 2.1: Method "League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.');
+        $this->assertSame(3, $doctrineAccessTokenManager->clearExpired());
+
+        $em->clear();
+
+        self::assertCount(3, $em->getRepository(RefreshToken::class)->findBy(['accessToken' => null], ['identifier' => 'ASC']));
+    }
+
+    #[IgnoreDeprecations]
+    public function testLegacyClearExpiredWithRefreshTokenWithoutSavingAccessToken(): void
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+        $doctrineAccessTokenManager = new DoctrineAccessTokenManager($em, false);
+
+        $client = new Client('name', 'client', 'secret');
+        $em->persist($client);
+        $em->flush();
+
+        $testData = $this->buildClearExpiredTestDataWithRefreshToken($client, false);
+
+        /** @var RefreshToken $token */
+        foreach ($testData['input'] as $token) {
+            $em->persist($token);
+        }
+
+        $em->flush();
+
+        $this->expectUserDeprecationMessage('Since league/oauth2-server-bundle 2.1: Method "League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AccessTokenManager::clearExpired()" is deprecated, use "clearExpiredTokens()" instead.');
         $this->assertSame(0, $doctrineAccessTokenManager->clearExpired());
 
         $this->assertSame(
