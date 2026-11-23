@@ -9,17 +9,20 @@ use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
 use League\Bundle\OAuth2ServerBundle\Repository\ClientRepository;
 use League\Bundle\OAuth2ServerBundle\Repository\DeviceCodeRepository;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 use Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher;
 
 final class DeviceCodeRepositoryTest extends AbstractIntegrationTestCase
 {
+    use ClockSensitiveTrait;
+
     public function testDeviceCodeRevoking(): void
     {
         $identifier = 'foo';
 
         $deviceCode = new DeviceCode(
             $identifier,
-            new \DateTimeImmutable('+1 day'),
+            static::mockTime(true)->now()->modify('+1 day'),
             new Client('name', 'identifier', 'secret'),
             null,
             [],

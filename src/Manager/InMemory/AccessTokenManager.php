@@ -6,9 +6,12 @@ namespace League\Bundle\OAuth2ServerBundle\Manager\InMemory;
 
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AccessTokenInterface;
+use Symfony\Component\Clock\ClockAwareTrait;
 
 final class AccessTokenManager implements AccessTokenManagerInterface
 {
+    use ClockAwareTrait;
+
     /**
      * @var array<string, AccessTokenInterface>
      */
@@ -45,7 +48,7 @@ final class AccessTokenManager implements AccessTokenManagerInterface
 
         $count = \count($this->accessTokens);
 
-        $expiry = (new \DateTimeImmutable());
+        $expiry = $this->now();
         if ($expireCleanupDelay) {
             $expiry = $expiry->sub($expireCleanupDelay);
         }

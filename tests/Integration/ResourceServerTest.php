@@ -6,9 +6,12 @@ namespace League\Bundle\OAuth2ServerBundle\Tests\Integration;
 
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
 final class ResourceServerTest extends AbstractIntegrationTestCase
 {
+    use ClockSensitiveTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -19,7 +22,8 @@ final class ResourceServerTest extends AbstractIntegrationTestCase
             $this->accessTokenManager,
             $this->refreshTokenManager,
             $this->authCodeManager,
-            $this->deviceCodeManager
+            $this->deviceCodeManager,
+            static::mockTime(true),
         );
     }
 

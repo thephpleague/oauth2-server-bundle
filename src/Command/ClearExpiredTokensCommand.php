@@ -8,6 +8,7 @@ use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
+use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,6 +19,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand(name: 'league:oauth2-server:clear-expired-tokens', description: 'Clears all expired access and/or refresh tokens and/or auth codes')]
 final class ClearExpiredTokensCommand extends Command
 {
+    use ClockAwareTrait;
+
     public function __construct(
         private readonly AccessTokenManagerInterface $accessTokenManager,
         private readonly RefreshTokenManagerInterface $refreshTokenManager,
@@ -94,7 +97,7 @@ final class ClearExpiredTokensCommand extends Command
                 return Command::FAILURE;
             }
 
-            $now = new \DateTimeImmutable();
+            $now = $this->now();
             if ($now->sub($expireCleanupDelay) > $now) {
                 $io->error('The expire cleanup delay must be a positive interval.');
 

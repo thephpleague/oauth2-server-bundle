@@ -22,6 +22,7 @@
         "league/oauth2-server": "^9.2",
         "nyholm/psr7": "^1.4",
         "psr/http-factory": "^1.0",
+        "symfony/clock": "^7.4|^8.1",
         "symfony/deprecation-contracts": "^3.0",
         "symfony/event-dispatcher": "^7.4|^8.1",
         "symfony/filesystem": "^7.4|^8.1",

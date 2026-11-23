@@ -12,6 +12,7 @@ use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
 use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -20,6 +21,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 #[CoversClass(DoctrineClientManager::class)]
 final class DoctrineClientManagerTest extends AbstractAcceptanceTestCase
 {
+    use ClockSensitiveTrait;
+
     public function testSimpleDelete(): void
     {
         /** @var EntityManagerInterface $em */
@@ -49,7 +52,7 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTestCase
         $em->persist($client);
         $em->flush();
 
-        $accessToken = new AccessToken('access token', new \DateTimeImmutable('+1 day'), $client, $client->getIdentifier(), []);
+        $accessToken = new AccessToken('access token', static::mockTime(true)->now()->modify('+1 day'), $client, $client->getIdentifier(), []);
         $em->persist($accessToken);
         $em->flush();
 
@@ -96,11 +99,13 @@ final class DoctrineClientManagerTest extends AbstractAcceptanceTestCase
         $em->persist($client);
         $em->flush();
 
-        $accessToken = new AccessToken('access token', new \DateTimeImmutable('+1 day'), $client, $client->getIdentifier(), []);
+        $clock = static::mockTime(true);
+
+        $accessToken = new AccessToken('access token', $clock->now()->modify('+1 day'), $client, $client->getIdentifier(), []);
         $em->persist($accessToken);
         $em->flush();
 
-        $refreshToken = new RefreshToken('refresh token', new \DateTimeImmutable('+1 day'), $accessToken);
+        $refreshToken = new RefreshToken('refresh token', $clock->now()->modify('+1 day'), $accessToken);
         $em->persist($refreshToken);
         $em->flush();
 

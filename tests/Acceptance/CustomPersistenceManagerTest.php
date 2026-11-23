@@ -27,14 +27,19 @@ use League\Bundle\OAuth2ServerBundle\Tests\TestHelper;
 use League\Bundle\OAuth2ServerBundle\ValueObject\RedirectUri;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Clock\ClockInterface;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
 class CustomPersistenceManagerTest extends AbstractAcceptanceTestCase
 {
+    use ClockSensitiveTrait;
+
     private AccessTokenManagerInterface&MockObject $accessTokenManager;
     private ClientManagerInterface&MockObject $clientManager;
     private RefreshTokenManagerInterface&MockObject $refreshTokenManager;
     private AuthorizationCodeManagerInterface&MockObject $authCodeManager;
     private DeviceCodeManagerInterface&MockObject $deviceCodeManager;
+    private ClockInterface $clock;
 
     protected function setUp(): void
     {
@@ -44,6 +49,7 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTestCase
         $this->refreshTokenManager = $this->createMock(RefreshTokenManagerInterface::class);
         $this->authCodeManager = $this->createMock(AuthorizationCodeManagerInterface::class);
         $this->deviceCodeManager = $this->createMock(DeviceCodeManagerInterface::class);
+        $this->clock = static::mockTime(true);
         $this->application = new Application($this->client->getKernel());
     }
 
@@ -108,8 +114,8 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTestCase
     {
         $hashedSecret = $this->client->getContainer()->get('league.oauth2_server.password_hasher')->hash('secret');
         $client = new Client('name', 'foo', $hashedSecret);
-        $accessToken = new AccessToken('access_token', new \DateTimeImmutable('+1 hour'), $client, 'user', []);
-        $refreshToken = new RefreshToken('refresh_token', new \DateTimeImmutable('+1 month'), $accessToken);
+        $accessToken = new AccessToken('access_token', $this->clock->now()->modify('+1 hour'), $client, 'user', []);
+        $refreshToken = new RefreshToken('refresh_token', $this->clock->now()->modify('+1 month'), $accessToken);
 
         $this->refreshTokenManager->expects(self::atLeastOnce())->method('find')->willReturn($refreshToken, null, null);
         $this->client->getContainer()->set('test.refresh_token_manager', $this->refreshTokenManager);
@@ -137,7 +143,7 @@ class CustomPersistenceManagerTest extends AbstractAcceptanceTestCase
         $hashedSecret = $this->client->getContainer()->get('league.oauth2_server.password_hasher')->hash('secret');
         $client = new Client('name', 'foo', $hashedSecret);
         $client->setRedirectUris(new RedirectUri('https://example.org/oauth2/redirect-uri'));
-        $authCode = new AuthorizationCode('authorization_code', new \DateTimeImmutable('+2 minute'), $client, 'user', []);
+        $authCode = new AuthorizationCode('authorization_code', $this->clock->now()->modify('+2 minute'), $client, 'user', []);
 
         $this->authCodeManager->expects(self::atLeastOnce())->method('find')->willReturn($authCode, null);
         $this->client->getContainer()->set('test.authorization_code_manager', $this->authCodeManager);

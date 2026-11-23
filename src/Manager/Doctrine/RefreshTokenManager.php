@@ -8,9 +8,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshTokenInterface;
+use Symfony\Component\Clock\ClockAwareTrait;
 
 final readonly class RefreshTokenManager implements RefreshTokenManagerInterface
 {
+    use ClockAwareTrait;
+
     public function __construct(
         private EntityManagerInterface $entityManager,
     ) {
@@ -29,7 +32,7 @@ final readonly class RefreshTokenManager implements RefreshTokenManagerInterface
 
     public function clearExpiredTokens(?\DateInterval $expireCleanupDelay = null): int
     {
-        $expiry = (new \DateTimeImmutable());
+        $expiry = $this->now();
         if ($expireCleanupDelay) {
             $expiry = $expiry->sub($expireCleanupDelay);
         }

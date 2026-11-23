@@ -8,9 +8,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\DeviceCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
 use League\Bundle\OAuth2ServerBundle\Model\DeviceCodeInterface;
+use Symfony\Component\Clock\ClockAwareTrait;
 
 final readonly class DeviceCodeManager implements DeviceCodeManagerInterface
 {
+    use ClockAwareTrait;
+
     public function __construct(
         private EntityManagerInterface $entityManager,
     ) {
@@ -41,7 +44,7 @@ final readonly class DeviceCodeManager implements DeviceCodeManagerInterface
 
     public function clearExpiredTokens(?\DateInterval $expireCleanupDelay = null): int
     {
-        $expiry = (new \DateTimeImmutable());
+        $expiry = $this->now();
         if ($expireCleanupDelay) {
             $expiry = $expiry->sub($expireCleanupDelay);
         }

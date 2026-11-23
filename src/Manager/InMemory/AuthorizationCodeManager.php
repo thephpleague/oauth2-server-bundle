@@ -6,9 +6,12 @@ namespace League\Bundle\OAuth2ServerBundle\Manager\InMemory;
 
 use League\Bundle\OAuth2ServerBundle\Manager\AuthorizationCodeManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCodeInterface;
+use Symfony\Component\Clock\ClockAwareTrait;
 
 final class AuthorizationCodeManager implements AuthorizationCodeManagerInterface
 {
+    use ClockAwareTrait;
+
     /**
      * @var array<string, AuthorizationCodeInterface>
      */
@@ -28,7 +31,7 @@ final class AuthorizationCodeManager implements AuthorizationCodeManagerInterfac
     {
         $count = \count($this->authorizationCodes);
 
-        $expiry = (new \DateTimeImmutable());
+        $expiry = $this->now();
         if ($expireCleanupDelay) {
             $expiry = $expiry->sub($expireCleanupDelay);
         }

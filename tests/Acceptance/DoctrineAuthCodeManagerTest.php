@@ -8,8 +8,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Manager\Doctrine\AuthorizationCodeManager as DoctrineAuthCodeManager;
 use League\Bundle\OAuth2ServerBundle\Model\AuthorizationCode;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
+use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use Symfony\Component\Clock\ClockInterface;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
 /**
  * @TODO This should be in the Integration tests folder but the current tests infrastructure would need improvements first.
@@ -17,6 +20,16 @@ use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 #[CoversClass(DoctrineAuthCodeManager::class)]
 final class DoctrineAuthCodeManagerTest extends AbstractAcceptanceTestCase
 {
+    use ClockSensitiveTrait;
+
+    private ClockInterface $clock;
+
+    #[Before]
+    protected function setMockClock(): void
+    {
+        $this->clock = static::mockTime(true);
+    }
+
     public function testClearExpiredTokens(): void
     {
         /** @var EntityManagerInterface $em */
@@ -119,7 +132,7 @@ final class DoctrineAuthCodeManagerTest extends AbstractAcceptanceTestCase
     {
         return new AuthorizationCode(
             $identifier,
-            new \DateTimeImmutable($modify),
+            $this->clock->now()->modify($modify),
             $client,
             null,
             []

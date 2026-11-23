@@ -6,9 +6,12 @@ namespace League\Bundle\OAuth2ServerBundle\Manager\InMemory;
 
 use League\Bundle\OAuth2ServerBundle\Manager\RefreshTokenManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshTokenInterface;
+use Symfony\Component\Clock\ClockAwareTrait;
 
 final class RefreshTokenManager implements RefreshTokenManagerInterface
 {
+    use ClockAwareTrait;
+
     /**
      * @var array<string, RefreshTokenInterface>
      */
@@ -28,7 +31,7 @@ final class RefreshTokenManager implements RefreshTokenManagerInterface
     {
         $count = \count($this->refreshTokens);
 
-        $expiry = (new \DateTimeImmutable());
+        $expiry = $this->now();
         if ($expireCleanupDelay) {
             $expiry = $expiry->sub($expireCleanupDelay);
         }

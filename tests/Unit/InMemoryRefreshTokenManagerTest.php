@@ -8,11 +8,24 @@ use League\Bundle\OAuth2ServerBundle\Manager\InMemory\RefreshTokenManager as InM
 use League\Bundle\OAuth2ServerBundle\Model\AccessToken;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
+use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Clock\ClockInterface;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
 final class InMemoryRefreshTokenManagerTest extends TestCase
 {
+    use ClockSensitiveTrait;
+
+    private ClockInterface $clock;
+
+    #[Before]
+    protected function setMockClock(): void
+    {
+        $this->clock = static::mockTime(true);
+    }
+
     public function testClearExpiredTokens(): void
     {
         $inMemoryRefreshTokenManager = new InMemoryRefreshTokenManager();
@@ -86,10 +99,10 @@ final class InMemoryRefreshTokenManagerTest extends TestCase
     {
         return new RefreshToken(
             $identifier,
-            new \DateTimeImmutable($modify),
+            $this->clock->now()->modify($modify),
             new AccessToken(
                 $identifier,
-                new \DateTimeImmutable('+1 day'),
+                $this->clock->now()->modify('+1 day'),
                 new Client('name', 'identifier', 'secret'),
                 null,
                 []

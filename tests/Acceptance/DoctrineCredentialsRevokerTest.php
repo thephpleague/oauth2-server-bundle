@@ -13,8 +13,11 @@ use League\Bundle\OAuth2ServerBundle\Model\DeviceCode;
 use League\Bundle\OAuth2ServerBundle\Model\RefreshToken;
 use League\Bundle\OAuth2ServerBundle\Service\CredentialsRevoker\DoctrineCredentialsRevoker;
 use League\Bundle\OAuth2ServerBundle\Tests\Fixtures\FixtureFactory;
+use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Component\Clock\ClockInterface;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -23,6 +26,16 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 #[CoversClass(DoctrineCredentialsRevoker::class)]
 final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTestCase
 {
+    use ClockSensitiveTrait;
+
+    private ClockInterface $clock;
+
+    #[Before]
+    protected function setMockClock(): void
+    {
+        $this->clock = static::mockTime(true);
+    }
+
     #[DataProvider('provideRevokeCredentialsOptions')]
     public function testRevokesAllCredentialsForUser(bool $persistAccessToken, bool $enableDeviceCodeGrant): void
     {
@@ -107,7 +120,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTestCase
     {
         return new RefreshToken(
             $identifier,
-            new \DateTimeImmutable($modify),
+            $this->clock->now()->modify($modify),
             $accessToken
         );
     }
@@ -116,7 +129,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTestCase
     {
         return new AccessToken(
             $identifier,
-            new \DateTimeImmutable($modify),
+            $this->clock->now()->modify($modify),
             $client,
             $userIdentifier,
             []
@@ -127,7 +140,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTestCase
     {
         return new AuthorizationCode(
             $identifier,
-            new \DateTimeImmutable($modify),
+            $this->clock->now()->modify($modify),
             $client,
             $userIdentifier,
             []
@@ -138,7 +151,7 @@ final class DoctrineCredentialsRevokerTest extends AbstractAcceptanceTestCase
     {
         return new DeviceCode(
             $identifier,
-            new \DateTimeImmutable($modify),
+            $this->clock->now()->modify($modify),
             $client,
             $userIdentifier,
             [],
