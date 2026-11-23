@@ -15,7 +15,7 @@ jobs:
             fail-fast: false
             matrix:
                 php: ["8.2", "8.3", "8.4", "8.5", "8.6"]
-                symfony: ["7.4.*", "8.1.*"]
+                symfony: ["7.4.*", "8.1.*", "8.2.*"]
                 dependency-versions: ["highest"]
                 composer-stable: ["1"]
                 can-fail: [false]
@@ -26,14 +26,18 @@ jobs:
                       composer-stable: "1"
                       can-fail: false
                     - php: "latest"
-                      symfony: "8.1.*"
-                      composer-flags: ''
+                      symfony: "8.2.*"
+                      composer-stable: ""
                       can-fail: true
                 exclude:
                     - php: "8.2"
                       symfony: "8.1.*"
                     - php: "8.3"
                       symfony: "8.1.*"
+                    - php: "8.2"
+                      symfony: "8.2.*"
+                    - php: "8.3"
+                      symfony: "8.2.*"
 
         name: "PHP ${{ matrix.php }} - Symfony ${{ matrix.symfony }} - Composer ${{ matrix.dependency-versions }}"
 
