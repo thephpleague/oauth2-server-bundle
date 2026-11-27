@@ -181,7 +181,7 @@ abstract class AbstractIntegrationTest extends TestCase
     {
         $request = $this
             ->psrFactory
-            ->createServerRequest('', '')
+            ->createServerRequest('GET', '/')
             ->withParsedBody($body)
         ;
 
@@ -196,7 +196,7 @@ abstract class AbstractIntegrationTest extends TestCase
     {
         return $this
             ->psrFactory
-            ->createServerRequest('', '')
+            ->createServerRequest('GET', '/')
             ->withHeader('Authorization', \sprintf('Bearer %s', $jwtToken))
         ;
     }
@@ -205,7 +205,7 @@ abstract class AbstractIntegrationTest extends TestCase
     {
         $serverRequest = $this
             ->psrFactory
-            ->createServerRequest('', '')
+            ->createServerRequest('GET', '/')
             ->withQueryParams($query)
         ;
 
